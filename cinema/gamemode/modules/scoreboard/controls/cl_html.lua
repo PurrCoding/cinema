@@ -35,8 +35,6 @@ local FilterCVar = CreateClientConVar( "cinema_html_filter", 0, true, false )
 local FILTER_ALL = 0
 local FILTER_NONE = 1
 
-local FLASH_WARNING_SHOWN = false
-
 AccessorFunc( PANEL, "m_bScrollbars", 			"Scrollbars", 		FORCE_BOOL )
 AccessorFunc( PANEL, "m_bAllowLua", 			"AllowLua", 		FORCE_BOOL )
 
@@ -68,26 +66,6 @@ function PANEL:Init()
 	
 	self:AddFunction( "gmod", "getUrl", function( href )
 		self:SetURL( href )
-	end )
-
-	self:AddFunction( "gmod", "detectFlash", function( detected )
-
-		-- Only display flash warning once
-		if FLASH_WARNING_SHOWN then return end
-
-		if not detected then
-
-			control.Add( KEY_F2, function( enabled, held )
-				if enabled and !held then
-					SetClipboardText( "http://get.adobe.com/flashplayer/otherversions/" )
-					gui.OpenURL( "http://pixeltailgames.com/cinema/flash.php" )
-				end
-			end )
-
-		end
-
-		FLASH_WARNING_SHOWN = true
-
 	end )
 
 	self:AddFunction( "window", "open", function()
