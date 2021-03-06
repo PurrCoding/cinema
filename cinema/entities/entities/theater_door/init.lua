@@ -1,3 +1,7 @@
+AddCSLuaFile( "cl_init.lua" )
+AddCSLuaFile( "sh_init.lua" )
+include( "sh_init.lua" )
+
 ENT.DoorOpen = Sound("doors/door1_move.wav") //just defaults
 ENT.DoorClose = Sound("doors/door_wood_close1.wav") //just defaults
 

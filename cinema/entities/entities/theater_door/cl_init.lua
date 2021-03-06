@@ -1,3 +1,5 @@
+include("sh_init.lua")
+
 ENT.RenderGroup 	= RENDERGROUP_TRANSLUCENT
 
 ENT.Mode = 0
