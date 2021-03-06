@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Cinema Default Page</title>
+	<script src="http://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.js" type="text/javascript"></script>
+	<script src="https://www.youtube.com/iframe_api" type="text/javascript"></script>
+	<script src="js/theater.min.js" type="text/javascript"></script>
+</head>
+<body>
+
+	<!--
+		Landing page for Garry's Mod Cinema gamemode
+
+		This webpage appears during the idle theater state
+		while there are no videos queued to play. 
+	-->
+
+	<div id="content" class="welcome-page">
+
+		<!-- Curtains -->
+		<div class="right-curtain"></div>
+		<div class="left-curtain"></div>
+		<div class="top-curtain"></div>
+
+		<!-- Welcome header -->
+		<div class="header-container">
+			<div class="welcome"></div>
+		</div>
+
+		<!-- Information -->
+		<div class="info-container">
+
+			<!-- Flash Detection -->
+			<div id="noflash" class="info warning"></div>
+
+			<div class="info">To request a video, open the queue by holding down Q and press the 'Request Video' button</div>
+
+		</div>
+
+		<!-- Footer -->
+		<div class="footer-container"></div>
+
+	</div>
+
+	<div id="player-container">
+		<div id="player"></div>
+	</div>
+
+	<link rel="stylesheet" href="css/style.css" type="text/css">
+
+	<script src="https://f.vimeocdn.com/js/froogaloop2.min.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	var elem = document.getElementById("noflash");
+	if(!swfobject.hasFlashPlayerVersion("1")) {
+		elem.innerText = "Adobe Flash Player not detected! Some videos may not load, press F2 for installation instructions.";
+		gmod.detectFlash(false);
+	}
+	</script>
+
+</body>
+</html>

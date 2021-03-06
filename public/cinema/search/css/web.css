@@ -1,0 +1,159 @@
+#cinema {
+	margin: 0px;
+	padding: 0px;
+	background: #252b2d url(../images/bgtile.jpg) center top;
+	min-height: 100%;
+	height: auto;
+	font-family: 'Maven Pro', sans-serif;
+	color: #B6B6B6;
+}
+
+#cinema p { padding: 0px; margin-top: 0px;}
+#cinema ul { list-style: square; margin-left: -15px; }
+#cinema li { margin-bottom: 6px; }
+
+#cinema ol {
+	display: block;
+	list-style-type: decimal;
+	margin-top: 1em;
+	margin-bottom: 1em;
+	padding-left: 40px;
+}
+
+#cinema h1, h2, h3, h4 {
+	margin-top: -5px;
+
+	color: #FFF;
+	font-family: 'Open Sans', sans-serif;
+	font-weight: 600;
+	text-shadow: 0 0 0.3em #424242;
+	font-size: 150%;
+}
+#cinema h3 { margin-bottom: 6px; }
+#cinema h4 { margin-top: 6px; margin-bottom: -8px; margin-right: 6px; border-bottom: 0px; }
+
+#cinema a:link, a:visited { color: #AAAAEE; text-decoration: none; }
+#cinema a:hover { color: #F9CD00; background-color: #252525; }
+
+#cinema input[type=button].workshop {
+	background-image: url(../images/workshop_button.png);
+	width: 343px;
+	height: 84px;
+	border-radius: 4pt;
+	border: none;
+}
+
+#cinema p.description {
+	margin-bottom: 0px;
+	padding: 15px;
+	padding-bottom: 0px;
+	text-align: justify;
+	text-indent: 30px;
+	line-height: 15pt;
+}
+
+#footer
+{
+	padding-top: 4px;
+	padding-bottom: 16px;
+
+	color: #CBCBCB;
+	text-align: center;
+	font-size: 14px;
+}
+#footer a { color: #b0db6e; text-decoration: none; }
+#footer a:hover { color: #FAFAFA; }
+
+.entry
+{
+	display: block;
+
+	margin: 0 auto;
+	margin-top: 30px;
+	margin-bottom: 30px;
+	padding: 8px;
+	padding-left: 67px;
+	padding-right: 67px;
+
+	width: 600px;
+
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	/*background-color: rgba(0,0,0,0.33);*/
+	background-image: url(../images/bgfilm.png);
+	background-repeat: repeat-y;
+	min-height: 29px;
+}
+.entry p { font-size: 90%; }
+.entry ul { font-size: 90%; }
+.entry h3 { font-size: 120%; }
+.entry .entry { width: 840px; background-color: #323232; }
+.entry .entry img { float: right; margin-left: 8px; }
+
+.button
+{
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 100%;
+
+	color: #FFF;
+	text-shadow: 0 1px 1px rgba(0,0,0,0.20);
+	text-decoration: none;
+	text-align: center;
+
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	border: none;
+
+	background: rgba(0,0,0,0.2);
+
+	-moz-box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 1px 2px rgba(0,0,0,0.4);
+	-webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 1px 2px rgba(0,0,0,0.4);
+	box-shadow: 0 1px 0 rgba(255,255,255,0.3) inset, 0 1px 2px rgba(0,0,0,0.4);
+	-webkit-background-clip: padding-box; /* fixes chrome border radius background bleed through */
+}
+.button:hover { cursor:pointer; 	background: #6a6a6a; }
+.button:active
+{ 
+	-moz-box-shadow: 0 1px 4px rgba(0,0,0,0.8) inset, 0 1px 0 rgb(150,150,150);
+	-webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.8) inset, 0 1px 0 rgb(150,150,150);
+	box-shadow: 0 1px 4px rgba(0,0,0,0.8) inset, 0 1px 0 rgb(150,150,150);
+	
+	background: rgb(63,63,63);
+}
+.download
+{
+	padding: 6px 38px 6px 17px;
+
+	text-align: left;
+	font-size: 20px; 
+	font-weight: bold;
+	color: #CCC;
+
+	background: #585858 url(../images/button_arrow.png) no-repeat 94% 55%;/* for browsers that don't support multiple backgrounds */
+	background: url(../images/button_arrow.png) no-repeat 94% 55%, -moz-linear-gradient(center top , #585858, #3a3a3a);
+	background: url(../images/button_arrow.png) no-repeat 94% 55%, -webkit-gradient(linear, left top, left bottom, from(#585858), to(#3a3a3a));
+
+	border-top: 1px solid rgb(102,102,102);
+	border-bottom: 1px solid rgb(32,32,32);
+	border-left: 1px solid rgb(58,58,58);
+	border-right:1 px solid rgb(58,58,58);
+}
+.download:hover
+{
+	background: #6a6a6a url(../images/button_arrow.png) no-repeat 94% 55%;/* for browsers that don't support multiple backgrounds */
+	background: url(../images/button_arrow.png) no-repeat 94% 55%, -moz-linear-gradient(center top , #6a6a6a, #464646);
+	background: url(../images/button_arrow.png) no-repeat 94% 55%, -webkit-gradient(linear, left top, left bottom, from(#6a6a6a), to(#464646));
+	color: #FFF;
+}
+.download:active
+{
+	background: url(../images/button_arrow.png) no-repeat 94% 55%, rgb(63,63,63);
+	color: #888;
+}
+
+.instruction li
+{
+	margin-top: 15px;
+}
