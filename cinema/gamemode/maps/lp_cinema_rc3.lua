@@ -6,7 +6,7 @@ Location.Add( "lp_cinema_rc3",
 		Min = Vector( 58.739582061768, 1025.1486816406, -28.207374572754 ),
 		Max = Vector( 945.72784423828, 1668.7130126953, 313.57202148438 ),
 	},
-	
+
 	[ "Lobby" ] =
 	{
 		Min = Vector( -20.570646286011, -760.60040283203, -22.252363204956 ),
@@ -18,7 +18,7 @@ Location.Add( "lp_cinema_rc3",
 		Min = Vector( -88.318634033203, -1096.5361328125, 43.408634185791 ),
 		Max = Vector( 1257.0656738281, -759.04089355469, 332.33898925781 ),
 	},
-	
+
 	[ "Restroom" ] =
 	{
 		Min = Vector( -635.43182373047, -647.58258056641, -13.020117759705 ),
@@ -203,7 +203,7 @@ Location.Add( "lp_cinema_rc3",
 } )
 
 if CLIENT then
-	
+
 	hook.Add( "InitPostEntity", "DisableHDR", function()
 
 		-- This command attempts to save the game and change levels.

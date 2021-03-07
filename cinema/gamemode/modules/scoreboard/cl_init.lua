@@ -37,7 +37,7 @@ function SCOREBOARD:PerformLayout()
 	self.Settings:SetWide( 256 )
 	self.Settings:AlignLeft( self.PlayerList:GetWide() + 1 )
 	self.Settings:AlignTop( self.TheaterList:GetTall() )
-	
+
 	-- Animate
 	local curTall = math.max( self.Settings.y + self.Settings:GetTall(), self.PlayerList:GetTall() )
 	curTall = math.Clamp( curTall, 256, ScrH() * .8 )
@@ -50,7 +50,7 @@ end
 vgui.Register( "Scoreboard", SCOREBOARD )
 
 
-if ValidPanel( Gui ) then 
+if ValidPanel( Gui ) then
 	Gui:Remove()
 	Gui = nil
 end
@@ -145,7 +145,7 @@ function GM:MenuShow()
 	end
 
 end
-concommand.Add("+menu", GM.MenuShow ) 
+concommand.Add("+menu", GM.MenuShow )
 concommand.Add("+menu_context", GM.MenuShow )
 
 function GM:MenuHide()
@@ -163,7 +163,7 @@ function GM:MenuHide()
 	end
 
 end
-concommand.Add("-menu", GM.MenuHide ) 
+concommand.Add("-menu", GM.MenuHide )
 concommand.Add("-menu_context", GM.MenuHide )
 
 -- Scroll playerlist

@@ -63,7 +63,7 @@ function GetByLocation( locId, setup )
 
 			-- Found screen entity
 			if IsValid(screen) then
-				
+
 				-- Cache keyvalues
 				local kv = screen.keyvalues
 

@@ -48,7 +48,7 @@ ChairSitSounds = {
 }
 
 local function HandleRollercoasterAnimation( vehicle, player )
-	return player:SelectWeightedSequence( ACT_GMOD_SIT_ROLLERCOASTER ) 
+	return player:SelectWeightedSequence( ACT_GMOD_SIT_ROLLERCOASTER )
 end
 
 function CreateSeatAtPos(pos, angle)
@@ -71,7 +71,7 @@ function CreateSeatAtPos(pos, angle)
 	end
 
 	ent:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER )
-	
+
 	ent.IsCinemaSeat = true
 
 	return ent
@@ -225,7 +225,7 @@ hook.Add("CanExitVehicle", "Leave", PlayerLeaveVehicle)
 function PlayerExitLeft( ply )
 	if ply:IsPlayer() then
 		local Vehicle = ply:GetVehicle()
-		
+
 		if IsValid( Vehicle ) and Vehicle.IsCinemaSeat then
 			PlayerLeaveVehicle( Vehicle, ply )
 		end

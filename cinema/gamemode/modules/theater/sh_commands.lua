@@ -15,7 +15,7 @@ if CLIENT then
 
 	cvars.AddChangeCallback( "cinema_resolution", function(cmd, old, new)
 		new = tonumber(new)
-		
+
 		if !new then
 			return
 		elseif new < 2 then
@@ -29,7 +29,7 @@ if CLIENT then
 
 	cvars.AddChangeCallback( "cinema_volume", function(cmd, old, new)
 		new = tonumber(new)
-		
+
 		if !new then
 			return
 		elseif new < 0 then
@@ -91,10 +91,10 @@ if CLIENT then
 
 		-- Local player in a theater and hide players enabled
 		if LocalPlayer():InTheater() then
-			if theater.Fullscreen then 
+			if theater.Fullscreen then
 				return true
 			end
-				
+
 			if HidePlayers:GetBool() then
 				amount = HideAmount:GetFloat()
 
@@ -127,7 +127,7 @@ if CLIENT then
 		HasFocus = system.HasFocus()
 
 		if ( LastState and !HasFocus ) or ( !LastState and HasFocus ) then
-			
+
 			if HasFocus == true then
 				theater.SetVolume( LastVolume )
 				LastVolume = nil
@@ -148,17 +148,17 @@ else
 
 	-- Settings
 	CreateConVar( "cinema_video_duration_max", 3 * 60 * 60, fcvar, "Maximum video duration for requests in public theaters." )
-	CreateConVar( "cinema_skip_ratio", 0.66, fcvar, "Ratio between 0-1 determining how many players are required to voteskip a video." )	
+	CreateConVar( "cinema_skip_ratio", 0.66, fcvar, "Ratio between 0-1 determining how many players are required to voteskip a video." )
 	-- Permissions
 	CreateConVar( "cinema_allow_url", 0, fcvar, "Allow any url to be set in private theaters." )
 	CreateConVar( "cinema_allow_reset", 0, fcvar, "Reset the theater after all players have left." )
 	CreateConVar( "cinema_allow_voice", 0, fcvar, "Allow theater viewers to talk amongst themselves." )
 	CreateConVar( "cinema_allow_3dvoice", 1, fcvar, "Use 3D voice chat." )
-	
+
 	concommand.Add("cinema_fullscreen_freeze", function(ply,cmd,args)
 		ply:Freeze(tobool(args[1]))
 	end)
-	
+
 	local function TheaterCommand( name, Function )
 
 		if !Function then return end
@@ -187,7 +187,7 @@ else
 
 		local Video = args[1]
 		if !Video then return end
-		
+
 		Theater:RequestVideo(ply, Video)
 
 	end)
@@ -196,7 +196,7 @@ else
 
 		local id = tonumber(args[1])
 		if !id then return end
-		
+
 		Theater:RemoveQueuedVideo(ply, id)
 
 	end)
@@ -205,7 +205,7 @@ else
 
 		local name = args[1]
 		if !name then return end
-		
+
 		Theater:SetName( name, ply )
 
 	end)
@@ -319,7 +319,7 @@ else
 
 		local Theater = ply:GetTheater()
 		if Theater then
-			
+
 			if theater.ExtractURLData( chat ) then
 				Theater:RequestVideo( ply, chat )
 				return ""

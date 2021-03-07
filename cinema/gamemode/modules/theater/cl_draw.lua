@@ -77,7 +77,7 @@ function DrawActiveTheater( bDrawingDepth, bDrawingSkybox )
 	cam.End3D2D()
 
 	if LastInfoDraw + InfoDrawDelay > CurTime() then
-		cam.Start3D2D( Pos, Ang, InfoScale )	
+		cam.Start3D2D( Pos, Ang, InfoScale )
 				pcall( theater.DrawVideoInfo, w, h, InfoScale )
 		cam.End3D2D()
 	end

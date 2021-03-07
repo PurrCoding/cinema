@@ -2,9 +2,9 @@
 control.Add( KEY_EQUAL, function( enabled )
 	-- If they're typing in Chat, ignore it
 	if LocalPlayer():IsTyping() then return end
-	
+
 	if enabled then
-		
+
 		local increment = 5
 		local volume = math.Round( theater.GetVolume() / increment ) * increment
 
@@ -18,9 +18,9 @@ end )
 control.Add( KEY_MINUS, function( enabled )
 	-- If they're typing in Chat, ignore it
 	if LocalPlayer():IsTyping() then return end
-	
+
 	if enabled then
-		
+
 		local increment = 5
 		local volume = math.Round( theater.GetVolume() / increment ) * increment
 
@@ -71,7 +71,7 @@ function RegisterPanel( Theater )
 			if GetConVar("cinema_hd"):GetBool() then
 				panel:QueueJavascript( "if(window.theater) theater.enableHD();" )
 			end
-			
+
 			if GetConVar("cinema_cc"):GetBool() then
 				panel:QueueJavascript( "if(window.theater) theater.enableCC();" )
 			end
@@ -107,16 +107,16 @@ function RefreshPanel( reload )
 		RemovePanels()
 		LoadVideo( LastVideo )
 	end
-	
+
 	ResizePanel()
 
 end
 
 function ResizePanel()
-	
+
 	local panel = ActivePanel()
 	if !ValidPanel(panel) then return end
-	
+
 	local Theater = LocalPlayer():GetTheater()
 	local w, h = Theater:GetSize()
 	local scale = w / h
@@ -127,7 +127,7 @@ function ResizePanel()
 	-- Adjust width based on the theater screen's scale
 	w = math.floor(h2 * scale)
 	h = h2
-	
+
 	panel:SetSize(w, h)
 
 end
@@ -149,7 +149,7 @@ function RemovePanels()
 		if ValidPanel(p) and loc != LocalPlayer():GetLocation() then
 			RemovePanel(p)
 			Panels[loc] = nil
-		end	
+		end
 	end
 
 	-- Remove any remaining panels that might exist
@@ -181,7 +181,7 @@ function CurrentVideo()
 end
 
 function ToggleFullscreen()
-	
+
 	local panel = ActivePanel()
 	if !ValidPanel(panel) then return end
 
@@ -279,9 +279,9 @@ function ReceiveVideo()
 				Theater._Owner = owner
 			end
 		end
-		
+
 	end
-	
+
 	NumVoteSkips = 0
 	LastInfoDraw = CurTime()
 
@@ -389,7 +389,7 @@ function LoadVideo( Video )
 		-- Initialize HTML panel
 		local Theater = LocalPlayer():GetTheater()
 		if !Theater then return end
-		
+
 		-- Initialize panel and load the webpage
 		panel = RegisterPanel( Theater )
 		panel:OpenURL( theaterUrl )

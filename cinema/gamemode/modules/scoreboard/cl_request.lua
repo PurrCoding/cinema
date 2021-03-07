@@ -144,7 +144,7 @@ function HISTORY:Init()
 		self:AddVideo( request )
 	end
 
-	self.VideoList:SortVideos( function( a, b ) 
+	self.VideoList:SortVideos( function( a, b )
 		return a.lastRequest > b.lastRequest
 	end )
 
@@ -161,7 +161,7 @@ function HISTORY:AddVideo( vid )
 		self.Videos[ vid.id ] = panel
 		self.VideoList:AddItem( panel )
 	end
-	
+
 end
 
 function HISTORY:RemoveVideo( vid )
@@ -258,7 +258,7 @@ function VIDEO:Init()
 		pcall( function(v)
 			self:GetParent():GetParent():GetParent():RemoveVideo( v )
 		end, self.Video )
-		
+
 	end
 	self.DeleteVideo.Think = function()
 		if IsMouseOver( self.DeleteVideo ) then
@@ -273,7 +273,7 @@ end
 function VIDEO:SetVideo( vid )
 
 	self.Video = vid
-	
+
 	self:SetTooltip( self.Video.title )
 	self.Title:SetText( self.Video.title )
 
@@ -310,7 +310,7 @@ function VIDEO:PerformLayout()
 
 	self.DeleteVideo:Center()
 	self.DeleteVideo:AlignRight( 10 )
-	
+
 end
 
 function VIDEO:Paint( w, h )

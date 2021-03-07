@@ -1,5 +1,5 @@
 if CLIENT then
-	
+
 	local Debug = CreateClientConVar( "cinema_translation_debug", 0, false, false )
 
 	translations = {}
@@ -124,7 +124,7 @@ end
 local LanguageFiles = file.Find( GM.FolderName .. "/gamemode/localization/*", "LUA" )
 for _, filename in pairs( LanguageFiles ) do
 	if SERVER then
-		AddCSLuaFile( "localization/" .. filename )		
+		AddCSLuaFile( "localization/" .. filename )
 	else
 		LANG = {}
 		include( "localization/" .. filename )

@@ -66,7 +66,7 @@ end
 --
 -- Return true to draw local (thirdperson) camera - false to prevent - nothing to use default behaviour
 --
-function PLAYER:ShouldDrawLocal() 
+function PLAYER:ShouldDrawLocal()
 
 	if ( self.TauntCam:ShouldDrawLocalPlayer( self.Player, self.Player:IsPlayingTaunt() ) ) then return true end
 

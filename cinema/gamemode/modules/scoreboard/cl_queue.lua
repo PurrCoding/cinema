@@ -63,7 +63,7 @@ function QUEUE:Init()
 end
 
 function QUEUE:AddVideo( vid )
-	
+
 	if self.Videos[ vid.Id ] then
 		self.Videos[ vid.Id ]:SetVideo( vid )
 	else
@@ -73,7 +73,7 @@ function QUEUE:AddVideo( vid )
 		self.Videos[ vid.Id ] = panel
 		self.VideoList:AddItem( panel )
 	end
-	
+
 end
 
 function QUEUE:RemoveVideo( vid )
@@ -96,7 +96,7 @@ function QUEUE:Update()
 end
 
 function QUEUE:UpdateList()
-	
+
 	local ids = {}
 	for _, vid in pairs( theater.GetQueue() ) do
 		self:AddVideo( vid )
@@ -116,11 +116,11 @@ end
 function QUEUE:SortList()
 
 	if theater.GetQueueMode() == QUEUE_CHRONOLOGICAL then
-		self.VideoList:SortVideos( function( a, b ) 
+		self.VideoList:SortVideos( function( a, b )
 			return a.Id < b.Id
 		end )
 	else
-		self.VideoList:SortVideos( function( a, b ) 
+		self.VideoList:SortVideos( function( a, b )
 			if a.Votes == b.Votes then
 				return a.Id < b.Id
 			else
@@ -244,7 +244,7 @@ function VIDEO:PerformLayout()
 	self.Duration:SizeToContents()
 	self.Duration:AlignTop( self.Title:GetTall() - 4 )
 	self.Duration:AlignLeft( self.Padding )
-	
+
 end
 
 function VIDEO:Paint( w, h )
@@ -261,7 +261,7 @@ vgui.Register( "ScoreboardVideo", VIDEO )
 
 local VIDEOVOTE = {}
 VIDEOVOTE.Padding = 8
-	
+
 function IsMouseOver( self )
 
 	local x,y = self:CursorPos()
@@ -285,7 +285,7 @@ function VIDEOVOTE:Init()
 		RunConsoleCommand( "cinema_voteup", self.Video.Id )
 
 		if self.Video.Value then -- player has already voted
-			
+
 			if self.Video.Value > 0 then
 				self.Video.Value = nil
 				self.Video.Votes = self.Video.Votes - 1
@@ -305,7 +305,7 @@ function VIDEOVOTE:Init()
 
 		local queue = self:GetParent():GetParent()
 		queue.NextUpdate = (queue.NextUpdate or RealTime()) + 2 -- avoid race conditions with networking
-	
+
 	end
 	self.VoteUp.Think = function()
 		if IsMouseOver( self.VoteUp ) or self.VoteUp.Voted then
@@ -407,7 +407,7 @@ function VIDEOVOTE:PerformLayout()
 		self.RemoveBtn:AlignRight()
 
 	end
-	
+
 end
 
 vgui.Register( "ScoreboardVideoVote", VIDEOVOTE )
@@ -477,7 +477,7 @@ function VIDEOCONTROLS:PerformLayout()
 		self.RemoveBtn:AlignRight()
 
 	end
-	
+
 end
 
 vgui.Register( "ScoreboardVideoControls", VIDEOCONTROLS )

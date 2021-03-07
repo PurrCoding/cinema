@@ -40,7 +40,7 @@ end
 
 --[[---------------------------------------------------------
 	 Name: gamemode:ShouldCollide( Ent1, Ent2 )
-	 Desc: This should always return true unless you have 
+	 Desc: This should always return true unless you have
 			a good reason for it not to.
 -----------------------------------------------------------]]
 function GM:ShouldCollide( Ent1, Ent2 )
@@ -51,7 +51,7 @@ end
 --[[---------------------------------------------------------
 	 Name: gamemode:Move
 	 This basically overrides the NOCLIP, PLAYERMOVE movement stuff.
-	 It's what actually performs the move. 
+	 It's what actually performs the move.
 	 Return true to not perform any default movement actions. (completely override)
 -----------------------------------------------------------]]
 function GM:Move( ply, mv )

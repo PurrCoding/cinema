@@ -16,7 +16,7 @@ function draw.HTMLTexture( panel, w, h )
 
 	if !panel or !ValidPanel(panel) then return end
 	if !w or !h then return end
-	
+
 	panel:UpdateHTMLTexture()
 
 	local pw, ph = panel:GetSize()

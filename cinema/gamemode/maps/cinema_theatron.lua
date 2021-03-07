@@ -86,7 +86,7 @@ Location.Add( "cinema_theatron",
 } )
 
 if SERVER then
-	
+
 	local UseCooldown = 0.3 -- seconds
 	hook.Add( "PlayerUse", "PrivateTheaterLightSwitch", function( ply, ent )
 
