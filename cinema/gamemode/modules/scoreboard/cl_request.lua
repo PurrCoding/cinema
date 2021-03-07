@@ -1,6 +1,6 @@
 function RequestVideoURL( url )
 
-	if ValidPanel( RequestPanel ) then
+	if IsValid( RequestPanel ) then
 		RequestPanel:OnClose()
 		RequestPanel:Remove()
 	end
@@ -68,7 +68,7 @@ function PANEL:Init()
 end
 
 function PANEL:OnClose()
-	if ValidPanel(self.Browser) then
+	if IsValid(self.Browser) then
 		Msg("AWESOMIUM: Destroyed instance for video request window\n")
 		self.Browser:Remove()
 	end
@@ -166,7 +166,7 @@ end
 
 function HISTORY:RemoveVideo( vid )
 
-	if ValidPanel( self.Videos[ vid.id ] ) then
+	if IsValid( self.Videos[ vid.id ] ) then
 		self.VideoList:RemoveItem( self.Videos[ vid.Id ] )
 		self.Videos[ vid.id ]:Remove()
 		self.Videos[ vid.id ] = nil

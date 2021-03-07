@@ -92,7 +92,7 @@ local panel
 function DrawVideoInfo( w, h, scale )
 
 	panel = ActivePanel()
-	if !ValidPanel(panel) then return end
+	if !IsValid(panel) then return end
 
 	local Video = CurrentVideo()
 	if !Video then return end

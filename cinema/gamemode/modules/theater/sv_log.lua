@@ -68,7 +68,7 @@ function LogVideo( Video, Theater )
 	local results = Query(str)
 
 	-- Video exists in history
-	if type(results) == "table" then
+	if istable(results) then
 
 		local count = tonumber(results[1].count) + 1
 

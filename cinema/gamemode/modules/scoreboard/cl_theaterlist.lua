@@ -46,7 +46,7 @@ end
 
 function THEATERLIST:RemoveTheater( th )
 
-	if ValidPanel( self.Theaters[ th ] ) then
+	if IsValid( self.Theaters[ th ] ) then
 		self.Theaters[ th ]:Remove()
 		self.Theaters[ th ] = nil
 	end

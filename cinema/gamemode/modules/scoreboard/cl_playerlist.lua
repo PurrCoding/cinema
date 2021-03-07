@@ -41,7 +41,7 @@ end
 
 function PLAYERLIST:RemovePlayer( ply )
 
-	if ValidPanel( self.Players[ ply ] ) then
+	if IsValid( self.Players[ ply ] ) then
 		self.PlayerList:RemoveItem( self.Players[ ply ] )
 		self.Players[ ply ]:Remove()
 		self.Players[ ply ] = nil
@@ -172,7 +172,7 @@ function PLAYER:UpdatePlayer()
 	if !IsValid(self.Player) then
 
 		local parent = self:GetParent()
-		if ValidPanel(parent) and parent.RemovePlayer then
+		if IsValid(parent) and parent.RemovePlayer then
 			parent:RemovePlayer(self.Player)
 		end
 

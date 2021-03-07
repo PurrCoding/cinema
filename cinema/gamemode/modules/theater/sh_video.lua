@@ -191,7 +191,7 @@ if SERVER then
 			else
 
 				local function loadFailure(code)
-					if type(code) == 'string' then
+					if isstring(code) then
 						callback(code)
 					else
 						callback(false)

@@ -63,7 +63,7 @@ function RegisterPanel( Theater )
 	Msg("AWESOMIUM: Initialized instance for theater screen\n")
 
 	timer.Simple(0.5, function()
-		if ValidPanel(panel) then
+		if IsValid(panel) then
 			local js = string.format(
 				"if(window.theater) theater.setVolume(%s);", GetVolume() )
 			panel:QueueJavascript(js)
@@ -95,7 +95,7 @@ function RefreshPanel( reload )
 
 	local panel = ActivePanel()
 
-	if ValidPanel(panel) then
+	if IsValid(panel) then
 		panel:SetPaintedManually(true)
 		panel:SetScrollbars(false)
 		panel:SetAllowLua(true)
@@ -115,7 +115,7 @@ end
 function ResizePanel()
 
 	local panel = ActivePanel()
-	if !ValidPanel(panel) then return end
+	if !IsValid(panel) then return end
 
 	local Theater = LocalPlayer():GetTheater()
 	local w, h = Theater:GetSize()
@@ -140,13 +140,13 @@ end
 function RemovePanels()
 
 	local panel = ActivePanel()
-	if ValidPanel(panel) then
+	if IsValid(panel) then
 		RemovePanel(panel)
 	end
 
 	-- Remove panels from table
 	for loc, p in pairs(Panels) do
-		if ValidPanel(p) and loc != LocalPlayer():GetLocation() then
+		if IsValid(p) and loc != LocalPlayer():GetLocation() then
 			RemovePanel(p)
 			Panels[loc] = nil
 		end
@@ -158,13 +158,13 @@ function RemovePanels()
 	table.Add( panels, GetHUDPanel():GetChildren() )
 
 	for _, p in pairs(panels) do
-		if ValidPanel(p) and p.ClassName == "TheaterHTML" then
+		if IsValid(p) and p.ClassName == "TheaterHTML" then
 			RemovePanel(p)
 		end
 	end
 
 	-- Remove admin panel between theater transitions
-	if ValidPanel( GuiAdmin ) then
+	if IsValid( GuiAdmin ) then
 		GuiAdmin:Remove()
 	end
 
@@ -183,7 +183,7 @@ end
 function ToggleFullscreen()
 
 	local panel = ActivePanel()
-	if !ValidPanel(panel) then return end
+	if !IsValid(panel) then return end
 
 	-- Toggle fullscreen
 	if Fullscreen then
@@ -224,7 +224,7 @@ function SetVolume( fVolume )
 
 	local js = string.format('if(window.theater) theater.setVolume(%s);', fVolume)
 	for _, p in pairs(Panels) do
-		if ValidPanel(p) then
+		if IsValid(p) then
 			p:QueueJavascript(js)
 		end
 	end
@@ -296,7 +296,7 @@ function ReceiveSeek()
 	local Video = CurrentVideo()
 	local Theater = LocalPlayer():GetTheater()
 
-	if !ValidPanel(panel) or !Video or !Theater then return end
+	if !IsValid(panel) or !Video or !Theater then return end
 
 	Video._VideoStart = seconds
 	Theater._VideoStart = seconds
@@ -335,7 +335,7 @@ function ReceiveTheaters()
 
 	end
 
-	if ValidPanel( Gui ) and ValidPanel( Gui.TheaterList ) then
+	if IsValid( Gui ) and IsValid( Gui.TheaterList ) then
 		Gui.TheaterList:UpdateList()
 	end
 
@@ -351,7 +351,7 @@ function ReceiveQueue()
 		table.insert(Queue, v)
 	end
 
-	if ValidPanel( GuiQueue ) then
+	if IsValid( GuiQueue ) then
 		GuiQueue:UpdateList()
 	end
 
@@ -384,7 +384,7 @@ function LoadVideo( Video )
 	local theaterUrl = GetConVarString( "cinema_url" )
 
 	local panel = ActivePanel()
-	if !ValidPanel( panel ) then
+	if !IsValid( panel ) then
 
 		-- Initialize HTML panel
 		local Theater = LocalPlayer():GetTheater()

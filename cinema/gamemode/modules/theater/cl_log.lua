@@ -95,7 +95,7 @@ local function CheckOldSystem(url, title, duration, vtype, data)
 
 	local oldsyscheck = Query(str)
 
-	if type(oldsyscheck) == "table" then
+	if istable(oldsyscheck) then
 		local count = tonumber(oldsyscheck[1].count) + 1
 
 		-- Update request count and make video entry compatible with new history system
@@ -153,7 +153,7 @@ function LogRequest()
 
 	local results = Query(str)
 
-	if type(results) == "table" then
+	if istable(results) then
 		local count = tonumber(results[1].count) + 1
 
 		if results[1].url != url then

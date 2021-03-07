@@ -1,4 +1,4 @@
-local string = string
+local string_Split = string.Split
 local ipairs = ipairs
 
 ---
@@ -10,7 +10,7 @@ local ipairs = ipairs
 -- @param default  Default value if the key doesn't exist
 --
 function table.Lookup( tbl, key, default )
-	local fragments = string.Split(key, '.')
+	local fragments = string_Split(key, '.')
 	local value = tbl
 
 	for _, fragment in ipairs(fragments) do

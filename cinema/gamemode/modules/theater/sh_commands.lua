@@ -72,7 +72,7 @@ if CLIENT then
 	hook.Add( "PlayerBindPress", "TheaterScroll", function( ply, bind, pressed )
 
 		local panel = theater.ActivePanel()
-		if !ValidPanel(panel) then return end
+		if !IsValid(panel) then return end
 
 		local amount = ScrollAmount:GetInt()
 		if bind == "invnext" then

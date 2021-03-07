@@ -111,7 +111,7 @@ function PANEL:OnSelect( index, value, data )
 
 	RunConsoleCommand( "gmod_language", data )
 
-	if ValidPanel( Gui ) then
+	if IsValid( Gui ) then
 		Gui:Remove()
 		Gui = nil
 		timer.Simple( 0.1, function()
@@ -119,12 +119,12 @@ function PANEL:OnSelect( index, value, data )
 		end )
 	end
 
-	if ValidPanel( GuiQueue ) then
+	if IsValid( GuiQueue ) then
 		GuiQueue:Remove()
 		GuiQueue = nil
 	end
 
-	if ValidPanel( GuiAdmin ) then
+	if IsValid( GuiAdmin ) then
 		GuiAdmin:Remove()
 		GuiAdmin = nil
 	end

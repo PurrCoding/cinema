@@ -50,24 +50,24 @@ end
 vgui.Register( "Scoreboard", SCOREBOARD )
 
 
-if ValidPanel( Gui ) then
+if IsValid( Gui ) then
 	Gui:Remove()
 	Gui = nil
 end
 
-if ValidPanel( GuiQueue ) then
+if IsValid( GuiQueue ) then
 	GuiQueue:Remove()
 	GuiQueue = nil
 end
 
-if ValidPanel( GuiAdmin ) then
+if IsValid( GuiAdmin ) then
 	GuiAdmin:Remove()
 	GuiAdmin = nil
 end
 
 function GM:ScoreboardShow()
 
-	if !ValidPanel( Gui ) then
+	if !IsValid( Gui ) then
 		Gui = vgui.Create( "Scoreboard" )
 	end
 
@@ -78,10 +78,10 @@ end
 
 function GM:ScoreboardHide()
 
-	if ValidPanel( Gui ) then
+	if IsValid( Gui ) then
 		Gui:SetVisible( false )
 
-		if not ( ValidPanel( GuiQueue ) and GuiQueue:IsVisible() ) then
+		if not ( IsValid( GuiQueue ) and GuiQueue:IsVisible() ) then
 			GAMEMODE:HideMouse()
 		end
 
@@ -123,7 +123,7 @@ function GM:MenuShow()
 	if !Theater then return end
 
 	-- Queue
-	if !ValidPanel( GuiQueue ) then
+	if !IsValid( GuiQueue ) then
 		GuiQueue = vgui.Create( "ScoreboardQueue" )
 	end
 
@@ -135,7 +135,7 @@ function GM:MenuShow()
 	if LocalPlayer():IsAdmin() or
 		( Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer() ) then
 
-		if !ValidPanel( GuiAdmin ) then
+		if !IsValid( GuiAdmin ) then
 			GuiAdmin = vgui.Create( "ScoreboardAdmin" )
 		end
 
@@ -150,15 +150,15 @@ concommand.Add("+menu_context", GM.MenuShow )
 
 function GM:MenuHide()
 
-	if ValidPanel( GuiQueue ) then
+	if IsValid( GuiQueue ) then
 		GuiQueue:SetVisible( false )
 	end
 
-	if ValidPanel( GuiAdmin ) then
+	if IsValid( GuiAdmin ) then
 		GuiAdmin:SetVisible( false )
 	end
 
-	if not ( ValidPanel( Gui ) and Gui:IsVisible() ) then
+	if not ( IsValid( Gui ) and Gui:IsVisible() ) then
 		GAMEMODE:HideMouse()
 	end
 
@@ -169,13 +169,13 @@ concommand.Add("-menu_context", GM.MenuHide )
 -- Scroll playerlist
 hook.Add( "PlayerBindPress", "PlayerListScroll", function( ply, bind, pressed )
 
-	local guiVisible = ( ValidPanel(Gui) and Gui:IsVisible() )
+	local guiVisible = ( IsValid(Gui) and Gui:IsVisible() )
 
 	if bind == "+attack" then
 
 		-- Show mouse if the scoreboard or queue menu are open
 		if not GAMEMODE.MouseEnabled and ( guiVisible or
-			( ValidPanel(GuiQueue) and GuiQueue:IsVisible() ) ) then
+			( IsValid(GuiQueue) and GuiQueue:IsVisible() ) ) then
 
 			GAMEMODE:ShowMouse()
 			return true
@@ -204,7 +204,7 @@ hook.Add( "GUIMousePressed", "RequestClose", function( key )
 
 		-- Check if the user clicked outside of the request panel. If so,
 		-- close the panel.
-		if ValidPanel(RequestPanel) then
+		if IsValid(RequestPanel) then
 			RequestPanel:CheckClose()
 		end
 

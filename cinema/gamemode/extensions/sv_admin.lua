@@ -65,7 +65,7 @@ concommand.Add( "cinema_changelevel", function( ply, cmd, args )
 
 		if map == nil then
 			map = game.GetMap()
-		elseif type( map ) != "string" then
+		elseif !isstring(map) then
 			return
 		end
 

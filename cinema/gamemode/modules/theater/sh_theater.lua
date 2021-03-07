@@ -217,7 +217,7 @@ function THEATER:Think()
 
 			local time = self:VideoCurrentTime()
 			local panel = ActivePanel()
-			if time > 5 and ValidPanel(panel) then
+			if time > 5 and IsValid(panel) then
 
 				local str = string.format(
 					"if(window.theater) theater.sync(%s);", time )
@@ -451,7 +451,7 @@ if SERVER then
 			if !success then
 				self:AnnounceToPlayer( ply, 'Theater_RequestFailed' )
 				return
-			elseif type(success) == 'string' then -- failure message
+			elseif isstring(success) then -- failure message
 				self:AnnounceToPlayer( ply, success )
 				return
 			end

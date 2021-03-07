@@ -78,7 +78,7 @@ end
 
 function QUEUE:RemoveVideo( vid )
 
-	if ValidPanel( self.Videos[ vid.Id ] ) then
+	if IsValid( self.Videos[ vid.Id ] ) then
 		self.VideoList:RemoveItem( self.Videos[ vid.Id ] )
 		self.Videos[ vid.Id ]:Remove()
 		self.Videos[ vid.Id ] = nil
@@ -319,14 +319,14 @@ end
 
 function VIDEOVOTE:AddRemoveButton()
 
-	if ValidPanel(self.RemoveBtn) then return end
+	if IsValid(self.RemoveBtn) then return end
 
 	self.RemoveBtn = vgui.Create( "DImageButton", self )
 	self.RemoveBtn:SetSize( 16, 16 )
 	self.RemoveBtn:SetImage( "theater/trashbin.png" )
 	self.RemoveBtn.DoClick = function()
 		RunConsoleCommand( "cinema_video_remove", self.Video.Id )
-		if ValidPanel(GuiQueue) then
+		if IsValid(GuiQueue) then
 			GuiQueue:RemoveVideo( self.Video )
 		end
 	end
@@ -424,14 +424,14 @@ end
 
 function VIDEOCONTROLS:AddRemoveButton()
 
-	if ValidPanel(self.RemoveBtn) then return end
+	if IsValid(self.RemoveBtn) then return end
 
 	self.RemoveBtn = vgui.Create( "DImageButton", self )
 	self.RemoveBtn:SetSize( 16, 16 )
 	self.RemoveBtn:SetImage( "theater/trashbin.png" )
 	self.RemoveBtn.DoClick = function()
 		RunConsoleCommand( "cinema_video_remove", self.Video.Id )
-		if ValidPanel(GuiQueue) then
+		if IsValid(GuiQueue) then
 			GuiQueue:RemoveVideo( self.Video )
 		end
 	end
@@ -471,7 +471,7 @@ end
 
 function VIDEOCONTROLS:PerformLayout()
 
-	if ValidPanel(self.RemoveBtn) then
+	if IsValid(self.RemoveBtn) then
 
 		self.RemoveBtn:Center()
 		self.RemoveBtn:AlignRight()

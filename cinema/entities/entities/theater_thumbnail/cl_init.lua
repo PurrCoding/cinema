@@ -154,7 +154,7 @@ function ENT:DrawThumbnail()
 		-- URL has changed
 		if (!self.LastURL or self.LastURL != self:GetThumbnail()) then
 
-			if ValidPanel( self.HTML ) then
+			if IsValid( self.HTML ) then
 				self:OnRemoveHTML()
 				self.HTML:Remove()
 			end
@@ -164,7 +164,7 @@ function ENT:DrawThumbnail()
 
 		elseif self.LastURL and !self.ThumbMat then
 			
-			if !ValidPanel( self.HTML ) then
+			if !IsValid( self.HTML ) then
 
 				-- Create HTML panel to load thumbnail
 				self.HTML = vgui.Create( "Awesomium" )
@@ -195,7 +195,7 @@ function ENT:DrawThumbnail()
 				timer.Simple(0.1, function()
 
 					if !IsValid(self) then return end
-					if !ValidPanel(self.HTML) then return end
+					if !IsValid(self.HTML) then return end
 
 					-- Grab HTML material
 					self.HTML:UpdateHTMLTexture()
