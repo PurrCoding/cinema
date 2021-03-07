@@ -29,4 +29,4 @@ but is stored in this GitHub repo and deployed on [Cloudflare Pages](https://pag
 * [CEF Codec Fix](https://github.com/solsticegamestudios/GModCEFCodecFix)
 * [Facepunch Thread](https://www.facepunch.com/showthread.php?t=1237719)
 * [Steam Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=118824086)
-* [Official Website] (https://www.pixeltailgames.com/cinema)
+* [Official Website](https://www.pixeltailgames.com/cinema)
