@@ -15,7 +15,7 @@ Cinema is a gamemode for Garry's Mod 13 which features synchronized video playba
 
 #### Inportant Info ####
 By default, only YouTube is supported with Chromium (x86-64).
-To benefit from the other Cinema services you should use the CEF Codec Fix!
+To benefit from the other Cinema services you should consider using CEF Codec Fix
 
 #### Links ####
 * [Original Repo](https://github.com/pixeltailgames/cinema)
