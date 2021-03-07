@@ -5,13 +5,17 @@ Cinema is a gamemode for Garry's Mod 13 which features synchronized video playba
 
 #### Features ####
 * Synchronized video playback
-* Support for YouTube and Twitch.TV
+* Support for YouTube and Twitch.tv Live
 * Intuitive video request system
 * Persistant video history
 * Private theater owner controls
 * Theater previews outside of theaters
 * Useable Seats
 * Support for additional maps
+
+#### New Features ####
+* Video history with search function and pages.
+* YouTube and Twitch completely without (server) API.
 
 #### Inportant Info ####
 By default, only YouTube is supported with Chromium (x86-64).

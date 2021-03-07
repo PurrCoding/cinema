@@ -109,11 +109,21 @@ end
 vgui.Register( "VideoRequestFrame", PANEL, "EditablePanel" )
 
 
+-- Custom search and page function made by Shadowsun™ (STEAM_0:1:75888605).
 local HISTORY = {}
 HISTORY.TitleHeight = 64
-HISTORY.VidHeight = 32 // 48
+HISTORY.VidHeight = 32 -- 48
+
+local arrowLeft = Material("icon16/arrow_left.png")
+local arrowRight = Material("icon16/arrow_right.png")
+local binempty = Material("icon16/bin_empty.png")
+local rowLimit = 50
 
 function HISTORY:Init()
+
+	self.Videos = {}
+	self.HistoryPageCount = 0
+	self.CurrentPageCount = 1
 
 	self:SetSize( 256, 512 )
 	self:SetPos( 8, ScrH() / 2 - ( self:GetTall() / 2 ) )
@@ -121,33 +131,148 @@ function HISTORY:Init()
 	self.Title = Label( T'Request_History', self )
 	self.Title:SetFont( "ScoreboardTitle" )
 	self.Title:SetColor( Color( 255, 255, 255 ) )
+	self.Title:SetContentAlignment(5)
 
-	self.Videos = {}
+	self.SearchZone = vgui.Create( "DPanel", self )
+	self.SearchZone:DockMargin(4,4,4,4)
+	self.SearchZone:SetPaintBackground(false)
+
+	self.SearchBar = vgui.Create( "DTextEntry", self.SearchZone )
+	self.SearchBar:DockMargin(0,0,10,0)
+	self.SearchBar:SetValue( "Search.." )
+	self.SearchBar:SetUpdateOnType(true)
+	self.SearchBar.OnEnter = function(pnl)
+		self.History = nil -- Clear History table on Enter
+
+		local text = pnl:GetValue()
+		self:Search(text)
+	end
+	self.SearchBar.OnGetFocus = function(pnl)
+		pnl:SetValue("")
+	end
+
+	-- Page Forward
+	self.PagerRight = vgui.Create( "DButton", self.SearchZone )
+	self.PagerRight:SetText( "" )
+	self.PagerRight:SetTooltip( "Next Page" )
+	self.PagerRight:SetMaterial(arrowRight)
+	self.PagerRight:SetPaintBackground(false)
+	self.PagerRight:SetSize( 20, 16 )
+	self.PagerRight.DoClick = function()
+		if self.History[self.CurrentPageCount] then
+			self.CurrentPageCount = self.CurrentPageCount + 1
+		end
+
+		self:Search()
+	end
+
+	-- Page Backward
+	self.PagerLeft = vgui.Create( "DButton", self.SearchZone )
+	self.PagerLeft:SetText( "" )
+	self.PagerLeft:SetTooltip( "Previous Page" )
+	self.PagerLeft:SetMaterial(arrowLeft)
+	self.PagerLeft:SetPaintBackground(false)
+	self.PagerLeft:SetSize( 20, 16 )
+	self.PagerLeft.DoClick = function()
+		if self.History[self.CurrentPageCount] then
+			self.CurrentPageCount = self.CurrentPageCount - 1
+		end
+
+		self:Search()
+	end
+
+	-- Page Info
+	self.PagerInfo = Label( "Page: 0/0", self.SearchZone )
+	self.PagerInfo:SetColor( Color( 255, 255, 255 ) )
+	self.PagerInfo.UpdateText = function(child, curPage, totalPage)
+		child:SetText(("Page: %d/%d"):format(curPage, totalPage))
+	end
+
+	-- Clear Button
+	self.ClearButton = vgui.Create( "DButton", self.SearchZone )
+	self.ClearButton:SetText( "" )
+	self.ClearButton:SetTooltip( "Clear History" )
+	self.ClearButton:SetMaterial(binempty)
+	self.ClearButton:SetPaintBackground(false)
+	self.ClearButton:SetSize( 20, 16 )
+	self.ClearButton:DockMargin(0,0,15,0)
+	self.ClearButton.DoClick = function()
+		local queryPnl = Derma_Query("Are you sure you want to clear your history?", "Info",
+			"Yes", function()
+				theater.ClearRequestHistory()
+				self.VideoList:Clear(true)
+			end,
+			"No", function() end
+		)
+
+		function queryPnl:Paint( w, h )
+			draw.RoundedBox( 8, 0, 0, w, h, Color( 40, 40, 40, 235 ) )
+		end
+	end
 
 	self.VideoList = vgui.Create( "TheaterList", self )
-	self.VideoList:DockMargin(0, self.TitleHeight + 2, 0, 0)
+	self.VideoList:DockMargin(0, 2, 0, 0)
 
-	self.Options = vgui.Create( "DPanelList", self )
-	self.Options:SetDrawBackground(false)
-	self.Options:SetPadding( 4 )
-	self.Options:SetSpacing( 4 )
+	self:Search()
+end
 
-	local ClearButton = vgui.Create( "TheaterButton" )
-	ClearButton:SetText( T'Request_Clear' )
-	ClearButton.DoClick = function()
-		theater.ClearRequestHistory()
-		self.VideoList:Clear(true)
+function HISTORY:Search(filter)
+
+	self.Videos = {}
+	self.VideoList:Clear(true)
+
+	-- Check if not History table exists and cache it!
+	if not self.History then
+		local memArray = {}
+		local memArrayCount, memCount = 1,1
+
+		-- Get History from SQL and Sort by Request time
+		local raw_history = theater.GetRequestHistory(filter)
+		table.sort( raw_history, function( a, b )
+
+			if not a then return false end
+			if not b then return true end
+
+			return a.lastRequest > b.lastRequest
+
+		end )
+
+		-- Split table into multidimensional tables
+		-- Each Keynumber represents a "Page" 
+		for i = 1,#raw_history do
+			if not memArray[memArrayCount] then
+				memArray[memArrayCount] = {}
+			end
+
+			memArray[memArrayCount][memCount] = raw_history[i]
+
+			if memCount == rowLimit then
+				memArrayCount = memArrayCount + 1
+				memCount = 1
+			else
+				memCount = memCount + 1
+			end
+		end
+
+		self.History = memArray -- Cache it!
 	end
-	self.Options:AddItem(ClearButton)
 
-	for _, request in pairs( theater.GetRequestHistory() ) do
-		self:AddVideo( request )
+	local history = self.History[self.CurrentPageCount]
+	if not history then -- Check if the Page exists
+		self.CurrentPageCount = 1 -- Fallback to Page no. 1
+
+		history = self.History[self.CurrentPageCount]
 	end
 
-	self.VideoList:SortVideos( function( a, b )
-		return a.lastRequest > b.lastRequest
-	end )
+	-- Create and Add video items
+	if history then
+		for i = 1,#history do
+			self:AddVideo( history[i] )
+		end
+	end
 
+	-- Update Page info
+	self.PagerInfo:UpdateText(self.CurrentPageCount, #self.History)
 end
 
 function HISTORY:AddVideo( vid )
@@ -175,7 +300,6 @@ function HISTORY:RemoveVideo( vid )
 end
 
 local Background = Material( "theater/banner.png" )
-
 function HISTORY:Paint( w, h )
 
 	// Background
@@ -191,22 +315,25 @@ function HISTORY:Paint( w, h )
 	surface.SetMaterial( Background )
 	surface.DrawTexturedRect( 0, -1, 512, self.Title:GetTall() + 1 )
 
+
 end
 
 function HISTORY:PerformLayout()
 
-	self.Title:SizeToContents()
 	self.Title:SetTall( self.TitleHeight )
-	self.Title:CenterHorizontal()
+	self.Title:Dock(TOP)
 
-	if self.Title:GetWide() > self:GetWide() and self.Title:GetFont() != "ScoreboardTitleSmall" then
-		self.Title:SetFont( "ScoreboardTitleSmall" )
-	end
+	self.SearchZone:SetTall(20)
+	self.SearchZone:Dock(TOP)
+
+	self.SearchBar:Dock(FILL)
+
+	self.ClearButton:Dock(RIGHT)
+	self.PagerInfo:Dock(RIGHT)
+	self.PagerRight:Dock(RIGHT)
+	self.PagerLeft:Dock(RIGHT)
 
 	self.VideoList:Dock( FILL )
-
-	self.Options:Dock( BOTTOM )
-	self.Options:SizeToContents()
 
 end
 

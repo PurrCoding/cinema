@@ -45,9 +45,15 @@ function RemoveRequestById( id )
 	return Query( "DELETE FROM cinema_requests WHERE id=" .. id )
 end
 
-function GetRequestHistory()
+function GetRequestHistory(filter)
 
-	local results = Query( "SELECT * FROM cinema_requests" ) or {}
+	local q = "SELECT * FROM cinema_requests"
+
+	if filter and filter ~= "" then
+		q = q .. " WHERE title LIKE '%" .. sql.SQLStr(filter,true) .. "%'"
+	end
+
+	local results = Query(q) or {}
 
 	if #results > 0 then
 		results.duration = tonumber(results.duration)
