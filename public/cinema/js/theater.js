@@ -3,7 +3,7 @@ window.open = function() { return null; }; // prevent popups
 
 var theater = {
 
-	VERSION: '1.1.7',
+	VERSION: '1.1.8',
 
 	playerContainer: null,
 	playerContent: null,
@@ -376,43 +376,23 @@ function registerPlayer( type, object ) {
 	var TwitchStreamVideo = function() {
 
 		var self = this;
+		var player;
 
 		/*
 			Embed Player Object
 		*/
 		this.embed = function() {
-
-			var flashvars = {
-				hostname: "www.twitch.tv",
-				hide_chat: true,
+			player = new Twitch.Embed('player', {
 				channel: this.videoId,
-				embed: 0,
-				auto_play: true,
-				start_volume: 25 // out of 50
-			};
+				autoplay: true,
+				layout: "video",
+				width: window.innerWidth,
+				height: window.innerHeight,
+			});
 
-			var swfurl = "http://www.twitch.tv/swflibs/TwitchPlayer.swf";
-
-			var params = {
-				"allowFullScreen": "true",
-				"allowNetworking": "all",
-				"allowScriptAccess": "always",
-				"movie": swfurl,
-				"wmode": "opaque",
-				"bgcolor": "#000000"
-			};
-
-			swfobject.embedSWF(
-				swfurl,
-				"player",
-				"100%",
-				"104%",
-				"9.0.0",
-				false,
-				flashvars,
-				params
-			);
-
+			player.addEventListener(Twitch.Embed.VIDEO_READY, () => {
+				this.onReady()
+			});
 		};
 
 		/*
@@ -497,15 +477,6 @@ function onYouTubePlayerReady( playerId ) {
 		type = player && player.getType();
 	if ( player && ((type == "youtube") || (type == "youtubelive")) ) {
 		player.onReady();
-	}
-}
-
-function livestreamPlayerCallback( event, data ) {
-	if (event == "ready") {
-		var player = theater.getPlayer();
-		if ( player && (player.getType() == "livestream") ) {
-			player.onReady();
-		}
 	}
 }
 
