@@ -1,9 +1,8 @@
-if (window.swfobject === undefined) window.swfobject = null;
 window.open = function() { return null; }; // prevent popups
 
 var theater = {
 
-	VERSION: '1.1.8',
+	VERSION: '1.1.9',
 
 	playerContainer: null,
 	playerContent: null,
@@ -220,41 +219,6 @@ function registerPlayer( type, object ) {
 	players[ type ] = object;
 }
 
-/*
-	If someone is reading this and trying to figure out how
-	I implemented each player API, here's what I did.
-
-	To avoid endlessly searching for API documentations, I
-	discovered that by decompiling a swf file, you can simply
-	search for "ExternalInterface.addCallback" for finding
-	JavaScript binded functions. And by reading the actual 
-	source code, things should be much easier.
-
-	This website provides a quick-and-easy way to decompile
-	swf code http://www.showmycode.com/
-
-	If you need additional information, you can reach me through
-	the following contacts:
-
-	samuelmaddock.com
-	samuel.maddock@gmail.com
-	http://steamcommunity.com/id/samm5506
-
-
-	Test Cases
-
-	theater.loadVideo( "youtube", "JVxe5NIABsI", 30 )
-	theater.loadVideo( "youtubelive", "0Sdkwsw2Ji0" )
-	theater.loadVideo( "vimeo", "55874553", 30 )
-	theater.loadVideo( "twitch", "mega64podcast,c4320640", 30*60 )
-	theater.loadVideo( "twitch", "cosmowright,c1789194" )
-	theater.loadVideo( "twitchstream", "ignproleague" )
-	Justin.TV Support removed 8-5-2014
-	theater.loadVideo( "blip", "6484826", 60 )
-	theater.loadVideo( "html", "<span style='color:red;'>Hello world!</span>", 10 )
-	theater.loadVideo( "viooz", "", 0 )
-
-*/
 (function() {
 
 	var YouTubeVideo = function() {
@@ -375,15 +339,25 @@ function registerPlayer( type, object ) {
 
 	var TwitchStreamVideo = function() {
 
+		/*
+			Embed Player Object
+		*/
+
 		var self = this;
 		var player;
 
 		/*
-			Embed Player Object
+			Standard Player Methods
 		*/
-		this.embed = function() {
+
+		this.setVideo = function( id ) {
+			this.lastVideoId = null;
+			this.videoId = id;
+
+			if (player) { return; }
+
 			player = new Twitch.Embed('player', {
-				channel: this.videoId,
+				channel: id,
 				autoplay: true,
 				layout: "video",
 				width: window.innerWidth,
@@ -393,35 +367,6 @@ function registerPlayer( type, object ) {
 			player.addEventListener(Twitch.Embed.VIDEO_READY, () => {
 				this.onReady()
 			});
-		};
-
-		/*
-			Standard Player Methods
-		*/
-		this.setVideo = function( id ) {
-			this.lastVideoId = null;
-			this.videoId = id;
-
-			// Wait for player to be ready
-			if ( this.player === null ) {
-				this.lastVideoId = this.videoId;
-				this.embed();
-
-				var i = 0;
-				var interval = setInterval( function() {
-					var el = document.getElementById("player");
-					if(el.mute){
-						clearInterval(interval);
-						self.onReady();
-					}
-
-					i++;
-					if (i > 100) {
-						console.log("Error waiting for player to load");
-						clearInterval(interval);
-					}
-				}, 33);
-			}
 		};
 
 		this.setVolume = function( volume ) {
@@ -436,32 +381,36 @@ function registerPlayer( type, object ) {
 		/*
 			Player Specific Methods
 		*/
-		this.think = function() {
 
-			if ( this.player ) {
+		this.think = function() {
+			if ( this.player !== null ) {
 
 				if ( this.videoId != this.lastVideoId ) {
-					this.embed();
+					player.setChannel(this.videoId);
 					this.lastVideoId = this.videoId;
+					this.lastStartTime = this.startTime;
 				}
 
-				 if ( this.volume != this.lastVolume ) {
-					// this.embed(); // volume doesn't change...
-					this.lastVolume = this.volume;
-				}
+				if ( !player.isPaused() ) {
 
+					if ( this.volume != this.lastVolume ) {
+						player.setVolume( this.volume );
+						this.lastVolume = this.volume;
+					}
+
+				}
 			}
-
 		};
 
 		this.onReady = function() {
 			this.player = document.getElementById('player');
-			this.interval = setInterval( function() { self.think(self); }, 100 );
-		};
 
-		this.toggleControls = function( enabled ) {
-			this.player.height = enabled ? "100%" : "104%";
+			if (this.interval) {
+				clearInterval(this.interval)
+			}
+			this.interval = setInterval( this.think.bind(this), 100 );
 		};
+		this.toggleControls = function( enabled ) {};
 
 	};
 	registerPlayer( "twitchstream", TwitchStreamVideo );
