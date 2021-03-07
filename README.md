@@ -21,6 +21,9 @@ Cinema is a gamemode for Garry's Mod 13 which features synchronized video playba
 By default, only YouTube is supported with Chromium (x86-64).
 To benefit from the other Cinema services you should consider using CEF Codec Fix
 
+This fork of Cinema does not use the official urls of PixelTailGames,
+but are stored in this GitHub repo and are hosted via [Cloudflare Pages](https://pages.cloudflare.com/).
+
 #### Links ####
 * [Original Repo](https://github.com/pixeltailgames/cinema)
 * [CEF Codec Fix](https://github.com/solsticegamestudios/GModCEFCodecFix)
