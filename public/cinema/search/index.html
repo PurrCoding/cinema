@@ -41,14 +41,20 @@
 	</div>
 
 	<script type="text/javascript">
+	function playUISound(click) {
+		if (!!gmod && gmod.clickSound) {
+			gmod.clickSound(click);
+		}
+	}
+
 	// Event called when a service is hovered
 	function hoverService() {
-		gmod.clickSound(false);
+		playUISound(false);
 	}
 
 	// Event called when a service is selected
 	function selectService(name, url) {
-		gmod.clickSound(true);
+		playUISound(true);
 
 		setTimeout(function(){
 			window.location.href = url;
