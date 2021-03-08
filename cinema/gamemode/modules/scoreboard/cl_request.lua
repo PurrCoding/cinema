@@ -23,9 +23,9 @@ function PANEL:Init()
 	local w = math.Clamp( ScrW() - 100, 800, 1152 + self.HistoryWidth )
 	local h = ScrH()
 	if h > 800 then
-		h = h * 3/4
+		h = h * 3 / 4
 	elseif h > 600 then
-		h = h * 7/8
+		h = h * 7 / 8
 	end
 	self:SetSize( w, h )
 
@@ -302,15 +302,15 @@ end
 local Background = Material( "theater/banner.png" )
 function HISTORY:Paint( w, h )
 
-	// Background
+	-- Background
 	surface.SetDrawColor( 26, 30, 38, 255 )
 	surface.DrawRect( 0, 0, self:GetWide(), self:GetTall() )
 
-	// Title
+	-- Title
 	surface.SetDrawColor( 141, 38, 33, 255 )
 	surface.DrawRect( 0, 0, self:GetWide(), self.Title:GetTall() )
 
-	// Title Background
+	-- Title Background
 	surface.SetDrawColor( 255, 255, 255, 255 )
 	surface.SetMaterial( Background )
 	surface.DrawTexturedRect( 0, -1, 512, self.Title:GetTall() + 1 )

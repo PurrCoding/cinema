@@ -21,7 +21,7 @@ local function fixOldFlags(theaterInfo)
 	local flags = theaterInfo.Flags
 
 	if flags == 3 and name:lower():find("vip") then
-		print("Fixed '"..name.."' privileged flag [https://goo.gl/hLOUu7]")
+		print("Fixed '" .. name .. "' privileged flag [https://goo.gl/hLOUu7]")
 		return THEATER_PRIVILEGED
 	else
 		return flags

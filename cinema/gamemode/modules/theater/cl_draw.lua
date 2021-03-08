@@ -137,9 +137,9 @@ function DrawVideoInfo( w, h, scale )
 		local percent = math.Clamp( (current / Video:Duration() ) * 100, 0, 100 )
 
 		-- Bar
-		local bh = h * 1/32
+		local bh = h * 1 / 32
 		draw.RoundedBox( 0, 0, h - bh, w, bh, Color(0,0,0,200) )
-		draw.RoundedBox( 0, 0, h - bh, w * (percent/100), bh, Color( 255, 255, 255, 255 ) )
+		draw.RoundedBox( 0, 0, h - bh, w * (percent / 100), bh, Color( 255, 255, 255, 255 ) )
 
 		-- Current Time
 		local strSeconds = string.FormatSeconds(math.Clamp(math.Round(current), 0, Video:Duration()))

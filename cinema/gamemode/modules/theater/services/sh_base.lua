@@ -68,7 +68,7 @@ if CLIENT then
 
 	function SERVICE:LoadVideo( Video, panel )
 
-		local theaterUrl = GetConVarString( "cinema_url" )
+		local theaterUrl = GetConVar( "cinema_url" ):GetString()
 
 		if Video:Type() == "url" then
 			panel:OpenURL( Video:Data() )

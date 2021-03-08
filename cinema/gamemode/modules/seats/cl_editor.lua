@@ -16,7 +16,7 @@
 	fixing it, consider submitting a pull request to the Cinema
 	gamemode with the additions.
 
-	https://github.com/pixeltailgames/cinema
+	https:--github.com/pixeltailgames/cinema
 
 */
 
@@ -57,11 +57,11 @@ function Open()
 	MainPanel:SetSize( 1280, 800 )
 	MainPanel:SetTitle("Set chair offset")
 	MainPanel:SetDeleteOnClose( true )
-	//MainPanel.Close = Close
+	--MainPanel.Close = Close
 
-	//=======================================
-	// == Panel list of models
-	//=======================================
+	-- =======================================
+	-- == Panel list of models
+	-- =======================================
 	ModelNodes = vgui.Create( "DTree", MainPanel )
 	ModelNodes:Dock( LEFT )
 	ModelNodes:SetWide( 160 )
@@ -104,16 +104,16 @@ function Open()
 		ModelPanel:AddSeat(node)
 	end
 
-	//=======================================
-	// == MODEL PANEL
-	//=======================================
+	-- =======================================
+	-- == MODEL PANEL
+	-- =======================================
 
 	ModelPanel = vgui.Create("DChairEditor", MainPanel )
 	ModelPanel:Dock( FILL )
 
-	//=======================================
-	// == SLIDERS
-	//=======================================
+	-- =======================================
+	-- == SLIDERS
+	-- =======================================
 
 	local TextValues = {"XPos", "YPos", "ZPos", "PAng", "YAng", "RAng", "Scale" }
 
@@ -127,7 +127,7 @@ function Open()
 		panel:SetWide( 130 )
 		panel:SetPos( 5, 50 * i )
 		panel:SetText( TextValues[ i ] )
-		//panel.OnValueChanged = RequestUpdate
+		--panel.OnValueChanged = RequestUpdate
 
 		if i <= 3 then
 			panel:SetMinMax( -100, 100 )
@@ -144,9 +144,9 @@ function Open()
 
 	end
 
-	//=======================================
-	// == COPY PASTE
-	//=======================================
+	--=======================================
+	-- == COPY PASTE
+	--=======================================
 
 	local Copy = vgui.Create("DButton", MainPanel )
 	Copy:SetText("COPY")
@@ -163,9 +163,9 @@ function Open()
 	Paste.DoClick = function()
 	end
 
-	//=======================================
-	// == SORT ITEMS BY NAME
-	//=======================================
+	--=======================================
+	-- == SORT ITEMS BY NAME
+	--=======================================
 
 	/*local Items = ModelNodes.Items
 	table.sort( Items, function( a, b )
@@ -277,20 +277,20 @@ function PANEL:SetModel( strModelName )
 
 	Msg("SETTING MODEL: " .. strModelName .. "\n")
 
-	// Note - there's no real need to delete the old
-	// entity, it will get garbage collected, but this is nicer.
+	-- Note - there's no real need to delete the old
+	-- entity, it will get garbage collected, but this is nicer.
 	if ( IsValid( self.Entity ) ) then
 		self.Entity:Remove()
 		self.Entity = nil
 	end
 
-	// Note: Not in menu dll
+	-- Note: Not in menu dll
 	if ( !ClientsideModel ) then return end
 
 	self.Entity = ClientsideModel( strModelName, RENDER_GROUP_OPAQUE_ENTITY )
 	if ( !IsValid(self.Entity) ) then return end
 
-	//self.Entity:SetNoDraw( true )
+	--self.Entity:SetNoDraw( true )
 end
 
 /*---------------------------------------------------------
@@ -298,7 +298,7 @@ end
 ---------------------------------------------------------*/
 function PANEL:SetSeat(node)
 
-	// Note: Not in menu dll
+	-- Note: Not in menu dll
 	if ( !ClientsideModel ) then return end
 
 	for _, seat in ipairs(self.Seats) do
@@ -316,7 +316,7 @@ end
 ---------------------------------------------------------*/
 function PANEL:AddSeat(node)
 
-	// Note: Not in menu dll
+	-- Note: Not in menu dll
 	if ( !ClientsideModel ) then return end
 
 	local seat = ClientsideModel( "models/player/kleiner.mdl", RENDER_GROUP_OPAQUE_ENTITY )
@@ -336,7 +336,7 @@ end
 function PANEL:Paint()
 
 	if ( !IsValid( self.Entity ) ) then return end
-	//if ( !IsValid( self.Seats ) ) then return end
+	--if ( !IsValid( self.Seats ) ) then return end
 
 	local x, y = self:LocalToScreen( 0, 0 )
 
@@ -411,15 +411,15 @@ end
 ---------------------------------------------------------*/
 function PANEL:LayoutEntity( Entity )
 
-	//
-	// This function is to be overriden
-	//
+	--
+	-- This function is to be overriden
+	--
 
-	//if ( self.bAnimated ) then
-	//	self:RunAnimation()
-	//end
+	--if ( self.bAnimated ) then
+	--	self:RunAnimation()
+	--end
 
-	//Entity:SetAngles( Angle( 0, RealTime()*10,  0) )
+	--Entity:SetAngles( Angle( 0, RealTime()*10,  0) )
 
 end
 

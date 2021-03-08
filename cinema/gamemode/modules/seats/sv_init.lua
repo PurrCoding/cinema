@@ -81,7 +81,7 @@ hook.Add("KeyRelease", "EnterSeat", function(ply, key)
 	if key != IN_USE || ply:InVehicle() || (ply.ExitTime && CurTime() < ply.ExitTime + 1) then return end
 
 	local eye = ply:EyePos()
-	local trace = util.TraceLine({start=eye, endpos=eye+ply:GetAimVector()*100, filter=ply})
+	local trace = util.TraceLine({start = eye, endpos = eye + ply:GetAimVector() * 100, filter = ply})
 
 	if !IsValid(trace.Entity) then return end
 
@@ -159,7 +159,7 @@ function TryPlayerExit(ply, ent)
 
 	while trydist <= 64 do
 		local telepos = pos + yaw:Forward() * trydist
-		local trace = util.TraceEntity({start=telepos, endpos=telepos - airdist}, ply)
+		local trace = util.TraceEntity({start = telepos, endpos = telepos - airdist}, ply)
 
 		if !trace.StartSolid && trace.Fraction > 0 && trace.Hit then
 			ply:SetPos(telepos)

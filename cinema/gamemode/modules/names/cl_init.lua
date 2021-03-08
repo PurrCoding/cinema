@@ -17,9 +17,9 @@ local function DrawName( ply, opacityScale )
 	end
 
 	local dist = LocalPlayer():GetPos():Distance( ply:GetPos() )
-	if ( dist >= 800 ) then return end // no need to draw anything if the player is far away
+	if ( dist >= 800 ) then return end --no need to draw anything if the player is far away
 
-	local opacity = math.Clamp( 310.526 - ( 0.394737 * dist ), 0, 150 ) // woot mathematica
+	local opacity = math.Clamp( 310.526 - ( 0.394737 * dist ), 0, 150 ) --woot mathematica
 
 	opacityScale = opacityScale and opacityScale or 1
 	opacity = opacity * opacityScale

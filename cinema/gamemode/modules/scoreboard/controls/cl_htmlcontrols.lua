@@ -20,7 +20,7 @@ function PANEL:Init()
 	self.BackButton:SetSize( ButtonSize, ButtonSize )
 	self.BackButton:SetMaterial( "gui/HTML/back" )
 	self.BackButton:Dock( LEFT )
-	self.BackButton:DockMargin( Spacing*3, Margins, Spacing, Margins )
+	self.BackButton:DockMargin( Spacing * 3, Margins, Spacing, Margins )
 	self.BackButton.DoClick = function()
 		self.BackButton:SetDisabled( true )
 		self.Cur = self.Cur - 1
@@ -55,7 +55,7 @@ function PANEL:Init()
 	self.HomeButton:SetSize( ButtonSize, ButtonSize )
 	self.HomeButton:SetMaterial( "gui/HTML/home" )
 	self.HomeButton:Dock( LEFT )
-	self.HomeButton:DockMargin( Spacing, Margins, Spacing*3, Margins )
+	self.HomeButton:DockMargin( Spacing, Margins, Spacing * 3, Margins )
 	self.HomeButton.DoClick = function()
 		self.HTML:Stop()
 		self.HTML:OpenURL( self.HomeURL )
@@ -71,7 +71,7 @@ function PANEL:Init()
 	end
 
 	self.RequestButton = vgui.Create( "TheaterButton", self )
-	self.RequestButton:SetSize( ButtonSize*8, ButtonSize )
+	self.RequestButton:SetSize( ButtonSize * 8, ButtonSize )
 	self.RequestButton:SetText( T'Request_Url' )
 	self.RequestButton:SetTooltip( T'Request_Url_Tooltip' )
 	self.RequestButton:SetDisabled( true )
@@ -161,7 +161,7 @@ function PANEL:UpdateHistory( url )
 	-- So clear the front out so we can re-write history!!
 	if ( self.Cur < table.Count( self.History ) ) then
 
-		for i=self.Cur+1, table.Count( self.History ) do
+		for i = self.Cur + 1, table.Count( self.History ) do
 			self.History[i] = nil
 		end
 

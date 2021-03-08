@@ -4,7 +4,7 @@ surface.CreateFont( "ScoreboardVidVotes", { font = "Open Sans Condensed", size =
 
 local QUEUE = {}
 QUEUE.TitleHeight = 64
-QUEUE.VidHeight = 32 // 48
+QUEUE.VidHeight = 32 -- 48
 
 function QUEUE:Init()
 
@@ -23,7 +23,7 @@ function QUEUE:Init()
 	self.VideoList:DockMargin(0, self.TitleHeight + 2, 0, 0)
 
 	self.Options = vgui.Create( "DPanelList", self )
-	self.Options:SetDrawBackground(false)
+	self.Options:SetPaintBackground(false)
 	self.Options:SetPadding( 4 )
 	self.Options:SetSpacing( 4 )
 
@@ -88,7 +88,7 @@ end
 
 function QUEUE:Update()
 
-	local Theater = LocalPlayer():GetTheater() // get player's theater from their location
+	local Theater = LocalPlayer():GetTheater() -- get player's theater from their location
 	if !Theater then return end
 
 	theater.PollServer()
@@ -145,15 +145,15 @@ local Background = Material( "theater/banner.png" )
 
 function QUEUE:Paint( w, h )
 
-	// Background
+	-- Background
 	surface.SetDrawColor( 26, 30, 38, 255 )
 	surface.DrawRect( 0, 0, self:GetWide(), self:GetTall() )
 
-	// Title
+	-- Title
 	surface.SetDrawColor( 141, 38, 33, 255 )
 	surface.DrawRect( 0, 0, self:GetWide(), self.Title:GetTall() )
 
-	// Title Background
+	-- Title Background
 	surface.SetDrawColor( 255, 255, 255, 255 )
 	surface.SetMaterial( Background )
 	surface.DrawTexturedRect( 0, -1, 512, self.Title:GetTall() + 1 )

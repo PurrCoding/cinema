@@ -2,17 +2,17 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "sh_init.lua" )
 include( "sh_init.lua" )
 
-ENT.DoorOpen = Sound("doors/door1_move.wav") //just defaults
-ENT.DoorClose = Sound("doors/door_wood_close1.wav") //just defaults
+ENT.DoorOpen = Sound("doors/door1_move.wav") --just defaults
+ENT.DoorClose = Sound("doors/door_wood_close1.wav") --just defaults
 
 function ENT:Initialize()
 	self:SetMoveType(MOVETYPE_NONE)
 	self:SetSolid(SOLID_VPHYSICS)
-	self:SetUseType(SIMPLE_USE)	
+	self:SetUseType(SIMPLE_USE)
 	self:DrawShadow( false )
 
 	local phys = self:GetPhysicsObject()
-	
+
 	if IsValid(phys) then
 		phys:SetMaterial("gmod_silent")
 	end
@@ -70,7 +70,7 @@ function ENT:GetTeleportEntity()
 			print(self)
 		end
 	end
-	
+
 	return self.TeleportEnt
 
 end
@@ -86,7 +86,7 @@ function ENT:StartLoading( ply )
 	timer.Simple( self.FadeTime + self.DelayTime, function()
 
 		if IsValid( ply ) then
-			//Teleport the player
+			--Teleport the player
 			ply.Teleporting = false
 			ply:Freeze( false )
 
@@ -106,7 +106,7 @@ end
 
 function ENT:Think()
 	if self.ShouldTeleport && CurTime() > self.TeleportAt then
-		//shut the frickity front door
+		--shut the frickity front door
 		local sequence = self:LookupSequence("idle")
 		self:SetSequence(sequence)
 
@@ -121,7 +121,7 @@ function ENT:Think()
 		self.TeleportPly = nil
 	end
 
-	self:NextThink(CurTime())  
+	self:NextThink(CurTime())
 	return true
 end
 
@@ -129,11 +129,11 @@ end
 
 function ENT:KeyValue(key, value)
 	local isEmpty = !value || string.len(value) <= 0
-	
+
 	if key == "OnTeleport" || key == "OnUnlock" || key == "OnUse" then
 		self:StoreOutput(key, value)
 	end
-	
+
 	if !isEmpty then
 
 		if key == "teleportentity" then

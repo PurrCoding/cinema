@@ -99,7 +99,7 @@ function RefreshPanel( reload )
 		panel:SetPaintedManually(true)
 		panel:SetScrollbars(false)
 		panel:SetAllowLua(true)
-		panel:SetKeyBoardInputEnabled(false)
+		panel:SetKeyboardInputEnabled(false)
 		panel:SetMouseInputEnabled(false)
 	end
 

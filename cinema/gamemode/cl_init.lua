@@ -143,12 +143,12 @@ function GM:CalcView( ply, origin, angles, fov, znear, zfar )
 
 		local func = Weapon.GetViewModelPosition
 		if ( func ) then
-			view.vm_origin,  view.vm_angles = func( Weapon, origin*1, angles*1 ) -- Note: *1 to copy the object so the child function can't edit it.
+			view.vm_origin,  view.vm_angles = func( Weapon, origin * 1, angles * 1 ) -- Note: *1 to copy the object so the child function can't edit it.
 		end
 
 		local func = Weapon.CalcView
 		if ( func ) then
-			view.origin, view.angles, view.fov = func( Weapon, ply, origin*1, angles*1, fov ) -- Note: *1 to copy the object so the child function can't edit it.
+			view.origin, view.angles, view.fov = func( Weapon, ply, origin * 1, angles * 1, fov ) -- Note: *1 to copy the object so the child function can't edit it.
 		end
 
 	end

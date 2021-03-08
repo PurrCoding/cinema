@@ -24,5 +24,5 @@ function ENT:OnRemove()
 end
 
 function ENT:UpdateTransmitState()
-    return TRANSMIT_PVS
+	return TRANSMIT_PVS
 end

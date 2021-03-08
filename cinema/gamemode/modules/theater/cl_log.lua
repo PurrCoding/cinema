@@ -74,7 +74,7 @@ local function CheckDuplicates(url, title, duration, vtype, data)
 	local count = 0
 
 	if results and #results > 1 then -- Check for multiple entries for same video type and data
-		print("Duplicate entries in 'cinema_requests' for type=" ..vtype.. " and data=" ..data.. ", fixing...")
+		print("Duplicate entries in 'cinema_requests' for type=" .. vtype .. " and data=" .. data .. ", fixing...")
 		for vidkey, vid in pairs(results) do
 			count = count + vid.count
 			if vidkey > 1 then -- Don't delete the first entry!

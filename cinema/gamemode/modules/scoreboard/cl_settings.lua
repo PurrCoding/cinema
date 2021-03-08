@@ -43,11 +43,11 @@ local Background = Material( "theater/settingsbright.png" )
 
 function SETTINGS:Paint( w, h )
 
-	//Render the background
+	--Render the background
 	surface.SetDrawColor( 62, 16, 15, 255 )
 	surface.DrawRect( 0, 0, self:GetWide(), self:GetTall() )
 
-	// Background image
+	--Background image
 	surface.SetDrawColor( 255, 255, 255, 255 )
 	surface.SetMaterial( Background )
 	surface.DrawTexturedRect( 0, self:GetTall() - 680, 256, 680 )

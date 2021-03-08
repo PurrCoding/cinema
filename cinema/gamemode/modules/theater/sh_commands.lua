@@ -46,14 +46,14 @@ if CLIENT then
 		if panel then
 			if panel._controlsEnabled then
 				panel:SetPaintedManually(true)
-				panel:SetKeyBoardInputEnabled(false)
+				panel:SetKeyboardInputEnabled(false)
 				panel:SetMouseInputEnabled(false)
 				panel:RunJavascript(
 					"if (window.theater) theater.toggleControls(false);")
 				panel._controlsEnabled = nil
 			else
 				panel:SetPaintedManually(false)
-				panel:SetKeyBoardInputEnabled(true)
+				panel:SetKeyboardInputEnabled(true)
 				panel:SetMouseInputEnabled(true)
 				panel:RunJavascript(
 					"if (window.theater) theater.toggleControls(true);")
@@ -76,9 +76,9 @@ if CLIENT then
 
 		local amount = ScrollAmount:GetInt()
 		if bind == "invnext" then
-			panel:QueueJavascript("window.scrollBy(0,"..amount..")")
+			panel:QueueJavascript("window.scrollBy(0," .. amount .. ")")
 		elseif bind == "invprev" then
-			panel:QueueJavascript("window.scrollBy(0,-"..amount..")")
+			panel:QueueJavascript("window.scrollBy(0,-" .. amount .. ")")
 		end
 
 	end )

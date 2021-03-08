@@ -14,7 +14,7 @@ PANEL.Scrollbar = {}
 local b = 20
 
 PANEL.Scrollbar.BackgroundColor = Color( 38 + b, 41 + b, 49 + b )
-PANEL.Scrollbar.HoverColor = Color( 38 + b*2, 41 + b*2, 49 + b*2 )
+PANEL.Scrollbar.HoverColor = Color( 38 + b * 2, 41 + b * 2, 49 + b * 2 )
 PANEL.Scrollbar.DepressedColor = Color( 255, 255, 255 )
 PANEL.Scrollbar.DisabledColor = Color( 26, 30, 38 )
 PANEL.Scrollbar.TextColor = Color( 255, 255, 255 )

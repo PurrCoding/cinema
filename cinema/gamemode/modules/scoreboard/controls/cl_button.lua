@@ -62,7 +62,7 @@ function PANEL:Paint( w, h )
 end
 
 function PANEL:UpdateColours( skin )
-    return self:SetTextStyleColor( self.TextColor )
+	return self:SetTextStyleColor( self.TextColor )
 end
 
 function PANEL:IsMouseOver()
