@@ -98,7 +98,6 @@ function RefreshPanel( reload )
 	if IsValid(panel) then
 		panel:SetPaintedManually(true)
 		panel:SetScrollbars(false)
-		panel:SetAllowLua(true)
 		panel:SetKeyboardInputEnabled(false)
 		panel:SetMouseInputEnabled(false)
 	end

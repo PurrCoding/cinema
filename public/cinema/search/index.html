@@ -43,12 +43,12 @@
 	<script type="text/javascript">
 	// Event called when a service is hovered
 	function hoverService() {
-		console.log( "RUNLUA: surface.PlaySound('garrysmod/ui_hover.wav');" );
+		gmod.clickSound(false);
 	}
 
 	// Event called when a service is selected
 	function selectService(name, url) {
-		console.log( "RUNLUA: surface.PlaySound('garrysmod/ui_click.wav');" );
+		gmod.clickSound(true);
 
 		setTimeout(function(){
 			window.location.href = url;

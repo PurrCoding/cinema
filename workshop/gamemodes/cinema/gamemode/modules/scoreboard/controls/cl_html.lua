@@ -49,7 +49,6 @@ function PANEL:Init()
 	self.URL = ""
 
 	self:SetScrollbars( true )
-	self:SetAllowLua( true )
 
 	self.JS = {}
 	self.Callbacks = {}
@@ -71,6 +70,14 @@ function PANEL:Init()
 	self:AddFunction( "window", "open", function()
 		-- prevents popups from opening
 	end)
+
+	self:AddFunction( "gmod", "clickSound", function( click )
+		if click then
+			surface.PlaySound('garrysmod/ui_click.wav')
+		else
+			surface.PlaySound('garrysmod/ui_hover.wav')
+		end
+	end )
 
 end
 
@@ -219,17 +226,6 @@ PANEL.Call = PANEL.QueueJavascript
 function PANEL:ConsoleMessage( msg, func )
 
 	if ( !isstring( msg ) ) then msg = "*js variable*" end
-
-	if ( self.m_bAllowLua && msg:StartWith( "RUNLUA:" ) ) then
-
-		local strLua = msg:sub( 8 )
-
-		SELF = self
-		RunString( strLua )
-		SELF = nil
-		return;
-
-	end
 
 	-- Filter messages output to the console
 	-- 'console.gmod' always gets output
