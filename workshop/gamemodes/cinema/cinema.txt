@@ -4,5 +4,5 @@
 	"title"			"Cinema"
 	"menusystem" 	"1"
 	"maps" 			"theater|theater_|cinema_"
-	"workshopid"	"118824086"
+	"workshopid"	"2419005587"
 }
