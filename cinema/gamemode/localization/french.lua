@@ -39,8 +39,6 @@ LANG.Theater_VideoAddedToQueue      = C(ColHighlight,"%s",ColDefault," a été a
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1  = "La carte actuelle n'est pas supportée par le mode de jeu Cinema"
 LANG.Warning_Unsupported_Line2  = "Appuyez sur F1 pour ouvrir la carte officielle dans le workshop"
-LANG.Warning_OSX_Line1          = "Les utilisateurs de Mac OS X peuvent être sujets à des problèmes d'écrans noirs dans les théatres"
-LANG.Warning_OSX_Line2          = "Appuyez sur F1 pour voir les astuces concernant les problèmes et pour fermer ce message"
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua

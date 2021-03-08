@@ -39,8 +39,6 @@ LANG.Theater_VideoAddedToQueue      = C(ColHighlight,"%s",ColDefault,"はキュ�
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1  = "このマップは映画館ゲームモードで非対応です。"
 LANG.Warning_Unsupported_Line2  = "F1を押してにはオフィシャルなマップはワークショップで見えます。"
-LANG.Warning_OSX_Line1          = "Mac OS Xユーザーはブランクなスクリーンを経験かもしれない。"
-LANG.Warning_OSX_Line2          = "F1を押してには助けてのページで見えてこのメッセージを除きます。"
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua

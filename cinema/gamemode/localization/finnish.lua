@@ -39,8 +39,6 @@ LANG.Theater_VideoAddedToQueue 		= C(ColHighlight,"%s",ColDefault," on lisätty 
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1	= "Nykyinen kartta ei tue Cinema-pelimuotoa."
 LANG.Warning_Unsupported_Line2	= "Paina F1 avataksesi virallisen kartan workshopissa."
-LANG.Warning_OSX_Line1			= "Mac OS X käyttäjät saattavat kärsiä mustista näytöistä Cinema-pelimuodossa."
-LANG.Warning_OSX_Line2			= "Paina F1 nähdäksesi vianmääritysohjeita ja sulkeaksesi tämän viestin."
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua

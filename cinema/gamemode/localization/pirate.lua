@@ -39,8 +39,6 @@ LANG.Theater_VideoAddedToQueue      = C(ColHighlight,"%s",ColDefault," sailed in
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1  = "The current map be unsupported by the Cinema gamemode"
 LANG.Warning_Unsupported_Line2  = "Press F1 to open the official map on workshop"
-LANG.Warning_OSX_Line1          = "Mac OS X users may experience blank screens in Cinema"
-LANG.Warning_OSX_Line2          = "Press F1 to view troubleshooting tips and to remove this message"
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua

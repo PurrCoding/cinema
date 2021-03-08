@@ -39,8 +39,6 @@ LANG.Theater_VideoAddedToQueue                 = C(ColHighlight,"%s",ColDefault,
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1        = "Hurrengo mapa onartu gabea dago cinema joku moduarengatik"
 LANG.Warning_Unsupported_Line2        = "Sakatu F1 workshop-en mapa ofiziala irekitzeko"
-LANG.Warning_OSX_Line1                        = "Mac OS X-eko usuarioak problemak izan ditzazkete (pantaila beltzak edo zuriak)"
-LANG.Warning_OSX_Line2                        = "Sakatu F1 arazoak konpontzeko aholkuak ikusteko ata mezu hau kentzeko"
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua

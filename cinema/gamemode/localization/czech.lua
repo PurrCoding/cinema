@@ -39,8 +39,6 @@ LANG.Theater_VideoAddedToQueue 		= C(ColHighlight,"%s",ColDefault," bylo přidá
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1	= "Současná mapa není podporována herním módem Cinema."
 LANG.Warning_Unsupported_Line2	= "Stiskněte F1 pro otevření oficiální mapy ve workshopu."
-LANG.Warning_OSX_Line1			= "Uživatelé Mac OS X mohou v Cinema módu vidět prázdné obrazovky"
-LANG.Warning_OSX_Line2			= "Stiskněte F1 pro zobrazení tipů pro odstraňování problémů a skrytí této zprávy"
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua

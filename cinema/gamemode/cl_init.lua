@@ -28,20 +28,6 @@ hook.Add( "InitPostEntity", "CheckMapSupport", function()
 
 		end
 
-	elseif system.IsOSX() then
-
-		warning.Set(
-			T'Warning_OSX_Line1',
-			T'Warning_OSX_Line2'
-		)
-
-		control.Add( KEY_F1, function( enabled, held )
-			if enabled and !held then
-				gui.OpenURL( "https://pixeltailgames.com/cinema/help.php" )
-				warning.Clear()
-			end
-		end )
-
 	else
 		warning.Clear()
 	end

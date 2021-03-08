@@ -39,8 +39,6 @@ LANG.Theater_VideoAddedToQueue 		= C(ColHighlight,"%s",ColDefault," 已加入到
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1	= "目前地圖不支援Cinema模式"
 LANG.Warning_Unsupported_Line2	= "請按F1打開Steam Workship的Cinema模式官方地圖"
-LANG.Warning_OSX_Line1			= "Mac OS X 用戶可能會在影院中出現黑屏問題"
-LANG.Warning_OSX_Line2			= "按F1查看疑難排解提示並移除此信息"
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua

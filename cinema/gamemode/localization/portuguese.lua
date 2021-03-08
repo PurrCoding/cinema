@@ -39,8 +39,6 @@ LANG.Theater_VideoAddedToQueue      = C(ColHighlight,"%s",ColDefault," foi adici
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1  = "O modo de jogo Cinema não tem suporte para o mapa atual"
 LANG.Warning_Unsupported_Line2  = "Pressione F1 para conferir o mapa oficial na oficina da Steam"
-LANG.Warning_OSX_Line1          = "Usuários de Mac OS X podem experienciar telas brancas no Cinema"
-LANG.Warning_OSX_Line2          = "Pressione F1 para ver dicas de soluções de problemas e para remover esta mensagem"
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua

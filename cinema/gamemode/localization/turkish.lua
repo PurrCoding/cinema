@@ -38,8 +38,6 @@ LANG.Theater_VideoAddedToQueue                 = C(ColHighlight,"%s",ColDefault,
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1        = "Suanki harita Cinema tarafindan desteklenmiyor"
 LANG.Warning_Unsupported_Line2        = "Resmi haritayi acmak icin F1 tusuna basin"
-LANG.Warning_OSX_Line1                        = "Mac OS X kullanicilari Cinema'da siyah ekran ile karsilasabilir"
-LANG.Warning_OSX_Line2                        = "Sorun giderme mesajlarini ve bu mesaji silmek icin F1 tusuna basin"
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua

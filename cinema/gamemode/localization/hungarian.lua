@@ -39,8 +39,6 @@ LANG.Theater_VideoAddedToQueue      = C(ColHighlight,"%s",ColDefault," hozzáadv
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1  = "A jelenlegi térképet nem támogatja a Mozi játékmód."
 LANG.Warning_Unsupported_Line2  = "Nyomd meg az F1 gombot és megnyílik a Műhely a hivatalos pályával."
-LANG.Warning_OSX_Line1          = "A Mac OS X felhasználók fekete képernyőt tapasztalhatnak a Moziban."
-LANG.Warning_OSX_Line2          = "Az F1 gomb megnyomására hibaelhárító tippeket lehet megtekinteni és ez az üzenet is törlésre kerül."
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua

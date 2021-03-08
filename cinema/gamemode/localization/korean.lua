@@ -39,8 +39,6 @@ LANG.Theater_VideoAddedToQueue      = C(ColHighlight,"%s",ColDefault," 비디오
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1  = "선택하신 맵은 시네마 게임 모드에 호환되지 않습니다."
 LANG.Warning_Unsupported_Line2  = "F1을 눌러 시네마 공식 맵을 창작 마당에서 확인하세요."
-LANG.Warning_OSX_Line1          = "맥 OS X 플레이어들은 검은 화면이 출력될 수 도 있습니다."
-LANG.Warning_OSX_Line2          = "F1을 눌러 이 메시지를 제거하고 문제 해결 팁을 얻을 수 있습니다."
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua

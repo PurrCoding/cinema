@@ -39,8 +39,6 @@ LANG.Theater_VideoAddedToQueue          = C(ColHighlight,"%s",ColDefault," har b
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1          = "Den gjeldene banen er ikke støtter av Cinema gamemode"
 LANG.Warning_Unsupported_Line2          = "Trykk F1 for å åpne den offisielle banen i workshop"
-LANG.Warning_OSX_Line1                  = "Mac OS X brukere kan erfare blanke skjermer i Cinema"
-LANG.Warning_OSX_Line2                  = "Trykk F! for å se feilsøke tips og for å fjerne denne beskjeden"
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua
