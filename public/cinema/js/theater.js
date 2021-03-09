@@ -402,7 +402,7 @@ function registerPlayer( type, object ) {
 				if ( !player.isPaused() ) {
 
 					if ( this.volume != this.lastVolume ) {
-						player.setVolume( this.volume );
+						player.setVolume( this.volume / 100 );
 						this.lastVolume = this.volume;
 					}
 
