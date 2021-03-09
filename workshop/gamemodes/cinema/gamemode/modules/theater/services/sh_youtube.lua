@@ -225,7 +225,12 @@ local SERVICE = {}
 
 SERVICE.Name 		= "YouTube Live"
 SERVICE.IsTimed 	= false
-SERVICE.TheaterType = THEATER_PRIVATE
+
+--[[
+	Uncomment this line below to restrict Livestreaming
+	only to Private Theaters.
+]]--
+-- SERVICE.TheaterType = THEATER_PRIVATE
 
 -- Implementation is found in 'youtube' service.
 -- GetVideoInfo switches to 'youtubelive'
