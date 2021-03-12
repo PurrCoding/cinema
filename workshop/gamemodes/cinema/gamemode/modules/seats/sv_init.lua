@@ -78,18 +78,18 @@ function CreateSeatAtPos(pos, angle)
 end
 
 hook.Add("KeyRelease", "EnterSeat", function(ply, key)
-	if key != IN_USE || ply:InVehicle() || (ply.ExitTime && CurTime() < ply.ExitTime + 1) then return end
+	if key ~= IN_USE or ply:InVehicle() or (ply.ExitTime and CurTime() < ply.ExitTime + 1) then return end
 
 	local eye = ply:EyePos()
 	local trace = util.TraceLine({start = eye, endpos = eye + ply:GetAimVector() * 100, filter = ply})
 
-	if !IsValid(trace.Entity) then return end
+	if not IsValid(trace.Entity) then return end
 
 	local seat = trace.Entity
 	local model = seat:GetModel()
 
 	local offsets = ChairOffsets[model]
-	if !offsets then return end
+	if not offsets then return end
 
 	local usetable = seat.UseTable or {}
 	local pos = -1
@@ -100,14 +100,14 @@ hook.Add("KeyRelease", "EnterSeat", function(ply, key)
 
 		for k,v in pairs(offsets) do
 			local dist = localpos:Distance(v.Pos)
-			if !usetable[k] && (bestpos == -1 || dist < bestdist) then
+			if not usetable[k] and (bestpos == -1 or dist < bestdist) then
 				bestpos, bestdist = k, dist
 			end
 		end
 
 		if bestpos == -1 then return end
 		pos = bestpos
-	elseif !usetable[1] then
+	elseif not usetable[1] then
 		pos = 1
 	else
 		return
@@ -143,7 +143,7 @@ end)
 
 hook.Add("CanPlayerEnterVehicle", "EnterSeat", function(ply, vehicle)
 	if not vehicle.IsCinemaSeat then return end
-	if vehicle:GetClass() != "prop_vehicle_prisoner_pod" then return end
+	if vehicle:GetClass() ~= "prop_vehicle_prisoner_pod" then return end
 
 	if vehicle.Removing then return false end
 	return (vehicle:GetOwner() == ply)
@@ -161,7 +161,7 @@ function TryPlayerExit(ply, ent)
 		local telepos = pos + yaw:Forward() * trydist
 		local trace = util.TraceEntity({start = telepos, endpos = telepos - airdist}, ply)
 
-		if !trace.StartSolid && trace.Fraction > 0 && trace.Hit then
+		if not trace.StartSolid and trace.Fraction > 0 and trace.Hit then
 			ply:SetPos(telepos)
 			return
 		end
@@ -179,7 +179,7 @@ end
 
 local function PlayerLeaveVehicle( vehicle, ply )
 	if not vehicle.IsCinemaSeat then return end
-	if vehicle:GetClass() != "prop_vehicle_prisoner_pod" then return end
+	if vehicle:GetClass() ~= "prop_vehicle_prisoner_pod" then return end
 	if vehicle.Removing == true then return end
 
 	local seat = vehicle.SeatData
@@ -188,7 +188,7 @@ local function PlayerLeaveVehicle( vehicle, ply )
 		return true
 	end
 
-	if seat.Ent && seat.Ent.UseTable then
+	if seat.Ent and seat.Ent.UseTable then
 		seat.Ent.UseTable[seat.Pos] = false
 	end
 
@@ -203,7 +203,7 @@ local function PlayerLeaveVehicle( vehicle, ply )
 			endpos = seat.EntryPoint
 		}, ply)
 
-		if vehicle:GetPos():Distance(seat.EntryPoint) < 128 && !trace.StartSolid && trace.Fraction > 0 then
+		if vehicle:GetPos():Distance(seat.EntryPoint) < 128 and not trace.StartSolid and trace.Fraction > 0 then
 			ply:SetPos(seat.EntryPoint)
 		else
 			TryPlayerExit(ply, vehicle)
@@ -212,7 +212,7 @@ local function PlayerLeaveVehicle( vehicle, ply )
 		ply:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER )
 	end
 
-	if !vehicle.bSlots then
+	if not vehicle.bSlots then
 		vehicle.Removing = true
 		vehicle:Remove()
 	end

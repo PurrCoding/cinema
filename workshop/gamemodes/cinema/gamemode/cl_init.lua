@@ -21,7 +21,7 @@ hook.Add( "InitPostEntity", "CheckMapSupport", function()
 			)
 
 			control.Add( KEY_F1, function( enabled, held )
-				if enabled and !held then
+				if enabled and not held then
 					steamworks.ViewFile( 119060917 )
 				end
 			end )
@@ -59,7 +59,7 @@ function GM:HUDShouldDraw( name )
 
 		local wep = ply:GetActiveWeapon()
 
-		if (wep && wep:IsValid() && wep.HUDShouldDraw != nil) then
+		if (wep and wep:IsValid() and wep.HUDShouldDraw ~= nil) then
 
 			return wep.HUDShouldDraw( wep, name )
 
@@ -67,7 +67,7 @@ function GM:HUDShouldDraw( name )
 
 	end
 
-	return !table.HasValue(self.HUDToHide, name)
+	return not table.HasValue(self.HUDToHide, name)
 
 end
 

@@ -21,7 +21,7 @@ function Check()
 			end
 
 			-- Key release
-			if !input.IsKeyDown( key ) then
+			if not input.IsKeyDown( key ) then
 				tbl.Toggle( false )
 				tbl.Enabled = false
 			end
@@ -44,7 +44,7 @@ hook.Add( "Think", "TheaterControlsThink", control.Check )
 
 function Add( key, onToggle )
 
-	if !key or !onToggle then return end
+	if not key or not onToggle then return end
 
 	KeyControls[ key ] = {
 		Enabled = false,

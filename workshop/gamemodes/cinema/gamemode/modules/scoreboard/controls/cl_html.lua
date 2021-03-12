@@ -147,7 +147,7 @@ function PANEL:Think()
 end
 
 function PANEL:FetchPageURL()
-	local js = "if (typeof gmod !== 'undefined') { gmod.getUrl(window.location.href); }"
+	local js = "if (typeof gmod ~== 'undefined') { gmod.getUrl(window.location.href); }"
 	self:RunJavascript(js)
 end
 
@@ -209,7 +209,7 @@ function PANEL:QueueJavascript( js )
 	--
 	-- Can skip using the queue if there's nothing else in it
 	--
-	if ( !self.JS && !self:IsLoading() ) then
+	if ( not self.JS and not self:IsLoading() ) then
 		return self:RunJavascript( js )
 	end
 
@@ -225,12 +225,12 @@ PANEL.Call = PANEL.QueueJavascript
 
 function PANEL:ConsoleMessage( msg, func )
 
-	if ( !isstring( msg ) ) then msg = "*js variable*" end
+	if ( not isstring( msg ) ) then msg = "*js variable*" end
 
 	-- Filter messages output to the console
 	-- 'console.gmod' always gets output
 	local filterLevel = FilterCVar:GetInt()
-	if ( func != "gmod" and filterLevel == FILTER_ALL ) then return end
+	if ( func ~= "gmod" and filterLevel == FILTER_ALL ) then return end
 
 	local prefixColor = ConsoleColors.default
 	local prefix = "[HTML"
@@ -286,7 +286,7 @@ function PANEL:AddFunction( obj, funcname, func )
 	--
 	-- Create the `object` if it doesn't exist
 	--
-	if ( !self.Callbacks[ obj ] ) then
+	if ( not self.Callbacks[ obj ] ) then
 		self:NewObject( obj )
 		self.Callbacks[ obj ] = {}
 	end

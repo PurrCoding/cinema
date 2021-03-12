@@ -4,14 +4,14 @@ function Query( command )
 
 	local updated = sql.Query( "SELECT type FROM cinema_requests LIMIT 1" )
 
-	if !updated then -- The Query will return a false bool if the column doesn't exist
+	if not updated then -- The Query will return a false bool if the column doesn't exist
 		print("Altering 'cinema_requests' table for updated structure...")
 		sql.Query( "ALTER TABLE cinema_requests ADD COLUMN type VARCHAR(32)" )
 		sql.Query( "ALTER TABLE cinema_requests ADD COLUMN data VARCHAR(2048)" )
 	end
 
 	-- Ensure the log table exists
-	if !sql.TableExists("cinema_requests") then
+	if not sql.TableExists("cinema_requests") then
 
 		Msg("Creating 'cinema_requests' table...\n")
 
@@ -41,7 +41,7 @@ function ClearRequestHistory()
 end
 
 function RemoveRequestById( id )
-	if !id then return end
+	if not id then return end
 	return Query( "DELETE FROM cinema_requests WHERE id=" .. id )
 end
 
@@ -162,7 +162,7 @@ function LogRequest()
 	if istable(results) then
 		local count = tonumber(results[1].count) + 1
 
-		if results[1].url != url then
+		if results[1].url ~= url then
 			str = CheckOldSystem(url, title, duration, vtype, data)
 		else
 			-- Update request count, url does not suggest duplicates

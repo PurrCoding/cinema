@@ -36,9 +36,9 @@ end
 
 function PANEL:Paint( w, h )
 
-	if ( !self.m_bBackground ) then return end
+	if ( not self.m_bBackground ) then return end
 
-	if ( self.Depressed || self:IsSelected() || self:GetToggle() ) then
+	if ( self.Depressed or self:IsSelected() or self:GetToggle() ) then
 		surface.SetDrawColor( self.DepressedColor )
 		surface.DrawRect( 0, 0, w, h )
 		return

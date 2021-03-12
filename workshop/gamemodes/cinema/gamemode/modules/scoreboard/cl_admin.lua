@@ -93,7 +93,7 @@ end
 function ADMIN:Update()
 
 	local Theater = LocalPlayer():GetTheater() -- get player's theater from their location
-	if !Theater then return end
+	if not Theater then return end
 
 	-- Change title text
 	if Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer() then
@@ -139,7 +139,7 @@ function ADMIN:PerformLayout()
 	self.Title:SetTall( self.TitleHeight )
 	self.Title:CenterHorizontal()
 
-	if self.Title:GetWide() > self:GetWide() and self.Title:GetFont() != "ScoreboardTitleSmall" then
+	if self.Title:GetWide() > self:GetWide() and self.Title:GetFont() ~= "ScoreboardTitleSmall" then
 		self.Title:SetFont( "ScoreboardTitleSmall" )
 	end
 

@@ -4,13 +4,13 @@ Services = {}
 
 function RegisterService( class, object, base )
 
-	if !class or !object then return end
-	if !base then base = "base" end
+	if not class or not object then return end
+	if not base then base = "base" end
 
 	Services[ class ] = object
 	Services[ class ].ClassName = class
 
-	if !Services[ base ] then
+	if not Services[ base ] then
 		ErrorNoHalt( "theater.RegisterService: Base class '" .. tostring(base) .. "' not found!" )
 	else
 		if class == "base" then return end

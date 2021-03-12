@@ -73,7 +73,7 @@ function PLAYERLIST:Think()
 	if RealTime() > self.NextUpdate then
 
 		for ply in pairs( self.Players ) do
-			if !IsValid( ply ) then
+			if not IsValid( ply ) then
 				self:RemovePlayer( ply )
 			end
 		end
@@ -97,8 +97,8 @@ function PLAYERLIST:PerformLayout()
 
 	table.sort( self.PlayerList.Items, function( a, b )
 
-		if !a or !a.Player or !IsValid(a.Player) then return false end
-		if !b or !b.Player or !IsValid(b.Player) then return true end
+		if not a or not a.Player or not IsValid(a.Player) then return false end
+		if not b or not b.Player or not IsValid(b.Player) then return true end
 
 		return string.lower( a.Player:Nick() ) < string.lower( b.Player:Nick() )
 
@@ -169,7 +169,7 @@ end
 
 function PLAYER:UpdatePlayer()
 
-	if !IsValid(self.Player) then
+	if not IsValid(self.Player) then
 
 		local parent = self:GetParent()
 		if IsValid(parent) and parent.RemovePlayer then
@@ -237,7 +237,7 @@ function PLAYER:Paint( w, h )
 
 	surface.SetDrawColor( 255, 255, 255, 255 )
 
-	if self.Player.IsPixelTail && self.Player:IsPixelTail() then
+	if self.Player.IsPixelTail and self.Player:IsPixelTail() then
 
 		surface.SetMaterial( PixeltailIcon )
 		surface.DrawTexturedRect( self.Name.x + self.Name:GetWide() + 5, self.Name.y + 3, 40, 16 )
@@ -312,7 +312,7 @@ function PLAYERPING:Paint( w, h )
 	x = xpos
 	surface.SetDrawColor( 255, 255, 255, 255 )
 
-	for i=1, #self.Heights do
+	for i = 1, #self.Heights do
 
 		local h = self.Heights[i]
 

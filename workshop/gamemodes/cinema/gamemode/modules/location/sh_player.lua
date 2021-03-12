@@ -1,5 +1,5 @@
 local meta = FindMetaTable("Player")
-if !meta then return end
+if not meta then return end
 
 function meta:GetLocation()
 	return self:GetDTInt(0) or 0

@@ -1,5 +1,5 @@
 local PlayerMeta = FindMetaTable("Player")
-if !PlayerMeta then return end
+if not PlayerMeta then return end
 
 local Developers = {
 	["STEAM_0:0:0"] = true,			// Lua refresh error
@@ -12,6 +12,6 @@ local Developers = {
 }
 
 function PlayerMeta:IsPixelTail()
-	if !IsValid(self) then return false end
+	if not IsValid(self) then return false end
 	return Developers[self:SteamID()] or false
 end

@@ -2,7 +2,7 @@ surface.CreateFont( "3D2DName", { font = "Bebas Neue", size = 135, weight = 600 
 
 local function DrawName( ply, opacityScale )
 
-	if !IsValid(ply) or !ply:Alive() then return end
+	if not IsValid(ply) or not ply:Alive() then return end
 
 	local pos = ply:GetPos()
 	local ang = LocalPlayer():EyeAngles()
@@ -43,8 +43,8 @@ local fadeTime = 2
 hook.Add( "PostDrawTranslucentRenderables", "DrawPlayerNames", function()
 
 	-- Don't render names while we're sitting down
-	if GetConVar("cinema_drawnames") and !GetConVar("cinema_drawnames"):GetBool() then return end
-	if !LocalPlayer().InTheater then return end
+	if GetConVar("cinema_drawnames") and not GetConVar("cinema_drawnames"):GetBool() then return end
+	if not LocalPlayer().InTheater then return end
 	if theater.Fullscreen then return end
 	if IsValid( LocalPlayer():GetVehicle() ) then return end
 
@@ -65,8 +65,8 @@ hook.Add( "PostDrawTranslucentRenderables", "DrawPlayerNames", function()
 
 		local tr = util.GetPlayerTrace( LocalPlayer() )
 		local trace = util.TraceLine( tr )
-		if (!trace.Hit) then return end
-		if (!trace.HitNonWorld) then return end
+		if (not trace.Hit) then return end
+		if (not trace.HitNonWorld) then return end
 
 		-- Keep track of recently targetted players
 		if trace.Entity:IsPlayer() then
@@ -82,12 +82,12 @@ hook.Add( "PostDrawTranslucentRenderables", "DrawPlayerNames", function()
 		for _, ply in pairs( player.GetAll() ) do
 
 			-- Don't draw name if either player is not in theater and the other is, etc.
-			if (LocalPlayer():InTheater() and !ply:InTheater()) or
-				(!LocalPlayer():InTheater() and ply:InTheater()) then
+			if (LocalPlayer():InTheater() and not ply:InTheater()) or
+				(not LocalPlayer():InTheater() and ply:InTheater()) then
 				continue
 			end
 
-			if ply != LocalPlayer() then
+			if ply ~= LocalPlayer() then
 				DrawName( ply )
 			end
 		end

@@ -62,8 +62,8 @@ function PANEL:Init()
 
 	self.VBar.OnCursorMoved = function( self, x, y )
 
-		if ( !self.Enabled ) then return end
-		if ( !self.Dragging ) then return end
+		if ( not self.Enabled ) then return end
+		if ( not self.Dragging ) then return end
 
 		local x = 0
 		local y = gui.MouseY()
@@ -108,12 +108,12 @@ end
 -----------------------------------------------------------]]
 function PANEL:SortVideos( f )
 
-	if !f then return end
+	if not f then return end
 
 	table.sort( self.Items, function( a, b )
 
-		if !a or !a.Video then return false end
-		if !b or !b.Video then return true end
+		if not a or not a.Video then return false end
+		if not b or not b.Video then return true end
 
 		return f( a.Video, b.Video )
 

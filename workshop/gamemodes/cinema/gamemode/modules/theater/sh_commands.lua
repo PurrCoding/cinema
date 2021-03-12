@@ -16,7 +16,7 @@ if CLIENT then
 	cvars.AddChangeCallback( "cinema_resolution", function(cmd, old, new)
 		new = tonumber(new)
 
-		if !new then
+		if not new then
 			return
 		elseif new < 2 then
 			RunConsoleCommand( "cinema_resolution", 2 )
@@ -30,7 +30,7 @@ if CLIENT then
 	cvars.AddChangeCallback( "cinema_volume", function(cmd, old, new)
 		new = tonumber(new)
 
-		if !new then
+		if not new then
 			return
 		elseif new < 0 then
 			RunConsoleCommand( "cinema_volume", 0 )
@@ -72,7 +72,7 @@ if CLIENT then
 	hook.Add( "PlayerBindPress", "TheaterScroll", function( ply, bind, pressed )
 
 		local panel = theater.ActivePanel()
-		if !IsValid(panel) then return end
+		if not IsValid(panel) then return end
 
 		local amount = ScrollAmount:GetInt()
 		if bind == "invnext" then
@@ -126,7 +126,7 @@ if CLIENT then
 
 		HasFocus = system.HasFocus()
 
-		if ( LastState and !HasFocus ) or ( !LastState and HasFocus ) then
+		if ( LastState and not HasFocus ) or ( not LastState and HasFocus ) then
 
 			if HasFocus == true then
 				theater.SetVolume( LastVolume )
@@ -161,18 +161,18 @@ else
 
 	local function TheaterCommand( name, Function )
 
-		if !Function then return end
+		if not Function then return end
 
 		concommand.Add( name, function( ply, ... )
 
-			if !IsValid(ply) then return end
+			if not IsValid(ply) then return end
 
 			local Theater = ply:GetTheater()
 			if Theater then
 
 				local status, err = pcall(Function, Theater, ply, ...)
 
-				if !status then
+				if not status then
 					Msg("ERROR: There was a problem running the command '" .. name .. "'\n")
 					Msg(tostring(err) .. "\n")
 				end
@@ -186,7 +186,7 @@ else
 	TheaterCommand( "cinema_video_request", function( Theater, ply, cmd, args )
 
 		local Video = args[1]
-		if !Video then return end
+		if not Video then return end
 
 		Theater:RequestVideo(ply, Video)
 
@@ -195,7 +195,7 @@ else
 	TheaterCommand( "cinema_video_remove", function( Theater, ply, cmd, args )
 
 		local id = tonumber(args[1])
-		if !id then return end
+		if not id then return end
 
 		Theater:RemoveQueuedVideo(ply, id)
 
@@ -204,7 +204,7 @@ else
 	TheaterCommand( "cinema_name", function( Theater, ply, cmd, args )
 
 		local name = args[1]
-		if !name then return end
+		if not name then return end
 
 		Theater:SetName( name, ply )
 
@@ -226,7 +226,7 @@ else
 	TheaterCommand( "cinema_voteup", function( Theater, ply, cmd, args )
 
 		local QueueId = tonumber(args[1])
-		if !QueueId then return end
+		if not QueueId then return end
 
 		Theater:VoteQueuedVideo(ply, QueueId, true)
 
@@ -237,11 +237,11 @@ else
 	*/
 	local function TheaterPrivilegedCommand( name, Function )
 
-		if !Function then return end
+		if not Function then return end
 
 		concommand.Add( name, function( ply, ... )
 
-			if !IsValid(ply) then return end
+			if not IsValid(ply) then return end
 
 			local Theater = ply:GetTheater()
 			if Theater then
@@ -251,7 +251,7 @@ else
 
 					local status, err = pcall(Function, Theater, ply, ...)
 
-					if !status then
+					if not status then
 						Msg("ERROR: There was a problem running the command '" .. name .. "'\n")
 						Msg(tostring(err) .. "\n")
 					end
@@ -267,7 +267,7 @@ else
 	TheaterPrivilegedCommand( "cinema_video_set", function( Theater, ply, cmd, args )
 
 		local VideoUrl = args[1]
-		if !VideoUrl then return end
+		if not VideoUrl then return end
 
 		Theater:RequestVideo(ply, VideoUrl, true)
 
@@ -276,7 +276,7 @@ else
 	TheaterPrivilegedCommand( "cinema_seek", function( Theater, ply, cmd, args )
 
 		local seconds = args[1]
-		if !seconds then return end
+		if not seconds then return end
 
 		Theater:Seek(seconds)
 
@@ -301,7 +301,7 @@ else
 
 	TheaterPrivilegedCommand( "cinema_reset", function( Theater, ply, cmd, args )
 
-		if !ply:IsAdmin() then return end
+		if not ply:IsAdmin() then return end
 
 		Theater:AnnounceToPlayers( {
 			'Theater_PlayerReset',

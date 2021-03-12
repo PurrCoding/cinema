@@ -89,7 +89,7 @@ end
 function QUEUE:Update()
 
 	local Theater = LocalPlayer():GetTheater() -- get player's theater from their location
-	if !Theater then return end
+	if not Theater then return end
 
 	theater.PollServer()
 
@@ -104,7 +104,7 @@ function QUEUE:UpdateList()
 	end
 
 	for k, panel in pairs(self.Videos) do
-		if !table.HasValue(ids, k) then
+		if not table.HasValue(ids, k) then
 			self:RemoveVideo( panel.Video )
 		end
 	end
@@ -166,7 +166,7 @@ function QUEUE:PerformLayout()
 	self.Title:SetTall( self.TitleHeight )
 	self.Title:CenterHorizontal()
 
-	if self.Title:GetWide() > self:GetWide() and self.Title:GetFont() != "ScoreboardTitleSmall" then
+	if self.Title:GetWide() > self:GetWide() and self.Title:GetFont() ~= "ScoreboardTitleSmall" then
 		self.Title:SetFont( "ScoreboardTitleSmall" )
 	end
 

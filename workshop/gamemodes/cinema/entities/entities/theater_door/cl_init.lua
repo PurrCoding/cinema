@@ -39,7 +39,7 @@ usermessage.Hook("theater_door_load", function( um )
 end )
 
 hook.Add( "RenderScreenspaceEffects", "theater_render_loading", function()
-	if !IsValid( LocalPlayer().LoadingEntity ) || LocalPlayer().LoadingEntity.Mode == THEATER_LOAD_IDLE then return end
+	if not IsValid( LocalPlayer().LoadingEntity ) or LocalPlayer().LoadingEntity.Mode == THEATER_LOAD_IDLE then return end
 
 	local mode = LocalPlayer().LoadingEntity.Mode
 	local ent = LocalPlayer().LoadingEntity

@@ -12,7 +12,7 @@ resource.AddWorkshop( "119060917" ) -- cinema_theatron
 
 timer.Create( "TheaterPlayerThink", 1, 0, function()
 	for _, v in pairs( player.GetAll() ) do
-		if ( !IsValid( v ) ) then continue end
+		if ( not IsValid( v ) ) then continue end
 
 		hook.Call( "PlayerThink", GAMEMODE, v )
 	end
@@ -28,7 +28,7 @@ function GM:DoPlayerDeath( ply, attacker, dmginfo )
 
 	ply:AddDeaths( 1 )
 
-	if ( attacker:IsValid() && attacker:IsPlayer() ) then
+	if ( attacker:IsValid() and attacker:IsPlayer() ) then
 
 		if ( attacker == ply ) then
 			attacker:AddFrags( -1 )
@@ -58,7 +58,7 @@ timer.Create( "HostnameThink", 30, 0, HostnameThink )
 function GM:PlayerCanHearPlayersVoice( listener, talker )
 
 	-- Check for theater module first
-	if !theater then
+	if not theater then
 		return true
 	end
 
@@ -72,8 +72,8 @@ function GM:PlayerCanHearPlayersVoice( listener, talker )
 			GetConVar("cinema_allow_voice"):GetBool(), Voice3D
 
 	-- One player in theater
-	elseif (ListenerInTheater and !TalkerInTheater) ||
-		(!ListenerInTheater and TalkerInTheater) then
+	elseif (ListenerInTheater and not TalkerInTheater) or
+		(not ListenerInTheater and TalkerInTheater) then
 		return false, Voice3D
 
 	-- Both players in non-theater areas (Lobby)
@@ -94,7 +94,7 @@ function GM:PlayerSwitchFlashlight( ply, enable )
 
 	-- Only allow disabling the flashlight in theaters
 	if ply.InTheater and ply:InTheater() then
-		return !enable
+		return not enable
 	end
 
 	if ply.NextFlashlightSwitch and ply.NextFlashlightSwitch > CurTime() then

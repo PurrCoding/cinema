@@ -29,7 +29,7 @@ end
 // returns a table of locations for the specified map, or the current map if nil
 function GetLocations( strMap )
 
-	if ( !strMap ) then
+	if ( not strMap ) then
 		strMap = game.GetMap()
 	end
 
@@ -64,7 +64,7 @@ end
 // indexes get networked
 function GetLocationByIndex( iIndex, strMap )
 	local locations = GetLocations( strMap )
-	if !locations then return end
+	if not locations then return end
 	for k, v in pairs( locations ) do
 		if ( v.Index == iIndex ) then return v end
 	end
@@ -73,7 +73,7 @@ end
 // find a location by name
 function GetLocationByName( strName, strMap )
 	local locations = GetLocations( strMap )
-	if !locations then return end
+	if not locations then return end
 	return locations[strName]
 end
 
@@ -81,7 +81,7 @@ local function GetTeleportBy( func, nameOrIndex, strMap )
 
 	local tblLoc = func( nameOrIndex, strMap )
 
-	if ( !tblLoc ) then
+	if ( not tblLoc ) then
 
 		if ( SERVER ) then
 			Sql.Log( "location", "Tried to get teleport for invalid location \"" .. nameOrIndex .. "\" on map \"" .. strMap .. "\"!" )
@@ -90,7 +90,7 @@ local function GetTeleportBy( func, nameOrIndex, strMap )
 		return
 	end
 
-	if ( !tblLoc.Teleports ) then
+	if ( not tblLoc.Teleports ) then
 
 		if ( SERVER ) then
 			Sql.Log( "location", "Tried to get a teleport for a location \"" .. nameOrIndex .. "\" on map \"" .. strMap .. "\" without any registered teleports!" )
@@ -118,7 +118,7 @@ function Find( ply )
 
 	local tblLoc = GetLocations()
 
-	if ( !tblLoc ) then return 0 end
+	if ( not tblLoc ) then return 0 end
 
 	for k, v in pairs( tblLoc ) do
 		if ( ply:GetPos():InBox( v.Min, v.Max ) ) then

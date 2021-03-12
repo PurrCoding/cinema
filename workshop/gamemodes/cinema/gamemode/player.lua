@@ -40,9 +40,9 @@ end
 -----------------------------------------------------------]]
 function GM:PlayerDeathThink( pl )
 
-	if (  pl.NextSpawnTime && pl.NextSpawnTime > CurTime() ) then return end
+	if (  pl.NextSpawnTime and pl.NextSpawnTime > CurTime() ) then return end
 
-	if ( pl:KeyPressed( IN_ATTACK ) || pl:KeyPressed( IN_ATTACK2 ) || pl:KeyPressed( IN_JUMP ) ) then
+	if ( pl:KeyPressed( IN_ATTACK ) or pl:KeyPressed( IN_ATTACK2 ) or pl:KeyPressed( IN_JUMP ) ) then
 
 		pl:Spawn()
 
@@ -83,7 +83,7 @@ function GM:PlayerSpawn( pl )
 	-- If the player doesn't have a team in a TeamBased game
 	-- then spawn him as a spectator
 	--
-	if ( GAMEMODE.TeamBased && ( pl:Team() == TEAM_SPECTATOR || pl:Team() == TEAM_UNASSIGNED ) ) then
+	if ( GAMEMODE.TeamBased and ( pl:Team() == TEAM_SPECTATOR or pl:Team() == TEAM_UNASSIGNED ) ) then
 
 		GAMEMODE:PlayerSpawnAsSpectator( pl )
 		return

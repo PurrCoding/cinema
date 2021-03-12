@@ -31,7 +31,7 @@ function SETTINGS:NewSetting( control, text, convar )
 		Control:SetConVar( convar )
 	end
 
-	if !table.HasValue( self.Settings, Control ) then
+	if not table.HasValue( self.Settings, Control ) then
 		table.insert( self.Settings, Control )
 	end
 
@@ -57,7 +57,7 @@ end
 function SETTINGS:Think()
 
 	if IsValid( Gui ) then
-		self.Help:SetVisible( !Gui.MouseEnabled )
+		self.Help:SetVisible( not Gui.MouseEnabled )
 	end
 
 end
@@ -72,7 +72,7 @@ function SETTINGS:PerformLayout()
 		curY = curY + 28
 
 		-- Resize label if needed for localization
-		if IsValid( panel.Label ) and panel.Label:GetFont() != "ScoreboardHelpSmall" then
+		if IsValid( panel.Label ) and panel.Label:GetFont() ~= "ScoreboardHelpSmall" then
 
 			local px, py = panel:GetPos()
 
@@ -98,7 +98,7 @@ function SETTINGS:PerformLayout()
 	self.Help:CenterHorizontal()
 	self.Help:AlignBottom( 10 )
 
-	if self.Help:GetWide() > self:GetWide() and self.Help:GetFont() != "ScoreboardHelpSmall" then
+	if self.Help:GetWide() > self:GetWide() and self.Help:GetFont() ~= "ScoreboardHelpSmall" then
 		self.Help:SetFont( "ScoreboardHelpSmall" )
 	end
 

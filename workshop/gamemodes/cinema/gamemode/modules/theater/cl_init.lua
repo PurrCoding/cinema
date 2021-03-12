@@ -114,7 +114,7 @@ end
 function ResizePanel()
 
 	local panel = ActivePanel()
-	if !IsValid(panel) then return end
+	if not IsValid(panel) then return end
 
 	local Theater = LocalPlayer():GetTheater()
 	local w, h = Theater:GetSize()
@@ -145,7 +145,7 @@ function RemovePanels()
 
 	-- Remove panels from table
 	for loc, p in pairs(Panels) do
-		if IsValid(p) and loc != LocalPlayer():GetLocation() then
+		if IsValid(p) and loc ~= LocalPlayer():GetLocation() then
 			RemovePanel(p)
 			Panels[loc] = nil
 		end
@@ -182,7 +182,7 @@ end
 function ToggleFullscreen()
 
 	local panel = ActivePanel()
-	if !IsValid(panel) then return end
+	if not IsValid(panel) then return end
 
 	-- Toggle fullscreen
 	if Fullscreen then
@@ -196,7 +196,7 @@ function ToggleFullscreen()
 		-- panel:SetParent(GetHUDPanel())
 	end
 
-	Fullscreen = !Fullscreen
+	Fullscreen = not Fullscreen
 	RunConsoleCommand("cinema_fullscreen_freeze", tostring(Fullscreen))
 
 end
@@ -219,7 +219,7 @@ end
 function SetVolume( fVolume )
 
 	fVolume = tonumber(fVolume)
-	if !fVolume then return end
+	if not fVolume then return end
 
 	local js = string.format('if(window.theater) theater.setVolume(%s);', fVolume)
 	for _, p in pairs(Panels) do
@@ -295,7 +295,7 @@ function ReceiveSeek()
 	local Video = CurrentVideo()
 	local Theater = LocalPlayer():GetTheater()
 
-	if !IsValid(panel) or !Video or !Theater then return end
+	if not IsValid(panel) or not Video or not Theater then return end
 
 	Video._VideoStart = seconds
 	Theater._VideoStart = seconds
@@ -378,16 +378,16 @@ net.Receive( "TheaterVoteSkips", ReceiveVoteSkips )
 
 function LoadVideo( Video )
 
-	if !Video then return end
+	if not Video then return end
 
 	local theaterUrl = GetConVarString( "cinema_url" )
 
 	local panel = ActivePanel()
-	if !IsValid( panel ) then
+	if not IsValid( panel ) then
 
 		-- Initialize HTML panel
 		local Theater = LocalPlayer():GetTheater()
-		if !Theater then return end
+		if not Theater then return end
 
 		-- Initialize panel and load the webpage
 		panel = RegisterPanel( Theater )

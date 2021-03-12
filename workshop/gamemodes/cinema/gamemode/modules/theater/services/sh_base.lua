@@ -72,7 +72,7 @@ if CLIENT then
 
 		if Video:Type() == "url" then
 			panel:OpenURL( Video:Data() )
-		elseif panel:GetURL() != theaterUrl then
+		elseif panel:GetURL() ~= theaterUrl then
 			panel:OpenURL( theaterUrl )
 		end
 

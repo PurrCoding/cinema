@@ -11,7 +11,7 @@ local function GetFileList( strDirectory, strGamemode )
 
 	for k, v in pairs( table.Add(findFiles, findFolders) ) do
 
-		if ( v == "." || v == ".." || v == ".svn" ) then continue end
+		if ( v == "." or v == ".." or v == ".svn" ) then continue end
 
 		table.insert( files, v )
 
@@ -50,7 +50,7 @@ local function LoadFile( strDirectory, strGamemode, strFile )
 
 		include( realFile )
 
-	elseif ( prefix == "sv_" || strFile == "init.lua" ) then
+	elseif ( prefix == "sv_" or strFile == "init.lua" ) then
 
 		if SERVER then
 			include( realFile )
@@ -62,7 +62,7 @@ end
 
 function Load( strDirectory, strGamemode )
 
-	if ( !strGamemode ) then
+	if ( not strGamemode ) then
 		strGamemode = BaseGamemode
 	end
 

@@ -3,7 +3,7 @@ module( "theater", package.seeall )
 function Query( command )
 
 	-- Ensure the log table exists
-	if !sql.TableExists("cinema_history") then
+	if not sql.TableExists("cinema_history") then
 
 		Msg("Creating 'cinema_history' table...\n")
 
@@ -52,7 +52,7 @@ function LogVideo( Video, Theater )
 	local Type = Video:Type()
 
 	-- Streams can be offline, so caching results isn't a good idea
-	if !IsVideoTimed( Type ) then
+	if not IsVideoTimed( Type ) then
 		return
 	end
 

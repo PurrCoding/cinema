@@ -16,7 +16,7 @@ if CLIENT then
 	end
 
 	function translations.Format( key, ... )
-		if !key then return "" end
+		if not key then return "" end
 		if Debug:GetBool() then print("TRANSLATION: " .. key) end
 		local lang = translations.GetLanguage()
 		local value = Languages[lang] and Languages[lang][key] or Languages[DefaultId][key]
@@ -71,7 +71,7 @@ if CLIENT then
 				-- Break loop if there are no more tags
 				if not start then
 					-- Insert remaining fragment of translation
-					if value != "" then
+					if value ~= "" then
 						table.insert( tbl, value )
 					end
 					break

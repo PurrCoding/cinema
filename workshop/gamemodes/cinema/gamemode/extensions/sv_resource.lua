@@ -2,7 +2,7 @@ resource.ValidExtensions = { "vmt", "png", "mdl", "wav", "mp3", "ttf" }
 
 function resource.AddDirectory( directory, recursive, path )
 
-	if !directory then return end
+	if not directory then return end
 
 	-- Remove trailing folder '/'
 	if string.match( directory, "/$" ) then
@@ -19,7 +19,7 @@ function resource.AddDirectory( directory, recursive, path )
 
 		local File = directory .. "/" .. v
 
-		if v != "_svn" && v != ".svn" then
+		if v ~= "_svn" and v ~= ".svn" then
 
 			local ext = string.GetExtensionFromFilename(v)
 

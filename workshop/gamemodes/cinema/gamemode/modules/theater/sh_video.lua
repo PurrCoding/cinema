@@ -110,11 +110,11 @@ if SERVER then
 
 	function VIDEO:ValidateVotes()
 		for k, v in pairs(self._Votes) do
-			if !IsValid(v.owner) then
+			if not IsValid(v.owner) then
 				table.remove(self._Votes, k)
 			else
 				-- Make sure the player is still in the theater
-				if !v.owner:InTheater() or v.owner:GetLocation() != self.theaterId then
+				if not v.owner:InTheater() or v.owner:GetLocation() ~= self.theaterId then
 					table.remove(self._Votes, k)
 				end
 			end
@@ -139,18 +139,18 @@ if SERVER then
 	end
 
 	function VIDEO:HasPlayerVoted(ply)
-		return self:GetVoteByPlayer(ply) != nil
+		return self:GetVoteByPlayer(ply) ~= nil
 	end
 
 	function VIDEO:AddVote( ply, positive )
 
-		if !IsValid(ply) then return end
+		if not IsValid(ply) then return end
 
 		local vote = self:GetVoteByPlayer(ply)
 
 		if vote then
 
-			if (vote.value > 0 and positive) or (vote.value < 0 and !positive) then
+			if (vote.value > 0 and positive) or (vote.value < 0 and not positive) then
 				self:RemoveVoteByPlayer(ply)
 			else
 				vote.value = positive and 1 or -1
@@ -172,13 +172,13 @@ if SERVER then
 	*/
 	function VIDEO:RequestInfo( callback )
 
-		if !callback then return end
+		if not callback then return end
 
-		if self:Type() != "" then
+		if self:Type() ~= "" then
 
 			-- Query info from local database
 			local results = GetVideoLog(self:Data(), self:Type())
-			if results != nil and istable(results) then
+			if results ~= nil and istable(results) then
 
 				results = results[1]
 
@@ -221,7 +221,7 @@ if SERVER then
 				end, loadFailure)
 
 				-- Something went wrong while grabbing the video info
-				if !status then
+				if status then
 					callback(false)
 				end
 

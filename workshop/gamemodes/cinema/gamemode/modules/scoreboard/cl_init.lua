@@ -67,7 +67,7 @@ end
 
 function GM:ScoreboardShow()
 
-	if !IsValid( Gui ) then
+	if not IsValid( Gui ) then
 		Gui = vgui.Create( "Scoreboard" )
 	end
 
@@ -100,7 +100,7 @@ function GM:ShowMouse()
 end
 
 function GM:HideMouse()
-	if !self.MouseEnabled then return end
+	if not self.MouseEnabled then return end
 	RememberCursorPosition()
 	gui.EnableScreenClicker( false )
 	self.MouseEnabled = false
@@ -117,13 +117,13 @@ end )
 
 function GM:MenuShow()
 
-	if !IsValid(LocalPlayer()) or !LocalPlayer().GetTheater then return end
+	if not IsValid(LocalPlayer()) or not LocalPlayer().GetTheater then return end
 
 	local Theater = LocalPlayer():GetTheater()
-	if !Theater then return end
+	if not Theater then return end
 
 	-- Queue
-	if !IsValid( GuiQueue ) then
+	if not IsValid( GuiQueue ) then
 		GuiQueue = vgui.Create( "ScoreboardQueue" )
 	end
 
@@ -135,7 +135,7 @@ function GM:MenuShow()
 	if LocalPlayer():IsAdmin() or
 		( Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer() ) then
 
-		if !IsValid( GuiAdmin ) then
+		if not IsValid( GuiAdmin ) then
 			GuiAdmin = vgui.Create( "ScoreboardAdmin" )
 		end
 

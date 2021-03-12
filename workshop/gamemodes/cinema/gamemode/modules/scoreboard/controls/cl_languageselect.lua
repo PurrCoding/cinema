@@ -154,7 +154,7 @@ end
 
 function PANEL:IsMenuOpen()
 
-	return IsValid( self.Menu ) && self.Menu:IsVisible()
+	return IsValid( self.Menu ) and self.Menu:IsVisible()
 
 end
 

@@ -40,7 +40,7 @@ function GetByLocation( locId, setup )
 
 	local Theater = Theaters[locId]
 
-	if SERVER and !Theater and setup then
+	if SERVER and not Theater and setup then
 
 		local loc = Location.GetLocationByIndex( locId )
 
@@ -48,7 +48,7 @@ function GetByLocation( locId, setup )
 		local info = loc.Theater
 
 		-- Attempt to find theater_screen entity within location
-		if !info then
+		if not info then
 
 			local screen = nil
 			local screens = ents.FindByClass( "theater_screen" )
@@ -116,7 +116,7 @@ end
 local function ServiceMatch( Theater, service, data )
 
 	-- Make sure this service can be used in the theater
-	if service.TheaterType and (!Theater or !IsFlagSupported(Theater, service.TheaterType)) then
+	if service.TheaterType and (not Theater or not IsFlagSupported(Theater, service.TheaterType)) then
 		return
 	end
 
@@ -134,12 +134,12 @@ local function GetURLInfo( url, Theater )
 
 	-- Parse url
 	local status, data = pcall( url2.parse2, url )
-	if !status then
+	if not status then
 		print( "ERROR:\n" .. tostring(data) )
 		return false
 	end
 
-	if !data then
+	if not data then
 		return false
 	end
 
@@ -182,7 +182,7 @@ function ExtractURLData( url, Theater )
 
 	-- Parse url info
 	local status, info = pcall( GetURLInfo, url, Theater )
-	if !status then
+	if not status then
 		print( "ERROR:\n" .. tostring(info) )
 		return
 	end

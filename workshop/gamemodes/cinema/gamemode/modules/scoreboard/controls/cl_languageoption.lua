@@ -42,7 +42,7 @@ function PANEL:SetSubMenu( menu )
 
 	self.SubMenu = menu
 
-	if ( !self.SubMenuArrow ) then
+	if ( not self.SubMenuArrow ) then
 
 		self.SubMenuArrow = vgui.Create( "DPanel", self )
 		self.SubMenuArrow.Paint = function( panel, w, h ) derma.SkinHook( "Paint", "MenuRightArrow", panel, w, h ) end
@@ -122,7 +122,7 @@ function PANEL:OnMouseReleased( mousecode )
 
 	DButton.OnMouseReleased( self, mousecode )
 
-	if ( self.m_MenuClicking && mousecode == MOUSE_LEFT ) then
+	if ( self.m_MenuClicking and mousecode == MOUSE_LEFT ) then
 
 		self.m_MenuClicking = false
 		CloseDermaMenus()
@@ -164,7 +164,7 @@ end
 -----------------------------------------------------------]]
 function PANEL:ToggleCheck()
 
-	self:SetChecked( !self:GetChecked() )
+	self:SetChecked( not self:GetChecked() )
 	self:OnChecked( self:GetChecked() )
 
 end
@@ -211,7 +211,7 @@ function PANEL:SetLanguage( name, id, author )
 	self:SetText( name )
 	self.Flag:SetMaterial( MatStr:format( id ) )
 
-	if author and author != "" then
+	if author and author ~= "" then
 		self:SetTooltip( T('TranslationsCredit',author) )
 	end
 

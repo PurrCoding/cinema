@@ -23,12 +23,12 @@ end
 function ENT:Use(activator, caller)
 	self:TriggerOutput("OnUse", activator)
 
-	if IsValid(activator) && !activator.Teleporting then
+	if IsValid(activator) and not activator.Teleporting then
 		self:StartLoading( activator )
 
 		local sequence = self:LookupSequence("open")
 
-		if (self:GetSequence() != sequence ) then
+		if (self:GetSequence() ~= sequence ) then
 			self:ResetSequence(sequence)
 			self:SetPlaybackRate(1.0)
 
@@ -47,7 +47,7 @@ function ENT:GetLinkedDoor()
 	if IsValid( self.TeleportEnt ) then
 		local near = ents.FindInSphere( self.TeleportEnt:GetPos(), 50 )
 		for _, v in pairs( near ) do
-			if IsValid( v ) && v:GetClass() == self:GetClass() then
+			if IsValid( v ) and v:GetClass() == self:GetClass() then
 				return v
 			end
 		end
@@ -59,7 +59,7 @@ end
 function ENT:GetTeleportEntity()
 
 	-- Attempt to find entity
-	if !IsValid(self.TeleportEnt) then
+	if not IsValid(self.TeleportEnt) then
 		if self.TeleportName then
 			local entities = ents.FindByName(self.TeleportName)
 			if IsValid(entities[1]) then
@@ -105,7 +105,7 @@ function ENT:StartLoading( ply )
 end
 
 function ENT:Think()
-	if self.ShouldTeleport && CurTime() > self.TeleportAt then
+	if self.ShouldTeleport and CurTime() > self.TeleportAt then
 		--shut the frickity front door
 		local sequence = self:LookupSequence("idle")
 		self:SetSequence(sequence)
@@ -128,13 +128,13 @@ end
 
 
 function ENT:KeyValue(key, value)
-	local isEmpty = !value || string.len(value) <= 0
+	local isEmpty = not value or string.len(value) <= 0
 
-	if key == "OnTeleport" || key == "OnUnlock" || key == "OnUse" then
+	if key == "OnTeleport" or key == "OnUnlock" or key == "OnUse" then
 		self:StoreOutput(key, value)
 	end
 
-	if !isEmpty then
+	if not isEmpty then
 
 		if key == "teleportentity" then
 			self.TeleportName = value

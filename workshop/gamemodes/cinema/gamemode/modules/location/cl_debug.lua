@@ -26,7 +26,7 @@ FootOffset = Vector( 0, 0, -5 )
 */
 
 concommand.Add( "cinema_loc_start", function( ply, cmd, args )
-	if !ply:IsAdmin() then return end
+	if not ply:IsAdmin() then return end
 
 	DebugLocStart = LocalPlayer():GetPos() + FootOffset
 
@@ -37,7 +37,7 @@ concommand.Add( "cinema_loc_start", function( ply, cmd, args )
 end )
 
 concommand.Add( "cinema_loc_end", function ( ply, cmd, args )
-	if !ply:IsAdmin() then return end
+	if not ply:IsAdmin() then return end
 
 	DebugLocEnd = LocalPlayer():GetPos() + FootOffset
 	hook.Remove( "PostDrawTranslucentRenderables", "CinemaDebugLocation" )
@@ -66,7 +66,7 @@ concommand.Add( "cinema_loc_end", function ( ply, cmd, args )
 end )
 
 concommand.Add( "cinema_loc_vector", function ( ply, cmd, args )
-	if !ply:IsAdmin() then return end
+	if not ply:IsAdmin() then return end
 	local pos = LocalPlayer():GetPos()
 	local posstr = "Vector( " .. math.Round(pos.x) .. ", " .. math.Round(pos.y) .. ", " .. math.Round(pos.z) .. " ),"
 	SetClipboardText( posstr )
@@ -77,7 +77,7 @@ end )
 // location visualizer for debugging
 hook.Add( "PostDrawTranslucentRenderables", "CinemaDebugLocations", function ()
 
-	if ( !DebugEnabled:GetBool() ) then return end
+	if ( not DebugEnabled:GetBool() ) then return end
 
 	for k, v in pairs( GetLocations() or {} ) do
 
@@ -86,7 +86,7 @@ hook.Add( "PostDrawTranslucentRenderables", "CinemaDebugLocations", function ()
 		Debug3D.DrawBox( v.Min, v.Max )
 		Debug3D.DrawText( center, k, "VideoInfoSmall" )
 
-		if ( !v.Teleports ) then continue end
+		if ( not v.Teleports ) then continue end
 
 		for _, tele in ipairs( v.Teleports ) do
 

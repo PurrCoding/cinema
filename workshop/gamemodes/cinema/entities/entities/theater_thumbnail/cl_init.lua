@@ -36,7 +36,7 @@ local AngleOffset = Angle(0,90,90)
 function ENT:DrawTranslucent()
 
 	-- Find attachment
-	if !self.Attach then
+	if not self.Attach then
 
 		local attachId = self:LookupAttachment("thumb3d2d")
 		self.Attach = self:GetAttachment(attachId)
@@ -105,7 +105,7 @@ function ENT:DrawText()
 	title = self:GetTitle()
 
 	-- Name has changed
-	if name != CurrentName then
+	if name ~= CurrentName then
 		CurrentName = name
 		TranslatedName = name
 		if name == 'Invalid' then
@@ -114,7 +114,7 @@ function ENT:DrawText()
 	end
 
 	-- Title has changed
-	if title != CurrentTitle then
+	if title ~= CurrentTitle then
 		CurrentTitle = title
 		TranslatedTitle = title
 		if title == 'NoVideoPlaying' then
@@ -152,7 +152,7 @@ function ENT:DrawThumbnail()
 	else -- Thumbnail is valid
 
 		-- URL has changed
-		if (!self.LastURL or self.LastURL != self:GetThumbnail()) then
+		if (not self.LastURL or self.LastURL ~= self:GetThumbnail()) then
 
 			if IsValid( self.HTML ) then
 				self:OnRemoveHTML()
@@ -162,9 +162,9 @@ function ENT:DrawThumbnail()
 			self.LastURL = self:GetThumbnail()
 			self.ThumbMat = nil
 
-		elseif self.LastURL and !self.ThumbMat then
+		elseif self.LastURL and not self.ThumbMat then
 
-			if !IsValid( self.HTML ) then
+			if not IsValid( self.HTML ) then
 
 				-- Create HTML panel to load thumbnail
 				self.HTML = vgui.Create( "Awesomium" )
@@ -178,7 +178,7 @@ function ENT:DrawThumbnail()
 				Msg(self:GetThumbnail())
 				Msg("\n")
 
-			elseif !self.HTML:IsLoading() and !self.JSDelay then
+			elseif not self.HTML:IsLoading() and not self.JSDelay then
 
 				-- Force thumbnail sizes
 				self.HTML:RunJavascript( [[
@@ -194,8 +194,8 @@ function ENT:DrawThumbnail()
 				-- Add delay to wait for JS to run
 				timer.Simple(0.1, function()
 
-					if !IsValid(self) then return end
-					if !IsValid(self.HTML) then return end
+					if not IsValid(self) then return end
+					if not IsValid(self.HTML) then return end
 
 					-- Grab HTML material
 					self.HTML:UpdateHTMLTexture()

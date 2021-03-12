@@ -67,7 +67,7 @@ function GM:PlayerNoClip( pl, on )
 end
 
 local meta = FindMetaTable( "Player" )
-if !meta then
+if not meta then
 	return
 end
 
@@ -82,7 +82,7 @@ function meta:GetTranslatedModel()
 	model = string.Replace( model, "models/humans/", "models/" )
 	model = string.Replace( model, "models/", "models/" )
 
-	/*if !string.find( model, "models/player/" ) then
+	/*if not string.find( model, "models/player/" ) then
 		model = string.Replace( model, "models/", "models/player/" )
 	end*/
 
@@ -92,7 +92,7 @@ end
 
 function meta:SetProperties( ent )
 
-	if !IsValid( ent ) then return end
+	if not IsValid( ent ) then return end
 
 	ent.GetPlayerColor = function() return self:GetPlayerColor() end
 	ent:SetMaterial( self:GetMaterial() )

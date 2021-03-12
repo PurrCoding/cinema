@@ -77,13 +77,13 @@ var theater = {
 		var player = this.getPlayer();
 
 		// player doesn't exist or is different video type
-		if ( (player === null) || (player.getType() != type) ) {
+		if ( (player === null) || (player.getType() ~= type) ) {
 
 			this.resetPlayer();
 			this.enablePlayer();
 
 			var playerObject = getPlayerByType( type );
-			if ( playerObject !== null ) {
+			if ( playerObject ~== null ) {
 				this.player = new playerObject();
 			} else {
 				this.getPlayerContainer().innerText = "Video type not yet implemented.";
@@ -92,7 +92,7 @@ var theater = {
 
 		}
 
-		this.player.setVolume( (this.volume !== null) ? this.volume : 25 );
+		this.player.setVolume( (this.volume ~== null) ? this.volume : 25 );
 		this.player.setStartTime( startTime || 0 );
 		this.player.setVideo( data );
 
@@ -100,7 +100,7 @@ var theater = {
 
 	setVolume: function( volume ) {
 		this.volume = volume;
-		if ( this.player !== null ) {
+		if ( this.player ~== null ) {
 			this.player.setVolume( volume );
 		}
 	},
@@ -124,10 +124,10 @@ var theater = {
 
 		if ( time === null ) return;
 
-		if ( this.player !== null ) {
+		if ( this.player ~== null ) {
 
 			var current = this.player.getCurrentTime();
-			if ( ( current !== null ) &&
+			if ( ( current ~== null ) &&
 				( Math.abs(time - current) > this.syncMaxDiff ) ) {
 				this.player.setStartTime( time );
 			}
@@ -137,7 +137,7 @@ var theater = {
 	},
 
 	toggleControls: function( enabled ) {
-		if ( this.player !== null ) {
+		if ( this.player ~== null ) {
 			this.player.toggleControls( enabled );
 		}
 	},
@@ -259,11 +259,11 @@ function registerPlayer( type, object ) {
 		};
 
 		this.seek = function( seconds ) {
-			if ( this.player !== null ) {
+			if ( this.player ~== null ) {
 				this.player.seekTo( seconds, true );
 
 				// Video isn't playing
-				if ( this.player.getPlayerState() != 1 ) {
+				if ( this.player.getPlayerState() ~= 1 ) {
 					this.player.playVideo();
 				}
 			}
@@ -277,37 +277,37 @@ function registerPlayer( type, object ) {
 			Player Specific Methods
 		*/
 		this.getCurrentTime = function() {
-			if ( this.player !== null ) {
+			if ( this.player ~== null ) {
 				return this.player.getCurrentTime();
 			}
 		};
 
 		this.canChangeTime = function() {
-			if ( this.player !== null ) {
+			if ( this.player ~== null ) {
 				//Is loaded and it is not buffering
-				return this.player.getVideoBytesTotal() != -1 &&
-				this.player.getPlayerState() != 3;
+				return this.player.getVideoBytesTotal() ~= -1 &&
+				this.player.getPlayerState() ~= 3;
 			}
 		};
 
 		this.think = function() {
 
-			if ( this.player !== null ) {
+			if ( this.player ~== null ) {
 
-				if ( this.videoId != this.lastVideoId ) {
+				if ( this.videoId ~= this.lastVideoId ) {
 					this.player.loadVideoById( this.videoId, this.startTime );
 					this.lastVideoId = this.videoId;
 					this.lastStartTime = this.startTime;
 				}
 
-				if ( this.player.getPlayerState() != -1 ) {
+				if ( this.player.getPlayerState() ~= -1 ) {
 
-					if ( this.startTime != this.lastStartTime ) {
+					if ( this.startTime ~= this.lastStartTime ) {
 						this.seek( this.startTime );
 						this.lastStartTime = this.startTime;
 					}
 
-					if ( this.volume != this.lastVolume ) {
+					if ( this.volume ~= this.lastVolume ) {
 						this.player.setVolume( this.volume );
 						this.lastVolume = this.volume;
 					}
@@ -377,9 +377,9 @@ function registerPlayer( type, object ) {
 		*/
 
 		this.think = function() {
-			if ( this.player !== null ) {
+			if ( this.player ~== null ) {
 
-				if ( this.videoId != this.lastVideoId ) {
+				if ( this.videoId ~= this.lastVideoId ) {
 					player.setChannel(this.videoId);
 					this.lastVideoId = this.videoId;
 					this.lastStartTime = this.startTime;
@@ -387,7 +387,7 @@ function registerPlayer( type, object ) {
 
 				if ( !player.isPaused() ) {
 
-					if ( this.volume != this.lastVolume ) {
+					if ( this.volume ~= this.lastVolume ) {
 						player.setVolume( this.volume / 100 );
 						this.lastVolume = this.volume;
 					}

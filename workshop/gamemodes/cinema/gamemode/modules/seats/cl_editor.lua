@@ -89,7 +89,7 @@ function Open()
 		node.ModelName = k
 		node.ModelPath = v
 
-		if !FirstNode then
+		if not FirstNode then
 			FirstNode = node
 		end
 	end
@@ -203,7 +203,7 @@ end
 
 	for _, seat in ipairs(ModelPanel.Seats) do
 
-		if IsValid(seat) && seat.Id == SeatNodes:GetSelectedItem().Id then
+		if IsValid(seat) and seat.Id == SeatNodes:GetSelectedItem().Id then
 			seat.Offset = {
 		end
 
@@ -285,10 +285,10 @@ function PANEL:SetModel( strModelName )
 	end
 
 	-- Note: Not in menu dll
-	if ( !ClientsideModel ) then return end
+	if ( not ClientsideModel ) then return end
 
 	self.Entity = ClientsideModel( strModelName, RENDER_GROUP_OPAQUE_ENTITY )
-	if ( !IsValid(self.Entity) ) then return end
+	if ( not IsValid(self.Entity) ) then return end
 
 	--self.Entity:SetNoDraw( true )
 end
@@ -299,7 +299,7 @@ end
 function PANEL:SetSeat(node)
 
 	-- Note: Not in menu dll
-	if ( !ClientsideModel ) then return end
+	if ( not ClientsideModel ) then return end
 
 	for _, seat in ipairs(self.Seats) do
 		if seat.Node == node then
@@ -317,7 +317,7 @@ end
 function PANEL:AddSeat(node)
 
 	-- Note: Not in menu dll
-	if ( !ClientsideModel ) then return end
+	if ( not ClientsideModel ) then return end
 
 	local seat = ClientsideModel( "models/player/kleiner.mdl", RENDER_GROUP_OPAQUE_ENTITY )
 	seat:ResetSequence(seat:LookupSequence( "sit" ))
@@ -335,8 +335,8 @@ end
 ---------------------------------------------------------*/
 function PANEL:Paint()
 
-	if ( !IsValid( self.Entity ) ) then return end
-	--if ( !IsValid( self.Seats ) ) then return end
+	if ( not IsValid( self.Entity ) ) then return end
+	--if ( not IsValid( self.Seats ) ) then return end
 
 	local x, y = self:LocalToScreen( 0, 0 )
 
@@ -347,14 +347,14 @@ function PANEL:Paint()
 
 		render.SuppressEngineLighting( true )
 		render.SetLightingOrigin( self.Entity:GetPos() )
-		render.ResetModelLighting( self.colAmbientLight.r/255, self.colAmbientLight.g/255, self.colAmbientLight.b/255 )
-		render.SetColorModulation( self.colColor.r/255, self.colColor.g/255, self.colColor.b/255 )
-		render.SetBlend( self.colColor.a/255 )
+		render.ResetModelLighting( self.colAmbientLight.r / 255, self.colAmbientLight.g / 255, self.colAmbientLight.b / 255 )
+		render.SetColorModulation( self.colColor.r / 255, self.colColor.g / 255, self.colColor.b / 255 )
+		render.SetBlend( self.colColor.a / 255 )
 
-		for i=0, 6 do
+		for i = 0, 6 do
 			local col = self.DirectionalLight[ i ]
 			if ( col ) then
-				render.SetModelLighting( i, col.r/255, col.g/255, col.b/255 )
+				render.SetModelLighting( i, col.r / 255, col.g / 255, col.b / 255 )
 			end
 		end
 
@@ -373,7 +373,7 @@ function PANEL:Paint()
 		end
 
 		for _, ent in ipairs(self.Seats) do
-			if IsValid(ent) && ent != seat then
+			if IsValid(ent) and ent ~= seat then
 				if ent.Pos then
 					ent:SetPos( ent.Pos - ent.Offset )
 				else
@@ -401,7 +401,7 @@ end
 function PANEL:RunAnimation()
 	for _, seat in ipairs(self.Seats) do
 		if IsValid(seat) then
-			seat:FrameAdvance( (RealTime()-self.LastPaint) * self.m_fAnimSpeed )
+			seat:FrameAdvance( (RealTime() - self.LastPaint) * self.m_fAnimSpeed )
 		end
 	end
 end

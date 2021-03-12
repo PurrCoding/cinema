@@ -48,15 +48,15 @@ end
 // the text will be centered at the position
 function DrawText( vecPos, strText, strFont, color, scale )
 
-	if ( !strFont ) then
+	if ( not strFont ) then
 		strFont = "Default"
 	end
 
-	if ( !color ) then
+	if ( not color ) then
 		color = Color( 255, 255, 255, 255 )
 	end
 
-	if ( !scale ) then
+	if ( not scale ) then
 		scale = 1
 	end
 

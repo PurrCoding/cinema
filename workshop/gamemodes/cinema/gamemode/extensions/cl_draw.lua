@@ -15,8 +15,8 @@ end
 
 function draw.HTMLTexture( panel, w, h )
 
-	if !panel or !IsValid(panel) then return end
-	if !w or !h then return end
+	if not panel or not IsValid(panel) then return end
+	if not w or not h then return end
 
 	panel:UpdateHTMLTexture()
 

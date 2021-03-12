@@ -44,10 +44,10 @@ function DrawActiveTheater( bDrawingDepth, bDrawingSkybox )
 
 	if theater.Fullscreen then return end -- Don't render twice
 
-	if !LastTheater then
+	if not LastTheater then
 
 		local Theater = LocalPlayer().GetTheater and LocalPlayer():GetTheater() or nil
-		if !Theater then
+		if not Theater then
 			LastTheater = nil
 			return
 		end
@@ -92,10 +92,10 @@ local panel
 function DrawVideoInfo( w, h, scale )
 
 	panel = ActivePanel()
-	if !IsValid(panel) then return end
+	if not IsValid(panel) then return end
 
 	local Video = CurrentVideo()
-	if !Video then return end
+	if not Video then return end
 
 	scale = scale and (1 / scale) * 0.1 or 1 -- scale for screen size fix
 
@@ -114,7 +114,7 @@ function DrawVideoInfo( w, h, scale )
 	surface.DrawRect(0, -2, w, 4)
 
 	-- Title
-	if LastTitle != T( Video:Title() ) or WasFullscreen != theater.Fullscreen then
+	if LastTitle ~= T( Video:Title() ) or WasFullscreen ~= theater.Fullscreen then
 		LastTitle = T( Video:Title() )
 		WasFullscreen = theater.Fullscreen
 		Title = string.reduce( LastTitle, "VideoInfoMedium", w )

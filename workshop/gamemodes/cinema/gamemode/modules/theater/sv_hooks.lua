@@ -9,7 +9,7 @@ function GM:PreVideoQueued( Video, Theater )
 	local ply = Video:GetOwner()
 
 	-- This shouldn't happen, but we'll check just in case
-	if !IsValid(ply) then return false end
+	if not IsValid(ply) then return false end
 
 	-- Disregard filtering admin requests
 	if ply:IsAdmin() then return true end
@@ -79,7 +79,7 @@ function GM:PrePlayerEnterTheater( ply, Theater )
 /*
 	Example VIP Implementation:
 
-	if Theater:IsPrivileged() and !ply:IsVIP() then
+	if Theater:IsPrivileged() and not ply:IsVIP() then
 
 		-- Respawn the player
 		ply:Spawn()
@@ -146,7 +146,7 @@ local function PlayerChangeTheater( ply, loc, old )
 
 		theater.PlayerLeave( ply, old )
 
-		if !Theater or !AllowedInTheater then
+		if not Theater or not AllowedInTheater then
 			ply:SetInTheater(false)
 		end
 

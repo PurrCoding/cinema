@@ -7,7 +7,7 @@ ENT.Type = "anim"
 -----------------------------------------------------------]]
 function ENT:KeyValue( key, value )
 
-	if !self.keyvalues then
+	if not self.keyvalues then
 		self.keyvalues = {}
 	end
 

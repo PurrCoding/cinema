@@ -67,7 +67,7 @@ function THEATERLIST:UpdateList()
 	end
 
 	for k, panel in pairs( self.Theaters ) do
-		if !table.HasValue(ids, k) then
+		if not table.HasValue(ids, k) then
 			self:RemoveTheater( k )
 		end
 	end
@@ -101,8 +101,8 @@ function THEATERLIST:PerformLayout()
 	end
 
 	local nameSort = function( a, b )
-		if !a.Panel or !a.Panel.TheaterId then return false end
-		if !b.Panel or !b.Panel.TheaterId then return true end
+		if not a.Panel or not a.Panel.TheaterId then return false end
+		if not b.Panel or not b.Panel.TheaterId then return true end
 		return string.lower( theater.GetNameByLocation(a.Panel.TheaterId) ) < string.lower( theater.GetNameByLocation(b.Panel.TheaterId) )
 	end
 	table.sort( TheatersSorted, nameSort )
@@ -125,7 +125,7 @@ function THEATERLIST:PerformLayout()
 	self.Title:SetTall( self.TitleHeight )
 	self.Title:CenterHorizontal()
 
-	if self.Title:GetWide() > self:GetWide() and self.Title:GetFont() != "ScoreboardTitleSmaller" then
+	if self.Title:GetWide() > self:GetWide() and self.Title:GetFont() ~= "ScoreboardTitleSmaller" then
 		self.Title:SetFont( "ScoreboardTitleSmaller" )
 	end
 
@@ -165,7 +165,7 @@ end
 function THEATER:Update()
 
 	local Theater = theater.GetByLocation(self.TheaterId)
-	if !Theater then return end
+	if not Theater then return end
 
 	self.Title:SetText( string.upper( Theater:Name() ) )
 	self.Time:SetText( Theater:VideoTime() )

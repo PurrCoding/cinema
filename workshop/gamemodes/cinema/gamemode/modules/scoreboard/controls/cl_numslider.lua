@@ -55,7 +55,7 @@ end
 ---------------------------------------------------------*/
 function PANEL:GetFloatValue( max )
 
-	if ( !self.m_fFloatValue ) then m_fFloatValue = 0 end
+	if ( not self.m_fFloatValue ) then m_fFloatValue = 0 end
 
 	return tonumber( self.m_fFloatValue ) or 0
 
@@ -76,7 +76,7 @@ function PANEL:SetValue( val )
 
 		val = Format( "%i", val )
 
-	elseif ( val != 0 ) then
+	elseif ( val ~= 0 ) then
 
 		val = Format( "%." .. self.m_iDecimals .. "f", val )
 
@@ -174,7 +174,7 @@ function PANEL:Think()
 
 	if self.ConVar then
 
-		if GetConVar( self.ConVar ):GetInt() != self.Value then
+		if GetConVar( self.ConVar ):GetInt() ~= self.Value then
 			self.Value = GetConVar( self.ConVar ):GetInt()
 			self.Slider:SetSlideX( self:GetFraction() )
 		end

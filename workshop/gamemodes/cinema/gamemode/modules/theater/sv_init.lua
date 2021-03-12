@@ -19,13 +19,13 @@ function Initialize()
 	end
 
 	-- Make sure we can depends on the Location module
-	if !Location then
+	if not Location then
 		return Error("Location module not found! Theaters can't be initialized.\n")
 	end
 
 	-- Get the map locations
 	local locations = Location.GetLocations()
-	if !locations then return end
+	if not locations then return end
 
 	for name, loc in pairs(locations) do
 		GetByLocation( loc.Index, true )
@@ -38,7 +38,7 @@ hook.Add( "OnReloaded", "ReInitTheaters", Initialize )
 function PlayerJoin( ply, locId )
 
 	local Theater = GetByLocation(locId, true)
-	if !Theater then return end
+	if not Theater then return end
 
 	Theater:AddPlayer(ply)
 
@@ -46,12 +46,12 @@ end
 
 function PlayerLeave( ply, locId )
 
-	if !locId then
+	if not locId then
 		locId = ply:GetLocation()
 	end
 
 	local Theater = GetByLocation(locId)
-	if !Theater then return end
+	if not Theater then return end
 
 	Theater:RemovePlayer(ply)
 
@@ -60,10 +60,10 @@ hook.Add( "PlayerDisconnected", "TheaterDisconnected", PlayerLeave )
 
 function RequestTheaterInfo( ply, force )
 
-	if !IsValid(ply) then return end
+	if not IsValid(ply) then return end
 
 	-- Prevent spamming requests
-	if !force and ply.LastTheaterRequest and ply.LastTheaterRequest + 1 > CurTime() then
+	if not force and ply.LastTheaterRequest and ply.LastTheaterRequest + 1 > CurTime() then
 		return
 	end
 
@@ -73,7 +73,7 @@ function RequestTheaterInfo( ply, force )
 	for _, Theater in pairs( GetTheaters() ) do
 
 		-- Theater is set to not broadcast
-		if !Theater:IsReplicated() and Theater != ply:GetTheater() then
+		if not Theater:IsReplicated() and Theater ~= ply:GetTheater() then
 			continue
 		end
 
@@ -150,7 +150,7 @@ end)
 
 function GetVideoInfo( data, Type, onSuccess, onFailure )
 
-	if !data or !Type then return end
+	if not data or not Type then return end
 
 	local service = Services[ Type ]
 	if service then
