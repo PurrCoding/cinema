@@ -242,7 +242,6 @@ function registerPlayer( type, object ) {
 				height: '100%',
 				width: '100%',
 				videoId: id,
-                wmode: 'transparent',
                 host: 'https://www.youtube-nocookie.com', //GDPR Friendly
 				playerVars: {
 					autoplay: 1,
@@ -251,7 +250,6 @@ function registerPlayer( type, object ) {
                     modestbranding: 1,
                     disablekb: 0,
                     rel: 0,
-                    wmode: 'transparent',
                     origin: location.origin,
 					iv_load_policy: 3, // hide annotations
 					cc_load_policy: theater.closedCaptions ? 1 : 0
