@@ -1,3 +1,10 @@
+local table_sort = table.sort
+local math_Clamp = math.Clamp
+local surface_DrawTexturedRect = surface.DrawTexturedRect
+local surface_SetDrawColor = surface.SetDrawColor
+local surface_DrawRect = surface.DrawRect
+local surface_SetMaterial = surface.SetMaterial
+
 function RequestVideoURL( url )
 
 	if IsValid( RequestPanel ) then
@@ -20,7 +27,7 @@ function PANEL:Init()
 
 	self:SetFocusTopLevel( true )
 
-	local w = math.Clamp( ScrW() - 100, 800, 1152 + self.HistoryWidth )
+	local w = math_Clamp( ScrW() - 100, 800, 1152 + self.HistoryWidth )
 	local h = ScrH()
 	if h > 800 then
 		h = h * 3 / 4
@@ -39,12 +46,12 @@ function PANEL:Init()
 	end
 	self.CloseButton.Paint = function( panel, w, h )
 		DisableClipping( true )
-		surface.SetDrawColor( 48, 55, 71 )
-		surface.DrawRect( 2, 2, w - 4, h - 4 )
+		surface_SetDrawColor( 48, 55, 71 )
+		surface_DrawRect( 2, 2, w - 4, h - 4 )
 
-		surface.SetDrawColor( 26, 30, 38 )
-		surface.SetMaterial( CloseTexture )
-		surface.DrawTexturedRect( 0, 0, w, h )
+		surface_SetDrawColor( 26, 30, 38 )
+		surface_SetMaterial( CloseTexture )
+		surface_DrawTexturedRect( 0, 0, w, h )
 
 		DisableClipping( false )
 	end
@@ -132,26 +139,26 @@ function HISTORY:Init()
 	self.Title:SetColor( Color( 255, 255, 255 ) )
 	self.Title:SetContentAlignment(5)
 
-	self.SearchZone = vgui.Create( "DPanel", self )
-	self.SearchZone:DockMargin(4,4,4,4)
-	self.SearchZone:SetPaintBackground(false)
+	self.SearchFrame = vgui.Create( "DPanel", self )
+	self.SearchFrame:DockMargin(4,4,4,4)
+	self.SearchFrame:SetPaintBackground(false)
 
-	self.SearchBar = vgui.Create( "DTextEntry", self.SearchZone )
-	self.SearchBar:DockMargin(0,0,10,0)
-	self.SearchBar:SetValue( "Search.." )
-	self.SearchBar:SetUpdateOnType(true)
-	self.SearchBar.OnEnter = function(pnl)
+	self.SearchField = vgui.Create( "DTextEntry", self.SearchFrame )
+	self.SearchField:DockMargin(0,0,10,0)
+	self.SearchField:SetValue( "Search.." )
+	self.SearchField:SetUpdateOnType(true)
+	self.SearchField.OnEnter = function(pnl)
 		self.History = nil -- Clear History table on Enter
 
 		local text = pnl:GetValue()
 		self:Search(text)
 	end
-	self.SearchBar.OnGetFocus = function(pnl)
-		pnl:SetValue("")
+	self.SearchField.ddd = function(pnl)
+		pnl:SetValue()
 	end
 
 	-- Page Forward
-	self.PagerRight = vgui.Create( "DButton", self.SearchZone )
+	self.PagerRight = vgui.Create( "DButton", self.SearchFrame )
 	self.PagerRight:SetText( "" )
 	self.PagerRight:SetTooltip( "Next Page" )
 	self.PagerRight:SetMaterial(arrowRight)
@@ -166,7 +173,7 @@ function HISTORY:Init()
 	end
 
 	-- Page Backward
-	self.PagerLeft = vgui.Create( "DButton", self.SearchZone )
+	self.PagerLeft = vgui.Create( "DButton", self.SearchFrame )
 	self.PagerLeft:SetText( "" )
 	self.PagerLeft:SetTooltip( "Previous Page" )
 	self.PagerLeft:SetMaterial(arrowLeft)
@@ -181,14 +188,14 @@ function HISTORY:Init()
 	end
 
 	-- Page Info
-	self.PagerInfo = Label( "Page: 0/0", self.SearchZone )
+	self.PagerInfo = Label( "Page: 0/0", self.SearchFrame )
 	self.PagerInfo:SetColor( Color( 255, 255, 255 ) )
 	self.PagerInfo.UpdateText = function(child, curPage, totalPage)
 		child:SetText(("Page: %d/%d"):format(curPage, totalPage))
 	end
 
 	-- Clear Button
-	self.ClearButton = vgui.Create( "DButton", self.SearchZone )
+	self.ClearButton = vgui.Create( "DButton", self.SearchFrame )
 	self.ClearButton:SetText( "" )
 	self.ClearButton:SetTooltip( "Clear History" )
 	self.ClearButton:SetMaterial(binempty)
@@ -196,7 +203,7 @@ function HISTORY:Init()
 	self.ClearButton:SetSize( 20, 16 )
 	self.ClearButton:DockMargin(0,0,15,0)
 	self.ClearButton.DoClick = function()
-		local queryPnl = Derma_Query("Are you sure you want to clear your history?", "Info",
+		local queryPnl = Derma_Query("Woah, hold on!\nYou are about to delete all your history, do you really want to do that?", "Info",
 			"Yes", function()
 				theater.ClearRequestHistory()
 				self.VideoList:Clear(true)
@@ -205,7 +212,7 @@ function HISTORY:Init()
 		)
 
 		function queryPnl:Paint( w, h )
-			draw.RoundedBox( 8, 0, 0, w, h, Color( 40, 40, 40, 235 ) )
+			draw.RoundedBox( 8, 0, 0, w, h, Color( 146, 146, 146, 230) )
 		end
 	end
 
@@ -227,7 +234,7 @@ function HISTORY:Search(filter)
 
 		-- Get History from SQL and Sort by Request time
 		local raw_history = theater.GetRequestHistory(filter)
-		table.sort( raw_history, function( a, b )
+		table_sort( raw_history, function( a, b )
 
 			if not a then return false end
 			if not b then return true end
@@ -302,17 +309,17 @@ local Background = Material( "theater/banner.png" )
 function HISTORY:Paint( w, h )
 
 	-- Background
-	surface.SetDrawColor( 26, 30, 38, 255 )
-	surface.DrawRect( 0, 0, self:GetWide(), self:GetTall() )
+	surface_SetDrawColor( 26, 30, 38, 255 )
+	surface_DrawRect( 0, 0, self:GetWide(), self:GetTall() )
 
 	-- Title
-	surface.SetDrawColor( 141, 38, 33, 255 )
-	surface.DrawRect( 0, 0, self:GetWide(), self.Title:GetTall() )
+	surface_SetDrawColor( 141, 38, 33, 255 )
+	surface_DrawRect( 0, 0, self:GetWide(), self.Title:GetTall() )
 
 	-- Title Background
-	surface.SetDrawColor( 255, 255, 255, 255 )
+	surface_SetDrawColor( 255, 255, 255, 255 )
 	surface.SetMaterial( Background )
-	surface.DrawTexturedRect( 0, -1, 512, self.Title:GetTall() + 1 )
+	surface_DrawTexturedRect( 0, -1, 512, self.Title:GetTall() + 1 )
 
 
 end
@@ -322,10 +329,10 @@ function HISTORY:PerformLayout()
 	self.Title:SetTall( self.TitleHeight )
 	self.Title:Dock(TOP)
 
-	self.SearchZone:SetTall(20)
-	self.SearchZone:Dock(TOP)
+	self.SearchFrame:SetTall(20)
+	self.SearchFrame:Dock(TOP)
 
-	self.SearchBar:Dock(FILL)
+	self.SearchField:Dock(FILL)
 
 	self.ClearButton:Dock(RIGHT)
 	self.PagerInfo:Dock(RIGHT)
@@ -416,7 +423,7 @@ end
 function VIDEO:PerformLayout()
 
 	self.Title:SizeToContents()
-	local w = math.Clamp(self.Title:GetWide(), 0, 224)
+	local w = math_Clamp(self.Title:GetWide(), 0, 224)
 	self.Title:SetSize(w, self.Title:GetTall())
 
 	self.Title:AlignTop( -2 )
@@ -441,8 +448,8 @@ end
 
 function VIDEO:Paint( w, h )
 
-	surface.SetDrawColor( 38, 41, 49, 255 )
-	surface.DrawRect( 0, 0, self:GetSize() )
+	surface_SetDrawColor( 38, 41, 49, 255 )
+	surface_DrawRect( 0, 0, self:GetSize() )
 
 end
 
