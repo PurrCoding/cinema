@@ -155,19 +155,7 @@ var theater = {
 		return this.closedCaptions;
 	}
 
-	/*clickPlayerCenter: function() {
-		var evt = document.createEvent("MouseEvents");
-
-		var player = document.getElementById("player");
-
-		var w = player.clientWidth / 2,
-			h = player.clientHeight / 2;
-
-		evt.initMouseEvent("click", true, true, window,
-			0, 0, 0, w, h, false, false, false, false, 0, null);
-
-		this.getPlayer().dispatchEvent(evt);
-	},
+	/*
 
 	setLanguage: function( language ) {
 		this.language = language;
