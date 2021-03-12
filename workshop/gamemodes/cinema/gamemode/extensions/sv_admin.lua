@@ -24,39 +24,6 @@ hook.Add( "PlayerInitialSpawn", "AuthAdmin", function( ply )
 
 end )
 
-concommand.Add( "cinema_runlua", function( ply, cmd, args )
-
-	if !ply:IsSuperAdmin() then return end
-
-	local lua = table.concat( args, " " )
-
-	RunString( "function CinemaRunLua() end" ) // clear out the last function, incase the new code is invalid
-	RunString( "function CinemaRunLua() " .. lua .. " end " )
-
-	status, err = pcall( CinemaRunLua )
-
-	if !status then
-		ply:PrintMessage( HUD_PRINTCONSOLE, "Lua error: " .. err .. "\n" )
-	end
-
-end )
-
-concommand.Add( "cinema_rcon", function( ply, cmd, args )
-
-	if !ply:IsSuperAdmin() then return end
-
-	if #args == 0 then
-		ply:PrintMessage( HUD_PRINTCONSOLE, "No commands specified.\n" )
-		return
-	end
-
-	local cmd = args[ 1 ]
-	local args = table.concat( args, " ", 2 )
-
-	RunConsoleCommand( cmd, args )
-
-end )
-
 concommand.Add( "cinema_changelevel", function( ply, cmd, args )
 
 	if ply == NULL or ply:IsSuperAdmin() then
