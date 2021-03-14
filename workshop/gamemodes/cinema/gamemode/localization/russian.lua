@@ -91,4 +91,4 @@ LANG.Service_PurchasableContent = "Данное видео имеет запре
 LANG.Service_StreamOffline 		= "Запрашиваемый стрим не в сети."
 
 -- Version 1.1
-LANG.TranslationsCredit = "Перевод запилил %s"
+LANG.TranslationsCredit = "Перевод запилили: %s"
