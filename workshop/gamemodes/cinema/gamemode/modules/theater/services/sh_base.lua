@@ -71,7 +71,7 @@ if CLIENT then
 		local theaterUrl = GetConVar( "cinema_url" ):GetString()
 
 		if self.LoadPlayer then
-			panel:OpenURL( Video:Data() )
+			self:LoadPlayer( Video, panel )
 		elseif panel:GetURL() ~= theaterUrl then
 			panel:OpenURL( theaterUrl )
 		end
