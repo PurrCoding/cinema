@@ -228,7 +228,7 @@ function PANEL:ConsoleMessage( msg, func )
 	if ( not isstring( msg ) ) then msg = "*js variable*" end
 
 	if ( msg:StartWith( "INTERFACE_START" ) ) then
-		theater.startController()
+		timer.Simple(.15, theater.startController)
 		return
 	end
 
