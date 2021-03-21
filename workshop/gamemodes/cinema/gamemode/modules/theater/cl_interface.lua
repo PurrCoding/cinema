@@ -42,5 +42,10 @@ function startController()
     local panel = ActivePanel()
     if IsValid(panel) then
         panel:QueueJavascript(THEATER_INTERFACE)
+
+        -- Run it on the next Think
+        timer.Simple(0, function()
+            SetVolume( GetVolume() )
+        end)
     end
 end
