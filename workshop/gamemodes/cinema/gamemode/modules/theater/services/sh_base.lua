@@ -70,25 +70,11 @@ if CLIENT then
 
 		local theaterUrl = GetConVar( "cinema_url" ):GetString()
 
-		if Video:Type() == "url" then
-			panel:OpenURL( Video:Data() )
+		if self.LoadPlayer then
+			self:LoadPlayer( Video, panel )
 		elseif panel:GetURL() ~= theaterUrl then
 			panel:OpenURL( theaterUrl )
 		end
-
-		local startTime = CurTime() - Video:StartTime()
-
-		-- Set the volume before playing anything
-		local str = string.format(
-			"if (window.theater) theater.setVolume(%s)", theater.GetVolume() )
-		panel:QueueJavascript( str )
-
-		-- Let the webpage handle loading a video
-		str = string.format( "if (window.theater) theater.loadVideo( '%s', '%s', %s );",
-			Video:Type(), string.JavascriptSafe(Video:Data()), startTime )
-
-		panel:QueueJavascript( str )
-
 	end
 
 end

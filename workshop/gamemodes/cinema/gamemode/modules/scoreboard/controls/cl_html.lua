@@ -227,6 +227,11 @@ function PANEL:ConsoleMessage( msg, func )
 
 	if ( not isstring( msg ) ) then msg = "*js variable*" end
 
+	if ( msg:StartWith( "INTERFACE_START" ) ) then
+		timer.Simple(.15, theater.startController)
+		return
+	end
+
 	-- Filter messages output to the console
 	-- 'console.gmod' always gets output
 	local filterLevel = FilterCVar:GetInt()
