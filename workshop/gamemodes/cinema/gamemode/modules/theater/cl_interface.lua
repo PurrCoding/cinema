@@ -44,7 +44,7 @@ function startController()
         panel:QueueJavascript(THEATER_INTERFACE)
 
         -- Run it on the next Think
-        timer.Simple(0, function()
+        timer.Simple(0.1, function()
             SetVolume( GetVolume() )
         end)
     end
