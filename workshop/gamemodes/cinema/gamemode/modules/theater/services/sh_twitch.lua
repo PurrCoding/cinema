@@ -59,7 +59,7 @@ if CLIENT then
 				console.log("INTERFACE_START");
 			}
 		}
-		var checkerInterval = setInterval(check, 250);
+		var checkerInterval = setInterval(check, 100);
 	]]
 
 	function SERVICE:LoadPlayer( Video, panel )
