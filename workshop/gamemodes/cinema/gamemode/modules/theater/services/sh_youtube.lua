@@ -253,7 +253,9 @@ SERVICE.IsTimed 	= false
 ]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
--- Implementation is found in 'youtube' service.
 -- GetVideoInfo switches to 'youtubelive'
+if (CLIENT) then -- Take the Implementation from 'youtube' service.
+	SERVICE.LoadPlayer = theater.Services["youtube"].LoadPlayer
+end
 
 theater.RegisterService( 'youtubelive', SERVICE )
