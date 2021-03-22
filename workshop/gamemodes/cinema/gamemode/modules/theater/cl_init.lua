@@ -62,6 +62,22 @@ function RegisterPanel( Theater )
 
 	Msg("AWESOMIUM: Initialized instance for theater screen\n")
 
+	timer.Simple(0.5, function()
+		if IsValid(panel) then
+			local js = string.format(
+				"if(window.theater) theater.setVolume(%s);", GetVolume() )
+			panel:QueueJavascript(js)
+
+			if GetConVar("cinema_hd"):GetBool() then
+				panel:QueueJavascript( "if(window.theater) theater.enableHD();" )
+			end
+
+			if GetConVar("cinema_cc"):GetBool() then
+				panel:QueueJavascript( "if(window.theater) theater.enableCC();" )
+			end
+		end
+	end)
+
 	Panels[ Theater:GetLocation() ] = panel
 	LastPanel = panel
 

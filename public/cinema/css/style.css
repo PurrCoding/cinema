@@ -100,3 +100,22 @@ body {
 	text-align: center;
 	line-height: 22pt;
 }
+
+.info.warning {
+	color: red;
+	font-weight: bold;
+	font-style: italic;
+	font-size: 22pt;
+	line-height: 32pt;
+}
+
+#player-container, #player {
+	width: 100%;
+	height: 100%;
+}
+
+#player-container {
+	background: black;
+	overflow: hidden;
+	display: none;
+}

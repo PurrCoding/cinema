@@ -9,30 +9,9 @@ SERVICE.Name 	= "YouTube"
 SERVICE.IsTimed = true
 
 local METADATA_URL = "https://www.youtube.com/watch?v=%s"
-local PLAYER_PATH = "%sservices/youtube.html?v=%s&t=%s"
 
 function SERVICE:Match( url )
 	return string.match( url.host, "youtu.?be[.com]?" )
-end
-
-if CLIENT then
-
-	function SERVICE:LoadPlayer( Video, panel )
-
-		local theaterUrl = GetConVar( "cinema_url" ):GetString()
-		local startTime = math.ceil(math.max(CurTime() - Video:StartTime(), 0))
-		local url = PLAYER_PATH:format(
-			theaterUrl,
-			Video:Data(),
-			startTime
-		)
-
-		local panel = theater.ActivePanel()
-		panel:Stop()
-		panel:OpenURL( url )
-
-	end
-
 end
 
 ---
@@ -253,9 +232,7 @@ SERVICE.IsTimed 	= false
 ]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
+-- Implementation is found in 'youtube' service.
 -- GetVideoInfo switches to 'youtubelive'
-if (CLIENT) then -- Take the Implementation from 'youtube' service.
-	SERVICE.LoadPlayer = theater.Services["youtube"].LoadPlayer
-end
 
 theater.RegisterService( 'youtubelive', SERVICE )
