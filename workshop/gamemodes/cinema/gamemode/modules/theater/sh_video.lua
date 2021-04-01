@@ -221,7 +221,7 @@ if SERVER then
 				end, loadFailure)
 
 				-- Something went wrong while grabbing the video info
-				if status then
+				if not status then
 					callback(false)
 				end
 
