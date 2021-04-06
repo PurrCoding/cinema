@@ -282,14 +282,6 @@ function registerPlayer( type, object ) {
 			}
 		};
 
-		this.canChangeTime = function() {
-			if ( this.player !== null ) {
-				//Is loaded and it is not buffering
-				return this.player.getVideoBytesTotal() != -1 &&
-				this.player.getPlayerState() != 3;
-			}
-		};
-
 		this.think = function() {
 
 			if ( this.player !== null ) {
@@ -408,6 +400,110 @@ function registerPlayer( type, object ) {
 
 	};
 	registerPlayer( "twitchstream", TwitchStreamVideo );
+
+
+	var FileVideo = function() {
+
+		/*
+			Embed Player Object
+		*/
+		var player;
+
+		/*
+			Standard Player Methods
+		*/
+		this.setVideo = function( id ) {
+			this.lastStartTime = null;
+			this.lastVideoId = null;
+			this.videoId = id;
+
+			if (player) { return; }
+
+			this.element = document.getElementById('player');
+			player = document.createElement("video");
+			player.autoplay = true;
+			player.src = id;
+
+			player.style.width = "100%";
+			player.style.height = "100%";
+
+			this.element.appendChild(player);
+
+			var self = this; // Why...
+			player.onloadedmetadata = function() {
+				self.onReady()
+			}; 
+		}
+
+		this.setVolume = function( volume ) {
+			this.lastVolume = null;
+			this.volume = volume;
+		};
+
+		this.setStartTime = function( seconds ) {
+			this.lastStartTime = null;
+			this.startTime = seconds;
+		};
+
+		this.seek = function( seconds ) {
+			if ( this.player !== null ) {
+				this.player.currentTime = seconds;
+
+				// Video isn't playing
+				if ( this.player.paused ) {
+					this.player.play();
+				}
+			}
+		};
+
+		this.onRemove = function() {
+			clearInterval( this.interval );
+		};
+
+		/*
+			Player Specific Methods
+		*/
+		this.getCurrentTime = function() {
+			if ( this.player !== null ) {
+				return this.player.currentTime;
+			}
+		};
+
+		this.think = function() {
+
+			if ( this.player !== null ) {
+
+				if ( this.videoId != this.lastVideoId ) {
+					this.player.src = this.videoId + "#t=" + this.startTime
+					this.lastVideoId = this.videoId;
+					this.lastStartTime = this.startTime;
+				}
+
+				if ( !this.player.paused ) {
+
+					if ( this.startTime != this.lastStartTime ) {
+						this.player.currentTime = this.startTime;
+						this.lastStartTime = this.startTime;
+					}
+
+					if ( this.volume != this.lastVolume ) {
+						this.player.volume = this.volume / 100 ;
+						this.lastVolume = this.volume;
+					}
+
+				}
+			}
+
+		};
+
+		this.onReady = function() {
+			this.player = player;
+
+			this.interval = setInterval( this.think.bind(this), 100 );
+		};
+
+	};
+	registerPlayer( "archive", FileVideo );
 
 })();
 
