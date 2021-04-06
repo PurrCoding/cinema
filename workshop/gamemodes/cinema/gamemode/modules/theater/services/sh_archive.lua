@@ -41,7 +41,6 @@ if (CLIENT) then
 		local identifier, file = Data[1], ( Data[2] and Data[2] or nil )
 
 		local url = DOWNLOAD_URL:format(identifier, Video:Title() )
-		print(url)
 		local str = string.format( "if (window.theater) theater.loadVideo( '%s', '%s', %s );",
 		Video:Type(), string.JavascriptSafe(url), startTime )
 
