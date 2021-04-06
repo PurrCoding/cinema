@@ -52,7 +52,7 @@ function SERVICE:GetURLInfo( url )
 	if url.path then
 		local identifier = url.path:match("^/details/([%w%-%._]+)")
 		if identifier then
-			local file = ("^/details/%s/([%%w%%-%%.%%/%%+_]+)"):format(identifier)
+			local file = ("^/details/%s/([%%w%%-%%.%%/%%+%%&_]+)"):format(identifier)
 			file = url.path:match(file)
 
 			return { Data = ("%s%s"):format(identifier, file and "," .. file or "") }
@@ -119,7 +119,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 			end
 		end
 
-		thumbnail = self:GetThumbnail(response, file or name)
+		thumbnail = self:GetThumbnail(response, file or name) or self.PlaceholderThumb
 
 		if not name or not duration or not thumbnail then -- Do we have everything that we want?
 			return onFailure( "Theater_RequestFailed" )
