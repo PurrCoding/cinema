@@ -2,6 +2,7 @@ local SERVICE = {}
 
 SERVICE.Name 		= "Base"
 SERVICE.IsTimed 	= true
+SERVICE.PlaceholderThumb = "https://cataas.com/cat?width=1280&height=720"
 
 function SERVICE:GetName()
 	return self.Name
