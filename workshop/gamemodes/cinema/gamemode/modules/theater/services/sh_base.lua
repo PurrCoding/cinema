@@ -83,12 +83,16 @@ if CLIENT then
 			"if (window.theater) theater.setVolume(%s)", theater.GetVolume() )
 		panel:QueueJavascript( str )
 
-		-- Let the webpage handle loading a video
-		str = string.format( "if (window.theater) theater.loadVideo( '%s', '%s', %s );",
-			Video:Type(), string.JavascriptSafe(Video:Data()), startTime )
 
-		panel:QueueJavascript( str )
+		if self.PreLoadVideo then
+			self:PreLoadVideo(Video, panel)
+		else
+			-- Let the webpage handle loading a video
+			str = string.format( "if (window.theater) theater.loadVideo( '%s', '%s', %s );",
+				Video:Type(), string.JavascriptSafe(Video:Data()), startTime )
 
+			panel:QueueJavascript( str )
+		end
 	end
 
 end
