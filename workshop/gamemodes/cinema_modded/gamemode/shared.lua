@@ -5,11 +5,11 @@ GM.Website 		= "www.pixeltailgames.com"
 GM.Version 		= "1.2"
 GM.TeamBased 	= false
 
-include( 'sh_load.lua' )
+include( "sh_load.lua" )
 
-include( 'player_shd.lua' )
-include( 'player_class/player_lobby.lua' )
-include( 'translations.lua' )
+include( "player_shd.lua" )
+include( "player_class/player_lobby.lua" )
+include( "translations.lua" )
 
 Loader.Load( "extensions" )
 Loader.Load( "modules" )
