@@ -1,7 +1,7 @@
 "Gamemode"
 {
 	"base"			"base"
-	"title"			"Cinema"
+	"title"			"Cinema (Fixed Edition)"
 	"menusystem" 	"1"
 	"maps" 			"theater|theater_|cinema_"
 	"category"	"other"
