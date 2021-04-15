@@ -34,7 +34,7 @@ InfoScale = 1
 w = 0
 h = 0
 
-local LoadingStr = T"Loading"
+local LoadingStr = T("Loading")
 
 function DrawActiveTheater( bDrawingDepth, bDrawingSkybox )
 
