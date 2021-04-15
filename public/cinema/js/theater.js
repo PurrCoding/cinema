@@ -1,4 +1,4 @@
-window.open = function() { return null; }; // prevent popups
+window.open = function () { return null; }; // prevent popups
 
 var theater = {
 
@@ -13,31 +13,31 @@ var theater = {
 	volume: 25,
 	syncMaxDiff: 5,
 
-	getPlayerContainer: function() {
-		if ( this.playerContainer === null ) {
+	getPlayerContainer: function () {
+		if (this.playerContainer === null) {
 			this.playerContainer = document.getElementById('player-container') ||
 				document.createElement('div');
 		}
 		return this.playerContainer;
 	},
 
-	getPlayerContent: function() {
-		if ( this.playerContent === null ) {
+	getPlayerContent: function () {
+		if (this.playerContent === null) {
 			this.playerContent = document.getElementById('content') ||
 				document.createElement('div');
 		}
 		return this.playerContent;
 	},
 
-	resetPlayer: function() {
-		if ( this.player ) {
+	resetPlayer: function () {
+		if (this.player) {
 			this.player.onRemove();
 			delete this.player;
 		}
 		this.getPlayerContainer().innerHTML = "<div id='player'></div>";
 	},
 
-	enablePlayer: function() {
+	enablePlayer: function () {
 		// Show player
 		var player = this.getPlayerContainer();
 		player.style.display = "block";
@@ -47,7 +47,7 @@ var theater = {
 		content.style.display = "none";
 	},
 
-	disablePlayer: function() {
+	disablePlayer: function () {
 		// Hide player
 		var player = this.getPlayerContainer();
 		player.style.display = "none";
@@ -59,31 +59,31 @@ var theater = {
 		content.style.display = "block";
 	},
 
-	getPlayer: function() {
+	getPlayer: function () {
 		return this.player;
 	},
 
-	loadVideo: function( type, data, startTime ) {
+	loadVideo: function (type, data, startTime) {
 
-		if ( ( type === null ) || ( data === null ) ) return;
-		
-		if ( type === "" ) {
+		if ((type === null) || (data === null)) return;
+
+		if (type === "") {
 			this.disablePlayer();
 			return;
 		}
 
-		startTime = Math.max( 0, startTime );
+		startTime = Math.max(0, startTime);
 
 		var player = this.getPlayer();
 
 		// player doesn't exist or is different video type
-		if ( (player === null) || (player.getType() != type) ) {
+		if ((player === null) || (player.getType() != type)) {
 
 			this.resetPlayer();
 			this.enablePlayer();
 
-			var playerObject = getPlayerByType( type );
-			if ( playerObject !== null ) {
+			var playerObject = getPlayerByType(type);
+			if (playerObject !== null) {
 				this.player = new playerObject();
 			} else {
 				this.getPlayerContainer().innerText = "Video type not yet implemented.";
@@ -92,53 +92,53 @@ var theater = {
 
 		}
 
-		this.player.setVolume( (this.volume !== null) ? this.volume : 25 );
-		this.player.setStartTime( startTime || 0 );
-		this.player.setVideo( data );
+		this.player.setVolume((this.volume !== null) ? this.volume : 25);
+		this.player.setStartTime(startTime || 0);
+		this.player.setVideo(data);
 
 	},
 
-	setVolume: function( volume ) {
+	setVolume: function (volume) {
 		this.volume = volume;
-		if ( this.player !== null ) {
-			this.player.setVolume( volume );
+		if (this.player !== null) {
+			this.player.setVolume(volume);
 		}
 	},
 
-	seek: function( seconds ) {
+	seek: function (seconds) {
 		var player = this.getPlayer();
-		if ( player ) {
-			player.seek( seconds );
+		if (player) {
+			player.seek(seconds);
 		}
 	},
 
-	enableHD: function() {
+	enableHD: function () {
 		this.hdPlayback = true;
 	},
 
-	isHDEnabled: function() {
+	isHDEnabled: function () {
 		return this.hdPlayback;
 	},
 
-	sync: function( time ) {
+	sync: function (time) {
 
-		if ( time === null ) return;
+		if (time === null) return;
 
-		if ( this.player !== null ) {
+		if (this.player !== null) {
 
 			var current = this.player.getCurrentTime();
-			if ( ( current !== null ) &&
-				( Math.abs(time - current) > this.syncMaxDiff ) ) {
-				this.player.setStartTime( time );
+			if ((current !== null) &&
+				(Math.abs(time - current) > this.syncMaxDiff)) {
+				this.player.setStartTime(time);
 			}
 
 		}
 
 	},
 
-	toggleControls: function( enabled ) {
-		if ( this.player !== null ) {
-			this.player.toggleControls( enabled );
+	toggleControls: function (enabled) {
+		if (this.player !== null) {
+			this.player.toggleControls(enabled);
 		}
 	},
 
@@ -146,12 +146,12 @@ var theater = {
 		Google Chromeless player doesn't support closed captions...
 		http://code.google.com/p/gdata-issues/issues/detail?id=444
 	*/
-	
-	enableCC: function() {
+
+	enableCC: function () {
 		this.closedCaptions = true;
 	},
 
-	isCCEnabled: function() {
+	isCCEnabled: function () {
 		return this.closedCaptions;
 	}
 
@@ -167,11 +167,11 @@ var theater = {
 
 var players = [];
 
-function getPlayerByType( type ) {
-	return players[ type ];
+function getPlayerByType(type) {
+	return players[type];
 }
 
-var DefaultVideo = function() {};
+var DefaultVideo = function () { };
 DefaultVideo.prototype = {
 	player: null,
 
@@ -183,33 +183,33 @@ DefaultVideo.prototype = {
 
 	currentTime: 0,
 
-	getCurrentTime: function() {
+	getCurrentTime: function () {
 		return null;
 	},
 
 	lastStartTime: 0,
 	startTime: 0,
 
-	setVolume: function( volume ) {},
-	setStartTime: function( seconds ) {},
-	seek: function( seconds ) {},
-	onRemove: function() {},
-	toggleControls: function() {}
+	setVolume: function (volume) { },
+	setStartTime: function (seconds) { },
+	seek: function (seconds) { },
+	onRemove: function () { },
+	toggleControls: function () { }
 };
 
-function registerPlayer( type, object ) {
+function registerPlayer(type, object) {
 	object.prototype = new DefaultVideo();
 	object.prototype.type = type;
-	object.prototype.getType = function() {
+	object.prototype.getType = function () {
 		return this.type;
 	};
 
-	players[ type ] = object;
+	players[type] = object;
 }
 
-(function() {
+(function () {
 
-	var YouTubeVideo = function() {
+	var YouTubeVideo = function () {
 
 		/*
 			Embed Player Object
@@ -219,7 +219,7 @@ function registerPlayer( type, object ) {
 		/*
 			Standard Player Methods
 		*/
-		this.setVideo = function( id ) {
+		this.setVideo = function (id) {
 			this.lastStartTime = null;
 			this.lastVideoId = null;
 			this.videoId = id;
@@ -230,15 +230,15 @@ function registerPlayer( type, object ) {
 				height: '100%',
 				width: '100%',
 				videoId: id,
-                host: 'https://www.youtube-nocookie.com', //GDPR Friendly
+				host: 'https://www.youtube-nocookie.com', //GDPR Friendly
 				playerVars: {
 					autoplay: 1,
 					controls: 0,
-                    showinfo: 0,
-                    modestbranding: 1,
-                    disablekb: 0,
-                    rel: 0,
-                    origin: location.origin,
+					showinfo: 0,
+					modestbranding: 1,
+					disablekb: 0,
+					rel: 0,
+					origin: location.origin,
 					iv_load_policy: 3, // hide annotations
 					cc_load_policy: theater.closedCaptions ? 1 : 0
 				},
@@ -248,59 +248,59 @@ function registerPlayer( type, object ) {
 			});
 		};
 
-		this.setVolume = function( volume ) {
+		this.setVolume = function (volume) {
 			this.lastVolume = null;
 			this.volume = volume;
 		};
 
-		this.setStartTime = function( seconds ) {
+		this.setStartTime = function (seconds) {
 			this.lastStartTime = null;
 			this.startTime = seconds;
 		};
 
-		this.seek = function( seconds ) {
-			if ( this.player !== null ) {
-				this.player.seekTo( seconds, true );
+		this.seek = function (seconds) {
+			if (this.player !== null) {
+				this.player.seekTo(seconds, true);
 
 				// Video isn't playing
-				if ( this.player.getPlayerState() != 1 ) {
+				if (this.player.getPlayerState() != 1) {
 					this.player.playVideo();
 				}
 			}
 		};
 
-		this.onRemove = function() {
-			clearInterval( this.interval );
+		this.onRemove = function () {
+			clearInterval(this.interval);
 		};
 
 		/*
 			Player Specific Methods
 		*/
-		this.getCurrentTime = function() {
-			if ( this.player !== null ) {
+		this.getCurrentTime = function () {
+			if (this.player !== null) {
 				return this.player.getCurrentTime();
 			}
 		};
 
-		this.think = function() {
+		this.think = function () {
 
-			if ( this.player !== null ) {
+			if (this.player !== null) {
 
-				if ( this.videoId != this.lastVideoId ) {
-					this.player.loadVideoById( this.videoId, this.startTime );
+				if (this.videoId != this.lastVideoId) {
+					this.player.loadVideoById(this.videoId, this.startTime);
 					this.lastVideoId = this.videoId;
 					this.lastStartTime = this.startTime;
 				}
 
-				if ( this.player.getPlayerState() != -1 ) {
+				if (this.player.getPlayerState() != -1) {
 
-					if ( this.startTime != this.lastStartTime ) {
-						this.seek( this.startTime );
+					if (this.startTime != this.lastStartTime) {
+						this.seek(this.startTime);
 						this.lastStartTime = this.startTime;
 					}
 
-					if ( this.volume != this.lastVolume ) {
-						this.player.setVolume( this.volume );
+					if (this.volume != this.lastVolume) {
+						this.player.setVolume(this.volume);
 						this.lastVolume = this.volume;
 					}
 
@@ -309,21 +309,21 @@ function registerPlayer( type, object ) {
 
 		};
 
-		this.onReady = function() {
+		this.onReady = function () {
 			this.player = player;
 
-			if ( theater.isHDEnabled() ) {
+			if (theater.isHDEnabled()) {
 				this.player.setPlaybackQuality("hd720");
 			}
 
-			this.interval = setInterval( this.think.bind(this), 100 );
+			this.interval = setInterval(this.think.bind(this), 100);
 		};
 
 	};
-	registerPlayer( "youtube", YouTubeVideo );
-	registerPlayer( "youtubelive", YouTubeVideo );
+	registerPlayer("youtube", YouTubeVideo);
+	registerPlayer("youtubelive", YouTubeVideo);
 
-	var TwitchStreamVideo = function() {
+	var TwitchStreamVideo = function () {
 
 		/*
 			Embed Player Object
@@ -336,7 +336,7 @@ function registerPlayer( type, object ) {
 			Standard Player Methods
 		*/
 
-		this.setVideo = function( id ) {
+		this.setVideo = function (id) {
 			this.lastVideoId = null;
 			this.videoId = id;
 
@@ -355,32 +355,32 @@ function registerPlayer( type, object ) {
 			});
 		};
 
-		this.setVolume = function( volume ) {
+		this.setVolume = function (volume) {
 			this.lastVolume = null;
 			this.volume = volume;
 		};
 
-		this.onRemove = function() {
-			clearInterval( this.interval );
+		this.onRemove = function () {
+			clearInterval(this.interval);
 		};
 
 		/*
 			Player Specific Methods
 		*/
 
-		this.think = function() {
-			if ( this.player !== null ) {
+		this.think = function () {
+			if (this.player !== null) {
 
-				if ( this.videoId != this.lastVideoId ) {
+				if (this.videoId != this.lastVideoId) {
 					player.setChannel(this.videoId);
 					this.lastVideoId = this.videoId;
 					this.lastStartTime = this.startTime;
 				}
 
-				if ( !player.isPaused() ) {
+				if (!player.isPaused()) {
 
-					if ( this.volume != this.lastVolume ) {
-						player.setVolume( this.volume / 100 );
+					if (this.volume != this.lastVolume) {
+						player.setVolume(this.volume / 100);
 						this.lastVolume = this.volume;
 					}
 
@@ -388,21 +388,21 @@ function registerPlayer( type, object ) {
 			}
 		};
 
-		this.onReady = function() {
+		this.onReady = function () {
 			this.player = document.getElementById('player');
 
 			if (this.interval) {
 				clearInterval(this.interval)
 			}
-			this.interval = setInterval( this.think.bind(this), 100 );
+			this.interval = setInterval(this.think.bind(this), 100);
 		};
-		this.toggleControls = function( enabled ) {};
+		this.toggleControls = function (enabled) { };
 
 	};
-	registerPlayer( "twitchstream", TwitchStreamVideo );
+	registerPlayer("twitchstream", TwitchStreamVideo);
 
 
-	var FileVideo = function() {
+	var FileVideo = function () {
 
 		/*
 			Embed Player Object
@@ -412,7 +412,7 @@ function registerPlayer( type, object ) {
 		/*
 			Standard Player Methods
 		*/
-		this.setVideo = function( id ) {
+		this.setVideo = function (id) {
 			this.lastStartTime = null;
 			this.lastVideoId = null;
 			this.videoId = id;
@@ -430,64 +430,64 @@ function registerPlayer( type, object ) {
 			this.element.appendChild(player);
 
 			var self = this; // Why...
-			player.onloadedmetadata = function() {
+			player.onloadedmetadata = function () {
 				self.onReady()
-			}; 
+			};
 		}
 
-		this.setVolume = function( volume ) {
+		this.setVolume = function (volume) {
 			this.lastVolume = null;
 			this.volume = volume;
 		};
 
-		this.setStartTime = function( seconds ) {
+		this.setStartTime = function (seconds) {
 			this.lastStartTime = null;
 			this.startTime = seconds;
 		};
 
-		this.seek = function( seconds ) {
-			if ( this.player !== null ) {
+		this.seek = function (seconds) {
+			if (this.player !== null) {
 				this.player.currentTime = seconds;
 
 				// Video isn't playing
-				if ( this.player.paused ) {
+				if (this.player.paused) {
 					this.player.play();
 				}
 			}
 		};
 
-		this.onRemove = function() {
-			clearInterval( this.interval );
+		this.onRemove = function () {
+			clearInterval(this.interval);
 		};
 
 		/*
 			Player Specific Methods
 		*/
-		this.getCurrentTime = function() {
-			if ( this.player !== null ) {
+		this.getCurrentTime = function () {
+			if (this.player !== null) {
 				return this.player.currentTime;
 			}
 		};
 
-		this.think = function() {
+		this.think = function () {
 
-			if ( this.player !== null ) {
+			if (this.player !== null) {
 
-				if ( this.videoId != this.lastVideoId ) {
+				if (this.videoId != this.lastVideoId) {
 					this.player.src = this.videoId + "#t=" + this.startTime
 					this.lastVideoId = this.videoId;
 					this.lastStartTime = this.startTime;
 				}
 
-				if ( !this.player.paused ) {
+				if (!this.player.paused) {
 
-					if ( this.startTime != this.lastStartTime ) {
+					if (this.startTime != this.lastStartTime) {
 						this.player.currentTime = this.startTime;
 						this.lastStartTime = this.startTime;
 					}
 
-					if ( this.volume != this.lastVolume ) {
-						this.player.volume = this.volume / 100 ;
+					if (this.volume != this.lastVolume) {
+						this.player.volume = this.volume / 100;
 						this.lastVolume = this.volume;
 					}
 
@@ -496,14 +496,14 @@ function registerPlayer( type, object ) {
 
 		};
 
-		this.onReady = function() {
+		this.onReady = function () {
 			this.player = player;
 
-			this.interval = setInterval( this.think.bind(this), 100 );
+			this.interval = setInterval(this.think.bind(this), 100);
 		};
 
 	};
-	registerPlayer( "archive", FileVideo );
+	registerPlayer("archive", FileVideo);
 
 })();
 
@@ -511,10 +511,10 @@ function registerPlayer( type, object ) {
 	API-specific global functions
 */
 
-function onYouTubePlayerReady( playerId ) {
+function onYouTubePlayerReady(playerId) {
 	var player = theater.getPlayer(),
 		type = player && player.getType();
-	if ( player && ((type == "youtube") || (type == "youtubelive")) ) {
+	if (player && ((type == "youtube") || (type == "youtubelive"))) {
 		player.onReady();
 	}
 }
