@@ -2,7 +2,7 @@ GM.Name 		= "Cinema"
 GM.Author		= "pixelTail Games"
 GM.Email 		= "contact@pixeltailgames.com"
 GM.Website 		= "www.pixeltailgames.com"
-GM.Version 		= "1.1"
+GM.Version 		= "1.2"
 GM.TeamBased 	= false
 
 include( 'sh_load.lua' )
@@ -15,13 +15,19 @@ Loader.Load( "extensions" )
 Loader.Load( "modules" )
 
 -- Load Map configuration file
-local strMap = GM.FolderName .. "/gamemode/maps/" .. game.GetMap() .. ".lua"
-if file.Exists( strMap, "LUA" ) then
-	if SERVER then
-		AddCSLuaFile( strMap )
+
+local function loadMap(legacy)
+	local strMap = (legacy and "cinema" or GM.FolderName ) .. "/gamemode/maps/" .. game.GetMap() .. ".lua"
+
+	if file.Exists( strMap, "LUA" ) then
+		if SERVER then
+			AddCSLuaFile( strMap )
+		end
+		include( strMap )
 	end
-	include( strMap )
 end
+loadMap()
+loadMap(true) -- Backward compatibility
 
 --[[---------------------------------------------------------
 	 Name: gamemode:PlayerShouldTakeDamage
