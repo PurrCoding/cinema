@@ -18,11 +18,11 @@ function GM:PreVideoQueued( Video, Theater )
 	if Theater:IsReplicated() then
 
 		-- Limit videos to a specified maximum duration
-		local MaxDuration = GetConVarNumber("cinema_video_duration_max")
+		local MaxDuration = GetConVar("cinema_video_duration_max"):GetInt()
 		if Video:Duration() > MaxDuration then
 
 			Theater:AnnounceToPlayer( ply, {
-				'Theater_PublicVideoLength',
+				"Theater_PublicVideoLength",
 				MaxDuration
 			} )
 

@@ -2,7 +2,7 @@
 ColDefault = Color( 200, 200, 200 )
 ColHighlight = Color( 158, 37, 33 )
 
-include( 'shared.lua' )
+include( "shared.lua" )
 
 --[[
 	Unsupported Notifications
@@ -16,8 +16,8 @@ hook.Add( "InitPostEntity", "CheckMapSupport", function()
 		if not Location.GetLocations() then
 
 			warning.Set(
-				T'Warning_Unsupported_Line1',
-				T'Warning_Unsupported_Line2'
+				T"Warning_Unsupported_Line1",
+				T"Warning_Unsupported_Line2"
 			)
 
 			control.Add( KEY_F1, function( enabled, held )
@@ -34,9 +34,9 @@ hook.Add( "InitPostEntity", "CheckMapSupport", function()
 
 end )
 
-/*
+--[[
 	HUD Elements to hide
-*/
+--]]
 GM.HUDToHide = {
 	"CHudHealth",
 	"CHudSuitPower",

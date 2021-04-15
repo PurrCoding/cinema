@@ -104,7 +104,7 @@ if SERVER then
 			ply.LastUse = CurTime()
 
 			if Theater:GetOwner() ~= ply then
-				Theater:AnnounceToPlayer( ply, 'Theater_OwnerUseOnly' )
+				Theater:AnnounceToPlayer( ply, "Theater_OwnerUseOnly" )
 				return false
 			end
 

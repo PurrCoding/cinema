@@ -285,7 +285,7 @@ else
 	TheaterPrivilegedCommand( "cinema_forceskip", function( Theater, ply, cmd, args )
 
 		Theater:AnnounceToPlayers( {
-			'Theater_ForceSkipped',
+			"Theater_ForceSkipped",
 			ply:Nick()
 		} )
 
@@ -304,7 +304,7 @@ else
 		if not ply:IsAdmin() then return end
 
 		Theater:AnnounceToPlayers( {
-			'Theater_PlayerReset',
+			"Theater_PlayerReset",
 			ply:Nick()
 		} )
 

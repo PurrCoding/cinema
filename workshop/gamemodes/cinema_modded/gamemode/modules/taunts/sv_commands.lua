@@ -35,7 +35,7 @@ hook.Add( "PlayerSay", "TheaterActCommands", function( ply, chat )
 
 			net.Start( "TheaterAnnouncement" )
 				net.WriteTable({
-					'ActCommand',
+					"ActCommand",
 					ply:Nick(),
 					command
 				})

@@ -41,7 +41,7 @@ function GM:OnPlayerChat( player, strText, bTeamOnly, bPlayerIsDead )
 	end
 
 	table.insert( tab, Color( 255, 255, 255 ) )
-	table.insert( tab, ": "..strText )
+	table.insert( tab, ": " .. strText )
 
 	chat.AddText( unpack(tab) )
 
@@ -82,9 +82,9 @@ function meta:GetTranslatedModel()
 	model = string.Replace( model, "models/humans/", "models/" )
 	model = string.Replace( model, "models/", "models/" )
 
-	/*if not string.find( model, "models/player/" ) then
+	--[[ if not string.find( model, "models/player/" ) then
 		model = string.Replace( model, "models/", "models/player/" )
-	end*/
+	end --]]
 
 	return model
 

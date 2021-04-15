@@ -56,7 +56,7 @@ function PANEL:Init()
 	--
 	-- Implement a console - because awesomium doesn't provide it for us anymore.
 	--
-	local console_funcs = {'log','error','debug','warn','info','gmod'}
+	local console_funcs = {"log","error","debug","warn","info","gmod"}
 	for _, func in pairs(console_funcs) do
 		self:AddFunction( "console", func, function( param )
 			self:ConsoleMessage( param, func )
@@ -73,9 +73,9 @@ function PANEL:Init()
 
 	self:AddFunction( "gmod", "clickSound", function( click )
 		if click then
-			surface.PlaySound('garrysmod/ui_click.wav')
+			surface.PlaySound("garrysmod/ui_click.wav")
 		else
-			surface.PlaySound('garrysmod/ui_hover.wav')
+			surface.PlaySound("garrysmod/ui_hover.wav")
 		end
 	end )
 

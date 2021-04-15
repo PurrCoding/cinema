@@ -1,11 +1,11 @@
-AddCSLuaFile( 'cl_init.lua' )
-AddCSLuaFile( 'player_shd.lua' )
-AddCSLuaFile( 'sh_load.lua' )
-AddCSLuaFile( 'shared.lua' )
-AddCSLuaFile( 'translations.lua' )
+AddCSLuaFile( "cl_init.lua" )
+AddCSLuaFile( "player_shd.lua" )
+AddCSLuaFile( "sh_load.lua" )
+AddCSLuaFile( "shared.lua" )
+AddCSLuaFile( "translations.lua" )
 
-include( 'shared.lua' )
-include( 'player.lua' )
+include( "shared.lua" )
+include( "player.lua" )
 
 resource.AddWorkshop( "2419005587" ) -- cinema gamemode
 resource.AddWorkshop( "119060917" ) -- cinema_theatron

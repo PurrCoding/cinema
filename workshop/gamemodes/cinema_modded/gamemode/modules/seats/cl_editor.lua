@@ -121,7 +121,7 @@ function Open()
 	SliderPanel:Dock( RIGHT )
 	SliderPanel:SetWide( 140 )
 
-	for i=1, 7 do
+	for i = 1, 7 do
 
 		local panel = vgui.Create("DNumSlider", SliderPanel )
 		panel:SetWide( 130 )

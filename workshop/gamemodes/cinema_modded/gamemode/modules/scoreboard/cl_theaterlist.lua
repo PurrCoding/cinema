@@ -8,7 +8,7 @@ THEATERLIST.TheaterHeight = 56
 
 function THEATERLIST:Init()
 
-	self.Title = Label( T'TheaterList_NowShowing', self )
+	self.Title = Label( T"TheaterList_NowShowing", self )
 	self.Title:SetFont( "ScoreboardTitleSmall" )
 	self.Title:SetColor( Color( 255, 255, 255 ) )
 

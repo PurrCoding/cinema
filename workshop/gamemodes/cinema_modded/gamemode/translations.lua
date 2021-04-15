@@ -8,7 +8,7 @@ if CLIENT then
 	local DefaultId = "en"
 
 	function translations.GetLanguage()
-		return GetConVarString("gmod_language")
+		return GetConVar("gmod_language"):GetString()
 	end
 
 	function translations.GetLanguages()
@@ -47,7 +47,7 @@ if CLIENT then
 		local key, value = string.match(tag, patterns.data)
 
 		-- Deserialize color
-		if key == 'rgb' then
+		if key == "rgb" then
 			local r,g,b = string.match(value, patterns.rgb)
 			return Color(r,g,b)
 		end
@@ -107,7 +107,7 @@ if CLIENT then
 			-- Serialize color
 			if istable(v) and v.r and v.g and v.b then
 				local col = string.format("%d,%d,%d", v.r, v.g, v.b)
-				str = str .. buildTag('rgb', col)
+				str = str .. buildTag("rgb", col)
 			else
 				str = str .. tostring(v)
 			end

@@ -47,7 +47,7 @@ Location.Add( "lp_cinema_rc3",
 			Pos = Vector(1312,-145,240),
 			Ang = Angle(0,0,0),
 			Width = 460,
-			Height = 460 * 8.4/16,
+			Height = 460 * 8.4 / 16,
 			ThumbInfo = {
 				Pos = Vector( 1730, -778, 129 ),
 				Ang = Angle(0, -90, 0)
@@ -65,7 +65,7 @@ Location.Add( "lp_cinema_rc3",
 			Pos = Vector(2607,-928,240),
 			Ang = Angle(0,-90,0),
 			Width = 460,
-			Height = 460 * 8.4/16,
+			Height = 460 * 8.4 / 16,
 			ThumbInfo = {
 				Pos = Vector( 1969, -963, 129 ),
 				Ang = Angle(0, 180, 0)
@@ -83,7 +83,7 @@ Location.Add( "lp_cinema_rc3",
 			Pos = Vector(1824,-2735,240),
 			Ang = Angle(0,180,0),
 			Width = 460,
-			Height = 460 * 8.4/16,
+			Height = 460 * 8.4 / 16,
 			ThumbInfo = {
 				Pos = Vector( 1790, -2106, 129 ),
 				Ang = Angle(0, 90, 0)
@@ -101,7 +101,7 @@ Location.Add( "lp_cinema_rc3",
 			Pos = Vector(594,-1700,240),
 			Ang = Angle(0,90,0),
 			Width = 460,
-			Height = 460 * 8.4/16,
+			Height = 460 * 8.4 / 16,
 			ThumbInfo = {
 				Pos = Vector( 1222, -1280, 129 ),
 				Ang = Angle(0, 0, 0)
@@ -160,7 +160,7 @@ Location.Add( "lp_cinema_rc3",
 			Pos = Vector(-2090,-2976,945),
 			Ang = Angle(0,90,0),
 			Width = 1600,
-			Height = 1600 * 7.05/16,
+			Height = 1600 * 7.05 / 16,
 			ThumbInfo = {
 				Pos = Vector( -121, -1677, 128 ),
 				Ang = Angle(0, 0, 0)
@@ -178,7 +178,7 @@ Location.Add( "lp_cinema_rc3",
 			Pos = Vector(1568,-5230,944),
 			Ang = Angle(0,180,0),
 			Width = 1600,
-			Height = 1600 * 7.05/16,
+			Height = 1600 * 7.05 / 16,
 			ThumbInfo = {
 				Pos = Vector( 190, -3434, 128 ),
 				Ang = Angle(0, 90, 0)

@@ -27,9 +27,8 @@ end
 
 -- Load the base service before anything else
 if SERVER then
-	AddCSLuaFile('services/sh_base.lua')
+	AddCSLuaFile("services/sh_base.lua")
 end
-include('services/sh_base.lua')
+include("services/sh_base.lua")
 
 Loader.Load( "modules/theater/services" )
--- Loader.Load( "modules/theater/services" )

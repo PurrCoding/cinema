@@ -134,7 +134,7 @@ function HISTORY:Init()
 	self:SetSize( 256, 512 )
 	self:SetPos( 8, ScrH() / 2 - ( self:GetTall() / 2 ) )
 
-	self.Title = Label( T'Request_History', self )
+	self.Title = Label( T"Request_History", self )
 	self.Title:SetFont( "ScoreboardTitle" )
 	self.Title:SetColor( Color( 255, 255, 255 ) )
 	self.Title:SetContentAlignment(5)
@@ -368,7 +368,7 @@ function VIDEO:Init()
 	self.RequestVideo = vgui.Create( "DImageButton", self )
 	self.RequestVideo:SetSize( 16, 16 )
 	self.RequestVideo:SetImage( "theater/play.png" )
-	self.RequestVideo:SetTooltip( T'Request_Video' )
+	self.RequestVideo:SetTooltip( T"Request_Video" )
 	self.RequestVideo.DoClick = function()
 		RequestVideoURL( self.Video.url )
 	end
@@ -383,7 +383,7 @@ function VIDEO:Init()
 	self.DeleteVideo = vgui.Create( "DImageButton", self )
 	self.DeleteVideo:SetSize( 16, 16 )
 	self.DeleteVideo:SetImage( "theater/trashbin.png" )
-	self.DeleteVideo:SetTooltip( T'Request_DeleteTooltip' )
+	self.DeleteVideo:SetTooltip( T"Request_DeleteTooltip" )
 	self.DeleteVideo.DoClick = function()
 		theater.RemoveRequestById( self.Video.id )
 
@@ -416,7 +416,7 @@ function VIDEO:SetVideo( vid )
 		self.Duration:SetText( "" )
 	end
 
-	self.Requests:SetText( T('Request_PlayCount', self.Video.count) )
+	self.Requests:SetText( T("Request_PlayCount", self.Video.count) )
 
 end
 

@@ -221,7 +221,7 @@ function SetVolume( fVolume )
 	fVolume = tonumber(fVolume)
 	if not fVolume then return end
 
-	local js = string.format('if(window.theater) theater.setVolume(%s);', fVolume)
+	local js = string.format("if(window.theater) theater.setVolume(%s);", fVolume)
 	for _, p in pairs(Panels) do
 		if IsValid(p) then
 			p:QueueJavascript(js)
@@ -300,7 +300,7 @@ function ReceiveSeek()
 	Video._VideoStart = seconds
 	Theater._VideoStart = seconds
 
-	local js = string.format( 'if(window.theater) theater.seek(%s);', CurTime() - seconds )
+	local js = string.format( "if(window.theater) theater.seek(%s);", CurTime() - seconds )
 	panel:QueueJavascript( js )
 
 	PollServer()
@@ -364,7 +364,7 @@ function ReceiveVoteSkips()
 	local required = net.ReadInt(7)
 
 	AddAnnouncement( {
-		'Theater_PlayerVoteSkipped',
+		"Theater_PlayerVoteSkipped",
 		name,
 		skips,
 		required
@@ -380,7 +380,7 @@ function LoadVideo( Video )
 
 	if not Video then return end
 
-	local theaterUrl = GetConVarString( "cinema_url" )
+	local theaterUrl = GetConVar( "cinema_url" ):GetString()
 
 	local panel = ActivePanel()
 	if not IsValid( panel ) then

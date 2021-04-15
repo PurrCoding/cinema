@@ -191,7 +191,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	local onReceive = function( body, length, headers, code )
 		local status, metadata = pcall(self.ParseYTMetaDataFromHTML, self, body)
 		if not status  then
-			return onFailure( 'Theater_RequestFailed' )
+			return onFailure( "Theater_RequestFailed" )
 		end
 
 		local info = {}
@@ -201,7 +201,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		local isLive = metadata["duration"] == 0
 
 		if isLive then
-			info.type = 'youtubelive'
+			info.type = "youtubelive"
 			info.duration = 0
 		else
 			info.duration = metadata["duration"]
@@ -218,7 +218,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 end
 
-theater.RegisterService( 'youtube', SERVICE )
+theater.RegisterService( "youtube", SERVICE )
 
 
 local SERVICE = {}
@@ -235,4 +235,4 @@ SERVICE.IsTimed 	= false
 -- Implementation is found in 'youtube' service.
 -- GetVideoInfo switches to 'youtubelive'
 
-theater.RegisterService( 'youtubelive', SERVICE )
+theater.RegisterService( "youtubelive", SERVICE )

@@ -16,7 +16,7 @@ function THEATER:Init( locId, info )
 	o._Ang = info.Ang or Angle(0,0,0)
 
 	o._Width = info.Width or 128
-	o._Height = info.Height or math.Round(o._Width * (9/16))
+	o._Height = info.Height or math.Round(o._Width * (9 / 16))
 
 	if SERVER then
 
@@ -55,7 +55,7 @@ function THEATER:Init( locId, info )
 
 	else
 
-		info.Title = info.Title or 'NoVideoPlaying'
+		info.Title = info.Title or "NoVideoPlaying"
 		o._Video = VIDEO:Init( info )
 
 	end
@@ -173,7 +173,7 @@ function THEATER:VideoTime()
 end
 
 function THEATER:VideoTitle()
-	return self._Video and self._Video:Title() or 'NoVideoPlaying'
+	return self._Video and self._Video:Title() or "NoVideoPlaying"
 end
 
 function THEATER:VideoStartTime()
@@ -181,11 +181,11 @@ function THEATER:VideoStartTime()
 end
 
 function THEATER:VideoOwnerName()
-	return self._Video and self._Video:GetOwnerName() or 'Invalid'
+	return self._Video and self._Video:GetOwnerName() or "Invalid"
 end
 
 function THEATER:VideoOwnerSteamID()
-	return self._Video and self._Video:GetOwnerSteamID() or 'STEAM_0:0:0'
+	return self._Video and self._Video:GetOwnerSteamID() or "STEAM_0:0:0"
 end
 
 /*
@@ -302,7 +302,7 @@ if SERVER then
 			Data 		= "",
 			StartTime 	= 0,
 			Duration 	= 0,
-			Title 		= 'NoVideoPlaying'
+			Title 		= "NoVideoPlaying"
 		}
 
 		self:SetVideo( VIDEO:Init(info), true )
@@ -346,7 +346,7 @@ if SERVER then
 
 				if Video:GetOwnerName() ~= "" then
 					self:AnnounceToPlayers( {
-						'Theater_VideoRequestedBy',
+						"Theater_VideoRequestedBy",
 						Video:GetOwnerName()
 					} )
 				end
@@ -379,7 +379,7 @@ if SERVER then
 
 			-- Prevent requests from non-theater-owner if queue is locked
 			if self:IsQueueLocked() and ply ~= self:GetOwner() then
-				return self:AnnounceToPlayer( ply, 'Theater_OwnerLockedQueue' )
+				return self:AnnounceToPlayer( ply, "Theater_OwnerLockedQueue" )
 			end
 
 		end
@@ -388,7 +388,7 @@ if SERVER then
 
 		-- Invalid request data
 		if not info then
-			return self:AnnounceToPlayer( ply, 'Theater_InvalidRequest' )
+			return self:AnnounceToPlayer( ply, "Theater_InvalidRequest" )
 		end
 
 		-- Check for duplicate requests
@@ -400,7 +400,7 @@ if SERVER then
 				-- Place vote for player
 				vid:AddVote(ply, true)
 
-				self:AnnounceToPlayer( ply, 'Theater_AlreadyQueued' )
+				self:AnnounceToPlayer( ply, "Theater_AlreadyQueued" )
 
 				return
 			end
@@ -410,7 +410,7 @@ if SERVER then
 		local service = GetServiceByClass( info.Type )
 		if service then
 			self:AnnounceToPlayer( ply, {
-				'Theater_ProcessingRequest',
+				"Theater_ProcessingRequest",
 				service:GetName()
 			} )
 		end
@@ -426,7 +426,7 @@ if SERVER then
 			if success and VideoType ~= vid:Type() then
 				service = GetServiceByClass( vid:Type() )
 				if service and service.TheaterType and not IsFlagSupported(self, service.TheaterType) then
-					self:AnnounceToPlayer( ply, 'Theater_InvalidRequest' )
+					self:AnnounceToPlayer( ply, "Theater_InvalidRequest" )
 					return
 				end
 			end
@@ -440,7 +440,7 @@ if SERVER then
 					-- Place vote for player
 					video:AddVote(ply, true)
 
-					self:AnnounceToPlayer( ply, 'Theater_AlreadyQueued' )
+					self:AnnounceToPlayer( ply, "Theater_AlreadyQueued" )
 
 					return
 				end
@@ -449,7 +449,7 @@ if SERVER then
 
 			-- Failed to grab video info, etc.
 			if not success then
-				self:AnnounceToPlayer( ply, 'Theater_RequestFailed' )
+				self:AnnounceToPlayer( ply, "Theater_RequestFailed" )
 				return
 			elseif isstring(success) then -- failure message
 				self:AnnounceToPlayer( ply, success )
@@ -637,7 +637,7 @@ if SERVER then
 
 	function THEATER:NumRequiredVoteSkips()
 
-		local ratio = math.Clamp( GetConVar("cinema_skip_ratio"):GetFloat() or 2/3, 0, 1 )
+		local ratio = math.Clamp( GetConVar("cinema_skip_ratio"):GetFloat() or 2 / 3, 0, 1 )
 
 		local numply = self:NumPlayers()
 		if numply == 1 then
@@ -710,7 +710,7 @@ if SERVER then
 		-- Skip the current video if the voteskip requirement is met
 		if self:NumVoteSkips() >= self:NumRequiredVoteSkips() then
 
-			self:AnnounceToPlayers( 'Theater_Voteskipped' )
+			self:AnnounceToPlayers( "Theater_Voteskipped" )
 
 			self:SkipVideo()
 
@@ -771,7 +771,7 @@ if SERVER then
 		-- Owner leaving private theater
 		if self:IsPrivate() and ply == self:GetOwner() then
 			self:ResetOwner()
-			self:AnnounceToPlayer( ply, 'Theater_LostOwnership' )
+			self:AnnounceToPlayer( ply, "Theater_LostOwnership" )
 		end
 
 		-- Players remain in the theater
@@ -823,7 +823,7 @@ if SERVER then
 		if IsValid( self:GetOwner() ) then return end
 
 		self._Owner = ply
-		self:AnnounceToPlayer( ply, 'Theater_NotifyOwnership' )
+		self:AnnounceToPlayer( ply, "Theater_NotifyOwnership" )
 
 		RequestTheaterInfo(ply)
 
