@@ -15,7 +15,6 @@ Loader.Load( "extensions" )
 Loader.Load( "modules" )
 
 -- Load Map configuration file
-
 local function loadMap(legacy)
 	local strMap = (legacy and "cinema" or GM.FolderName ) .. "/gamemode/maps/" .. game.GetMap() .. ".lua"
 
