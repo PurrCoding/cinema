@@ -9,9 +9,24 @@ SERVICE.Name 	= "YouTube"
 SERVICE.IsTimed = true
 
 local METADATA_URL = "https://www.youtube.com/watch?v=%s"
+local THEATER_URL = "https://gmod-cinema.pages.dev/cinema/youtube.html?v=%s&t=%s"
 
 function SERVICE:Match( url )
 	return string.match( url.host, "youtu.?be[.com]?" )
+end
+
+if (CLIENT) then
+	function SERVICE:LoadProvider( Video, panel )
+
+		panel:OpenURL( THEATER_URL:format(
+			Video:Data(),
+			math.Round(CurTime() - Video:StartTime())
+		))
+
+		panel.OnDocumentReady = function(pnl)
+			self:LoadExFunctions(pnl)
+		end
+	end
 end
 
 ---

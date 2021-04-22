@@ -66,34 +66,63 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 end
 
 if CLIENT then
+	local THEATER_INTERFACE = [[
+		if (!window.theater) {
+			class CinemaPlayer {
+
+				get player() {
+					return window.cinema_controller;
+				}
+
+				setVolume(volume) {
+					if (!!this.player) {
+						this.player.volume = volume / 100;
+					}
+				}
+
+				seek(second) {
+					if (!!this.player && !!this.player.currentTime) {
+						this.player.currentTime = second;
+					}
+				}
+
+				sync(time) {
+					if (!!this.player && !!this.player.currentTime && !!time) {
+
+						var current = this.player.currentTime;
+						if ((current !== null) &&
+							(Math.abs(time - current) > 3)) {
+							this.player.currentTime = time;
+						}
+					}
+				}
+
+				enableHD(on) { }
+			};
+			window.theater = new CinemaPlayer();
+		}
+	]]
+
+	function SERVICE:LoadExFunctions(panel)
+		panel:QueueJavascript(THEATER_INTERFACE)
+
+		panel:AddFunction( "exTheater", "controllerReady", function(data)
+
+			panel:QueueJavascript(
+				("if (window.theater) theater.setVolume(%s)"):format( theater.GetVolume() )
+			)
+
+		end )
+	end
 
 	function SERVICE:LoadVideo( Video, panel )
+		panel.OnDocumentReady = function() end -- Clear any possible remainings of Service code
+		panel:Stop() -- Stops all panel animations by clearing its animation list. This also clears all delayed animations.
 
-		local theaterUrl = GetConVar( "cinema_url" ):GetString()
-
-		if Video:Type() == "url" then
-			panel:OpenURL( Video:Data() )
-		elseif panel:GetURL() ~= theaterUrl then
-			panel:OpenURL( theaterUrl )
+		if self.LoadProvider then
+			self:LoadProvider(Video, panel)
 		end
 
-		local startTime = CurTime() - Video:StartTime()
-
-		-- Set the volume before playing anything
-		local str = string.format(
-			"if (window.theater) theater.setVolume(%s)", theater.GetVolume() )
-		panel:QueueJavascript( str )
-
-
-		if self.PreLoadVideo then
-			self:PreLoadVideo(Video, panel)
-		else
-			-- Let the webpage handle loading a video
-			str = string.format( "if (window.theater) theater.loadVideo( '%s', '%s', %s );",
-				Video:Type(), string.JavascriptSafe(Video:Data()), startTime )
-
-			panel:QueueJavascript( str )
-		end
 	end
 
 end

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <style>
+        body {
+            margin: 0px;
+            background-color: black;
+            overflow: hidden;
+        }
+
+        .videoWrapper iframe {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+    </style>
+
+    <div class="videoWrapper">
+        <div id="player"></div>
+    </div>
+
+    <script>
+        var query = new URL(location.href).searchParams;
+        var videoID = query.get("v") || "dQw4w9WgXcQ";
+        var startTime = query.get("t") || 0
+
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player, playing = false;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: window.innerHeight,
+                width: window.innerWidth,
+                videoId: videoID,
+                wmode: 'transparent',
+                host: 'https://www.youtube-nocookie.com', //GDPR Friendly
+                playerVars: {
+                    start: parseInt(startTime),
+                    controls: 0,
+                    showinfo: 0,
+                    modestbranding: 1,
+                    disablekb: 0,
+                    mute: 1,
+                    rel: 0,
+                    wmode: 'transparent',
+                    iv_load_policy: 3, // hide annotations
+                    origin: location.origin
+                },
+                events: {
+                    'onReady': onPlayerReady,
+					'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+			event.target.playVideo();
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.BUFFERING || event.data == YT.PlayerState.PAUSED) {
+                event.target.playVideo();
+            }
+
+            if (event.data == YT.PlayerState.PLAYING && !playing) {
+                playing = true;
+    
+                event.target.setPlaybackQuality('medium');
+                event.target.volume = 0
+                event.target.currentTime = 0;
+                event.target.duration = event.target.getDuration();
+
+                Object.defineProperty(event.target, 'volume', {
+                    get() {
+                        return event.target.getVolume();
+                    },
+                    set(volume) {
+                        if (event.target.isMuted()) { event.target.unMute(); }
+                        event.target.setVolume(volume * 100);
+                    },
+                });
+
+                Object.defineProperty(event.target, 'currentTime', {
+                    get() {
+                        return Number(event.target.getCurrentTime());
+                    },
+                    set(time) {
+                        event.target.seekTo(time);
+                    },
+                });
+
+                if (typeof (exTheater) != 'undefined') {
+                    exTheater.controllerReady();
+                }
+
+                window.cinema_controller = player;
+
+            } else if (event.data == YT.PlayerState.PAUSED && playing) {
+                playing = false; // Well we dont need this.. 
+            }
+        }
+    </script>
+</body>
+
+</html>
