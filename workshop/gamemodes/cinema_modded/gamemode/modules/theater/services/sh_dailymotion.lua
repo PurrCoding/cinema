@@ -33,7 +33,6 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		print( DAILYMOTION_URL:format( Video:Data() ))
 		panel:OpenURL( DAILYMOTION_URL:format( Video:Data() ) )
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
