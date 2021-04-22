@@ -17,25 +17,17 @@
 
 			<div style="text-align:center;font-size:0;">
 
-				<service style="background-image:url(logos/youtube.png);" onclick="selectService('YouTube','http://www.youtube.com/');" onmouseover="hoverService();">-</service>
+				<service style="background-image:url(logos/youtube.png);" onclick="selectService('http://www.youtube.com/');" onmouseover="hoverService();">-</service>
 
-				<service style="background-image:url(logos/twitch.png);" onclick="selectService('Twitch','http://www.twitch.tv/');" onmouseover="hoverService();">-</service>
+				<service style="background-image:url(logos/twitch.png);" onclick="selectService('http://www.twitch.tv/');" onmouseover="hoverService();">-</service>
 
 				<br />
 				
-				<service style="background-image:url(logos/vimeo.svg);background-size:90%;" onclick="selectService('Vimeo','https://vimeo.com/watch');" onmouseover="hoverService();">-</service>
+				<service style="background-image:url(logos/vimeo.svg);background-size:90%;" onclick="selectService('https://vimeo.com/watch');" onmouseover="hoverService();">-</service>
 
-				<service style="background-image:url(logos/dailymotion.png);" onclick="selectService('Dailymotion','https://www.dailymotion.com/');" onmouseover="hoverService();">-</service>
+				<service style="background-image:url(logos/dailymotion.png);" onclick="selectService('https://www.dailymotion.com/');" onmouseover="hoverService();">-</service>
 
-				<service style="background-image:url(logos/archive.png);" onclick="selectService('Archive','https://archive.org/details/movies');" onmouseover="hoverService();">-</service>
-
-
-
-				<!-- <service style="background-image:url(logos/blip.png);" onclick="selectService('Blip','http://www.blip.tv/');" onmouseover="hoverService();">-</service> -->
-
-				<!-- <service class="subtext" style="background-image:url(logos/reddit.png);" onclick="selectService('Reddit/videos','http://www.reddit.com/r/videos/');" onmouseover="hoverService();">Videos</service> -->
-
-				<!-- <service class="subtext" style="background-image:url(logos/reddit.png);" onclick="selectService('Reddit/fullmoviesonyoutube','http://www.reddit.com/r/fullmoviesonyoutube/');" onmouseover="hoverService();">FullMoviesOnYouTube</service> -->
+				<service style="background-image:url(logos/archive.png);" onclick="selectService('https://archive.org/details/movies');" onmouseover="hoverService();">-</service>
 
 			</div>
 
@@ -57,7 +49,7 @@
 	}
 
 	// Event called when a service is selected
-	function selectService(name, url) {
+	function selectService(url) {
 		playUISound(true);
 
 		setTimeout(function(){
