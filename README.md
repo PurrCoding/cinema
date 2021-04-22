@@ -17,6 +17,7 @@ Cinema is a gamemode for Garry's Mod 13 which features synchronized video playba
 #### New Features ####
 * Almost all services without API.
 * Video History pagination.
+* Livestreams can be played anywhere
 * Dailymotion & Archive support
 
 #### Supported Services ####
