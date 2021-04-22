@@ -5,22 +5,28 @@ Cinema
 
 Cinema is a gamemode for Garry's Mod 13 which features synchronized video playback.
 
-#### Features ####
+#### Legacy Features ####
 * Synchronized video playback
-* Support for YouTube* and Twitch.tv Live**
 * Intuitive video request system
 * Persistant video history
 * Private theater owner controls
 * Theater previews outside of theaters
 * Useable Seats
 * Support for additional maps
-* Video history with search function and pages. ***
-* YouTube and Twitch completely without (server) API. ***
 
+#### New Features ####
+* Almost all services without API.
+* Video History pagination.
+* Dailymotion & Archive support
+
+#### Supported Services ####
+* Youtube & YouTube Live
+* Twitch Livestream
+* Archive.org
+* Dailymotion
+* Vimeo
 <sub>
-* requires Chromium (or x86-64) BETA branch<br>
-** requires <a href="https://github.com/solsticegamestudios/GModCEFCodecFix">CEF Codec Fix</a> <br>
-*** Introduced in this fork as a new feature.
+Minimum requirement for YouTube streaming only is x86-64 beta branch, otherwise CEF codec fix is needed
 </sub>
 
 #### Links ####
