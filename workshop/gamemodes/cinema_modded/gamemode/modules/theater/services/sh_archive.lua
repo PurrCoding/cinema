@@ -35,17 +35,39 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
-	function SERVICE:PreLoadVideo(Video, panel)
-		local startTime = CurTime() - Video:StartTime()
+	local THEATER_JS = [[
+		function check() {
+			var player = document.getElementsByTagName("VIDEO")[0]
+			if (!!player) {
+				if (player.paused) {player.play();}
+				if (player.paused === false && player.readyState === 4) {
+					clearInterval(checkerInterval);
+
+					window.cinema_controller = player;
+					player.style = "width:100%; height: 100%;";
+
+					exTheater.controllerReady();
+				}
+			}
+		}
+		var checkerInterval = setInterval(check, 50);
+	]]
+
+	function SERVICE:LoadProvider( Video, panel )
+
 		local Data = string.Explode(",", Video:Data())
 		local identifier, file = Data[1], ( Data[2] and Data[2] or nil )
-
 		local url = DOWNLOAD_URL:format(identifier, Video:Title() )
-		local str = string.format( "if (window.theater) theater.loadVideo( '%s', '%s', %s );",
-		Video:Type(), string.JavascriptSafe(url), startTime )
 
-		panel:QueueJavascript( str )
+		panel:OpenURL( url )
+		panel.OnDocumentReady = function(pnl)
+			self:LoadExFunctions( pnl )
+			pnl:QueueJavascript(THEATER_JS)
+		end
+
 	end
+
+
 end
 
 function SERVICE:GetURLInfo( url )
