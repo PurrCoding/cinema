@@ -236,11 +236,6 @@ end
 theater.RegisterService( "youtube", SERVICE )
 
 
-local SERVICE = {}
-
-SERVICE.Name 		= "YouTube Live"
-SERVICE.IsTimed 	= false
-
 --[[
 	Uncomment this line below to restrict Livestreaming
 	only to Private Theaters.
@@ -250,4 +245,8 @@ SERVICE.IsTimed 	= false
 -- Implementation is found in 'youtube' service.
 -- GetVideoInfo switches to 'youtubelive'
 
-theater.RegisterService( "youtubelive", SERVICE )
+theater.RegisterService( "youtubelive", {
+	Name = "YouTube Live",
+	IsTimed = false,
+	GetVideoInfo = SERVICE.GetVideoInfo
+} )
