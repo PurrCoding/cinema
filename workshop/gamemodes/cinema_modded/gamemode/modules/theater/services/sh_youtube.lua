@@ -248,5 +248,5 @@ theater.RegisterService( "youtube", SERVICE )
 theater.RegisterService( "youtubelive", {
 	Name = "YouTube Live",
 	IsTimed = false,
-	GetVideoInfo = SERVICE.GetVideoInfo
+	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )
