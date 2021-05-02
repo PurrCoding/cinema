@@ -62,8 +62,9 @@
         }
 
         function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.BUFFERING || event.data == YT.PlayerState.PAUSED) {
+            if (event.data == YT.PlayerState.BUFFERING) {
                 event.target.playVideo();
+                event.target.seekTo(event.target.getCurrentTime(), true)
             }
 
             if (event.data == YT.PlayerState.PLAYING && !playing) {
@@ -89,7 +90,7 @@
                         return Number(event.target.getCurrentTime());
                     },
                     set(time) {
-                        event.target.seekTo(time);
+                        event.target.seekTo(time, true);
                     },
                 });
 
