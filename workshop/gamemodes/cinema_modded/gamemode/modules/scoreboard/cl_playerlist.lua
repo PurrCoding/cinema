@@ -165,6 +165,9 @@ function PLAYER:Init()
 
 	self.Ping = vgui.Create( "ScoreboardPlayerPing", self )
 
+	self.Mute = vgui.Create( "DImageButton", self )
+	self.Mute:SetSize( 32, 32 )
+
 end
 
 function PLAYER:UpdatePlayer()
@@ -182,6 +185,34 @@ function PLAYER:UpdatePlayer()
 
 	self.Name:SetText( self.Player:Name() )
 	self.Location:SetText( string.upper( self.Player:GetLocationName() or "Unknown" ) )
+
+	--[[ 
+		Info: Code taken from 'base' gamemode
+		Desc: Change the icon of the mute button based on state
+	--]]
+	if ( self.Muted == nil or self.Muted ~= self.Player:IsMuted() ) then
+
+		self.Muted = self.Player:IsMuted()
+		if ( self.Muted ) then
+			self.Mute:SetImage( "icon32/muted.png" )
+		else
+			self.Mute:SetImage( "icon32/unmuted.png" )
+		end
+
+		self.Mute.DoClick = function( s ) self.Player:SetMuted( not self.Muted ) end
+		self.Mute.OnMouseWheeled = function( s, delta )
+			self.Player:SetVoiceVolumeScale( self.Player:GetVoiceVolumeScale() + ( delta / 100 * 5 ) )
+			s.LastTick = CurTime()
+		end
+
+		self.Mute.PaintOver = function( s, w, h )
+			local a = 255 - math.Clamp( CurTime() - ( s.LastTick or 0 ), 0, 3 ) * 255
+			draw.RoundedBox( 4, 0, 0, w, h, Color( 0, 0, 0, a * 0.75 ) )
+			draw.SimpleText( math.ceil( self.Player:GetVoiceVolumeScale() * 100 ) .. "%", "DermaDefaultBold", w / 2, h / 2, Color( 255, 255, 255, a ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		end
+
+	end
+
 	self.Ping:Update()
 
 end
@@ -222,8 +253,13 @@ function PLAYER:PerformLayout()
 
 	self.Ping:InvalidateLayout()
 	self.Ping:SizeToContents()
-	self.Ping:AlignRight( self.Padding )
+	self.Ping:AlignRight( self.Padding * 6 )
 	self.Ping:CenterVertical()
+
+	self.Mute:InvalidateLayout()
+	self.Mute:SizeToContents()
+	self.Mute:AlignRight( self.Padding )
+	self.Mute:CenterVertical()
 
 end
 
