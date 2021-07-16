@@ -92,7 +92,10 @@ function initMp3Player() {
     document.getElementById("artwork").style.border = "5px solid #f174eb";
     document.getElementById("artwork").style.padding = "1px";
 
-    exTheater.controllerReady();
+    if (typeof(exTheater) != 'undefined') {
+        exTheater.controllerReady();
+    }
+
 }
 
 function frameLooper() {
