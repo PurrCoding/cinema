@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title id="pagetitle">Audio Visualizer</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+    <!-- We dont need favicon -->
+    <link rel="stylesheet" type="text/css" href="./assets/css/style.css" />
+
+    <script src="https://connect.soundcloud.com/sdk.js"></script>
+    <script type="text/javascript" src="./assets/js/script.js"></script>
+</head>
+
+<body onload="initPage()" style="cursor: default">
+    <canvas id="visualizer_render" width="1464" height="1248"></canvas>
+
+    <div id="image">
+        <img id="artwork" width="150" height="150" style="opacity: 0" />
+    </div>
+
+    <div id="artisttitle">
+        <h1 id="artistname"></h1>
+    </div>
+
+    <div id="songtitle">
+        <h1 id="songname"></h1>
+    </div>
+</body>
+
+</html>

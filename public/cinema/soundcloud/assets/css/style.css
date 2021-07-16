@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+  font-family: "Lato", sans-serif;
+}
+
+#image {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+}
+
+#artisttitle {
+  color: white;
+  position: absolute;
+  top: 40px;
+  left: 170px;
+  font-size: 50%;
+}
+
+#songtitle {
+  color: white;
+  position: absolute;
+  top: 0px;
+  left: 170px;
+  font-size: 70%;
+}
