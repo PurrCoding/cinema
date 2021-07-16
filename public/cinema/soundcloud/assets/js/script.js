@@ -8,6 +8,7 @@ var canvas, ctx, source, context, analyser, fbc_array, rads,
 
 //Nothing secrect, the key is from GM Mediaplayer
 var client_id = "2e0e541854cbabd873d647c1d45f79e8";
+var fallback_cover = "./assets/img/placeholder.png";
 
 // give vars an initial real value to validate
 bars = 200;
@@ -28,6 +29,9 @@ function initPage() {
     //resize_canvas();
 
     document.getElementById("artwork").style.opacity = 0;
+    document.getElementById("artwork").onerror = function(){
+        this.src = fallback_cover;
+    };
 
     audio = new Audio();
     audio.crossOrigin = "anonymous";
@@ -67,7 +71,7 @@ function loadSoundCloudAPI(data) {
             if (sound.kind == "track") {
                 inputURL = sound.stream_url + '?client_id=' + client_id;
                 title = sound.title;
-                img_url = sound.artwork_url || sound.user.avatar_url || "./assets/img/placeholder.png";
+                img_url = sound.artwork_url || sound.user.avatar_url || fallback_cover;
                 artist = sound.user.username;
 
                 initMp3Player();
