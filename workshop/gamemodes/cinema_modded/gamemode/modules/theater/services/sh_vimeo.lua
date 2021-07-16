@@ -74,4 +74,4 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 end
 
-theater.RegisterService( 'vimeo', SERVICE )
+theater.RegisterService( "vimeo", SERVICE )

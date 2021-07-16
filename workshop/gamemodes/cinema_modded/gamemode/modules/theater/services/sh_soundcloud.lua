@@ -83,4 +83,4 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 end
 
-theater.RegisterService( 'soundcloud', SERVICE )
+theater.RegisterService( "soundcloud", SERVICE )
