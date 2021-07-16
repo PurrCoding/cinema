@@ -31,7 +31,7 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
-	local PLAYER_URL = "https://workers.knab-networks.com/cinema/services/soundcloud/"
+	local PLAYER_URL = "https://gmod-cinema.pages.dev/cinema/soundcloud/"
 
 	function SERVICE:LoadProvider( Video, panel )
 
