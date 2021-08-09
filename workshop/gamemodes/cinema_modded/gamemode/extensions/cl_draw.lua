@@ -11,11 +11,13 @@ local surface_DrawTexturedRect = surface.DrawTexturedRect
 local FPS_Cap = 30
 local FPS_Smoother = CreateClientConVar( "cinema_smoother", 0, true, false, "Make some videos smoother at the cost of FPS" )
 
-cvars.AddChangeCallback( FPS_Smoother:GetName(), function(cmd, old, new)
+local function ChangeFrameCap()
 	local bool = FPS_Smoother:GetBool()
 
 	FPS_Cap = bool and 60 or 30
-end)
+end
+ChangeFrameCap()
+cvars.AddChangeCallback( FPS_Smoother:GetName(), ChangeFrameCap)
 
 function draw.TheaterText(text, font, x, y, colour, xalign, yalign)
 	draw_SimpleText(text, font, x, y + 4, Color(0,0,0,colour.a), xalign, yalign)
