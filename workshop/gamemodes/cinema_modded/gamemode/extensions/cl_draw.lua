@@ -8,7 +8,15 @@ local surface_DrawRect = surface.DrawRect
 local surface_SetMaterial = surface.SetMaterial
 local surface_DrawTexturedRect = surface.DrawTexturedRect
 
-local FPS = CreateClientConVar("cinema_fps", "30", false, false, "Maximum FPS for video, can improve performance. (Default 30)")
+local FPS_Cap = 30
+local FPS_Smoother = CreateClientConVar( "cinema_smoother", 0, true, false, "Make some videos smoother at the cost of FPS" )
+
+cvars.AddChangeCallback( FPS_Smoother:GetName(), function(cmd, old, new)
+	local bool = FPS_Smoother:GetBool()
+
+	FPS_Cap = bool and 60 or 30
+end)
+
 
 function draw.TheaterText(text, font, x, y, colour, xalign, yalign)
 	draw_SimpleText(text, font, x, y + 4, Color(0,0,0,colour.a), xalign, yalign)
@@ -24,7 +32,7 @@ function draw.HTMLTexture( panel, w, h )
 
 	if not panel.NextHTMLTextureThink or RealTime() > panel.NextHTMLTextureThink then
 		panel:UpdateHTMLTexture()
-		panel.NextHTMLTextureThink = RealTime() + (1 / FPS:GetInt())
+		panel.NextHTMLTextureThink = RealTime() + (1 / FPS_Cap)
 	end
 
 	pw, ph = panel:GetSize()
