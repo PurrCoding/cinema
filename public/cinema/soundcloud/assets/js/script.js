@@ -7,7 +7,6 @@ var canvas, ctx, source, context, analyser, fbc_array, rads,
     artist, title, img_url, isSeeking;
 
 //Nothing secrect, the key is from GM Mediaplayer
-var client_id = "2e0e541854cbabd873d647c1d45f79e8";
 var fallback_cover = "./assets/img/placeholder.png";
 
 // give vars an initial real value to validate
@@ -58,8 +57,7 @@ function resize_canvas() {
     canvas.height = window.innerHeight;
 }
 
-function loadSoundCloudAPI(data) {
-    var url = "https://soundcloud.com/" + data
+function loadSoundCloudAPI(url, client_id) {
     this.sound = {};
     SC.initialize({
         client_id: client_id
