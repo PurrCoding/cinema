@@ -24,7 +24,8 @@ SERVICE.Name 	= "Soundcloud"
 SERVICE.IsTimed = true
 
 local client_id = "2e0e541854cbabd873d647c1d45f79e8" -- Nothing special, its from GM Media Player.
-local API_URL = "https://api.soundcloud.com/resolve.json?url=https://soundcloud.com/%s/%s&client_id=%s"
+local API_URL = "https://api.soundcloud.com/resolve.json?url=%s&client_id=%s"
+local PERMA_URL = "https://soundcloud.com/%s/%s?client_id=%s"
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("soundcloud.com")
@@ -41,7 +42,7 @@ if (CLIENT) then
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
 
-			local str = string.format("loadSoundCloudAPI('%s/%s')", path[1], path[2])
+			local str = ("loadSoundCloudAPI('%s', '%s')"):format( PERMA_URL:format(path[1], path[2], client_id), client_id )
 			pnl:QueueJavascript(str)
 		end
 
@@ -62,6 +63,7 @@ end
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 	local path = string.Explode(",", data)
+	local escapedPerma = url.escape(PERMA_URL:format(path[1], path[2], client_id))
 
 	local onReceive = function( body, length, headers, code )
 
@@ -79,7 +81,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		end
 
 	end
-	self:Fetch( API_URL:format(path[1], path[2], client_id), onReceive, onFailure )
+	self:Fetch( API_URL:format(escapedPerma, client_id), onReceive, onFailure )
 
 end
 
