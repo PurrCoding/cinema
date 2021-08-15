@@ -6,7 +6,6 @@ var canvas, ctx, source, context, analyser, fbc_array, rads,
     JSONResponse, soundCloudTrackName, audio, pause,
     artist, title, img_url, isSeeking;
 
-//Nothing secrect, the key is from GM Mediaplayer
 var fallback_cover = "./assets/img/placeholder.png";
 
 // give vars an initial real value to validate
