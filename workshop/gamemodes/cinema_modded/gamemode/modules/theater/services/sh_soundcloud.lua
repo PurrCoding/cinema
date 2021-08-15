@@ -27,6 +27,10 @@ local client_id = "2e0e541854cbabd873d647c1d45f79e8" -- Nothing special, its fro
 local API_URL = "https://api.soundcloud.com/resolve.json?url=%s&client_id=%s"
 local PERMA_URL = "https://soundcloud.com/%s/%s?client_id=%s"
 
+local Ignored = {
+	["sets"] = true,
+}
+
 function SERVICE:Match( url )
 	return url.host and url.host:match("soundcloud.com")
 end
@@ -53,7 +57,7 @@ function SERVICE:GetURLInfo( url )
 
 	if url.path then
 		local user, title = url.path:match("^/([%w%-_]+)/([%w%-_]+)")
-		if (user and title) then return { Data = user .. "," .. title } end
+		if (user and title and not Ignored[title]) then return { Data = user .. "," .. title } end
 	end
 
 	return false
