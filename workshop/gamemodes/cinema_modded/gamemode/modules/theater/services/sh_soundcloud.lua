@@ -31,6 +31,12 @@ local Ignored = {
 	["sets"] = true,
 }
 
+local accessLevel = {
+	["playable"] = true, -- The user can listen to a full track.
+	["preview"] = true, -- The user gets a snippet of a track (Go+ content for free users).
+	["blocked"] = false, -- The user isn’t allowed to play the track but can see the metadata.
+}
+
 function SERVICE:Match( url )
 	return url.host and url.host:match("soundcloud.com")
 end
@@ -73,7 +79,10 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 		local response = util.JSONToTable( body )
 		if not response then return onFailure("The API servers did not return the requested data.") end
-		if not response.title or not response.duration then return onFailure("Cannot get duration or title from song") end
+		if (response.access and not accessLevel[response.access]) or
+			(response.embeddable_by and response.embeddable_by == "none") then
+				return onFailure("The requested song is not playable")
+		end
 
 		local info = {}
 		info.title = response.title
