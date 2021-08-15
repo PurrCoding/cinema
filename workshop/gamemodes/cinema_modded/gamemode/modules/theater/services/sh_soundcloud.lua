@@ -72,7 +72,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	local onReceive = function( body, length, headers, code )
 
 		local response = util.JSONToTable( body )
-		if not response then return onFailure("No response from the API") end
+		if not response then return onFailure("The API servers did not return the requested data.") end
 		if not response.title or not response.duration then return onFailure("Cannot get duration or title from song") end
 
 		local info = {}
