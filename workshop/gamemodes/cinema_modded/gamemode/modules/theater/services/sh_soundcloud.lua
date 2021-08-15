@@ -81,7 +81,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		if not response then return onFailure("The API servers did not return the requested data.") end
 		if (response.access and not accessLevel[response.access]) or
 			(response.embeddable_by and response.embeddable_by == "none") then
-				return onFailure("The requested song is not playable")
+				return onFailure("The requested song is not playable, as there is a restriction set by SoundCloud")
 		end
 
 		local info = {}
