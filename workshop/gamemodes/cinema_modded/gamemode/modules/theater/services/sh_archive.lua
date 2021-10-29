@@ -31,6 +31,7 @@ local VALID_FORMATS = {
 
 SERVICE.Name 	= "Archive"
 SERVICE.IsTimed = true
+-- SERVICE.TheaterType = THEATER_PRIVATE
 
 function SERVICE:Match( url )
 	return string.match( url.host, "archive.org" )
