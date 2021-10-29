@@ -18,6 +18,9 @@ timer.Create( "TheaterPlayerThink", 1, 0, function()
 	end
 end )
 
+-- Indicates that the server is running with the Fixed Edition
+CreateConVar("has_cinema_fixed", "1", {FCVAR_NOTIFY})
+
 --[[---------------------------------------------------------
    Name: gamemode:DoPlayerDeath( )
    Desc: Carries out actions when the player dies
