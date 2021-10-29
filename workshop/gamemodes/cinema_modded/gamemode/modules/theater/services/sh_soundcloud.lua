@@ -29,18 +29,17 @@ SERVICE.IsTimed = true
 ]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
-local client_id = "2e0e541854cbabd873d647c1d45f79e8" -- Nothing special, its from GM Media Player.
-local API_URL = "https://api.soundcloud.com/resolve.json?url=%s&client_id=%s"
-local PERMA_URL = "https://soundcloud.com/%s/%s?client_id=%s"
+local API_URL = "https://api-widget.soundcloud.com/resolve?url=%s&format=json&client_id=%s"
+local SRV_API_KEY = "LBCcHmRB8XSStWL6wKH2HPACspQlXg2P"
 
 local Ignored = {
 	["sets"] = true,
 }
 
 local accessLevel = {
-	["playable"] = true, -- The user can listen to a full track.
-	["preview"] = true, -- The user gets a snippet of a track (Go+ content for free users).
-	["blocked"] = false, -- The user isn’t allowed to play the track but can see the metadata.
+	["all"] = true, -- It can be embedded anywhere.
+	["me"] = false, -- It can be embedded only on a specific page.
+	["none"] = false, -- It cannot be embedded anywhere.
 }
 
 function SERVICE:Match( url )
@@ -48,20 +47,16 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
-	local PLAYER_URL = "https://gmod-cinema.pages.dev/cinema/soundcloud/"
+	local PLAYER_URL = "https://gmod-cinema.pages.dev/cinema/soundcloud.html"
 
 	function SERVICE:LoadProvider( Video, panel )
 
 		local path = string.Explode(",", Video:Data())
 
-		panel:OpenURL(PLAYER_URL)
+		panel:OpenURL(PLAYER_URL:format( path[1], path[2] ))
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
-
-			local str = ("loadSoundCloudAPI('%s', '%s')"):format( PERMA_URL:format(path[1], path[2], client_id), client_id )
-			pnl:QueueJavascript(str)
 		end
-
 	end
 end
 
@@ -79,28 +74,28 @@ end
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 	local path = string.Explode(",", data)
-	local escapedPerma = url.escape(PERMA_URL:format(path[1], path[2], client_id))
+	local escapedUrl = url.escape( ("https://soundcloud.com/%s/%s"):format(path[1], path[2]) )
 
 	local onReceive = function( body, length, headers, code )
 
 		local response = util.JSONToTable( body )
 		if not response then return onFailure("The API servers did not return the requested data.") end
-		if (response.access and not accessLevel[response.access]) or
-			(response.embeddable_by and response.embeddable_by == "none") then
-				return onFailure("The requested song is not playable, as there is a restriction set by SoundCloud")
+
+		if (response.embeddable_by and not accessLevel[response.embeddable_by]) then
+			return onFailure("The requested song is not playable, as there is a restriction set by SoundCloud")
 		end
 
 		local info = {}
 		info.title = response.title
-		info.thumbnail = response.artwork_url or self.PlaceholderThumb
-		info.duration = response.duration / 1000
+		info.thumbnail = ( response.artwork_url and response.artwork_url:Replace("-large.jpg", "-original.jpg") ) or self.PlaceholderThumb
+		info.duration = math.ceil(response.duration / 1000)
 
 		if onSuccess then
 			pcall(onSuccess, info)
 		end
 
 	end
-	self:Fetch( API_URL:format(escapedPerma, client_id), onReceive, onFailure )
+	self:Fetch( API_URL:format(escapedUrl, SRV_API_KEY), onReceive, onFailure )
 
 end
 

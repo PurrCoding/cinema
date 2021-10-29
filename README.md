@@ -24,7 +24,7 @@ This standalone ***"fork"*** of Cinema focuses on fixing the problems and extend
 * Dailymotion
 * Vimeo
 * DLive
-* SoundCloud (currently broken)
+* SoundCloud
 * AniMix Play &#42;
 <sub>
 &#42; = Limited only to GOGO Stream & Fixed video duration of 10Hours <br />
