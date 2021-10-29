@@ -22,6 +22,11 @@
 local SERVICE = {}
 SERVICE.Name = "DLive"
 SERVICE.IsTimed = false
+
+--[[
+	Uncomment this line below to restrict Livestreaming
+	only to Private Theaters.
+]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
 local Ignored = {

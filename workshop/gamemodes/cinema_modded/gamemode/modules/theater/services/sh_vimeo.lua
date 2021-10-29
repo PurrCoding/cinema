@@ -2,6 +2,11 @@ local SERVICE = {}
 
 SERVICE.Name = "Vimeo"
 SERVICE.IsTimed = true
+
+--[[
+	Uncomment this line below to restrict Videostreaming
+	only to Private Theaters.
+]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
 local API_URL = "https://vimeo.com/api/oembed.json?url=https://vimeo.com/%s"

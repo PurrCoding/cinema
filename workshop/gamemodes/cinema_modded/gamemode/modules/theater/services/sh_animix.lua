@@ -30,6 +30,11 @@
 local SERVICE = {}
 SERVICE.Name = "AniMix Play"
 SERVICE.IsTimed = true
+
+--[[
+	Uncomment this line below to restrict Videostreaming
+	only to Private Theaters.
+]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
 local Versions = {

@@ -31,6 +31,11 @@ local VALID_FORMATS = {
 
 SERVICE.Name = "Archive"
 SERVICE.IsTimed = true
+
+--[[
+	Uncomment this line below to restrict Videostreaming
+	only to Private Theaters.
+]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
 function SERVICE:Match( url )

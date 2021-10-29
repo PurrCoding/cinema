@@ -4,6 +4,11 @@ local THUMB_URL = "https://static-cdn.jtvnw.net/previews-ttv/live_user_%s-1280x7
 
 SERVICE.Name = "Twitch.TV Stream"
 SERVICE.IsTimed = false
+
+--[[
+	Uncomment this line below to restrict Livestreaming
+	only to Private Theaters.
+]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
 local Ignored = {

@@ -22,6 +22,11 @@
 local SERVICE = {}
 SERVICE.Name = "Soundcloud"
 SERVICE.IsTimed = true
+
+--[[
+	Uncomment this line below to restrict Audiostreaming
+	only to Private Theaters.
+]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
 local client_id = "2e0e541854cbabd873d647c1d45f79e8" -- Nothing special, its from GM Media Player.

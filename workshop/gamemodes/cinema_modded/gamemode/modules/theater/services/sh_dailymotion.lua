@@ -22,6 +22,11 @@
 local SERVICE = {}
 SERVICE.Name = "Dailymotion"
 SERVICE.IsTimed = true
+
+--[[
+	Uncomment this line below to restrict Videostreaming
+	only to Private Theaters.
+]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
 local API_URL = "https://api.dailymotion.com/video/%s?fields=id,title,duration,thumbnail_url,status,mode,private"
