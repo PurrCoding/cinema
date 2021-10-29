@@ -22,6 +22,7 @@
 local SERVICE = {}
 SERVICE.Name = "Dailymotion"
 SERVICE.IsTimed = true
+-- SERVICE.TheaterType = THEATER_PRIVATE
 
 local API_URL = "https://api.dailymotion.com/video/%s?fields=id,title,duration,thumbnail_url,status,mode,private"
 

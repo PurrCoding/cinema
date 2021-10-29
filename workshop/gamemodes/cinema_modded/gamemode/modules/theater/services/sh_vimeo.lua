@@ -1,7 +1,8 @@
 local SERVICE = {}
 
-SERVICE.Name 	= "Vimeo"
+SERVICE.Name = "Vimeo"
 SERVICE.IsTimed = true
+-- SERVICE.TheaterType = THEATER_PRIVATE
 
 local API_URL = "https://vimeo.com/api/oembed.json?url=https://vimeo.com/%s"
 

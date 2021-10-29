@@ -5,7 +5,7 @@ Workaround with a Metadata parser.
 
 local SERVICE = {}
 
-SERVICE.Name 	= "YouTube"
+SERVICE.Name = "YouTube"
 SERVICE.IsTimed = true
 
 local METADATA_URL = "https://www.youtube.com/watch?v=%s"

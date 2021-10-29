@@ -20,8 +20,9 @@
 --]]
 
 local SERVICE = {}
-SERVICE.Name 	= "Soundcloud"
+SERVICE.Name = "Soundcloud"
 SERVICE.IsTimed = true
+-- SERVICE.TheaterType = THEATER_PRIVATE
 
 local client_id = "2e0e541854cbabd873d647c1d45f79e8" -- Nothing special, its from GM Media Player.
 local API_URL = "https://api.soundcloud.com/resolve.json?url=%s&client_id=%s"

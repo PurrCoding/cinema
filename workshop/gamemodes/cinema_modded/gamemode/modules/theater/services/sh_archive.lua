@@ -29,7 +29,7 @@ local VALID_FORMATS = {
 	["Ogg Video"] = true,
 }
 
-SERVICE.Name 	= "Archive"
+SERVICE.Name = "Archive"
 SERVICE.IsTimed = true
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
