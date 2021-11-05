@@ -15,6 +15,7 @@ PLAYER.TauntCam = TauntCamera()
 PLAYER.DisplayName			= "Lobby Class"
 
 PLAYER.WalkSpeed 			= 200		-- How fast to move when not running
+PLAYER.SlowWalkSpeed		= 100		-- How fast to move when slow-walking (+WALK)
 PLAYER.RunSpeed				= 300		-- How fast to move when running
 PLAYER.CrouchedWalkSpeed 	= 0.2		-- Multiply move speed by this when crouching
 PLAYER.DuckSpeed			= 0.3		-- How fast to go from not ducking, to ducking
