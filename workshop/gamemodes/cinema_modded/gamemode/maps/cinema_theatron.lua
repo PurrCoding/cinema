@@ -110,8 +110,6 @@ if SERVER then
 
 		end
 
-		return true
-
 	end )
 
 end
