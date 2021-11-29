@@ -41,9 +41,11 @@ This standalone ***"fork"*** of Cinema focuses on fixing the problems and extend
 * [Foohy](http://steamcommunity.com/profiles/76561197970525198), [MacDGuy](http://steamcommunity.com/profiles/76561197972354223), [clopsy](http://steamcommunity.com/profiles/76561197990944858), [Sam](http://steamcommunity.com/profiles/76561197991989781), [Foohy](http://steamcommunity.com/profiles/76561197997689747) for the Original work on Cinema
 * [Veitikka](https://github.com/veitikka) for the YouTube fix on [Media Player](https://github.com/samuelmaddock/gm-mediaplayer/pull/34)
 * [Nova™](https://steamcommunity.com/id/FarukGamer/) for his efforts to get the Cinema running again and adding new features.
+* [Hyo](http://steamcommunity.com/profiles/76561198003580789) for his step by step video tutorial.
 
 
 #### Links ####
 * Steam Workshop [Fixed edition](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587) and [Original](https://steamcommunity.com/sharedfiles/filedetails/?id=118824086)
 * [PixelTail Games Website](https://www.pixeltailgames.com/cinema)
 * [Original GitHub Repo](https://github.com/pixeltailgames/cinema)
+* [How to get codecs for Garrys Mod cinemas](https://www.youtube.com/watch?v=QfPAVTtOzgA)
