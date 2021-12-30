@@ -1,6 +1,6 @@
 include('sh_init.lua')
 
-ENT.RenderGroup = RENDERGROUP_BOTH
+ENT.RenderGroup = RENDERGROUP_OPAQUE
 
 surface.CreateFont( "TheaterInfoLarge", {
 	font      = "Open Sans Condensed",
@@ -24,37 +24,36 @@ function ENT:Initialize()
 end
 
 function ENT:Draw()
+
 	self:DrawModel()
-end
+	self:FixOffsets() -- Begone Monitor Grid
 
-local ThumbWidth = 480
-local ThumbHeight = 360
-local RenderScale = 0.2
+	if not self.Attach then return end
 
-local AngleOffset = Angle(0,90,90)
-
-function ENT:DrawTranslucent()
-
-	-- Find attachment
-	if not self.Attach then
-
-		local attachId = self:LookupAttachment("thumb3d2d")
-		self.Attach = self:GetAttachment(attachId)
-
-		if self.Attach then
-			self.Attach.Ang = self.Attach.Ang + AngleOffset
-		else
-			return
-		end
-
-	end
-
-	cam.Start3D2D( self.Attach.Pos, self.Attach.Ang, RenderScale )
+	cam.Start3D2D( self.Attach.Pos, self.Attach.Ang, self.Attach.Scale )
 		pcall( self.DrawThumbnail, self )
 	cam.End3D2D()
 
 	pcall( self.DrawText, self )
+end
 
+local DefaultThumbnail = Material( "theater/static.vmt" )
+local ThumbWidth = 480
+local ThumbHeight = 360
+local RenderScale = 0.197
+
+local AngleOffset = Angle(0,90,90)
+
+function ENT:FixOffsets()
+
+	local screenScale = RenderScale * self:GetModelScale()
+	local pos, ang = LocalToWorld( Vector(0.6, screenScale * ThumbWidth * -0.5, screenScale * ThumbHeight * 0.5), AngleOffset, self:GetPos(), self:GetAngles() )
+
+	self.Attach = {
+		Pos = pos,
+		Ang = ang,
+		Scale = screenScale,
+	}
 end
 
 local hangs = { "p", "g", "y", "q", "j" }
@@ -87,7 +86,7 @@ function ENT:DrawSubtitle( str, height )
 	ty = (height * scale) + (bh / 2)
 	ty = math.min( ty, (ThumbHeight * scale) - bh / 2 )
 
-	cam.Start3D2D( self.Attach.Pos, self.Attach.Ang, ( 1 / scale ) * RenderScale )
+	cam.Start3D2D( self.Attach.Pos, self.Attach.Ang, ( 1 / scale ) * self.Attach.Scale )
 		surface.SetDrawColor( 0, 0, 0, 200 )
 		surface.DrawRect( 0, by, bw, bh )
 		draw.TheaterText( str, "TheaterInfoMedium", (ThumbWidth * scale) / 2, ty, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
@@ -129,8 +128,6 @@ function ENT:DrawText()
 	self:DrawSubtitle( TranslatedTitle, 303 )
 
 end
-
-local DefaultThumbnail = Material( "theater/static.vmt" )
 
 function ENT:OnRemoveHTML()
 	Msg("AWESOMIUM: Destroyed instance for video thumbnail: ")
