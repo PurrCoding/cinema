@@ -16,6 +16,13 @@ surface.CreateFont( "TheaterInfoMedium", {
 	antialias = true
 })
 
+local DefaultThumbnail = Material( "theater/static.vmt" )
+local ThumbWidth = 480
+local ThumbHeight = 360
+local RenderScale = 0.197
+
+local AngleOffset = Angle(0,90,90)
+
 function ENT:Initialize()
 
 	local bound = Vector(1,1,1) * 1024
@@ -36,13 +43,6 @@ function ENT:Draw()
 
 	pcall( self.DrawText, self )
 end
-
-local DefaultThumbnail = Material( "theater/static.vmt" )
-local ThumbWidth = 480
-local ThumbHeight = 360
-local RenderScale = 0.197
-
-local AngleOffset = Angle(0,90,90)
 
 function ENT:FixOffsets()
 
