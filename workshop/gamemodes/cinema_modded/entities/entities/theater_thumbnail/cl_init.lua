@@ -28,6 +28,8 @@ function ENT:Initialize()
 	local bound = Vector(1,1,1) * 1024
 	self:SetRenderBounds( -bound, bound )
 
+	self.ScreenScale = RenderScale * self:GetModelScale()
+
 end
 
 function ENT:Draw()
@@ -37,7 +39,7 @@ function ENT:Draw()
 
 	if not self.Attach then return end
 
-	cam.Start3D2D( self.Attach.Pos, self.Attach.Ang, self.Attach.Scale )
+	cam.Start3D2D( self.Attach.Pos, self.Attach.Ang, self.ScreenScale )
 		pcall( self.DrawThumbnail, self )
 	cam.End3D2D()
 
@@ -46,13 +48,10 @@ end
 
 function ENT:FixOffsets()
 
-	local screenScale = RenderScale * self:GetModelScale()
-	local pos, ang = LocalToWorld( Vector(0.6, screenScale * ThumbWidth * -0.5, screenScale * ThumbHeight * 0.5), AngleOffset, self:GetPos(), self:GetAngles() )
-
+	local pos, ang = LocalToWorld( Vector(0.6, self.ScreenScale * ThumbWidth * -0.5, self.ScreenScale * ThumbHeight * 0.5), AngleOffset, self:GetPos(), self:GetAngles() )
 	self.Attach = {
 		Pos = pos,
 		Ang = ang,
-		Scale = screenScale,
 	}
 end
 
@@ -86,7 +85,7 @@ function ENT:DrawSubtitle( str, height )
 	ty = (height * scale) + (bh / 2)
 	ty = math.min( ty, (ThumbHeight * scale) - bh / 2 )
 
-	cam.Start3D2D( self.Attach.Pos, self.Attach.Ang, ( 1 / scale ) * self.Attach.Scale )
+	cam.Start3D2D( self.Attach.Pos, self.Attach.Ang, ( 1 / scale ) * self.ScreenScale )
 		surface.SetDrawColor( 0, 0, 0, 200 )
 		surface.DrawRect( 0, by, bw, bh )
 		draw.TheaterText( str, "TheaterInfoMedium", (ThumbWidth * scale) / 2, ty, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
