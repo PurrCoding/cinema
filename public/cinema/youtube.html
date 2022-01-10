@@ -25,6 +25,8 @@
       var query = new URL(location.href).searchParams;
       var videoID = query.get("v") || "dQw4w9WgXcQ";
       var startTime = query.get("t") || 0;
+      startTime = parseInt(startTime);
+      var startTimeSet = false;
 
       var tag = document.createElement("script");
       tag.src = "https://www.youtube.com/iframe_api";
@@ -42,7 +44,6 @@
           wmode: "transparent",
           host: "https://www.youtube-nocookie.com", //GDPR Friendly
           playerVars: {
-            start: parseInt(startTime),
             controls: 0,
             showinfo: 0,
             modestbranding: 1,
@@ -101,6 +102,11 @@
 
           if (typeof exTheater != "undefined") {
             exTheater.controllerReady();
+          }
+
+          if (startTime && !startTimeSet ) {
+            event.target.seekTo(startTime);
+            startTimeSet = true;
           }
 
           window.cinema_controller = player;
