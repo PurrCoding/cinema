@@ -141,6 +141,10 @@ function LogRequest()
 	local vtype = net.ReadString()
 	local data = net.ReadString()
 
+	if vTypeConv[vtype] then
+		vtype = vTypeConv[vtype]
+	end
+
 	-- Notify player of video added to queue
 	AddAnnouncement( {
 		"Theater_VideoAddedToQueue",

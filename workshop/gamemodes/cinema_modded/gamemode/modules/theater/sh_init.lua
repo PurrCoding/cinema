@@ -32,6 +32,10 @@ module( "theater", package.seeall )
 
 Theaters = {}
 
+vTypeConv = {
+	["youtubensfw"] = "youtube",
+}
+
 function GetTheaters()
 	return Theaters
 end
