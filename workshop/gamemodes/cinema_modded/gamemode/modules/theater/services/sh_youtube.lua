@@ -108,7 +108,8 @@ local patterns = {
 	["thumb_fallback"] = "<link%sitemprop=\"thumbnailUrl\"%s-href=%b\"\">",
 	["duration"] = "<meta%sitemprop%s-=%s-\"duration\"%s-content%s-=%s-%b\"\">",
 	["live"] = "<meta%sitemprop%s-=%s-\"isLiveBroadcast\"%s-content%s-=%s-%b\"\">",
-	["live_enddate"] = "<meta%sitemprop%s-=%s-\"endDate\"%s-content%s-=%s-%b\"\">"
+	["live_enddate"] = "<meta%sitemprop%s-=%s-\"endDate\"%s-content%s-=%s-%b\"\">",
+	["age_restriction"] = "<meta%sproperty=\"og:restrictions:age\"%s-content=%b\"\">"
 }
 
 function SERVICE:GetURLInfo( url )
@@ -184,6 +185,8 @@ function SERVICE:ParseYTMetaDataFromHTML( html )
 	metadata.thumbnail = ParseElementAttribute(string.match(html, patterns["thumb"]), "content")
 		or ParseElementAttribute(string.match(html, patterns["thumb_fallback"]), "href")
 
+	metadata.familyfriendly = ParseElementAttribute(string.match(html, patterns["age_restriction"]), "content") or ""
+
 	-- See if the video is an ongoing live broadcast
 	-- Set duration to 0 if it is, otherwise use the actual duration
 	local isLiveBroadcast = tobool(ParseElementAttribute(string.match(html, patterns["live"]), "content"))
@@ -214,11 +217,17 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		info.thumbnail = metadata["thumbnail"]
 
 		local isLive = metadata["duration"] == 0
+		local familyFriendly = metadata["familyfriendly"] ~= "18+"
+
 
 		if isLive then
 			info.type = "youtubelive"
 			info.duration = 0
 		else
+			if not familyFriendly then
+				info.type = "youtubensfw"
+			end
+
 			info.duration = metadata["duration"]
 		end
 
@@ -248,5 +257,6 @@ theater.RegisterService( "youtube", SERVICE )
 theater.RegisterService( "youtubelive", {
 	Name = "YouTube Live",
 	IsTimed = false,
+	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )
