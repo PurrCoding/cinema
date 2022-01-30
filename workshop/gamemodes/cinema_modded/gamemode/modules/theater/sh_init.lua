@@ -185,9 +185,8 @@ end
 function ExtractURLData( url, Theater )
 
 	-- Parse url info
-	local status, info = pcall( GetURLInfo, url, Theater )
+	local info = GetURLInfo( url, Theater )
 	if not status then
-		print( "ERROR:\n" .. tostring(info) )
 		return
 	end
 
