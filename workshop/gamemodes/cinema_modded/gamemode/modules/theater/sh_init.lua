@@ -186,7 +186,7 @@ function ExtractURLData( url, Theater )
 
 	-- Parse url info
 	local info = GetURLInfo( url, Theater )
-	if not info then
+	if not status then
 		return
 	end
 
