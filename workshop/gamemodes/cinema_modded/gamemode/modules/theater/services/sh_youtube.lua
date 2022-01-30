@@ -12,7 +12,7 @@ local METADATA_URL = "https://www.youtube.com/watch?v=%s"
 local THEATER_URL = "https://gmod-cinema.pages.dev/cinema/youtube.html?v=%s&t=%s"
 
 function SERVICE:Match( url )
-	return string.match( url.host, "youtu.?be[.com]?" )
+	return url.host and url.host:match("youtu.?be[.com]?")
 end
 
 if (CLIENT) then

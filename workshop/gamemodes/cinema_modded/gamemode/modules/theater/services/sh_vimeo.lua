@@ -12,7 +12,7 @@ SERVICE.IsTimed = true
 local API_URL = "https://vimeo.com/api/oembed.json?url=https://vimeo.com/%s"
 
 function SERVICE:Match( url )
-	return string.match(url.host, "vimeo.com") and string.match(url.path, "^/(%d+)")
+	return url.host and url.host:match("vimeo.com")
 end
 
 if (CLIENT) then

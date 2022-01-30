@@ -39,7 +39,7 @@ SERVICE.IsTimed = true
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
 function SERVICE:Match( url )
-	return string.match( url.host, "archive.org" )
+	return url.host and url.host:match("archive.org")
 end
 
 if (CLIENT) then
