@@ -131,33 +131,12 @@ function SERVICE:GetURLInfo( url )
 		info.Data = string.match(url.path, "^/([%a%d-_]+)$")
 	end
 
-	-- Start time, #t=123s or ?t=123s
-	if (url.fragment and url.fragment.t and url.fragment.t ~= "") or (url.query and url.query.t and url.query.t ~= "") then
-
-		local time = (url.fragment and url.fragment.t) and url.fragment.t or url.query.t
-
-		local seconds = tonumber(string.match(time, "(%d+)s"))
-		local minutes = tonumber(string.match(time, "(%d+)m"))
-		local hours = tonumber(string.match(time, "(%d+)h"))
-
-		if seconds then
-			time = seconds
-		end
-
-		if minutes then
-			time = tonumber(time) and time or 0
-			time = time + (minutes * 60)
-		end
-
-		if hours then
-			time = tonumber(time) and time or 0
-			time = time + (hours * 60 * 60)
-		end
-
-		if time then
+	-- Start time, ?t=123s
+	if (url.query and url.query.t and url.query.t ~= "") then
+		local time = convertISO8601Time(url.query.t)
+		if time and time ~= 0 then
 			info.StartTime = time
 		end
-
 	end
 
 	if info.Data then
