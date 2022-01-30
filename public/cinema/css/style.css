@@ -19,7 +19,7 @@ body {
 
 .header-container {
 	position: absolute;
-	top: 76px;
+	top: 85px;
 	left: 0;
 	right: 0;
 	height: 200px;
@@ -58,7 +58,7 @@ body {
 	background-image: url(../images/theaterwelcome.png);
 	background-repeat: no-repeat;
 	width: 660px;
-	height: 141px;
+	height: 171px;
 }
 
 .top-curtain {
