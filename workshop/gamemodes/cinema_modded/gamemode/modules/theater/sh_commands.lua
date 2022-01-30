@@ -317,16 +317,14 @@ else
 	*/
 	hook.Add("PlayerSay", "TheaterAutoAdd", function(ply, chat)
 		local Theater = ply:GetTheater()
-	
+
 		if Theater then
 			if string.find(chat, "/", 1, true) and string.find(chat, ".", 1, true) then
 				if theater.ExtractURLData(chat) then
 					Theater:RequestVideo(ply, chat)
-	
+
 					return ""
 				end
-			else --remove the else and return here. If they have custom chat commands, this will override them
-				return chat
 			end
 		end
 	end)
