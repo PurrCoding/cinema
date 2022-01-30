@@ -45,10 +45,10 @@ end
 
 function SERVICE:GetURLInfo( url )
 
-	local info = {}
-	info.Data = string.match(url.path, "/(%d+)")
-
-	return info
+	if url.path then
+		local data = url.path:match("/(%d+)")
+		if ( data ) then return { Data = data } end
+	end
 
 end
 
