@@ -50,6 +50,7 @@ function SERVICE:GetURLInfo( url )
 		if ( data ) then return { Data = data } end
 	end
 
+	return false
 end
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
