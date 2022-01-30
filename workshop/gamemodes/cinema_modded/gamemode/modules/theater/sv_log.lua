@@ -29,9 +29,7 @@ end
 
 function GetVideoLog( data, type )
 
-	local str = "SELECT * FROM cinema_history WHERE " ..
-		string.format("type='%s' AND ", type) ..
-		string.format("data='%s'", data)
+	local str = "SELECT * FROM cinema_history WHERE type = " .. SQLStr(type) .. " AND data = " .. SQLStr(data)
 
 	return Query(str)
 
@@ -39,9 +37,7 @@ end
 
 function RemoveVideoLog( data, type )
 
-	local str = "DELETE FROM cinema_history WHERE " ..
-		string.format("type='%s' AND ", type) ..
-		string.format("data='%s'", data)
+	local str = "DELETE FROM cinema_history WHERE type = " .. SQLStr(type) .. " AND data = " .. SQLStr(data)
 
 	return Query(str)
 
