@@ -67,10 +67,10 @@ LANG.TheaterList_NowShowing     = "NOW SHOWING"
 -- modules/scoreboard/cl_request.lua
 LANG.Request_History            = "HISTORY"
 LANG.Request_Clear              = "Clear"
-LANG.Request_DeleteTooltip      = "Remove video from history"
+LANG.Request_DeleteTooltip      = "Remove this video from history"
 LANG.Request_PlayCount          = "%d request(s)" -- e.g. 10 request(s)
 LANG.Request_Url                = "Request URL"
-LANG.Request_Url_Tooltip        = "Press to request a valid video URL.\nThe button will be red when the URL is valid"
+LANG.Request_Url_Tooltip        = "Press to request a valid video URL.\nThe button will be red when the URL is valid."
 
 -- Scoreboard settings panel
 -- modules/scoreboard/cl_settings.lua
@@ -78,12 +78,12 @@ LANG.Settings_Title             = "SETTINGS"
 LANG.Settings_ClickActivate     = "CLICK TO ACTIVATE YOUR MOUSE"
 LANG.Settings_VolumeLabel       = "Volume"
 LANG.Settings_VolumeTooltip     = "Use the +/- keys to increase/decrease volume."
-LANG.Settings_HDLabel           = "HD Video Playback"
-LANG.Settings_HDTooltip         = "Enable HD video playback for HD enabled videos."
-LANG.Settings_HidePlayersLabel  = "Hide Players In Theater"
-LANG.Settings_HidePlayersTooltip = "Reduce player visibility inside of theaters."
+LANG.Settings_HDLabel           = "HD video playback"
+LANG.Settings_HDTooltip         = "Enables HD video playback for HD enabled videos."
+LANG.Settings_HidePlayersLabel  = "Hide players in theaters"
+LANG.Settings_HidePlayersTooltip = "Reduces player visibility inside of theaters."
 LANG.Settings_MuteFocusLabel    = "Mute audio while alt-tabbed"
-LANG.Settings_MuteFocusTooltip  = "Mute theater volume while Garry's Mod is out-of-focus (e.g. you alt-tabbed)."
+LANG.Settings_MuteFocusTooltip  = "Mutes theater volume while Garry's Mod is out-of-focus (e.g. you alt-tabbed)."
 
 -- Video Services
 LANG.Service_EmbedDisabled      = "The requested video is embed disabled."
