@@ -60,7 +60,7 @@ if (CLIENT) then
 			print("[Simple YouTube A.R.B]: " .. message)
 		end
 
-		http.Fetch("https://github.com/zerodytrash/Simple-YouTube-Age-Restriction-Bypass/raw/main/dist/Simple-YouTube-Age-Restriction-Bypass.user.js", onSuccess, onFailure, {})
+		http.Fetch("https://github.com/zerodytrash/Simple-YouTube-Age-Restriction-Bypass/releases/download/v2.3.5/Simple-YouTube-Age-Restriction-Bypass.user.js", onSuccess, onFailure, {})
 	end
 	fetchAgeBypass()
 
