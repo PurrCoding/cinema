@@ -79,6 +79,15 @@ function PANEL:Init()
 		end
 	end )
 
+	self:AddFunction("gmod", "requestUrl", function(url)
+		RequestVideoURL(url)
+	end)
+
+	self:AddFunction("gmod", "openUrl", function(url)
+		if not isstring(url) then return end
+		gui.OpenURL(url)
+	end)
+
 end
 
 function PANEL:SetupCallbacks()
