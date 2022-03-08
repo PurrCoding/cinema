@@ -71,9 +71,9 @@
 		});
 
 		widget.bind(SC.Widget.Events.PLAY, function () {
-			if ( widget.sc_played ) { return; }
+			if (widget.sc_played) { return; }
 
-			if (typeof(exTheater) != 'undefined') {
+			if (typeof (exTheater) != 'undefined') {
 				widget.sc_played = true;
 
 				exTheater.controllerReady();
