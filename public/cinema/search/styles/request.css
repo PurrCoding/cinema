@@ -1,0 +1,165 @@
+@import "./lib/normalize.css";
+html,
+body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+* {
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+*::selection {
+	background: rgba(255, 255, 255, 0.11);
+}
+body {
+	background: -webkit-radial-gradient(
+		center,
+		ellipse cover,
+		#242f3a 0%,
+		#161616 100%
+	);
+	color: white;
+	font-family: "Oswald", sans-serif;
+}
+.content-container {
+	width: 100%;
+	height: 100%;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-box-align: center;
+	-webkit-box-pack: center;
+	overflow: auto;
+}
+h1 {
+	font-size: 20pt;
+	text-shadow: 0px 0px 8px rgba(0, 0, 0, 0.88);
+}
+.services {
+	text-align: center;
+	font-size: 0;
+	max-width: 540px;
+}
+.services:after {
+	content: "";
+	display: table;
+	clear: both;
+}
+.services > .media-service {
+	width: 120px;
+	height: 120px;
+	margin: 30px;
+	display: inline-block;
+	background-color: #eee;
+	background-repeat: no-repeat;
+	background-position: center center;
+	border-radius: 8pt;
+	font-size: 8pt;
+	line-height: 194px;
+	cursor: pointer;
+	color: transparent;
+}
+.services > .media-service:hover {
+	box-shadow: 0px 10px 33px rgba(0, 0, 0, 0.66);
+}
+.services > .media-service.subtext {
+	color: #666;
+}
+.logo-youtube {
+	background-image: url(../images/logos/youtube.png);
+}
+.logo-twitch {
+	background-image: url(../images/logos/twitch.png);
+}
+.logo-dlive {
+	background-image: url(../images/logos/dlive.png);
+}
+.logo-soundcloud {
+	background-image: url(../images/logos/soundcloud.png);
+}
+.logo-vimeo {
+	background-image: url(../images/logos/vimeo.svg);
+	background-size: 80px;
+}
+.logo-dailymotion {
+	background-image: url(../images/logos/dailymotion.png);
+}
+.logo-archive {
+	background-image: url(../images/logos/archive.png);
+}
+.logo-animix {
+	background-image: url(../images/logos/animixplay.png);
+	background-size: 90px;
+}
+.notice {
+	text-align: center;
+	color: rgba(255, 255, 255, 0.44);
+	line-height: 16pt;
+}
+.notice a,
+.notice a:visited,
+.notice a:hover {
+	color: rgba(0, 139, 253, 0.88);
+}
+.notice a:hover {
+	text-decoration: none;
+}
+.url-notice {
+	margin: 0 0 20px 0;
+}
+.url-container {
+	width: 480px;
+	text-align: center;
+	margin-bottom: 10px;
+}
+.url-input {
+	color: #000;
+	left: 0;
+	padding: 5px;
+	height: 30px;
+	width: 400px;
+	float: left;
+	z-index: 2;
+	border: none;
+	border-radius: 2px 0 0 2px;
+}
+.url-submit {
+	display: inline-block;
+	float: left;
+	width: 80px;
+	height: 30px;
+	padding: 5px;
+	background: #e74c3c;
+	color: white;
+	line-height: 18px;
+	text-decoration: none;
+	text-align: center;
+	font-size: 12px;
+	border: none;
+	border-radius: 0 2px 2px 0;
+}
+.url-submit:hover {
+	background: #c0392b;
+}
+.url-submit:active {
+	background: #e74c3c;
+}
+@media all and (max-width: 730px) {
+	.media-service {
+		margin: 10px;
+	}
+}
+@media all and (max-width: 570px) {
+	h1 {
+		font-size: 14pt;
+	}
+	.media-service {
+		margin: 2px;
+		width: 110px;
+		height: 110px;
+	}
+}
+a[href] {
+	color: lightblue;
+}
