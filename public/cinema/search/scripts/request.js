@@ -61,31 +61,3 @@ function selectService(elem) {
         window.location.href = href;
     }
 }
-
-(function(gmod) {
-    if (gmod === undefined) { return; }
-
-    window.setServices = function (serviceIds) {
-        serviceIds = serviceIds.split(',');
-
-        var elem, sid;
-        var serviceElems = document.querySelectorAll('.media-service');
-
-        for (var i = 0; i < serviceElems.length; i++) {
-            elem = serviceElems[i];
-            sid = elem.dataset.service;
-            if (!sid) { continue; }
-
-            sid = sid.split(' ');
-
-            // hide all service icons which aren't supported
-            for (var j = 0; j < sid.length; j++) {
-                if (serviceIds.indexOf(sid[j]) === -1) {
-                    elem.style.display = 'none';
-                }
-            }
-        }
-    };
-
-    gmod.getServices();
-}(window.gmod));
