@@ -25,9 +25,11 @@ This standalone ***"fork"*** of Cinema focuses on fixing the problems and extend
 * Vimeo
 * DLive
 * SoundCloud
-* AniMix Play &#42;
+* Url (mp4, webm) &#42;
+* AniMix Play &#42;&#42;
 <sub>
-&#42; = Limited only to GOGO Stream & Fixed video duration of 10Hours <br />
+&#42; = Fixed video duration of 10Hours <br />
+&#42;&#42; = Limited only to GOGO Stream & Fixed video duration of 10Hours <br />
 ⚠ 𝐌𝐢𝐧𝐢𝐦𝐮𝐦 𝐫𝐞𝐪𝐮𝐢𝐫𝐞𝐦𝐞𝐧𝐭 𝐟𝐨𝐫 𝐘𝐨𝐮𝐓𝐮𝐛𝐞 𝐬𝐭𝐫𝐞𝐚𝐦𝐢𝐧𝐠 𝐨𝐧𝐥𝐲 𝐢𝐬 𝐱𝟖𝟔-𝟔𝟒 𝐛𝐞𝐭𝐚 𝐛𝐫𝐚𝐧𝐜𝐡, 𝐨𝐭𝐡𝐞𝐫𝐰𝐢𝐬𝐞 𝐂𝐄𝐅 𝐜𝐨𝐝𝐞𝐜 𝐟𝐢𝐱 𝐢𝐬 𝐧𝐞𝐞𝐝𝐞𝐝!
 </sub>
 
