@@ -84,7 +84,7 @@ LANG.Settings_HidePlayersLabel   = "Hide players in theaters"
 LANG.Settings_HidePlayersTooltip = "Reduces player visibility inside of theaters."
 LANG.Settings_MuteFocusLabel     = "Mute audio while alt-tabbed"
 LANG.Settings_MuteFocusTooltip   = "Mutes theater volume while Garry's Mod is out-of-focus (e.g. you alt-tabbed)."
-LANG.Settings_SmoothVideoLabel	 = "Smooth video playback"
+LANG.Settings_SmoothVideoLabel	 = "Smoother video playback"
 LANG.Settings_SmoothVideoTooltip = "Make some videos smoother at the cost of FPS."
 
 -- Video Services

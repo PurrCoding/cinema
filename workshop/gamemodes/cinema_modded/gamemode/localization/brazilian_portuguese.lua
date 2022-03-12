@@ -85,7 +85,7 @@ LANG.Settings_HidePlayersTooltip = "Reduz a visiblidade dos jogadores dentro de 
 LANG.Settings_MuteFocusLabel     = "Silenciar áudio enquanto minimizado"
 LANG.Settings_MuteFocusTooltip   = "Silencia os vídeos enquanto o Garry's Mod estiver em segundo plano (por exemplo, ao minimizar)."
 LANG.Settings_SmoothVideoLabel	 = "Reproduzir vídeos suavemente"
-LANG.Settings_SmoothVideoTooltip = "Torna a reprodução de vídeos suave, mas reduz o desempenho do jogo."
+LANG.Settings_SmoothVideoTooltip = "Torna a reprodução de vídeos mais suave, mas reduz o desempenho do jogo."
 
 -- Video Services
 LANG.Service_EmbedDisabled      = "A incorporação do vídeo solicitado está desativada."
