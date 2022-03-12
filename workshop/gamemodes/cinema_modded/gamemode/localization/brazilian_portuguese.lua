@@ -33,12 +33,12 @@ LANG.Theater_UnlockedQueue          = C(ColHighlight,"%s",ColDefault," desbloque
 LANG.Theater_OwnerUseOnly           = "Somente o dono do teatro pode usar isso."
 LANG.Theater_PublicVideoLength      = "Solicitações feitas em teatros públicos são limitadas a %s segundo(s) de duração."
 LANG.Theater_PlayerVoteSkipped      = C(ColHighlight,"%s",ColDefault," votou para pular ",ColHighlight,"(%s/%s)",ColDefault,".")
-LANG.Theater_VideoAddedToQueue      = C(ColHighlight,"%s",ColDefault," foi adicionado(a) à fila.")
+LANG.Theater_VideoAddedToQueue      = C(ColHighlight,"%s",ColDefault," foi adicionado à fila.")
 
 -- Warnings
 -- cl_init.lua
 LANG.Warning_Unsupported_Line1  = "O mapa atual não tem suporte ao modo de jogo Cinema"
-LANG.Warning_Unsupported_Line2  = "Pressione F1 para abrir o mapa oficial na Oficina"
+LANG.Warning_Unsupported_Line2  = "Pressione F1 para abrir o mapa oficial na Oficina Steam"
 
 -- Queue
 -- modules/scoreboard/cl_queue.lua
@@ -74,16 +74,18 @@ LANG.Request_Url_Tooltip        = "Clique para solicitar um vídeo de um URL vá
 
 -- Scoreboard settings panel
 -- modules/scoreboard/cl_settings.lua
-LANG.Settings_Title             = "CONFIGURAÇÕES"
-LANG.Settings_ClickActivate     = "CLIQUE PARA ATIVAR O SEU MOUSE"
-LANG.Settings_VolumeLabel       = "Volume"
-LANG.Settings_VolumeTooltip     = "Use as teclas + e - para aumentar ou diminuir o volume."
-LANG.Settings_HDLabel           = "Reproduzir vídeos em HD"
-LANG.Settings_HDTooltip         = "Reproduz vídeos em HD sempre que possível."
-LANG.Settings_HidePlayersLabel  = "Ocultar jogadores em teatros"
+LANG.Settings_Title              = "CONFIGURAÇÕES"
+LANG.Settings_ClickActivate      = "CLIQUE PARA ATIVAR O SEU MOUSE"
+LANG.Settings_VolumeLabel        = "Volume"
+LANG.Settings_VolumeTooltip      = "Use as teclas + e - para aumentar ou diminuir o volume."
+LANG.Settings_HDLabel            = "Reproduzir vídeos em HD"
+LANG.Settings_HDTooltip          = "Reproduz vídeos em HD sempre que possível."
+LANG.Settings_HidePlayersLabel   = "Ocultar jogadores em teatros"
 LANG.Settings_HidePlayersTooltip = "Reduz a visiblidade dos jogadores dentro de teatros."
-LANG.Settings_MuteFocusLabel    = "Silenciar áudio enquanto minimizado"
-LANG.Settings_MuteFocusTooltip  = "Silencia os vídeos enquanto o Garry's Mod estiver em segundo plano (por exemplo, ao minimizar)."
+LANG.Settings_MuteFocusLabel     = "Silenciar áudio enquanto minimizado"
+LANG.Settings_MuteFocusTooltip   = "Silencia os vídeos enquanto o Garry's Mod estiver em segundo plano (por exemplo, ao minimizar)."
+LANG.Settings_SmoothVideoLabel	 = "Reproduzir vídeos suavemente"
+LANG.Settings_SmoothVideoTooltip = "Torna a reprodução de vídeos suave, mas reduz o desempenho do jogo."
 
 -- Video Services
 LANG.Service_EmbedDisabled      = "A incorporação do vídeo solicitado está desativada."

@@ -9,7 +9,7 @@ local surface_SetMaterial = surface.SetMaterial
 local surface_DrawTexturedRect = surface.DrawTexturedRect
 
 local FPS_Cap = 30
-local FPS_Smoother = CreateClientConVar( "cinema_smoother", 0, true, false, "Make some videos smoother at the cost of FPS" )
+local FPS_Smoother = CreateClientConVar( "cinema_smoother", 1, true, false, "Make some videos smoother at the cost of FPS" )
 
 local function ChangeFrameCap()
 	local bool = FPS_Smoother:GetBool()
