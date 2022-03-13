@@ -85,6 +85,8 @@ LANG.Settings_HidePlayersLabel		= "Spieler im Theater ausblenden"
 LANG.Settings_HidePlayersTooltip 	= "Reduziert die Sichtbarkeit der Spieler innerhalb der Theater."
 LANG.Settings_MuteFocusLabel		= "Im Hintergrund stummschalten"
 LANG.Settings_MuteFocusTooltip		= "Theater Audio stummschalten während Garrysmod minimiert ist."
+LANG.Settings_SmoothVideoLabel	    = "Flüssige Videowiedergabe"
+LANG.Settings_SmoothVideoTooltip    = "Mach einige Videos flüssiger Kosten der FPS."
 
 -- Video Services
 LANG.Service_EmbedDisabled			= "Das angeforderte Video hat die Einbettung deaktiviert."
