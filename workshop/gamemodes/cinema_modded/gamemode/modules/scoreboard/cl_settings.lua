@@ -126,8 +126,8 @@ function SETTINGS:Create()
 	HD.Label:SetTall(50)
 
 	-- Video Smoother
-	local VideoSmoother = self:NewSetting( "TheaterCheckBoxLabel", "Smooth Video Playback", "cinema_smoother" )
-	VideoSmoother:SetTooltip( "Make some videos smoother at the cost of FPS" )
+	local VideoSmoother = self:NewSetting( "TheaterCheckBoxLabel", T("Settings_SmoothVideoLabel"), "cinema_smoother" )
+	VideoSmoother:SetTooltip( T("Settings_SmoothVideoTooltip") )
 	VideoSmoother:AlignLeft( 16 )
 	VideoSmoother:AlignTop( self.TitleHeight + 64 )
 	VideoSmoother.Label:SetFont( "LabelFont" )
