@@ -124,6 +124,10 @@ function SERVICE:GetURLInfo( url )
 	elseif url.path and string.match(url.path, "^/v/([%a%d-_]+)") then
 		info.Data = string.match(url.path, "^/v/([%a%d-_]+)")
 
+		-- http://www.youtube.com/shorts/(videoId)
+	elseif url.path and string.match(url.path, "^/shorts/([%a%d-_]+)") then
+		info.Data = string.match(url.path, "^/shorts/([%a%d-_]+)")
+
 	-- http://youtu.be/(videoId)
 	elseif string.match(url.host, "youtu.be") and
 		url.path and string.match(url.path, "^/([%a%d-_]+)$") and
