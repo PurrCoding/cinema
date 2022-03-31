@@ -145,16 +145,13 @@ function HISTORY:Init()
 
 	self.SearchField = vgui.Create( "DTextEntry", self.SearchFrame )
 	self.SearchField:DockMargin(0,0,10,0)
-	self.SearchField:SetValue( "Search.." )
+	self.SearchField:SetPlaceholderText( "Search.." )
 	self.SearchField:SetUpdateOnType(true)
-	self.SearchField.OnEnter = function(pnl)
-		self.History = nil -- Clear History table on Enter
+	self.SearchField.OnChange = function(pnl)
+		self.History = nil -- Clear History table on Change
 
 		local text = pnl:GetValue()
 		self:Search(text)
-	end
-	self.SearchField.ddd = function(pnl)
-		pnl:SetValue()
 	end
 
 	-- Page Forward
