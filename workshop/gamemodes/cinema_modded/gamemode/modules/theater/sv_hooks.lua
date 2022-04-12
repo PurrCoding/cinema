@@ -47,6 +47,16 @@ end
 
 
 /*---------------------------------------------------------------------------
+	Name: OnFinishedPlaying
+	Desc: Called after a video has finished playing,
+		Will not be called if the video was skipped.
+---------------------------------------------------------------------------*/
+function GM:OnFinishedPlaying( Video, Theater )
+
+end
+
+
+/*---------------------------------------------------------------------------
 	Name: PrePlayVideo
 	Desc: Called prior to a video being played. Return false in a hook
 		to prevent the video from playing. However, it will still remain

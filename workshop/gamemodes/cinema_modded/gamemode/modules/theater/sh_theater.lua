@@ -291,6 +291,8 @@ if SERVER then
 		Video Playback
 	*/
 	function THEATER:OnFinishedPlaying()
+		hook.Run("OnFinishedPlaying", self._Video, self)
+
 		self._Finished = true
 		self:NextVideo()
 	end
