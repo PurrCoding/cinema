@@ -152,7 +152,7 @@ local function PlayerChangeTheater( ply, loc, old )
 	-- Player left theater
 	if OldTheater then
 
-		hook.Run( "PrePlayerExitTheater", ply, Theater )
+		hook.Run( "PrePlayerExitTheater", ply, OldTheater )
 
 		theater.PlayerLeave( ply, old )
 
@@ -160,7 +160,7 @@ local function PlayerChangeTheater( ply, loc, old )
 			ply:SetInTheater(false)
 		end
 
-		hook.Run( "PostPlayerExitTheater", ply, Theater )
+		hook.Run( "PostPlayerExitTheater", ply, OldTheater )
 
 	end
 
