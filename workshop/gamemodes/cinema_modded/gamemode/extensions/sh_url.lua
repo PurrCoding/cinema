@@ -1,20 +1,14 @@
-local module = module
-local pairs = pairs
 local string_gsub = string.gsub
 local string_format = string.format
 local string_byte = string.byte
-local ipairs = ipairs
-local string_char = string.char
-local tonumber = tonumber
 local string_sub = string.sub
-local parse = parse
 local string_Explode = string.Explode
-local parse_path = parse_path
-local build_path = build_path
-local istable = istable
-local build = build
+local string_char = string.char
 local table_insert = table.insert
-local unescape = unescape
+local ipairs = ipairs
+local tonumber = tonumber
+local istable = istable
+local pairs = pairs
 
 -----------------------------------------------------------------------------
 -- URI parsing, composition and relative URL resolution
