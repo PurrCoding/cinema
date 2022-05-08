@@ -1,7 +1,7 @@
 -- Basic information
 LANG.Name		= "Russian"	-- Native name for language
 LANG.Id			= "ru"		-- Find corresponding ID in garrysmod/resource/localization
-LANG.Author		= "Joker[Rus], berry"		-- Chain authors if necessary (e.g. "Sam, MacDGuy, Foohy")
+LANG.Author		= "Joker[Rus], berry, Alivebyte!"		-- Chain authors if necessary (e.g. "Sam, MacDGuy, Foohy")
 
 -- Common
 LANG.Cinema						= "CINEMA"
@@ -84,6 +84,8 @@ LANG.Settings_HidePlayersLabel	= "Прятать игроков в театре"
 LANG.Settings_HidePlayersTooltip = "В театрах игроки станут невидимые для вас."
 LANG.Settings_MuteFocusLabel	= "Глушить звук в не игры"
 LANG.Settings_MuteFocusTooltip	= "Отключение звука театра, когда вы вне игры (например: игра свернута)."
+LANG.Settings_SmoothVideoLabel	 = "Cглаживать воспроизведение видео"
+LANG.Settings_SmoothVideoTooltip = "Сглаживать воспроизведение видео, влияет на производительность."
 
 -- Video Services
 LANG.Service_EmbedDisabled 		= "Запрещено вставлять выбранное видео."
