@@ -1,7 +1,7 @@
 -- Basic information
-LANG.Name       = "English" -- Native name for language
-LANG.Id         = "en"      -- Find corresponding ID in garrysmod/resource/localization
-LANG.Author     = ""        -- Chain authors if necessary (e.g. "Sam, MacDGuy, Foohy")
+LANG.Name       = "English"    -- Native name for language
+LANG.Id         = "en"         -- Find corresponding ID in garrysmod/resource/localization
+LANG.Author     = "FarukGamer" -- Chain authors if necessary (e.g. "Sam, MacDGuy, Foohy")
 
 -- Common
 LANG.Cinema                     = "CINEMA"
@@ -17,7 +17,7 @@ LANG.Set                        = "Set"
 -- modules/theater/cl_init.lua
 -- modules/theater/sh_commands.lua
 -- modules/theater/sh_theater.lua
-LANG.Theater_VideoRequestedBy       = C("Current video requested by ",ColHighlight,"%s",ColDefault,".")
+LANG.Theater_VideoRequestedBy       = C("The current video was requested by ",ColHighlight,"%s",ColDefault,".")
 LANG.Theater_InvalidRequest         = "Invalid video request."
 LANG.Theater_AlreadyQueued          = "The requested video is already in the queue."
 LANG.Theater_ProcessingRequest      = C("Processing ",ColHighlight,"%s",ColDefault," request...")
@@ -31,7 +31,7 @@ LANG.Theater_OwnerLockedQueue       = "The owner of the theater has locked the q
 LANG.Theater_LockedQueue            = C(ColHighlight,"%s",ColDefault," has locked the theater queue.")
 LANG.Theater_UnlockedQueue          = C(ColHighlight,"%s",ColDefault," has unlocked the theater queue.")
 LANG.Theater_OwnerUseOnly           = "Only the theater owner can use that."
-LANG.Theater_PublicVideoLength      = "Public theater requests are limited to %s second(s) in length."
+LANG.Theater_PublicVideoLength      = "Public theater requests are limited to %s seconds in length."
 LANG.Theater_PlayerVoteSkipped      = C(ColHighlight,"%s",ColDefault," has voted to skip ",ColHighlight,"(%s/%s)",ColDefault,".")
 LANG.Theater_VideoAddedToQueue      = C(ColHighlight,"%s",ColDefault," has been added to the queue.")
 
@@ -43,10 +43,10 @@ LANG.Warning_Unsupported_Line2  = "Press F1 to open the official map on the Stea
 -- Queue
 -- modules/scoreboard/cl_queue.lua
 LANG.Queue_Title                = "QUEUE"
-LANG.Request_Video              = "Request Video"
-LANG.Vote_Skip                  = "Vote Skip"
-LANG.Toggle_Fullscreen          = "Toggle Fullscreen"
-LANG.Refresh_Theater            = "Refresh Theater"
+LANG.Request_Video              = "Request video"
+LANG.Vote_Skip                  = "Vote to skip"
+LANG.Toggle_Fullscreen          = "Toggle fullscreen"
+LANG.Refresh_Theater            = "Refresh theater"
 
 -- Theater controls
 -- modules/scoreboard/cl_admin.lua
@@ -55,8 +55,8 @@ LANG.Theater_Owner              = "OWNER"
 LANG.Theater_Skip               = "Skip"
 LANG.Theater_Seek               = "Seek"
 LANG.Theater_Reset              = "Reset"
-LANG.Theater_ChangeName         = "Change Name"
-LANG.Theater_QueueLock          = "Toggle Queue Lock"
+LANG.Theater_ChangeName         = "Change name"
+LANG.Theater_QueueLock          = "Toggle queue lock"
 LANG.Theater_SeekQuery          = "HH:MM:SS or number of seconds (e.g. 1:30:00 or 5400)"
 
 -- Theater list

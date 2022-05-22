@@ -1,7 +1,7 @@
 -- Basic information
 LANG.Name       = "Português (Brasil)" -- Native name for language
-LANG.Id         = "pt-BR"      -- Find corresponding ID in garrysmod/resource/localization
-LANG.Author     = "Tiagoquix"        -- Chain authors if necessary (e.g. "Sam, MacDGuy, Foohy")
+LANG.Id         = "pt-BR"              -- Find corresponding ID in garrysmod/resource/localization
+LANG.Author     = "Tiagoquix"          -- Chain authors if necessary (e.g. "Sam, MacDGuy, Foohy")
 
 -- Common
 LANG.Cinema                     = "CINEMA"
@@ -31,13 +31,13 @@ LANG.Theater_OwnerLockedQueue       = "O dono do teatro bloqueou a fila."
 LANG.Theater_LockedQueue            = C(ColHighlight,"%s",ColDefault," bloqueou a fila do teatro.")
 LANG.Theater_UnlockedQueue          = C(ColHighlight,"%s",ColDefault," desbloqueou a fila do teatro.")
 LANG.Theater_OwnerUseOnly           = "Somente o dono do teatro pode usar isso."
-LANG.Theater_PublicVideoLength      = "Solicitações feitas em teatros públicos são limitadas a %s segundo(s) de duração."
+LANG.Theater_PublicVideoLength      = "Solicitações feitas em teatros públicos são limitadas a %s segundos de duração."
 LANG.Theater_PlayerVoteSkipped      = C(ColHighlight,"%s",ColDefault," votou para pular ",ColHighlight,"(%s/%s)",ColDefault,".")
 LANG.Theater_VideoAddedToQueue      = C(ColHighlight,"%s",ColDefault," foi adicionado à fila.")
 
 -- Warnings
 -- cl_init.lua
-LANG.Warning_Unsupported_Line1  = "O mapa atual não tem suporte ao modo de jogo Cinema"
+LANG.Warning_Unsupported_Line1  = "O mapa atual é incompatível com o modo de jogo Cinema"
 LANG.Warning_Unsupported_Line2  = "Pressione F1 para abrir o mapa oficial na Oficina Steam"
 
 -- Queue
