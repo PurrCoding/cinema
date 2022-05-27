@@ -39,14 +39,12 @@ if (CLIENT) then
 	local DAILYMOTION_URL = "https://www.dailymotion.com/embed/video/%s?rel=0&autoplay=1"
 	local THEATER_JS = [[
 		function check() {
-			if (typeof playerV5 === "undefined") { return; }
-
-			var player = playerV5;
 			if (document.querySelector(".np_DialogConsent-accept")) {
 				document.querySelector(".np_DialogConsent-accept").click();
 			}
 
-			if (!!player && player.paused == false && player.ready) {
+			var player = document.querySelector("video.dmp_Video");
+			if (!!player && player.paused == false && player.readyState == 4) {
 				clearInterval(checkerInterval);
 
 				window.cinema_controller = player;
