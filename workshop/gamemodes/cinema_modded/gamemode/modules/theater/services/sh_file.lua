@@ -1,18 +1,18 @@
 --[[
-	███████╗██╗██╗     ███████╗                             
-	██╔════╝██║██║     ██╔════╝                             
-	█████╗  ██║██║     █████╗                               
-	██╔══╝  ██║██║     ██╔══╝                               
-	██║     ██║███████╗███████╗                             
-	╚═╝     ╚═╝╚══════╝╚══════╝                             
-															
+	███████╗██╗██╗     ███████╗
+	██╔════╝██║██║     ██╔════╝
+	█████╗  ██║██║     █████╗
+	██╔══╝  ██║██║     ██╔══╝
+	██║     ██║███████╗███████╗
+	╚═╝     ╚═╝╚══════╝╚══════╝
+
 		███████╗███████╗██████╗ ██╗   ██╗██╗ ██████╗███████╗
 		██╔════╝██╔════╝██╔══██╗██║   ██║██║██╔════╝██╔════╝
-		███████╗█████╗  ██████╔╝██║   ██║██║██║     █████╗  
-		╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██║██║     ██╔══╝  
+		███████╗█████╗  ██████╔╝██║   ██║██║██║     █████╗
+		╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██║██║     ██╔══╝
 		███████║███████╗██║  ██║ ╚████╔╝ ██║╚██████╗███████╗
 		╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝ ╚═════╝╚══════╝
-                                                        
+
     This Cinema service was created with time and effort by Shadowsun™ (STEAM_0:1:75888605 | https://steamcommunity.com/id/FarukGamer )
     Don't be a bad person who steals other people's works and uses it for their own benefit, keep the credits and don't remove them!
 
@@ -69,7 +69,7 @@ if (CLIENT) then
 	]]
 
 	local THEATER_JS = [[
-		function check() {
+		var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName("VIDEO")[0]
 			if (!!player) {
 
@@ -78,13 +78,12 @@ if (CLIENT) then
 					clearInterval(checkerInterval);
 
 					player.style = "width:100%; height: 100%;";
-					
+
 					window.cinema_controller = player;
 					exTheater.controllerReady();
 				}
 			}
-		}
-		var checkerInterval = setInterval(check, 50);
+		}, 50);
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )

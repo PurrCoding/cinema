@@ -23,7 +23,7 @@
 
 	This service has no API or method to collect metadata like the duration.
 	For this reason, a length of 10 hours is displayed for each video.
-	
+
 	For security and reliability reasons, only GOGO Stream is supported.
 ]]--
 
@@ -50,11 +50,11 @@ if (CLIENT) then
 
 	local THEATER_JS = {
 		["animixplay_v1"] = [[
-			function check() {
+			var checkerInterval = setInterval(function() {
 				if (typeof (iframeplayer) != 'undefined') {
 					if (!iframeplayer.src) {return;}
 					clearInterval(checkerInterval);
-	
+
 					window.location.replace(iframeplayer.src);
 				} else {
 					if (typeof (player1) != 'undefined') {
@@ -63,15 +63,14 @@ if (CLIENT) then
 							player1.play();
 							return;
 						}
-		
+
 						clearInterval(checkerInterval);
 
 						window.cinema_controller = player1.media;
 						exTheater.controllerReady();
 					}
 				}
-			}
-			var checkerInterval = setInterval(check, 150);
+			}, 50);
 		]]
 	}
 

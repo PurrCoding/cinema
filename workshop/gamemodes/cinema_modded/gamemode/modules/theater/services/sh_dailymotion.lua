@@ -38,7 +38,7 @@ end
 if (CLIENT) then
 	local DAILYMOTION_URL = "https://www.dailymotion.com/embed/video/%s?rel=0&autoplay=1"
 	local THEATER_JS = [[
-		function check() {
+		var checkerInterval = setInterval(function() {
 			if (document.querySelector(".np_DialogConsent-accept")) {
 				document.querySelector(".np_DialogConsent-accept").click();
 			}
@@ -50,8 +50,7 @@ if (CLIENT) then
 				window.cinema_controller = player;
 				exTheater.controllerReady();
 			}
-		}
-		var checkerInterval = setInterval(check, 100);
+		}, 50);
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )

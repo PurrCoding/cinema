@@ -18,7 +18,7 @@ end
 if (CLIENT) then
 	local VIMEO_URL = "https://player.vimeo.com/video/%s?rel=0&autoplay=1"
 	local THEATER_JS = [[
-		function check() {
+		var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName('video')[0];
 			if (!!player && player.paused == false && player.readyState == 4) {
 				clearInterval(checkerInterval);
@@ -28,8 +28,7 @@ if (CLIENT) then
 
 				exTheater.controllerReady();
 			}
-		}
-		var checkerInterval = setInterval(check, 50);
+		}, 50);
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )

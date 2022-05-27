@@ -24,7 +24,7 @@ end
 if (CLIENT) then
 	local TWITCH_URL = "https://player.twitch.tv/?channel=%s&parent=pixeltailgames.com"
 	local THEATER_JS = [[
-		function check() {
+		var checkerInterval = setInterval(function() {
 			var matureAccept = document.querySelectorAll("[data-a-target=\"player-overlay-mature-accept\"]")[0]
 			if (!!matureAccept) {matureAccept.click(); return;}
 
@@ -38,8 +38,7 @@ if (CLIENT) then
 
 				exTheater.controllerReady();
 			}
-		}
-		var checkerInterval = setInterval(check, 50);
+		}, 50);
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )

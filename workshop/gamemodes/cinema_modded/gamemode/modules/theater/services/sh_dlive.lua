@@ -12,8 +12,8 @@
 			╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██║██║     ██╔══╝
 			███████║███████╗██║  ██║ ╚████╔╝ ██║╚██████╗███████╗
 			╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝ ╚═════╝╚══════╝
-                                                                           
-    This Cinema service was created with time and effort by Shadowsun™ (STEAM_0:1:75888605 | https://steamcommunity.com/id/FarukGamer )                                                                            
+
+    This Cinema service was created with time and effort by Shadowsun™ (STEAM_0:1:75888605 | https://steamcommunity.com/id/FarukGamer )
     Don't be a bad person who steals other people's works and uses it for their own benefit, keep the credits and don't remove them!
 
 	Info: This service was once only made for "KNAB-Networks Cinema", now some of them are available for third party use.
@@ -39,8 +39,8 @@ end
 
 if (CLIENT) then
 	local BASE_URL = "https://dlive.tv/%s"
-	local THEATER_JS = [[		
-		function check() {
+	local THEATER_JS = [[
+		var checkerInterval = setInterval(function() {
 			var matureWarn = document.querySelectorAll(".d-btn-content");
 			matureWarn.forEach(function(item, index, array) {
 				if (item.innerText.indexOf("Start Watching") === 0) {
@@ -53,20 +53,19 @@ if (CLIENT) then
 				if (player.paused) {player.play(); }
 				if (player.paused === false && player.readyState === 4) {
 					clearInterval(checkerInterval);
-	
+
 					window.cinema_controller = player;
-	
+
 					var div = document.getElementsByClassName("dplayer-live")[0]
 					if (!!div) { document.getElementsByTagName("body")[0].appendChild(div) }
-	
+
 					var appElem = document.getElementById("app");
 					if (!!appElem) { appElem.remove(); }
-	
+
 					exTheater.controllerReady();
 				}
 			}
-		}
-		var checkerInterval = setInterval(check, 50);
+		}, 50);
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )

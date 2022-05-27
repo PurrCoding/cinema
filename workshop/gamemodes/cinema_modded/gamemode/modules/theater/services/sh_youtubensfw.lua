@@ -34,7 +34,7 @@ SERVICE.Hidden = true
 if (CLIENT) then
 	local THEATER_URL = "https://www.youtube.com/embed/%s?t=%s&autoplay=1&muted=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3"
 	local THEATER_JS = [[
-		function check() {
+		var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName('video')[0];
 			if (!!player && player.paused == false && player.readyState == 4) {
 				clearInterval(checkerInterval);
@@ -43,8 +43,7 @@ if (CLIENT) then
 
 				exTheater.controllerReady();
 			}
-		}
-		var checkerInterval = setInterval(check, 50);
+		}, 50);
 	]]
 	local agebypasser = nil
 

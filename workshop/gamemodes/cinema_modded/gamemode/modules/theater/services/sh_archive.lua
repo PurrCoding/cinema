@@ -1,19 +1,19 @@
 --[[
-     █████╗ ██████╗  ██████╗██╗  ██╗██╗██╗   ██╗███████╗    ██████╗ ██████╗  ██████╗ 
-    ██╔══██╗██╔══██╗██╔════╝██║  ██║██║██║   ██║██╔════╝   ██╔═══██╗██╔══██╗██╔════╝ 
+     █████╗ ██████╗  ██████╗██╗  ██╗██╗██╗   ██╗███████╗    ██████╗ ██████╗  ██████╗
+    ██╔══██╗██╔══██╗██╔════╝██║  ██║██║██║   ██║██╔════╝   ██╔═══██╗██╔══██╗██╔════╝
     ███████║██████╔╝██║     ███████║██║██║   ██║█████╗     ██║   ██║██████╔╝██║  ███╗
     ██╔══██║██╔══██╗██║     ██╔══██║██║╚██╗ ██╔╝██╔══╝     ██║   ██║██╔══██╗██║   ██║
     ██║  ██║██║  ██║╚██████╗██║  ██║██║ ╚████╔╝ ███████╗██╗╚██████╔╝██║  ██║╚██████╔╝
-    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝  ╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝ 
-                                                                                     
-                ███████╗███████╗██████╗ ██╗   ██╗██╗ ██████╗███████╗                 
-                ██╔════╝██╔════╝██╔══██╗██║   ██║██║██╔════╝██╔════╝                 
-                ███████╗█████╗  ██████╔╝██║   ██║██║██║     █████╗                   
-                ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██║██║     ██╔══╝                   
-                ███████║███████╗██║  ██║ ╚████╔╝ ██║╚██████╗███████╗                 
-                ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝ ╚═════╝╚══════╝                 
-                                                                                     
-    This Cinema service was created with time and effort by Shadowsun™ (STEAM_0:1:75888605 | https://steamcommunity.com/id/FarukGamer )                                                                            
+    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═══╝  ╚══════╝╚═╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝
+
+                ███████╗███████╗██████╗ ██╗   ██╗██╗ ██████╗███████╗
+                ██╔════╝██╔════╝██╔══██╗██║   ██║██║██╔════╝██╔════╝
+                ███████╗█████╗  ██████╔╝██║   ██║██║██║     █████╗
+                ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██║██║     ██╔══╝
+                ███████║███████╗██║  ██║ ╚████╔╝ ██║╚██████╗███████╗
+                ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝ ╚═════╝╚══════╝
+
+    This Cinema service was created with time and effort by Shadowsun™ (STEAM_0:1:75888605 | https://steamcommunity.com/id/FarukGamer )
     Don't be a bad person who steals other people's works and uses it for their own benefit, keep the credits and don't remove them!
 
 	Info: This service was once only made for "KNAB-Networks Cinema", now some of them are available for third party use.
@@ -44,7 +44,7 @@ end
 
 if (CLIENT) then
 	local THEATER_JS = [[
-		function check() {
+		var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName("VIDEO")[0]
 			if (!!player) {
 				if (player.paused) {player.play();}
@@ -57,8 +57,7 @@ if (CLIENT) then
 					exTheater.controllerReady();
 				}
 			}
-		}
-		var checkerInterval = setInterval(check, 50);
+		}, 50);
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )
