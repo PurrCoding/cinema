@@ -49,41 +49,36 @@ if (CLIENT) then
 
 	local HTML_BASE = [[
 		<html>
-			<head>
-				<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@clappr/core@latest/dist/clappr-core.min.js"></script>
-			</head>
-			<body style="margin:0px;background-color:black;overflow:hidden;">
-				<div id="player-wrapper"></div>
-
-				<script>
-					var playerController = new Clappr.Player({
-						source: "{@VideoURL}", parentId: "#player-wrapper",
-						preload: "metadata", mute: false, autoPlay: true,
-						hideMediaControl: true, height: window.innerHeight,
-						width: window.innerWidth
-					});
-				</script>
-
-			</body>
+		<head></head>
+		<body style="margin:0px;background-color:black;overflow:hidden;">
+			<div id="player-wrapper"></div>
+		
+			<script>
+				var playedHooked = false;
+				var video = document.createElement("video");
+				video.src = "{@VideoURL}";
+				video.autoplay = true;
+				video.controls = false;
+				video.muted = false;
+				video.height = window.innerHeight;
+				video.width = window.innerWidth;
+				
+				document.getElementById("player-wrapper").appendChild(video);
+			</script>
+		
+			<script>
+				var checkerInterval = setInterval(function() {			
+					if (!video.paused && video.readyState === 4) {
+						clearInterval(checkerInterval);
+					
+						window.cinema_controller = video;
+						exTheater.controllerReady();
+					}
+				}, 50);
+			</script>
+		
+		</body>
 		</html>
-	]]
-
-	local THEATER_JS = [[
-		var checkerInterval = setInterval(function() {
-			var player = document.getElementsByTagName("VIDEO")[0]
-			if (!!player) {
-
-				if (player.paused) { player.play(); }
-				if (!player.paused && player.readyState === 4) {
-					clearInterval(checkerInterval);
-
-					player.style = "width:100%; height: 100%;";
-
-					window.cinema_controller = player;
-					exTheater.controllerReady();
-				}
-			}
-		}, 50);
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )
@@ -99,7 +94,6 @@ if (CLIENT) then
 		panel:SetHTML(HTML_BASE:Replace("{@VideoURL}", url))
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
-			pnl:QueueJavascript(THEATER_JS)
 		end
 	end
 end
