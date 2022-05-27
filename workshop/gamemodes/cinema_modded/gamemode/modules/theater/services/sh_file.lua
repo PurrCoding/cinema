@@ -54,7 +54,6 @@ if (CLIENT) then
 			<div id="player-wrapper"></div>
 		
 			<script>
-				var playedHooked = false;
 				var video = document.createElement("video");
 				video.src = "{@VideoURL}";
 				video.autoplay = true;
