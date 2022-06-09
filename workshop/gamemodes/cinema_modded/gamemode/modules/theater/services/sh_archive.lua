@@ -29,7 +29,7 @@ local VALID_FORMATS = {
 	["Ogg Video"] = true,
 }
 
-SERVICE.Name = "Archive"
+SERVICE.Name = "Internet Archive"
 SERVICE.IsTimed = true
 
 --[[
