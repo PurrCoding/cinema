@@ -121,7 +121,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		end
 
 		response = response.result
-		local name, duration, thumbnail
+		local name, duration
 
 		if file then
 			oFile = file
@@ -149,16 +149,14 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 			end
 		end
 
-		thumbnail = self:GetThumbnail(response, file or name) or self.PlaceholderThumb
-
-		if not name or not duration or not thumbnail then -- Do we have everything that we want?
+		if not name or not duration  then -- Do we have everything that we want?
 			return onFailure( "Theater_RequestFailed" )
 		end
 
-		local info = {}
+		local info, thumbnail = {}, self:GetThumbnail(response, file or name)
 		info.title = name
 		info.duration = math.Round(duration)
-		info.thumbnail = DOWNLOAD_URL:format(identifier, thumbnail)
+		info.thumbnail = thumbnail and DOWNLOAD_URL:format(identifier, thumbnail) or self.PlaceholderThumb
 
 		if onSuccess then
 			pcall(onSuccess, info)
