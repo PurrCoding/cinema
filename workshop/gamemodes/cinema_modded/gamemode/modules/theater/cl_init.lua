@@ -306,8 +306,31 @@ function ReceiveSeek()
 	PollServer()
 
 end
-
 net.Receive( "TheaterSeek", ReceiveSeek )
+
+function ReceiveMetadataJob()
+
+	local type = net.ReadString()
+	local service = GetServiceByClass(type)
+
+	if service then
+		local data = net.ReadString()
+		local hash = net.ReadString()
+
+		service:GetMetadata(data, function(metadata)
+			if ( metadata and istable(metadata) ) then
+
+				net.Start("TheaterMetadata")
+					net.WriteString(hash)
+					net.WriteTable(metadata)
+				net.SendToServer()
+			end
+		end)
+
+	end
+
+end
+net.Receive("TheaterMetadata", ReceiveMetadataJob)
 
 function ReceiveTheaters()
 

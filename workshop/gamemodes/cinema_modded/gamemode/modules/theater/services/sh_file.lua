@@ -29,6 +29,7 @@
 local SERVICE = {}
 SERVICE.Name = "File"
 SERVICE.IsTimed = true
+SERVICE.ExtentedVideoInfo = true
 
 --[[
 	Uncomment this line below to restrict Videostreaming
@@ -46,6 +47,14 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
+
+	local MEDIA_ERR = { -- https://developer.mozilla.org/en-US/docs/Web/API/MediaError
+		[1] = "The user canceled the media.", -- MEDIA_ERR_ABORTED
+		[2] = "A network error occurred while fetching the media.", -- MEDIA_ERR_NETWORK
+		[3] = "An error occurred while decoding the media.", -- MEDIA_ERR_DECODE
+		[4] = "The audio is missing or is in a format not supported by your browser.", -- MEDIA_ERR_SRC_NOT_SUPPORTED
+		[5] = "An unknown error occurred.", -- MEDIA_ERR_UNKOWN
+	}
 
 	local HTML_BASE = [[
 		<html>
@@ -80,6 +89,20 @@ if (CLIENT) then
 		</html>
 	]]
 
+	local HTML_METADATA = [[
+		<html><body> <video id="video" src="{@VideoSrc}" preload="metadata"></video>
+			<script>
+				const video = document.querySelector('video');
+				video.onloadedmetadata = function() {
+					var metadata = { duration: video.duration }
+
+					console.log("METADATA:" + JSON.stringify(metadata))
+				};
+				video.onerror = function() { console.log("ERROR:" + video.error.code ) };
+			</script>
+		</body></html>
+	]]
+
 	function SERVICE:LoadProvider( Video, panel )
 		local url = Video:Data()
 
@@ -95,6 +118,31 @@ if (CLIENT) then
 			self:LoadExFunctions( pnl )
 		end
 	end
+
+	function SERVICE:GetMetadata( data, callback )
+		local panel = vgui.Create("HTML")
+		panel:SetSize(100,100)
+		panel:SetAlpha(0)
+		panel:SetMouseInputEnabled(false)
+
+		function panel:ConsoleMessage(msg)
+			if msg:StartWith("METADATA:") then
+				local metadata = util.JSONToTable(string.sub(msg, 10))
+
+				callback(metadata)
+				panel:Remove()
+			end
+
+			if msg:StartWith("ERROR:") then
+				local code = tonumber(string.sub(msg, 7))
+
+				callback({ err = MEDIA_ERR[code] or MEDIA_ERR[5] })
+				panel:Remove()
+			end
+		end
+
+		panel:SetHTML(HTML_METADATA:Replace( "{@VideoSrc}", data ))
+	end
 end
 
 function SERVICE:GetURLInfo( url )
@@ -107,14 +155,22 @@ end
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
-	local info = {}
-	info.title = ("File: %s"):format(data)
-	info.thumbnail = self.PlaceholderThumb
-	info.duration = 36000 -- 10 Hours
+	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
 
-	if onSuccess then
-		pcall(onSuccess, info)
-	end
+		if metadata.err then
+			return onFailure(metadata.err)
+		end
+
+		local info = {}
+		info.title = ("File: %s"):format(data:Data())
+		info.thumbnail = self.PlaceholderThumb
+		info.duration = tonumber(metadata.duration)
+
+		if onSuccess then
+			pcall(onSuccess, info)
+		end
+	end)
+
 end
 
 theater.RegisterService( "file", SERVICE )
