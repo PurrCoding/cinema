@@ -149,7 +149,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		local info = {}
 		info.title = ("AniMix Play: %s"):format(data:Data())
 		info.thumbnail = self.PlaceholderThumb
-		info.duration = tonumber(metadata.duration)
+		info.duration = math.Round(tonumber(metadata.duration))
 
 		if onSuccess then
 			pcall(onSuccess, info)
