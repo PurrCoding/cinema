@@ -77,7 +77,7 @@ if (CLIENT) then
 	]])
 
 	local METADATA_JS = JS_BASE:Replace("{@JS_Content}", [[
-		if (!player1.paused) { player1.pause(); }
+		if (player1.paused) { player1.play(); return;}
 		player1.muted = true;
 
 		clearInterval(checkerInterval);
