@@ -159,6 +159,14 @@ else
 		ply:Freeze(tobool(args[1]))
 	end)
 
+	concommand.Add("cinema_truncate_history", function(ply,cmd,args)
+
+		if (IsValid(ply) and ply:IsPlayer() and ply:IsSuperAdmin()) then
+			theater.Query("DELETE FROM cinema_history")
+		end
+
+	end)
+
 	local function TheaterCommand( name, Function )
 
 		if not Function then return end
