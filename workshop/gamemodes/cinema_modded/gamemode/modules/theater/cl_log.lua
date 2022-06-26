@@ -141,8 +141,9 @@ function LogRequest()
 	local vtype = net.ReadString()
 	local data = net.ReadString()
 
-	if vTypeConv[vtype] then
-		vtype = vTypeConv[vtype]
+	-- Use the parent classe of the service
+	if (Services[vtype] and Services[vtype].ParentClass) then
+		vtype = Services[vtype].ParentClass
 	end
 
 	-- Notify player of video added to queue

@@ -22,6 +22,7 @@
 local SERVICE = {}
 
 SERVICE.Name = "YouTube NSFW"
+SERVICE.ParentClass = "youtube"
 SERVICE.IsTimed = true
 SERVICE.Hidden = true
 
