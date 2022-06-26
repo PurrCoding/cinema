@@ -38,8 +38,16 @@ SERVICE.ExtentedVideoInfo = true
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
 local validExtensions = {
+
+	-- Video 
 	["mp4"] = true,
 	["webm"] = true,
+
+	-- Audio
+	["mp3"] = true,
+	["m4a"] = true,
+	["wav"] = true,
+	["ogg"] = true,
 }
 
 function SERVICE:Match( url )
@@ -66,7 +74,7 @@ if (CLIENT) then
 				var video = document.createElement("video");
 				video.src = "{@VideoURL}";
 				video.autoplay = true;
-				video.controls = false;
+				video.controls = true;
 				video.muted = false;
 				video.height = window.innerHeight;
 				video.width = window.innerWidth;
