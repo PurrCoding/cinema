@@ -2,6 +2,7 @@ util.AddNetworkString( "PlayerEnterTheater" )
 util.AddNetworkString( "PlayerLeaveTheater" )
 util.AddNetworkString( "PlayerVideoQueued" )
 util.AddNetworkString( "TheaterVideo" )
+util.AddNetworkString( "TheaterMetadata" )
 util.AddNetworkString( "TheaterInfo" )
 util.AddNetworkString( "TheaterQueue" )
 util.AddNetworkString( "TheaterSeek" )
@@ -57,6 +58,37 @@ function PlayerLeave( ply, locId )
 
 end
 hook.Add( "PlayerDisconnected", "TheaterDisconnected", PlayerLeave )
+
+local metadata_callback = {}
+function FetchVideoMedata( ply, service, callback )
+
+	if not IsValid(ply) then return end
+
+	local type = service:Type()
+	local data = service:Data()
+	local hash = util.CRC( math.random(1, 9999999) .. data ) -- Random hash
+
+	metadata_callback[hash] = callback
+
+	net.Start("TheaterMetadata")
+		net.WriteString(type) -- Service Type
+		net.WriteString(data) -- Unique Video ID 
+		net.WriteString(hash) -- Hash for callback
+	net.Send(ply)
+
+end
+net.Receive("TheaterMetadata", function(len, ply)
+
+	if not IsValid(ply) then return end
+
+	local hash = net.ReadString()
+	local data = net.ReadTable()
+
+	if metadata_callback[hash] then
+		metadata_callback[hash](data)
+		metadata_callback[hash] = nil
+	end
+end)
 
 function RequestTheaterInfo( ply, force )
 
@@ -148,13 +180,13 @@ net.Receive("TheaterInfo", function(len, ply)
 	theater.RequestTheaterInfo(ply)
 end)
 
-function GetVideoInfo( data, Type, onSuccess, onFailure )
+function GetVideoInfo( Video, onSuccess, onFailure )
 
-	if not data or not Type then return end
+	if not Video then return end
 
-	local service = Services[ Type ]
+	local service = Services[ Video:Type() ]
 	if service then
-		service:GetVideoInfo( data, onSuccess, onFailure )
+		service:GetVideoInfo( service.ExtentedVideoInfo and Video or Video:Data(), onSuccess, onFailure )
 	else
 		return pcall(onFailure, 404)
 	end

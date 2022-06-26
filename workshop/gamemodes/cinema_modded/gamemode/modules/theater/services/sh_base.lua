@@ -3,6 +3,7 @@ local SERVICE = {}
 SERVICE.Name 		= "Base"
 SERVICE.IsTimed 	= true
 SERVICE.PlaceholderThumb = "https://cataas.com/cat?width=1280&height=720"
+SERVICE.ExtentedVideoInfo = false -- Passes the complete video data instead of just the Data ID in GetVideoInfo
 
 function SERVICE:GetName()
 	return self.Name
