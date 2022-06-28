@@ -5,6 +5,11 @@ local surface_SetDrawColor = surface.SetDrawColor
 local surface_DrawRect = surface.DrawRect
 local surface_SetMaterial = surface.SetMaterial
 
+local mouseCodeFunc = {
+	[MOUSE_5] = "history.forward();",
+	[MOUSE_4] = "history.back();",
+}
+
 function RequestVideoURL( url )
 
 	if IsValid( RequestPanel ) then
@@ -59,6 +64,7 @@ function PANEL:Init()
 	self.BrowserContainer = vgui.Create( "DPanel", self )
 
 	self.Browser = vgui.Create( "TheaterHTML", self.BrowserContainer )
+	self.Browser.isContainer = true
 
 	Msg("AWESOMIUM: Initialized instance for video request window\n")
 
@@ -71,6 +77,11 @@ function PANEL:Init()
 	self.History = vgui.Create( "RequestHistory", self )
 	self.History:SetPaintBackgroundEnabled(false)
 
+	hook.Add("VGUIMousePressed", "Cinema.RequestInputs", function(pnl, mouseCode)
+		if (IsValid(pnl) and pnl.isContainer and mouseCodeFunc[mouseCode]) then
+			pnl:RunJavascript(mouseCodeFunc[mouseCode])
+		end
+	end)
 end
 
 function PANEL:OnClose()
@@ -78,6 +89,8 @@ function PANEL:OnClose()
 		Msg("AWESOMIUM: Destroyed instance for video request window\n")
 		self.Browser:Remove()
 	end
+
+	hook.Remove("VGUIMousePressed", "Cinema.RequestInputs")
 end
 
 function PANEL:CheckClose()
