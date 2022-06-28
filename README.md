@@ -11,7 +11,7 @@ This standalone ***"fork"*** of Cinema focuses on fixing the problems and extend
 
 #### Features ####
 * All previous known featuers
-* Video History pagination
+* Video History search and pagination
 * Per player volume control and muting
 * Livestreams can be played anywhere
 * Automated detection of video durations
