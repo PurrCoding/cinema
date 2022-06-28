@@ -16,6 +16,9 @@ function PANEL:Init()
 	local Margins = 2
 	local Spacing = 0
 
+	local vecTranslate = Vector()
+	local angRotate = Angle()
+
 	self.BackButton = vgui.Create( "DImageButton", self )
 	self.BackButton:SetSize( ButtonSize, ButtonSize )
 	self.BackButton:SetMaterial( "gui/HTML/back" )
@@ -49,6 +52,31 @@ function PANEL:Init()
 		self.RefreshButton:SetDisabled( true )
 		self.Refreshing = true
 		self.HTML:OpenURL( self.HTML:GetURL() )
+	end
+
+	self.RefreshButton.PaintOver = function(pnl)
+		if pnl._PushedMatrix then
+			cam.PopModelMatrix()
+			pnl._PushedMatrix = nil
+		end
+	end
+
+	self.RefreshButton.Paint = function(pnl, w, h )
+		if self.HTML and self.HTML:IsLoading() then
+			local x, y = pnl:LocalToScreen(0,0)
+
+			vecTranslate.x = x + w / 2
+			vecTranslate.y = y + h / 2
+
+			angRotate.y = RealTime() * 512
+
+			local mat = Matrix()
+			mat:Translate( vecTranslate )
+			mat:Rotate( angRotate )
+			mat:Translate( -vecTranslate )
+			cam.PushModelMatrix( mat )
+			pnl._PushedMatrix = true
+		end
 	end
 
 	self.HomeButton = vgui.Create( "DImageButton", self )
