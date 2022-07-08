@@ -1,5 +1,4 @@
-export async function onRequest(context) {
-	const { request } = context;
+export async function onRequestGet(request) {
 
 	isOPTIONS = (request.method == "OPTIONS");
 	var origin_url = new URL(request.url);
