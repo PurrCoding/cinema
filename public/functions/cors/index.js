@@ -1,29 +1,3 @@
-/*
-CORS Anywhere as a Cloudflare Worker!
-(c) 2019 by Zibri (www.zibri.org)
-email: zibri AT zibri DOT org
-https://github.com/Zibri/cloudflare-cors-anywhere
-*/
-
-/*
-whitelist = [ "^http.?://www.zibri.org$", "zibri.org$", "test\\..*" ];  // regexp for whitelisted urls
-*/
-
-blacklist = [];           // regexp for blacklisted urls
-whitelist = [".*"];     // regexp for whitelisted origins
-
-function isListed(uri, listing) {
-    var ret = false;
-    if (typeof uri == "string") {
-        listing.forEach((m) => {
-            if (uri.match(m) != null) ret = true;
-        });
-    } else {            //   decide what to do when Origin is null
-        ret = true;    // true accepts null origins false rejects them.
-    }
-    return ret;
-}
-
 export async function onRequest(context) {
 	// Contents of context object
 	const {
@@ -54,13 +28,11 @@ export async function onRequest(context) {
 		}
 		return myHeaders;
 	}
-	var fetch_url = decodeURIComponent(decodeURIComponent(origin_url.search.substr(1)));
+	var fetch_url = decodeURIComponent(decodeURIComponent(origin_url.get("url")));
 
 	var orig = request.headers.get("Origin");
 
 	var remIp = request.headers.get("CF-Connecting-IP");
-
-	if ((!isListed(fetch_url, blacklist)) && (isListed(orig, whitelist))) {
 
 		xheaders = request.headers.get("x-cors-headers");
 
@@ -70,7 +42,7 @@ export async function onRequest(context) {
 			} catch (e) { }
 		}
 
-		if (origin_url.search.startsWith("?")) {
+		if (fetch_url) {
 			recv_headers = {};
 			for (var pair of request.headers.entries()) {
 				if ((pair[0].match("^origin") == null) &&
@@ -146,17 +118,4 @@ export async function onRequest(context) {
 				{ status: 200, headers: myHeaders }
 			);
 		}
-	} else {
-
-		return new Response(
-			"Create your own cors proxy</br>\n" +
-			"<a href='https://github.com/Zibri/cloudflare-cors-anywhere'>https://github.com/Zibri/cloudflare-cors-anywhere</a></br>\n",
-			{
-				status: 403,
-				statusText: 'Forbidden',
-				headers: {
-					"Content-Type": "text/html"
-				}
-			});
-	}
 }
