@@ -11,7 +11,8 @@ export async function onRequest(context) {
   
 	fetch(request, env); {
 		isOPTIONS = (request.method == "OPTIONS");
-		var origin_url = new URL(request.url);
+		const { pathname, searchParams } = new URL(request.url);
+		var origin_url = new URL(searchParams.get("url"));
 	
 		function fix(myHeaders) {
 			myHeaders.set("Access-Control-Allow-Origin", request.headers.get("Origin"));
@@ -39,6 +40,7 @@ export async function onRequest(context) {
 			} catch (e) { }
 		}
 	
+
 		if (origin_url.search.startsWith("?")) {
 			recv_headers = {};
 			for (var pair of request.headers.entries()) {
