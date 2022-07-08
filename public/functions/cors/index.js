@@ -1,151 +1,62 @@
-blacklist = [];           // regexp for blacklisted urls
-whitelist = [".*"];     // regexp for whitelisted origins
 
-function isListed(uri, listing) {
-    var ret = false;
-    if (typeof uri == "string") {
-        listing.forEach((m) => {
-            if (uri.match(m) != null) ret = true;
-        });
-    } else {            //   decide what to do when Origin is null
-        ret = true;    // true accepts null origins false rejects them.
-    }
-    return ret;
+const corsHeaders = {
+	"Access-Control-Allow-Origin": "*",
+	"Access-Control-Allow-Methods": "GET,HEAD,POST,OPTIONS",
+	"Access-Control-Max-Age": "86400",
+}
+function handleOptions(request) {
+	// Make sure the necessary headers are present
+	// for this to be a valid pre-flight request
+	let headers = request.headers
+	if (
+		headers.get("Origin") !== null &&
+		headers.get("Access-Control-Request-Method") !== null &&
+		headers.get("Access-Control-Request-Headers") !== null
+	) {
+		// Handle CORS pre-flight request.
+		// If you want to check or reject the requested method + headers
+		// you can do that here.
+		let respHeaders = {
+			...corsHeaders,
+			// Allow all future content Request headers to go back to browser
+			// such as Authorization (Bearer) or X-Client-Name-Version
+			"Access-Control-Allow-Headers": request.headers.get("Access-Control-Request-Headers"),
+		}
+		return new Response(null, {
+			headers: respHeaders,
+		})
+	}
+	else {
+		// Handle standard OPTIONS request.
+		// If you want to allow other HTTP Methods, you can do that here.
+		return new Response(null, {
+			headers: {
+				Allow: "GET, HEAD, POST, OPTIONS",
+			},
+		})
+	}
 }
 
 export async function onRequest(context) {
 	// Contents of context object
 	const {
-	  request, // same as existing Worker API
-	  env, // same as existing Worker API
-	  params, // if filename includes [id] or [[path]]
-	  waitUntil, // same as ctx.waitUntil in existing Worker API
-	  next, // used for middleware or to fetch assets
-	  data, // arbitrary space for passing data between middlewares
+		request, // same as existing Worker API
+		env, // same as existing Worker API
+		params, // if filename includes [id] or [[path]]
+		waitUntil, // same as ctx.waitUntil in existing Worker API
+		next, // used for middleware or to fetch assets
+		data, // arbitrary space for passing data between middlewares
 	} = context;
 
-	isOPTIONS = (event.request.method == "OPTIONS");
-	var origin_url = new URL(event.request.url);
-
-	function fix(myHeaders) {
-		//            myHeaders.set("Access-Control-Allow-Origin", "*");
-		myHeaders.set("Access-Control-Allow-Origin", event.request.headers.get("Origin"));
-		if (isOPTIONS) {
-			myHeaders.set("Access-Control-Allow-Methods", event.request.headers.get("access-control-request-method"));
-			acrh = event.request.headers.get("access-control-request-headers");
-			//myHeaders.set("Access-Control-Allow-Credentials", "true");
-
-			if (acrh) {
-				myHeaders.set("Access-Control-Allow-Headers", acrh);
-			}
-
-			myHeaders.delete("X-Content-Type-Options");
-		}
-		return myHeaders;
+	let response
+	if (request.method === "OPTIONS") {
+		response = handleOptions(request)
 	}
-	var fetch_url = decodeURIComponent(decodeURIComponent(origin_url.search.substr(1)));
-
-	var orig = event.request.headers.get("Origin");
-
-	var remIp = event.request.headers.get("CF-Connecting-IP");
-
-	if ((!isListed(fetch_url, blacklist)) && (isListed(orig, whitelist))) {
-
-		xheaders = event.request.headers.get("x-cors-headers");
-
-		if (xheaders != null) {
-			try {
-				xheaders = JSON.parse(xheaders);
-			} catch (e) { }
-		}
-
-		if (origin_url.search.startsWith("?")) {
-			recv_headers = {};
-			for (var pair of event.request.headers.entries()) {
-				if ((pair[0].match("^origin") == null) &&
-					(pair[0].match("eferer") == null) &&
-					(pair[0].match("^cf-") == null) &&
-					(pair[0].match("^x-forw") == null) &&
-					(pair[0].match("^x-cors-headers") == null)
-				) recv_headers[pair[0]] = pair[1];
-			}
-
-			if (xheaders != null) {
-				Object.entries(xheaders).forEach((c) => recv_headers[c[0]] = c[1]);
-			}
-
-			newreq = new Request(event.request, {
-				"headers": recv_headers
-			});
-
-			var response = await fetch(fetch_url, newreq);
-			var myHeaders = new Headers(response.headers);
-			cors_headers = [];
-			allh = {};
-			for (var pair of response.headers.entries()) {
-				cors_headers.push(pair[0]);
-				allh[pair[0]] = pair[1];
-			}
-			cors_headers.push("cors-received-headers");
-			myHeaders = fix(myHeaders);
-
-			myHeaders.set("Access-Control-Expose-Headers", cors_headers.join(","));
-
-			myHeaders.set("cors-received-headers", JSON.stringify(allh));
-
-			if (isOPTIONS) {
-				var body = null;
-			} else {
-				var body = await response.arrayBuffer();
-			}
-
-			var init = {
-				headers: myHeaders,
-				status: (isOPTIONS ? 200 : response.status),
-				statusText: (isOPTIONS ? "OK" : response.statusText)
-			};
-			return new Response(body, init);
-
-		} else {
-			var myHeaders = new Headers();
-			myHeaders = fix(myHeaders);
-
-			if (typeof event.request.cf != "undefined") {
-				if (typeof event.request.cf.country != "undefined") {
-					country = event.request.cf.country;
-				} else
-					country = false;
-
-				if (typeof event.request.cf.colo != "undefined") {
-					colo = event.request.cf.colo;
-				} else
-					colo = false;
-			} else {
-				country = false;
-				colo = false;
-			}
-
-			return new Response(
-				"CLOUDFLARE-CORS-ANYWHERE\n\n" +
-				(orig != null ? "Origin: " + orig + "\n" : "") +
-				"Ip: " + remIp + "\n" +
-				(country ? "Country: " + country + "\n" : "") +
-				(colo ? "Datacenter: " + colo + "\n" : "") + "\n" +
-				((xheaders != null) ? "\nx-cors-headers: " + JSON.stringify(xheaders) : ""),
-				{ status: 200, headers: myHeaders }
-			);
-		}
-	} else {
-
-		return new Response(
-			"Create your own cors proxy</br>\n" +
-			"<a href='https://github.com/Zibri/cloudflare-cors-anywhere'>https://github.com/Zibri/cloudflare-cors-anywhere</a></br>\n",
-			{
-				status: 403,
-				statusText: 'Forbidden',
-				headers: {
-					"Content-Type": "text/html"
-				}
-			});
+	else {
+		response = await fetch(request)
+		response = new Response(response.body, response)
+		response.headers.set("Access-Control-Allow-Origin", "*")
+		response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
 	}
+	return response
 }
