@@ -10,29 +10,26 @@ pixelTail Games has discontinued supporting the [Cinema](https://github.com/pixe
 This standalone ***"fork"*** of Cinema focuses on fixing the problems and extending it with some new features/services. The minimum requirement is that you need the ***x86-64 BETA Branch to watch YouTube only***, otherwise you have to use [CEF Codec Fix](https://github.com/solsticegamestudios/GModCEFCodecFix) as well.
 
 #### Features ####
-* All the original features
-* Almost all services without API
-* Video History pagination
-* Player volume control with muting
+* All previous known featuers
+* Video History search and pagination
+* Per player volume control and muting
 * Livestreams can be played anywhere
-* Dailymotion & Archive support
+* Automated detection of video durations
 
 #### Supported Services ####
-* Youtube & YouTube Live
-* Twitch Livestream
-* Archive.org
-* Dailymotion
-* Vimeo
+<sub>⚠ 𝐌𝐢𝐧𝐢𝐦𝐮𝐦 𝐫𝐞𝐪𝐮𝐢𝐫𝐞𝐦𝐞𝐧𝐭 𝐟𝐨𝐫 𝐘𝐨𝐮𝐓𝐮𝐛𝐞 𝐨𝐧𝐥𝐲 𝐢𝐬 𝐱𝟖𝟔-𝟔𝟒 𝐛𝐞𝐭𝐚 𝐛𝐫𝐚𝐧𝐜𝐡, 𝐨𝐭𝐡𝐞𝐫𝐰𝐢𝐬𝐞 𝐂𝐄𝐅 𝐜𝐨𝐝𝐞𝐜 𝐟𝐢𝐱 𝐢𝐬 𝐧𝐞𝐞𝐝𝐞𝐝!</sub>
+* Youtube (Live)
+* Twitch Stream
 * DLive
 * SoundCloud
-* Url (mp4, webm + audio)
+* Vimeo
+* Dailymotion
+* Internet Archive
 * AniMix Play
-<sub>
-⚠ 𝐌𝐢𝐧𝐢𝐦𝐮𝐦 𝐫𝐞𝐪𝐮𝐢𝐫𝐞𝐦𝐞𝐧𝐭 𝐟𝐨𝐫 𝐘𝐨𝐮𝐓𝐮𝐛𝐞 𝐬𝐭𝐫𝐞𝐚𝐦𝐢𝐧𝐠 𝐨𝐧𝐥𝐲 𝐢𝐬 𝐱𝟖𝟔-𝟔𝟒 𝐛𝐞𝐭𝐚 𝐛𝐫𝐚𝐧𝐜𝐡, 𝐨𝐭𝐡𝐞𝐫𝐰𝐢𝐬𝐞 𝐂𝐄𝐅 𝐜𝐨𝐝𝐞𝐜 𝐟𝐢𝐱 𝐢𝐬 𝐧𝐞𝐞𝐝𝐞𝐝!
-</sub>
+* File (.mp4, .webm + audio)
 
 #### Known Issues ####
-* Archive.org is slow, due to their overloaded systems
+* Internet Archive is sometimes slow, due to their overloaded systems
 * Dailymotion is blocked in some countries (Russia, China, Kazakhstan, North Korea, etc)
 * Depending on the country, the government can prevent the playback of videos and thus also prevent websites from loading.
 * DNS-based filters (PI-Hole, eBlocker, AdGuard, etc) can render the displayed pages unusable if configured incorrectly.
@@ -49,3 +46,5 @@ This standalone ***"fork"*** of Cinema focuses on fixing the problems and extend
 * [PixelTail Games Website](https://www.pixeltailgames.com/cinema)
 * [Original GitHub Repo](https://github.com/pixeltailgames/cinema)
 * [How to get codecs for Garrys Mod cinemas](https://www.youtube.com/watch?v=QfPAVTtOzgA)
+
+![Alt](https://repobeats.axiom.co/api/embed/5a55d0e6ef6d4b6ad83fb4be316b882a8816dc5c.svg "Repobeats analytics image")
