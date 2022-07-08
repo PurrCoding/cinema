@@ -46,3 +46,5 @@ This standalone ***"fork"*** of Cinema focuses on fixing the problems and extend
 * [PixelTail Games Website](https://www.pixeltailgames.com/cinema)
 * [Original GitHub Repo](https://github.com/pixeltailgames/cinema)
 * [How to get codecs for Garrys Mod cinemas](https://www.youtube.com/watch?v=QfPAVTtOzgA)
+
+![Alt](https://repobeats.axiom.co/api/embed/5a55d0e6ef6d4b6ad83fb4be316b882a8816dc5c.svg "Repobeats analytics image")
