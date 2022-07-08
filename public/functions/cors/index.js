@@ -1,5 +1,15 @@
-export default {
-	async fetch(request, env) {
+export async function onRequest(context) {
+	// Contents of context object
+	const {
+	  request, // same as existing Worker API
+	  env, // same as existing Worker API
+	  params, // if filename includes [id] or [[path]]
+	  waitUntil, // same as ctx.waitUntil in existing Worker API
+	  next, // used for middleware or to fetch assets
+	  data, // arbitrary space for passing data between middlewares
+	} = context;
+  
+	fetch(request, env); {
 		isOPTIONS = (request.method == "OPTIONS");
 		var origin_url = new URL(request.url);
 	
@@ -105,5 +115,5 @@ export default {
 				{ status: 200, headers: myHeaders }
 			);
 		}
-	},
-};
+	}
+  }
