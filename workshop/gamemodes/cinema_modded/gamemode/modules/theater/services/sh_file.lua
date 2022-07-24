@@ -19,13 +19,6 @@
 	Info: This service was once only made for "KNAB-Networks Cinema", now some of them are available for third party use.
 --]]
 
---[[ NOTE:
-
-	This service has no API or method to collect metadata like the duration.
-	For this reason, a length of 10 hours is displayed for each video.
-
-]]--
-
 local SERVICE = {}
 SERVICE.Name = "File"
 SERVICE.IsTimed = true
