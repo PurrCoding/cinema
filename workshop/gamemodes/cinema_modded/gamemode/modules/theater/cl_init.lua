@@ -315,13 +315,13 @@ function ReceiveMetadataJob()
 
 	if service then
 		local data = net.ReadString()
-		local hash = net.ReadString()
+		local token = net.ReadString()
 
 		service:GetMetadata(data, function(metadata)
 			if ( metadata and istable(metadata) ) then
 
 				net.Start("TheaterMetadata")
-					net.WriteString(hash)
+					net.WriteString(token)
 					net.WriteTable(metadata)
 				net.SendToServer()
 			end

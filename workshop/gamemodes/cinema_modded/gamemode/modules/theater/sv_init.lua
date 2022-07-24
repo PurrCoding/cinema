@@ -64,16 +64,15 @@ function FetchVideoMedata( ply, service, callback )
 
 	if not IsValid(ply) then return end
 
-	local type = service:Type()
-	local data = service:Data()
-	local hash = util.CRC( math.random(1, 9999999) .. data ) -- Random hash
+	local type, data = service:Type(), service:Data()
+	local token = util.CRC( math.random(1, 9999999) .. data ) -- Generate a Access Token for callback
 
-	metadata_callback[hash] = callback
+	metadata_callback[token] = callback
 
 	net.Start("TheaterMetadata")
 		net.WriteString(type) -- Service Type
-		net.WriteString(data) -- Unique Video ID 
-		net.WriteString(hash) -- Hash for callback
+		net.WriteString(data) -- Unique Video ID/URL
+		net.WriteString(token) -- Access Token for callback
 	net.Send(ply)
 
 end
@@ -81,12 +80,12 @@ net.Receive("TheaterMetadata", function(len, ply)
 
 	if not IsValid(ply) then return end
 
-	local hash = net.ReadString()
-	local data = net.ReadTable()
+	local token = net.ReadString() -- Access Token for callback
+	local data = net.ReadTable() -- Response from Client with Metadata
 
-	if metadata_callback[hash] then
-		metadata_callback[hash](data)
-		metadata_callback[hash] = nil
+	if metadata_callback[token] then -- Does the Callback with the corresponding Token exists?
+		metadata_callback[token](data) -- Pass the Metadata to the right Request handler
+		metadata_callback[token] = nil -- Remove the Callback as its not requierd anymore
 	end
 end)
 
