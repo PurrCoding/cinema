@@ -24,12 +24,6 @@ export async function onRequest(context) {
 	    var thumbnailM = html.match(/<meta property=\"og:image\" content="([^")]*)\"\/>/);
 	    if (thumbnailM) { meta["thumbnail"] = thumbnailM[1].replaceAll('&amp;', '&'); }
 
-	    var titleM = html.match(/<meta property=\"og:title\" content="([^")]*)\"\/>/);
-	    if (titleM) {
-			var escaped = escape(titleM[1].replaceAll('&amp;', '&'))  //Base64
-			meta["title"] = btoa(escaped);
-		}
-
 	    return new Response(JSON.stringify(meta), {
 	        headers: {
 	            "content-type": "application/json; charset=UTF-8"
