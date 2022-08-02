@@ -29,7 +29,7 @@ export async function onRequest(context) {
 
 	    return new Response(JSON.stringify(meta), {
 	        headers: {
-	            "content-type": "application/json; charset=windows-1251"
+	            "content-type": "application/json; charset=ISO-8859-1"
 	        }
 	    })
 	} else {
