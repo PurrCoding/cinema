@@ -92,6 +92,11 @@ h1 {
 	background-image: url(../images/logos/animixplay.png);
 	background-size: 90px;
 }
+.logo-vk {
+	background-image: url(../images/logos/vk.png);
+	background-size: 75px;
+}
+
 .notice {
 	text-align: center;
 	color: rgba(255, 255, 255, 0.44);
