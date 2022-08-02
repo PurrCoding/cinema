@@ -1,4 +1,4 @@
-function handleRequest(request) {
+async function handleRequest(request) {
 	const Query = new URL(request.url).searchParams
 	const video = Query.get("v") || false
 
