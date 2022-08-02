@@ -1,6 +1,6 @@
 local SERVICE = {}
 
-SERVICE.Name = "VK"
+SERVICE.Name = "VKontakte"
 SERVICE.IsTimed = true
 
 --[[
