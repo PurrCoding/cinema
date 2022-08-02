@@ -1,4 +1,4 @@
-async function handleRequest(request) {
+export async function onRequestGet(request) {
 	const Query = new URL(request.url).searchParams
 	const video = Query.get("v") || false
 
@@ -33,9 +33,4 @@ async function handleRequest(request) {
     } else {
         return new Response("", {status: 204})
     }
-
-}
-
-export async function onRequestGet(request) {
-	return handleRequest(request);
 }
