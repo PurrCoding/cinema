@@ -8,7 +8,7 @@ export async function onRequest(context) {
 	    const init = {
 	        method: 'GET',
 	        headers: {
-	            'content-type': 'text/html; charset=UTF-8',
+	            'content-type': 'text/html; charset=windows-1251',
 	            'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36', 
 	        },
 	    }
