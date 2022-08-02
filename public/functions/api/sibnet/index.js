@@ -161,11 +161,11 @@ export async function onRequest(context) {
 	    if (thumbnailM) { meta["thumbnail"] = thumbnailM[1].replaceAll('&amp;', '&'); }
 
 	    var titleM = html.match(/<meta property=\"og:title\" content="([^")]*)\"\/>/);
-	    if (titleM) { meta["embed"] = await bruteForceWindows1252toUTF16 (titleM[1].replaceAll('&amp;', '&')); }
+	    if (titleM) { meta["embed"] = await bruteForceWindows1252toUTF16(titleM[1].replaceAll('&amp;', '&')); }
 
 	    return new Response(JSON.stringify(meta), {
 	        headers: {
-	            "content-type": "application/json; charset=UTF-8"
+	            "content-type": "application/json; charset=UTF-16"
 	        }
 	    })
 	} else {
