@@ -18,7 +18,7 @@ export async function onRequest(context) {
 	    var meta = {}
 	    const html = await response.text()
 
-	    var durationM = html.match(/<meta property=\"og:duration\" content="([^")]*)\"\/>/);
+	    var durationM = html.match(/<meta property=\"og:duration\" content="([^")]*)\" \/>/);
 	    if (durationM) { meta["duration"] = durationM[1]; }
 
 	    var thumbnailM = html.match(/<meta property=\"og:image\" content="([^")]*)\"\/>/);
