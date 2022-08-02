@@ -96,6 +96,10 @@ h1 {
 	background-image: url(../images/logos/vk.png);
 	background-size: 75px;
 }
+.logo-sibnet {
+	background-image: url(../images/logos/sibnet.png);
+	background-size: 75px;
+}
 
 .notice {
 	text-align: center;
