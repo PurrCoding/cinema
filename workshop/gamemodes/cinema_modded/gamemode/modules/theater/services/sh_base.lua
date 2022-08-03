@@ -26,11 +26,11 @@ local HttpHeaders = {
 	["Connection"] = "keep-alive",
 
 	-- Required for Google API requests; uses browser API key.
-	["Referer"] = "https://cinema.pixeltailgames.com/",
+	-- ["Referer"] = "https://cinema.pixeltailgames.com/",
 
 	-- Don't use improperly formatted GMod user agent in case anything actually
 	-- checks the user agent.
-	["User-Agent"] = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36"
+	["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
 }
 
 function SERVICE:Fetch( url, onReceive, onFailure )
