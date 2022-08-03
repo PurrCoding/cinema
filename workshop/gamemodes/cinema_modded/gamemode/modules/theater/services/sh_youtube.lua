@@ -30,51 +30,6 @@ if (CLIENT) then
 end
 
 ---
--- Helper function for converting ISO 8601 time strings; this is the formatting
--- used for duration specified in the YouTube v3 API.
---
--- http://stackoverflow.com/a/22149575/1490006
---
-local function convertISO8601Time( duration )
-	local a = {}
-
-	for part in string.gmatch(duration, "%d+") do
-	   table.insert(a, part)
-	end
-
-	if duration:find('M') and not (duration:find('H') or duration:find('S')) then
-		a = {0, a[1], 0}
-	end
-
-	if duration:find('H') and not duration:find('M') then
-		a = {a[1], 0, a[2]}
-	end
-
-	if duration:find('H') and not (duration:find('M') or duration:find('S')) then
-		a = {a[1], 0, 0}
-	end
-
-	duration = 0
-
-	if #a == 3 then
-		duration = duration + tonumber(a[1]) * 3600
-		duration = duration + tonumber(a[2]) * 60
-		duration = duration + tonumber(a[3])
-	end
-
-	if #a == 2 then
-		duration = duration + tonumber(a[1]) * 60
-		duration = duration + tonumber(a[2])
-	end
-
-	if #a == 1 then
-		duration = duration + tonumber(a[1])
-	end
-
-	return duration
-end
-
----
 -- Get the value for an attribute from a html element
 --
 local function ParseElementAttribute( element, attribute )
@@ -137,7 +92,7 @@ function SERVICE:GetURLInfo( url )
 
 	-- Start time, ?t=123s
 	if (url.query and url.query.t and url.query.t ~= "") then
-		local time = convertISO8601Time(url.query.t)
+		local time = util.ISO_8601ToSeconds(url.query.t)
 		if time and time ~= 0 then
 			info.StartTime = time
 		end
