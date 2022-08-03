@@ -76,7 +76,7 @@ local patterns = {
 -- Function to parse video metadata straight from the html instead of using the API
 --
 local function ParseMetaDataFromHTML( html )
-	local metadata = {}
+	local metadata, html = {}, html
 
 	metadata.title = util.ParseElementAttribute(html:match(patterns["title"]), "content")
 	metadata.title = url.htmlentities_decode(metadata.title) -- Parse HTML entities in the title into symbols

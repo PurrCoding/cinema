@@ -85,7 +85,7 @@ local patterns = {
 --
 local function ParseMetaDataFromHTML( html )
 	--MetaData table to return when we're done
-	local metadata = {}
+	local metadata, html = {}, html
 
 	-- Fetch title and thumbnail, with fallbacks if needed
 	metadata.title = util.ParseElementAttribute(html:match(patterns["title"]), "content")
