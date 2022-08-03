@@ -14,7 +14,7 @@ SERVICE.IsTimed = true
 ]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
-local API_URL = "https://gmod-cinema.pages.dev/api/vk?v=%s"
+local API_URL = "https://vk.com/video?z=%s"
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("vk.com")
@@ -29,9 +29,9 @@ if (CLIENT) then
 				if (player.paused) { player.play(); }
 				if (!player.paused && player.readyState === 4) {
 					if (player.muted) {player.muted = false}
-	
+
 					clearInterval(checkerInterval);
-	
+
 					document.body.style.backgroundColor = "black";
 					window.cinema_controller = player;
 
@@ -62,25 +62,62 @@ function SERVICE:GetURLInfo( url )
 	return false
 end
 
+-- Lua search patterns to find metadata from the html
+local patterns = {
+	["title"] = "<meta%sitemprop=\"name\"%s-content=%b\"\"%s/>",
+	["thumb"] = "<link%sitemprop=\"thumbnailUrl\"%s-href=%b\"\"%s/>",
+	["duration"] = "<meta%sitemprop=\"duration\"%s-content=%b\"\"%s/>",
+	["live"] = "<meta%sitemprop=\"isLiveBroadcast\"%s-content=%b\"\"%s/>",
+	["age_restriction"] = "<meta%sitemprop=\"isFamilyFriendly\"%s-content=%b\"\"%s/>",
+	["embed"] = "<link%sitemprop=\"embedUrl\"%s-href=%b\"\"%s/>",
+}
+
+---
+-- Function to parse video metadata straight from the html instead of using the API
+--
+local function ParseMetaDataFromHTML( html )
+	local metadata = {}
+
+	metadata.title = util.ParseElementAttribute(html:match(patterns["title"]), "content")
+	metadata.title = url.htmlentities_decode(metadata.title) -- Parse HTML entities in the title into symbols
+
+	metadata.thumbnail = util.ParseElementAttribute(html:match(patterns["thumb"]), "href")
+	metadata.familyfriendly = util.ParseElementAttribute(html:match(patterns["age_restriction"]), "content") or ""
+	metadata.embed = util.ParseElementAttribute(html:match(patterns["embed"]), "href")
+
+	local isLiveBroadcast = tobool(util.ParseElementAttribute(html:match(patterns["live"]), "content"))
+	if isLiveBroadcast then
+		metadata.duration = 0 -- Mark as live video
+	else
+		local durationISO8601 = util.ParseElementAttribute(html:match(patterns["duration"]), "content")
+		if isstring(durationISO8601) then
+			metadata.duration = math.max(1, util.ISO_8601ToSeconds(durationISO8601))
+		end
+	end
+
+	return metadata
+end
+
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 	local onReceive = function( body, length, headers, code )
 
-		local response = util.JSONToTable( body )
-		if not response then
-			return onFailure("VK: No response from API")
+		local status, metadata = pcall(ParseMetaDataFromHTML, body)
+		if not status  then
+			return onFailure( "Theater_RequestFailed" )
 		end
 
 		local info = {}
-		info.title = ("VK: %s"):format(data)
-		info.thumbnail = response.thumbnail
-		if response.duration == "0" then
-			return onFailure("VK: Livestream currently not supported")
-		else
-			info.duration = response.duration
-		end
+		info.title = metadata.title
+		info.thumbnail = metadata.thumbnail
+		info.data = metadata.embed
 
-		info.data = response.embed
+		if metadata.duration == 0 then
+			info.duration = 0
+			info.type = "vklive"
+		else
+			info.duration = metadata.duration
+		end
 
 		if onSuccess then
 			pcall(onSuccess, info)
@@ -94,3 +131,10 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 end
 
 theater.RegisterService( "vk", SERVICE )
+
+theater.RegisterService( "vklive", {
+	Name = "VKontakte Live",
+	IsTimed = false,
+	Hidden = true,
+	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
+} )
