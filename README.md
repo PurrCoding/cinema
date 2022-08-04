@@ -26,6 +26,9 @@ This standalone ***"fork"*** of Cinema focuses on fixing the problems and extend
 * Dailymotion
 * Internet Archive
 * AniMix Play
+* VKontakte
+* Sibnet
+* Ok
 * File (.mp4, .webm + audio)
 
 #### Known Issues ####
