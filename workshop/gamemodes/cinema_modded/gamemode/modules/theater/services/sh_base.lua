@@ -33,12 +33,12 @@ local HttpHeaders = {
 	["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
 }
 
-function SERVICE:Fetch( url, onReceive, onFailure )
+function SERVICE:Fetch( url, onReceive, onFailure, headers )
 
 	local request = {
 		url			= url,
 		method		= "GET",
-		headers     = HttpHeaders,
+		headers     = table.Merge(table.Copy(HttpHeaders), (headers and table.Copy(headers)) or {}),
 
 		success = function( code, body, headers )
 			code = tonumber( code ) or 0
@@ -57,6 +57,7 @@ function SERVICE:Fetch( url, onReceive, onFailure )
 			end
 		end
 	}
+	PrintTable(request.headers)
 
 	HTTP( request )
 
