@@ -177,14 +177,26 @@ local function decompress_mapping(codepage)
 	end
 end
 
+-- Create Mappings for each codepage
 local map_unicode_to_ansi, map_ansi_to_unicode = {}, {}
 for codepage, _ in pairs(compressed_mappings) do
 	map_unicode_to_ansi[codepage], map_ansi_to_unicode[codepage] = decompress_mapping(codepage)
 end
 
--- From UTF-8 to win-125x 
+--[[---------------------------------------------------------
+   	Name: util.utf8_to_win( )
+   	Desc: Converts UTF-8 strings to win-125x
+   	Parameters:
+			- str: Input String to Convert
+			- condepage: win-125x codepage
+	Note: missing or invalid codepages fallback to 1251 (Cyrillic)
+-----------------------------------------------------------]]
 function utf8_to_win(str, codepage)
-	local result_ansi = {}
+	if not codepage or (codepage and not compressed_mappings[codepage]) then
+		codepage = 1251 -- Fallback to Cyrillic
+	end
+
+	local result_ansi, map = {}, map_unicode_to_ansi[codepage]
 
 	for u in gmatch(str, ".[\128-\191]*") do
 		local code = byte(u) % 2 ^ (8 - #u)
@@ -193,19 +205,30 @@ function utf8_to_win(str, codepage)
 			code = (code - 2) * 64 + byte(u, j)
 		end
 
-		table_insert(result_ansi, char(code < 128 and code or map_unicode_to_ansi[codepage or 1251][code] or byte"?"))
+		table_insert(result_ansi, char(code < 128 and code or map[code] or byte"?"))
 	end
 
 	return table_concat(result_ansi)
 end
 
--- From win-125x to UTF-8
+--[[---------------------------------------------------------
+   	Name: util.win_to_utf8( )
+   	Desc: Converts win-125x strings to UTF-8
+   	Parameters:
+			- str: Input String to Convert
+			- condepage: win-125x codepage
+	Note: missing or invalid codepages fallback to 1251 (Cyrillic)
+-----------------------------------------------------------]]
 function win_to_utf8(str, codepage)
-	local result_utf8 = {}
+	if not codepage or (codepage and not compressed_mappings[codepage]) then
+		codepage = 1251 -- Fallback to Cyrillic
+	end
+
+	local result_utf8, map = {}, map_ansi_to_unicode[codepage]
 
 	for pos = #str, 1, -1 do
 		local code, h = byte(str, pos), 127
-		code = code < 128 and code or map_ansi_to_unicode[codepage or 1251][code] or byte"?"
+		code = code < 128 and code or map[code] or byte"?"
 
 		while code > h do
 			table_insert(result_utf8, char(128 + code % 64))
