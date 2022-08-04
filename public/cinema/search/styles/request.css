@@ -100,7 +100,14 @@ h1 {
 	background-image: url(../images/logos/sibnet.png);
 	background-size: 75px;
 }
+.logo-ok {
+	background-image: url(../images/logos/okru.png);
+	background-size: 75px;
+}
 
+.logo-ru {
+	background-image: url(../images/russia.png);
+}
 .notice {
 	text-align: center;
 	color: rgba(255, 255, 255, 0.44);
