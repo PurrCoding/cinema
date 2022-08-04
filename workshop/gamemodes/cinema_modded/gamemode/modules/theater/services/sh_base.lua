@@ -57,7 +57,6 @@ function SERVICE:Fetch( url, onReceive, onFailure, headers )
 			end
 		end
 	}
-	PrintTable(request.headers)
 
 	HTTP( request )
 
