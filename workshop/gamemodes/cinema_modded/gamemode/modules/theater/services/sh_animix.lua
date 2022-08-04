@@ -33,8 +33,8 @@ if (CLIENT) then
 
 				window.location.replace(iframeplayer.src);
 			} else {
-				if (typeof (player1) != 'undefined') {
-					if (!player1.media) {return;}
+				var player = document.getElementsByTagName('video')[0]
+				if (typeof (player) != 'undefined') {
 
 					{@JS_Content}
 				}
@@ -43,22 +43,21 @@ if (CLIENT) then
 	]]
 
 	local THEATER_JS = JS_BASE:Replace("{@JS_Content}", [[
-		if (player1.paused) { player1.play(); return;}
-		player1.muted = false;
+		if (player.paused) { player.play(); return;}
+		player.muted = false;
 
 		clearInterval(checkerInterval);
 
-		window.cinema_controller = player1.media;
+		window.cinema_controller = player;
 		exTheater.controllerReady();
 	]])
 
 	local METADATA_JS = JS_BASE:Replace("{@JS_Content}", [[
-		if (player1.paused) { player1.play(); return;}
-		player1.muted = true;
+		player.muted = true;
 
 		clearInterval(checkerInterval);
 
-		var metadata = { duration: player1.duration }
+		var metadata = { duration: player.duration }
 		console.log("METADATA:" + JSON.stringify(metadata))
 	]])
 
