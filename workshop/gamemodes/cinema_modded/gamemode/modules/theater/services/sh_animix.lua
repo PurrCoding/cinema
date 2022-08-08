@@ -57,8 +57,13 @@ if (CLIENT) then
 
 		clearInterval(checkerInterval);
 
-		var metadata = { duration: player.duration }
-		console.log("METADATA:" + JSON.stringify(metadata))
+		if (window.metaevent_set) {return;}
+		player.addEventListener('loadedmetadata', (event) => {
+			window.metaevent_set = true;
+
+			var metadata = { duration: player.duration };
+			console.log("METADATA:" + JSON.stringify(metadata));
+		});
 	]])
 
 	function SERVICE:LoadProvider( Video, panel )
