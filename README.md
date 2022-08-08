@@ -27,6 +27,9 @@ This standalone ***"fork"*** of Cinema focuses on fixing the problems and extend
 * Internet Archive
 * AniMix Play
 * File (.mp4, .webm + audio)
+* VKontakte
+* Sibnet
+* Ok
 
 #### Known Issues ####
 * Internet Archive is sometimes slow, due to their overloaded systems
