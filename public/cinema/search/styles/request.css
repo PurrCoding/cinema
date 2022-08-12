@@ -104,6 +104,10 @@ h1 {
 	background-image: url(../images/logos/okru.png);
 	background-size: 75px;
 }
+.logo-rutube {
+	background-image: url(../images/logos/rutube.jpg);
+	background-size: 50px;
+}
 
 .logo-ru {
 	background-image: url(../images/russia.png);
