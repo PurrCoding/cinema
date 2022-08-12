@@ -30,6 +30,7 @@ This standalone ***"fork"*** of Cinema focuses on fixing the problems and extend
 * VKontakte
 * Sibnet
 * Ok
+* Rutube
 
 #### Known Issues ####
 * Internet Archive is sometimes slow, due to their overloaded systems
