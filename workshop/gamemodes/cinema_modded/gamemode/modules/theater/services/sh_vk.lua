@@ -32,10 +32,21 @@ if (CLIENT) then
 
 					clearInterval(checkerInterval);
 
-					document.body.style.backgroundColor = "black";
 					window.cinema_controller = player;
-
 					exTheater.controllerReady();
+
+					document.body.style.backgroundColor = "black";
+
+					player.addEventListener("seeking", function () {
+						if (!player.paused) { player.pause() }
+
+						this.addEventListener("progress", function progessCheck() {
+							if (player.paused && player.readyState === 4) {
+								this.removeEventListener("progress", progessCheck);
+								player.play();
+							}
+						});
+					});
 				}
 			}
 		}, 50);
@@ -43,7 +54,15 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		panel:OpenURL( Video:Data() .. "&autoplay=1" )
+		local startTime = math.Round(CurTime() - Video:StartTime())
+		if startTime > 0 then
+			local t = string.FormattedTime( startTime )
+			local h, m, s = (t.h and t.h .. "h" or ""), (t.m and t.m .. "m" or ""), (t.s and t.s .. "s" or "")
+
+			startTime = ("%s%s%s"):format(h, m, s)
+		else startTime = 0 end
+
+		panel:OpenURL( Video:Data() .. "&autoplay=1" .. (self.IsTimed and "&t=" .. startTime or "" ))
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
 			pnl:QueueJavascript(THEATER_JS)
