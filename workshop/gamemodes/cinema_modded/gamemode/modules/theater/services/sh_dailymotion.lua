@@ -57,7 +57,7 @@ function SERVICE:GetURLInfo( url )
 
 	local info = {}
 
-	-- https://vk.com/video-xxxxxxxxx_xxxxxxxxx
+	-- https://dailymotion/video/xxxxxxxxx
 	if (url.path and url.path:match("^/video/([%a%d-_]+)")) then
 		info.Data = url.path:match("^/video/([%a%d-_]+)")
 	end
