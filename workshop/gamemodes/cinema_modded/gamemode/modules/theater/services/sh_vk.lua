@@ -56,10 +56,7 @@ if (CLIENT) then
 
 		local startTime = math.Round(CurTime() - Video:StartTime())
 		if startTime > 0 then
-			local t = string.FormattedTime( startTime )
-			local h, m, s = (t.h and t.h .. "h" or ""), (t.m and t.m .. "m" or ""), (t.s and t.s .. "s" or "")
-
-			startTime = ("%s%s%s"):format(h, m, s)
+			startTime = util.SecondsToISO_8601(startTime)
 		else startTime = 0 end
 
 		panel:OpenURL( Video:Data() .. "&autoplay=1" .. (self.IsTimed and "&t=" .. startTime or "" ))
