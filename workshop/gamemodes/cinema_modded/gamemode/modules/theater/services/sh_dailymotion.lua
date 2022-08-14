@@ -39,7 +39,12 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		panel:OpenURL( DAILYMOTION_URL:format( Video:Data() ) )
+		local startTime = math.Round(CurTime() - Video:StartTime())
+		if startTime > 0 then
+			startTime = startTime
+		else startTime = 0 end
+
+		panel:OpenURL( DAILYMOTION_URL:format( Video:Data() ) .. (self.IsTimed and "&start=" .. startTime or "" ) )
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
 			pnl:RunJavascript(THEATER_JS)
@@ -49,12 +54,26 @@ if (CLIENT) then
 end
 
 function SERVICE:GetURLInfo( url )
-	if url.path then
-		local data = url.path:match("^/video/([%a%d-_]+)")
-		if data then return { Data = data} end
+
+	local info = {}
+
+	-- https://vk.com/video-xxxxxxxxx_xxxxxxxxx
+	if (url.path and url.path:match("^/video/([%a%d-_]+)")) then
+		info.Data = url.path:match("^/video/([%a%d-_]+)")
 	end
 
-	return false
+	if (url.query) then
+
+		if url.query.start and url.query.start ~= "" then
+			local time = tonumber(url.query.start)
+			if time and time ~= 0 then
+				info.StartTime = time
+			end
+		end
+
+	end
+
+	return info or false
 end
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
