@@ -60,12 +60,7 @@ function SERVICE:GetURLInfo( url )
 		end
 	end
 
-	if info.Data then
-		return info
-	else
-		return false
-	end
-
+	return info.Data and info or false
 end
 
 -- Lua search patterns to find metadata from the html

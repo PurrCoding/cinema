@@ -73,7 +73,7 @@ function SERVICE:GetURLInfo( url )
 
 	end
 
-	return info or false
+	return info.Data and info or false
 end
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
