@@ -73,8 +73,9 @@ function SERVICE:GetURLInfo( url )
 	local info = {}
 
 	-- https://vk.com/video-xxxxxxxxx_xxxxxxxxx
-	if (url.path and url.path:match("[video%-(%d+)_(%d+)]+")) then
-		info.Data = url.path:match("[video%-(%d+)_(%d+)]+")
+	local videoID = url.path:match("[video%-(%d+)_(%d+)]+")
+	if (videoID and videoID ~= "video") then
+		info.Data = videoID
 	end
 
 	if (url.query) then
