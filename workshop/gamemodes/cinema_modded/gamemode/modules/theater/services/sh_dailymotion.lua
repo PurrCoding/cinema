@@ -81,9 +81,13 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	local onReceive = function( body, length, headers, code )
 
 		local response = util.JSONToTable(body)
-		if not response then return onFailure("Dailymotion: Cannot get video data.") end
-		if response.private then return onFailure("Dailymotion: This video is Private.") end
-		if response.status ~= "published" then return onFailure("Dailymotion: This video is not Published.") end
+		if not response then
+			return onFailure( "Theater_RequestFailed" )
+		end
+
+		if response.private or response.status ~= "published" then
+			return onFailure( "Service_EmbedDisabled" )
+		end
 
 		local info = {}
 		info.title = response.title
