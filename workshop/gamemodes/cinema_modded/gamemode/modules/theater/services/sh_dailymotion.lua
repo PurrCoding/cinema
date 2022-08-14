@@ -13,7 +13,7 @@ SERVICE.IsTimed = true
 ]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
-local API_URL = "https://api.dailymotion.com/video/%s?fields=id,title,duration,thumbnail_url,status,mode,private,mode"
+local API_URL = "https://api.dailymotion.com/video/%s?fields=id,title,duration,thumbnail_url,status,mode,private"
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("dailymotion.com")
