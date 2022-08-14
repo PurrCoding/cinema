@@ -33,7 +33,12 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		panel:OpenURL( VIMEO_URL:format( Video:Data() ) )
+		local startTime = math.Round(CurTime() - Video:StartTime())
+		if startTime > 0 then
+			startTime = util.SecondsToISO_8601(startTime)
+		else startTime = 0 end
+
+		panel:OpenURL( VIMEO_URL:format( Video:Data() ) .. (self.IsTimed and "#t=" .. startTime or "" ) )
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
 			pnl:QueueJavascript(THEATER_JS)
@@ -66,9 +71,14 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 		local info = {}
 		info.title = response.title
-		info.duration = response.duration
 		info.thumbnail = response.thumbnail_url
 
+		if response.duration == 0 then
+			info.type = "vimeolive"
+			info.duration = 0
+		else
+			info.duration = response.duration
+		end
 		if onSuccess then
 			pcall(onSuccess, info)
 		end
@@ -81,3 +91,10 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 end
 
 theater.RegisterService( "vimeo", SERVICE )
+
+theater.RegisterService( "vimeolive", {
+	Name = "Vimeo Live",
+	IsTimed = false,
+	Hidden = true,
+	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
+} )
