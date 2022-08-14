@@ -105,13 +105,13 @@ local function ParseMetaDataFromHTML( html )
 	metadata.embed = util.ParseElementAttribute(html:match(patterns["embed"]), "href")
 
 	local isLiveBroadcast = tobool(util.ParseElementAttribute(html:match(patterns["live"]), "content"))
-	if isLiveBroadcast then
+	local durationISO8601 = util.ParseElementAttribute(html:match(patterns["duration"]), "content")
+	local duration = util.ISO_8601ToSeconds(durationISO8601)
+
+	if isLiveBroadcast and duration == 0 then
 		metadata.duration = 0 -- Mark as live video
 	else
-		local durationISO8601 = util.ParseElementAttribute(html:match(patterns["duration"]), "content")
-		if isstring(durationISO8601) then
-			metadata.duration = math.max(1, util.ISO_8601ToSeconds(durationISO8601))
-		end
+		metadata.duration = math.max(1, duration)
 	end
 
 	return metadata
