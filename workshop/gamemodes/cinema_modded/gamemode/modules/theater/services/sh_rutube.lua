@@ -51,7 +51,12 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		panel:OpenURL( DAILYMOTION_URL:format( Video:Data() ) )
+		local startTime = math.Round(CurTime() - Video:StartTime())
+		if startTime > 0 then
+			startTime = startTime
+		else startTime = 0 end
+
+		panel:OpenURL( DAILYMOTION_URL:format( Video:Data() ) .. (self.IsTimed and "&t=" .. startTime or "" ) )
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
 			pnl:RunJavascript(THEATER_JS)
@@ -82,7 +87,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		local isPaid = response.is_paid
 		local isAudio = response.is_audio
 		local isDeleted = response.is_deleted
-
 
 		if isPaid then return onFailure( "Service_PurchasableContent" ) end
 
