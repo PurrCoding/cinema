@@ -79,6 +79,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		else
 			info.duration = response.duration
 		end
+
 		if onSuccess then
 			pcall(onSuccess, info)
 		end
