@@ -136,7 +136,6 @@ end
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 	local onReceive = function( body, length, headers, code )
-
 		local status, metadata = pcall(ParseMetaDataFromHTML, body)
 		if not status  then
 			return onFailure( "Theater_RequestFailed" )
@@ -148,8 +147,8 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		info.data = metadata.embed
 
 		if metadata.duration == 0 then
-			info.duration = 0
 			info.type = "vklive"
+			info.duration = 0
 		else
 			info.duration = metadata.duration
 		end

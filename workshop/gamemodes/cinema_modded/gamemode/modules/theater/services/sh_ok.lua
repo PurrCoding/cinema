@@ -107,8 +107,8 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		info.thumbnail = metadata.thumbnail
 
 		if metadata.duration == 0 then
-			info.duration = 0
 			info.type = "oklive"
+			info.duration = 0
 		else
 			info.duration = metadata.duration
 		end

@@ -125,22 +125,18 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		end
 
 		local info = {}
-		info.title = metadata["title"]
-		info.thumbnail = metadata["thumbnail"]
+		info.title = metadata.title
+		info.thumbnail = metadata.thumbnail
 
-		local isLive = metadata["duration"] == 0
-		local familyFriendly = metadata["familyfriendly"] ~= "18+"
-
-
-		if isLive then
+		if metadata.duration == 0 then
 			info.type = "youtubelive"
 			info.duration = 0
 		else
-			if not familyFriendly then
+			if metadata.familyfriendly == "18+" then
 				info.type = "youtubensfw"
 			end
 
-			info.duration = metadata["duration"]
+			info.duration = metadata.duration
 		end
 
 		if onSuccess then

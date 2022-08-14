@@ -60,10 +60,6 @@ end
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 	local onReceive = function( body, length, headers, code )
-		if not body or code ~= 200 then
-			return onFailure( "Service_EmbedDisabled" )
-		end
-
 		local response = util.JSONToTable(body)
 		if not response then
 			return onFailure( "Theater_RequestFailed" )
