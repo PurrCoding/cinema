@@ -73,12 +73,31 @@ end
 
 function SERVICE:GetURLInfo( url )
 
-	if (url.query and url.query.z) then
-		local data = url.query.z:match("[video%-(%d+)_(%d+)]+")
-		if data then return { Data = data } end
+	local info = {}
+
+	-- https://vk.com/video-xxxxxxxxx_xxxxxxxxx
+	if (url.path and url.path:match("[video%-(%d+)_(%d+)]+")) then
+		info.Data = url.path:match("[video%-(%d+)_(%d+)]+")
 	end
 
-	return false
+	if (url.query) then
+
+		-- https://vk.com/video?z=video-xxxxxxxxx_xxxxxxxxx
+		if url.query.z then
+			local data = url.query.z:match("[video%-(%d+)_(%d+)]+")
+			if data then info.Data = data end
+		end
+
+		if url.query.t and url.query.t ~= "" then
+			local time = util.ISO_8601ToSeconds(url.query.t)
+			if time and time ~= 0 then
+				info.StartTime = time
+			end
+		end
+
+	end
+
+	return info or false
 end
 
 -- Lua search patterns to find metadata from the html
