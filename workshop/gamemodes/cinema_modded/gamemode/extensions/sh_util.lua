@@ -16,6 +16,11 @@ function ISO_8601ToSeconds(str)
 	return h * (60 * 60) + m * 60 + s
 end
 
+function SecondsToISO_8601(seconds)
+	local t = string.FormattedTime( seconds )
+
+	return (t.h and t.h .. "h" or "") .. (t.m and t.m .. "m" or "") .. (t.s and t.s .. "s" or "")
+end
 
 -- Get the value for an attribute from a html element
 function ParseElementAttribute( element, attribute )
@@ -28,7 +33,6 @@ function ParseElementAttribute( element, attribute )
 	-- Trim the quotes around the value string
 	return output:sub( 2, -2 )
 end
-
 
 -- Get the contents of a html element by removing tags
 -- Used as fallback for when title cannot be found
