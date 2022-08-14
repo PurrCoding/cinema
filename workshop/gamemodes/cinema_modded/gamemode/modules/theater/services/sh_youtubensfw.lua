@@ -17,7 +17,7 @@ SERVICE.Hidden = true
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
 if (CLIENT) then
-	local THEATER_URL = "https://www.youtube.com/embed/%s?t=%s&autoplay=1&muted=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3"
+	local THEATER_URL = "https://www.youtube.com/embed/%s?autoplay=1&muted=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&unlock_confirmed=1"
 	local THEATER_JS = [[
 		var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName('video')[0];
@@ -44,7 +44,7 @@ if (CLIENT) then
 			print("[Simple YouTube A.R.B]: " .. message)
 		end
 
-		http.Fetch("https://github.com/zerodytrash/Simple-YouTube-Age-Restriction-Bypass/releases/download/v2.3.5/Simple-YouTube-Age-Restriction-Bypass.user.js", onSuccess, onFailure, {})
+		http.Fetch("https://github.com/zerodytrash/Simple-YouTube-Age-Restriction-Bypass/releases/download/v2.5.2/Simple-YouTube-Age-Restriction-Bypass.user.js", onSuccess, onFailure, {})
 	end
 	fetchAgeBypass()
 
@@ -63,10 +63,7 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		panel:OpenURL( THEATER_URL:format(
-			Video:Data(),
-			math.Round(CurTime() - Video:StartTime())
-		))
+		panel:OpenURL( THEATER_URL:format( Video:Data()) )
 
 		injectARB(panel)
 
