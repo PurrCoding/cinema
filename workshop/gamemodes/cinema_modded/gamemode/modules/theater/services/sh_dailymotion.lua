@@ -13,7 +13,7 @@ SERVICE.IsTimed = true
 ]]--
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
-local API_URL = "https://api.dailymotion.com/video/%s?fields=id,title,duration,thumbnail_url,status,mode,private"
+local API_URL = "https://api.dailymotion.com/video/%s?fields=id,title,duration,thumbnail_url,status,mode,private,mode"
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("dailymotion.com")
@@ -69,7 +69,13 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		local info = {}
 		info.title = response.title
 		info.thumbnail = response.thumbnail_url
-		info.duration = response.duration
+
+		if (response.mode == "live" and response.duration == 0) then
+			info.type = "dailymotionlive"
+			info.duration = 0
+		else
+			info.duration = response.duration
+		end
 
 		if onSuccess then
 			pcall(onSuccess, info)
@@ -82,3 +88,10 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 end
 theater.RegisterService( "dailymotion", SERVICE )
+
+theater.RegisterService( "dailymotionlive", {
+	Name = "Dailymotion Live",
+	IsTimed = false,
+	Hidden = true,
+	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
+} )
