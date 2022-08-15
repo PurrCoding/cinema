@@ -62,7 +62,7 @@ function PLAYER:Loadout()
 	self.Player:RemoveAllAmmo()
 	self.Player:SwitchToDefaultWeapon()
 
-	if GetConVar("cinema_enable_sandbox"):GetBool() then
+	if GetGlobalBool("DeriveSbox", false) then
 		self.Player:Give("gmod_tool")
 	end
 
