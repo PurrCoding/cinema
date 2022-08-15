@@ -5,6 +5,14 @@ GM.Website 		= "www.pixeltailgames.com"
 GM.Version 		= "1.2"
 GM.TeamBased 	= false
 
+-- Enable sandbox functionalities
+local Cvar_DeriveSbox = CreateConVar("cinema_enable_sandbox", "0", {FCVAR_NOTIFY, FCVAR_REPLICATED,
+	FCVAR_REPLICATED, FCVAR_LUA_SERVER, FCVAR_ARCHIVE}, "NEEDS SERVER RESTART!")
+
+if Cvar_DeriveSbox:GetBool() then
+	DeriveGamemode( "sandbox" )
+end
+
 include( "sh_load.lua" )
 
 include( "player_shd.lua" )
