@@ -88,14 +88,20 @@ if (CLIENT) then
 		</body></html>
 	]]
 
+	local function DropboxParse(url)
+		url = url:gsub([[^http%://dl%.dropboxusercontent%.com/]], [[https://dl.dropboxusercontent.com/]])
+		url = url:gsub([[^https?://dl.dropbox.com/]], [[https://www.dropbox.com/]])
+		url = url:gsub([[^https?://www.dropbox.com/s/(.+)%?dl%=[01]$]], [[https://dl.dropboxusercontent.com/s/%1]])
+		url = url:gsub([[^https?://www.dropbox.com/s/(.+)$]], [[https://dl.dropboxusercontent.com/s/%1]])
+
+		return url
+	end
+
 	function SERVICE:LoadProvider( Video, panel )
 		local url = Video:Data()
 
 		if url:find("dropbox", 1, true) then
-			url = url:gsub([[^http%://dl%.dropboxusercontent%.com/]], [[https://dl.dropboxusercontent.com/]])
-			url = url:gsub([[^https?://dl.dropbox.com/]], [[https://www.dropbox.com/]])
-			url = url:gsub([[^https?://www.dropbox.com/s/(.+)%?dl%=[01]$]], [[https://dl.dropboxusercontent.com/s/%1]])
-			url = url:gsub([[^https?://www.dropbox.com/s/(.+)$]], [[https://dl.dropboxusercontent.com/s/%1]])
+			url = DropboxParse(url)
 		end
 
 		panel:SetHTML(HTML_BASE:Replace("{@VideoURL}", url))
@@ -109,6 +115,10 @@ if (CLIENT) then
 		panel:SetSize(100,100)
 		panel:SetAlpha(0)
 		panel:SetMouseInputEnabled(false)
+
+		if data:find("dropbox", 1, true) then
+			data = DropboxParse(data)
+		end
 
 		function panel:ConsoleMessage(msg)
 			if msg:StartWith("METADATA:") then
