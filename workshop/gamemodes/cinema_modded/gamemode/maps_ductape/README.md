@@ -1,0 +1,1 @@
+In this directory are LUA files with the names corresponding to the maps. The purpose of these scripts is to minor make changes to maps that the author no longer makes. 
