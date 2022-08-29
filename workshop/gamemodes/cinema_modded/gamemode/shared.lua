@@ -7,11 +7,9 @@ GM.TeamBased 	= false
 
 -- Enable sandbox functionalities
 local Cvar_DeriveSbox = CreateConVar("cinema_enable_sandbox", "0", {FCVAR_NOTIFY, FCVAR_REPLICATED,
-		FCVAR_REPLICATED, FCVAR_LUA_SERVER, FCVAR_ARCHIVE}, "NEEDS SERVER RESTART!")
+FCVAR_REPLICATED, FCVAR_LUA_SERVER, FCVAR_ARCHIVE}, "NEEDS SERVER RESTART!")
 
-SetGlobalBool("DeriveSbox", Cvar_DeriveSbox:GetBool())
-
-if Cvar_DeriveSbox:GetBool() then
+if not GM.IsSandboxDerived and Cvar_DeriveSbox:GetBool() then
 	DeriveGamemode( "sandbox" )
 end
 

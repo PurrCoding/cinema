@@ -62,10 +62,6 @@ function PLAYER:Loadout()
 	self.Player:RemoveAllAmmo()
 	self.Player:SwitchToDefaultWeapon()
 
-	if GetGlobalBool("DeriveSbox", false) then
-		self.Player:Give("gmod_tool")
-	end
-
 end
 
 --
