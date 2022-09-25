@@ -10,6 +10,14 @@ local mouseCodeFunc = {
 	[MOUSE_4] = "history.back();",
 }
 
+-- Additional information when hovering the mouse over the video history
+local videoInfo = [[
+%s
+
+Last Request: %s
+Service: %s
+Supported: %s]]
+
 function RequestVideoURL( url )
 
 	if IsValid( RequestPanel ) then
@@ -417,14 +425,18 @@ function VIDEO:SetVideo( vid )
 
 	self.Video = vid
 
-	self:SetTooltip( self.Video.title )
-	self.Title:SetText( self.Video.title )
+	local service = theater.GetServiceByClass(self.Video.type)
+	local duration = tonumber(self.Video.duration) > 0 and
+		string.FormatSeconds(self.Video.duration) or ""
 
-	if tonumber(self.Video.duration) > 0 then
-		self.Duration:SetText( string.FormatSeconds(self.Video.duration) )
-	else
-		self.Duration:SetText( "" )
-	end
+	self.Title:SetText( self.Video.title )
+	self.Duration:SetText( duration )
+	self:SetTooltip( videoInfo:format(
+		self.Video.title,
+		os.date( "%H:%M:%S - %d/%m/%Y" , self.Video.lastRequest ),
+		service and service.Name or self.Video.type,
+		service and "Yes" or "No"
+	) )
 
 	self.Requests:SetText( T("Request_PlayCount", self.Video.count) )
 
