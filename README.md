@@ -20,7 +20,6 @@ This standalone ***"fork"*** of Cinema focuses on fixing the problems and extend
 <sub>⚠ 𝐌𝐢𝐧𝐢𝐦𝐮𝐦 𝐫𝐞𝐪𝐮𝐢𝐫𝐞𝐦𝐞𝐧𝐭 𝐟𝐨𝐫 𝐘𝐨𝐮𝐓𝐮𝐛𝐞 𝐨𝐧𝐥𝐲 𝐢𝐬 𝐱𝟖𝟔-𝟔𝟒 𝐛𝐞𝐭𝐚 𝐛𝐫𝐚𝐧𝐜𝐡, 𝐨𝐭𝐡𝐞𝐫𝐰𝐢𝐬𝐞 𝐂𝐄𝐅 𝐜𝐨𝐝𝐞𝐜 𝐟𝐢𝐱 𝐢𝐬 𝐧𝐞𝐞𝐝𝐞𝐝!</sub>
 * Youtube (Live)
 * Twitch Stream
-* DLive
 * SoundCloud
 * Vimeo
 * Dailymotion
