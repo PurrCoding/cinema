@@ -7,7 +7,6 @@ if CLIENT then
 	CreateClientConVar( "cinema_volume", 50, true, false )
 	CreateClientConVar( "cinema_resolution", 1080, true, false )
 	local MuteNoFocus = CreateClientConVar( "cinema_mute_nofocus", 1, true, false )
-	local ScrollAmount = CreateClientConVar( "cinema_scrollamount", 60, true, false )
 	local HidePlayers = CreateClientConVar( "cinema_hideplayers", 0, true, false )
 	local HideAmount = CreateClientConVar( "cinema_hide_amount", 0.11, true, false )
 
@@ -44,21 +43,6 @@ if CLIENT then
 	end )
 
 	concommand.Add( "cinema_fullscreen", theater.ToggleFullscreen )
-
-	-- Scroll panel
-	hook.Add( "PlayerBindPress", "TheaterScroll", function( ply, bind, pressed )
-
-		local panel = theater.ActivePanel()
-		if not IsValid(panel) then return end
-
-		local amount = ScrollAmount:GetInt()
-		if bind == "invnext" then
-			panel:QueueJavascript("window.scrollBy(0," .. amount .. ")")
-		elseif bind == "invprev" then
-			panel:QueueJavascript("window.scrollBy(0,-" .. amount .. ")")
-		end
-
-	end )
 
 	-- Hide Players
 	local amount = 0
