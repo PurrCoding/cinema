@@ -12,11 +12,16 @@ function ENT:Initialize()
 	self:DrawShadow( false )
 
 	local phys = self:GetPhysicsObject()
-
 	if IsValid(phys) then
 		phys:SetMaterial("gmod_silent")
 	end
 
+	self:PostInitialize()
+end
+
+function ENT:PostInitialize()
+	self.LinkedDoor = self:GetLinkedDoor()
+	self.TeleportEntity = self:GetTeleportEntity()
 end
 
 function ENT:Use(activator, caller)
@@ -31,7 +36,7 @@ function ENT:Use(activator, caller)
 			self:ResetSequence(sequence)
 			self:SetPlaybackRate(1.0)
 
-			local door = self:GetLinkedDoor()
+			local door = self.LinkedDoor
 			if IsValid( door ) then
 				door:ResetSequence( sequence )
 				door:SetPlaybackRate( 1.0 )
@@ -91,7 +96,7 @@ function ENT:StartLoading( ply )
 
 			ply:EmitSound(self.DoorClose)
 
-			local ent = self:GetTeleportEntity()
+			local ent = self.TeleportEntity
 			if IsValid(ent) then
 				ply:SetPos( ent:GetPos() )
 				ply:SetEyeAngles( ent:GetAngles() )
@@ -109,7 +114,7 @@ function ENT:Think()
 		local sequence = self:LookupSequence("idle")
 		self:SetSequence(sequence)
 
-		local door = self:GetLinkedDoor()
+		local door = self.LinkedDoor
 		if IsValid( door ) then
 			door:SetSequence( sequence )
 		end
