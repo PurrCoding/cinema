@@ -17,7 +17,6 @@ function ENT:Initialize()
 		phys:SetMaterial("gmod_silent")
 	end
 
-
 end
 
 function ENT:Use(activator, caller)
@@ -76,9 +75,9 @@ function ENT:GetTeleportEntity()
 end
 
 function ENT:StartLoading( ply )
-	umsg.Start( "theater_door_load", ply )
-		umsg.Entity( self )
-	umsg.End()
+	net.Start("TheaterDoorLoad", true)
+		net.WriteEntity( self )
+	net.Send(ply)
 
 	ply.Teleporting = true
 	ply:Freeze( true )
@@ -124,8 +123,6 @@ function ENT:Think()
 	self:NextThink(CurTime())
 	return true
 end
-
-
 
 function ENT:KeyValue(key, value)
 	local isEmpty = not value or string.len(value) <= 0

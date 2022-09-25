@@ -8,6 +8,7 @@ util.AddNetworkString( "TheaterQueue" )
 util.AddNetworkString( "TheaterSeek" )
 util.AddNetworkString( "TheaterVoteSkips" )
 util.AddNetworkString( "TheaterAnnouncement" )
+util.AddNetworkString( "TheaterDoorLoad" )
 
 local developer_cvar = GetConVar("developer")
 
