@@ -41,27 +41,6 @@ if CLIENT then
 		end
 	end)
 
-	concommand.Add( "cinema_toggle_controls", function()
-		local panel = theater.ActivePanel()
-		if panel then
-			if panel._controlsEnabled then
-				panel:SetPaintedManually(true)
-				panel:SetKeyboardInputEnabled(false)
-				panel:SetMouseInputEnabled(false)
-				panel:RunJavascript(
-					"if (window.theater) theater.toggleControls(false);")
-				panel._controlsEnabled = nil
-			else
-				panel:SetPaintedManually(false)
-				panel:SetKeyboardInputEnabled(true)
-				panel:SetMouseInputEnabled(true)
-				panel:RunJavascript(
-					"if (window.theater) theater.toggleControls(true);")
-				panel._controlsEnabled = true
-			end
-		end
-	end )
-
 	concommand.Add( "cinema_refresh", function()
 		theater.RefreshPanel(true)
 	end )
