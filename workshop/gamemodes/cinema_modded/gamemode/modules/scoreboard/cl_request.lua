@@ -206,10 +206,10 @@ function HISTORY:Init()
 	end
 
 	-- Page Info
-	self.PagerInfo = Label( "Page: 0/0", self.SearchFrame )
+	self.PagerInfo = Label( "0/0", self.SearchFrame )
 	self.PagerInfo:SetColor( Color( 255, 255, 255 ) )
 	self.PagerInfo.UpdateText = function(child, curPage, totalPage)
-		child:SetText(("Page: %d/%d"):format(curPage, totalPage))
+		child:SetText(("%d/%d"):format(curPage, totalPage))
 	end
 
 	-- Clear Button
