@@ -74,8 +74,6 @@ function PANEL:Init()
 	self.Browser = vgui.Create( "TheaterHTML", self.BrowserContainer )
 	self.Browser.isContainer = true
 
-	Msg("AWESOMIUM: Initialized instance for video request window\n")
-
 	self.Browser:OpenURL( "https://gmod-cinema.pages.dev/cinema/search/" )
 
 	self.Controls = vgui.Create( "TheaterHTMLControls", self.BrowserContainer )
@@ -94,7 +92,6 @@ end
 
 function PANEL:OnClose()
 	if IsValid(self.Browser) then
-		Msg("AWESOMIUM: Destroyed instance for video request window\n")
 		self.Browser:Remove()
 	end
 

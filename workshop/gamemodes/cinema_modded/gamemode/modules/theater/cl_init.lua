@@ -60,8 +60,6 @@ function RegisterPanel( Theater )
 	local panel = vgui.Create( "TheaterHTML", vgui.GetWorldPanel(), "TheaterScreen" )
 	panel:SetSize( h * scale, h )
 
-	Msg("AWESOMIUM: Initialized instance for theater screen\n")
-
 	Panels[ Theater:GetLocation() ] = panel
 	LastPanel = panel
 
@@ -116,7 +114,6 @@ function ResizePanel()
 end
 
 local function RemovePanel(panel)
-	Msg("AWESOMIUM: Destroyed instance for theater screen\n")
 	panel:Remove()
 end
 

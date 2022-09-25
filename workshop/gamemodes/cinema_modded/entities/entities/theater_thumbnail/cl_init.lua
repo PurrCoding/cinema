@@ -129,9 +129,7 @@ function ENT:DrawText()
 end
 
 function ENT:OnRemoveHTML()
-	Msg("AWESOMIUM: Destroyed instance for video thumbnail: ")
-	Msg(self:GetThumbnail())
-	Msg("\n")
+	-- Empty
 end
 
 function ENT:DrawThumbnail()
@@ -169,10 +167,6 @@ function ENT:DrawThumbnail()
 				self.HTML:SetKeyboardInputEnabled(false)
 				self.HTML:SetMouseInputEnabled(false)
 				self.HTML:OpenURL( self:GetThumbnail() )
-
-				Msg("AWESOMIUM: Initialized instance for video thumbnail: ")
-				Msg(self:GetThumbnail())
-				Msg("\n")
 
 			elseif not self.HTML:IsLoading() and not self.JSDelay then
 
