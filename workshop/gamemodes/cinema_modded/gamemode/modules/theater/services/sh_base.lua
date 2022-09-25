@@ -98,7 +98,6 @@ if CLIENT then
 					}
 				}
 
-				enableHD(on) { }
 			};
 			window.theater = new CinemaPlayer();
 		}
