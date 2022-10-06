@@ -117,49 +117,60 @@ end )
 
 function GM:MenuShow()
 
-	if not IsValid(LocalPlayer()) or not LocalPlayer().GetTheater then return end
+	if not IsValid( LocalPlayer() ) then return end
 
-	local Theater = LocalPlayer():GetTheater()
-	if not Theater then return end
+	local Theater = (LocalPlayer().GetTheater and LocalPlayer():GetTheater())
+	if Theater then
 
-	-- Queue
-	if not IsValid( GuiQueue ) then
-		GuiQueue = vgui.Create( "ScoreboardQueue" )
-	end
-
-	GuiQueue:InvalidateLayout()
-	GuiQueue:SetVisible( true )
-
-	GAMEMODE:ShowMouse()
-
-	if LocalPlayer():IsAdmin() or
-		( Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer() ) then
-
-		if not IsValid( GuiAdmin ) then
-			GuiAdmin = vgui.Create( "ScoreboardAdmin" )
+		-- Queue
+		if not IsValid( GuiQueue ) then
+			GuiQueue = vgui.Create( "ScoreboardQueue" )
 		end
 
-		GuiAdmin:InvalidateLayout()
-		GuiAdmin:SetVisible( true )
+		GuiQueue:InvalidateLayout()
+		GuiQueue:SetVisible( true )
 
+		GAMEMODE:ShowMouse()
+
+		if LocalPlayer():IsAdmin() or
+			( Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer() ) then
+
+			if not IsValid( GuiAdmin ) then
+				GuiAdmin = vgui.Create( "ScoreboardAdmin" )
+			end
+
+			GuiAdmin:InvalidateLayout()
+			GuiAdmin:SetVisible( true )
+
+		end
+
+		return
 	end
+
+	hook.Run( "OnSpawnMenuOpen" )
 
 end
 concommand.Add("+menu", GM.MenuShow )
 
 function GM:MenuHide()
 
-	if IsValid( GuiQueue ) then
-		GuiQueue:SetVisible( false )
+	if ( input.IsKeyTrapping() ) then return end
+
+	do -- Cienma specific stuff
+		if IsValid( GuiQueue ) then
+			GuiQueue:SetVisible( false )
+		end
+
+		if IsValid( GuiAdmin ) then
+			GuiAdmin:SetVisible( false )
+		end
+
+		if not ( IsValid( Gui ) and Gui:IsVisible() ) then
+			GAMEMODE:HideMouse()
+		end
 	end
 
-	if IsValid( GuiAdmin ) then
-		GuiAdmin:SetVisible( false )
-	end
-
-	if not ( IsValid( Gui ) and Gui:IsVisible() ) then
-		GAMEMODE:HideMouse()
-	end
+	hook.Run( "OnSpawnMenuClose" )
 
 end
 concommand.Add("-menu", GM.MenuHide )
