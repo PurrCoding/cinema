@@ -18,11 +18,6 @@ Last Request: %s
 Service: %s
 Supported: %s]]
 
-local browser
-local function getBrowser(path)
-	return IsValid(browser) and browser or false
-end
-
 function RequestVideoURL( url )
 
 	if IsValid( RequestPanel ) then
@@ -80,7 +75,6 @@ function PANEL:Init()
 	self.Browser.isContainer = true
 
 	self.Browser:OpenURL( theater.GetCinemaURL("search/") )
-	browser = self.Browser
 
 	self.Controls = vgui.Create( "TheaterHTMLControls", self.BrowserContainer )
 	self.Controls:SetHTML( self.Browser )
@@ -99,7 +93,6 @@ end
 function PANEL:OnClose()
 	if IsValid(self.Browser) then
 		self.Browser:Remove()
-		browser = nil
 	end
 
 	hook.Remove("VGUIMousePressed", "Cinema.RequestInputs")
@@ -252,9 +245,7 @@ function HISTORY:Init()
 		local menu = DermaMenu()
 
 		menu:AddOption( "YouTube Instance Selection", function()
-			if not getBrowser() then return end
-
-			getBrowser():OpenURL(theater.GetCinemaURL("search/instances.html"))
+			self.Browser:OpenURL(theater.GetCinemaURL("search/instances.html"))
 		end )
 
 		menu:Open()
