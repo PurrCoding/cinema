@@ -74,7 +74,7 @@ function PANEL:Init()
 	self.Browser = vgui.Create( "TheaterHTML", self.BrowserContainer )
 	self.Browser.isContainer = true
 
-	self.Browser:OpenURL( theater.GetCinemaURL("search/") )
+	self.Browser:OpenURL( "https://gmod-cinema.pages.dev/cinema/search/" )
 
 	self.Controls = vgui.Create( "TheaterHTMLControls", self.BrowserContainer )
 	self.Controls:SetHTML( self.Browser )
@@ -212,7 +212,7 @@ function HISTORY:Init()
 	-- Clear Button
 	self.ClearButton = vgui.Create( "DButton", self.SearchFrame )
 	self.ClearButton:SetText( "" )
-	self.ClearButton:SetTooltip( T"Request_Clear" )
+	self.ClearButton:SetTooltip( "Clear History" )
 	self.ClearButton:SetMaterial(binempty)
 	self.ClearButton:SetPaintBackground(false)
 	self.ClearButton:SetSize( 20, 16 )
@@ -233,24 +233,6 @@ function HISTORY:Init()
 
 	self.VideoList = vgui.Create( "TheaterList", self )
 	self.VideoList:DockMargin(0, 2, 0, 0)
-
-	self.Options = vgui.Create( "DPanelList", self )
-	self.Options:SetPaintBackground(false)
-	self.Options:SetPadding( 4 )
-	self.Options:SetSpacing( 4 )
-
-	local OptionsButton = vgui.Create( "TheaterButton")
-	OptionsButton:SetText( "Options" )
-	OptionsButton.DoClick = function()
-		local menu = DermaMenu()
-
-		menu:AddOption( "YouTube Instance Selection", function()
-			self.Browser:OpenURL(theater.GetCinemaURL("search/instances.html"))
-		end )
-
-		menu:Open()
-	end
-	self.Options:AddItem(OptionsButton)
 
 	self:Search()
 end
@@ -277,7 +259,7 @@ function HISTORY:Search(filter)
 		end )
 
 		-- Split table into multidimensional tables
-		-- Each Keynumber represents a "Page"
+		-- Each Keynumber represents a "Page" 
 		for i = 1,#raw_history do
 			if not memArray[memArrayCount] then
 				memArray[memArrayCount] = {}
@@ -373,9 +355,6 @@ function HISTORY:PerformLayout()
 	self.PagerLeft:Dock(RIGHT)
 
 	self.VideoList:Dock( FILL )
-
-	self.Options:Dock( BOTTOM )
-	self.Options:SizeToContents()
 
 end
 

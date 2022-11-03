@@ -88,11 +88,6 @@ function PANEL:Init()
 		gui.OpenURL(url)
 	end)
 
-	self:AddFunction("gmod", "setPipedInstance", function(url)
-		if not isstring(url) then return end
-		hook.Call("HTML.PipedInstance", url)
-	end)
-
 end
 
 function PANEL:SetupCallbacks()

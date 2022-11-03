@@ -194,7 +194,3 @@ end
 function GetQueueMode()
 	return GetConVar("cinema_queue_mode"):GetInt()
 end
-
-function GetCinemaURL(path)
-	return GetConVar("cinema_url"):GetString() .. (path and path or "")
-end
