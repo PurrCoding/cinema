@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="./styles/request.css">
+
+	<style>
+		table, th, td { border: 1px solid gray; padding: 2px; }
+        table button {color: black;}
+	</style>
+</head>
+
+<body>
+
+    <div style="position:absolute;top:0;left:0;right:0;bottom:0;">
+
+        <section class="content-container">
+
+            <table id="instanceTable">
+                <tr>
+                    <th>Select Instance</th>
+                    <th>Instance Name</th>
+                    <th>Instance Location(s)</th>
+                    <th>CDN</th>
+                </tr>
+            </table>
+        
+        </section>
+    </div>
+
+    <script>
+        function setPipedInstance(url) {
+            if (typeof gmod !== 'undefined') {
+                gmod.setPipedInstance(url);
+            }
+        }
+        
+        fetch("https://raw.githubusercontent.com/wiki/TeamPiped/Piped-Frontend/Instances.md")
+            .then(resp => resp.text())
+            .then(body => {
+                var skipped = 0;
+                var table = document.getElementById("instanceTable")
+
+                const lines = body.split("\n");
+                lines.map(line => {
+                    const split = line.split("|");
+                    if (split.length == 5) {
+                        if (skipped < 2) {
+                            skipped++;
+                            return;
+                        }
+
+                        const [name, url, location, cdn] = split
+
+                        const row = table.insertRow(table.rows.length++)
+                        row.insertCell(0).innerHTML = `<button onclick="setPipedInstance(\'${url.trim()}\')" >Select</button>`
+                        row.insertCell(1).innerHTML = name.trim();
+                        row.insertCell(2).innerHTML = location.trim();
+                        row.insertCell(3).innerHTML = cdn.trim();
+                    }
+
+                });
+            });
+    </script>
+
+</body>
+
+</html>
