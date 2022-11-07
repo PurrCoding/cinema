@@ -17,6 +17,7 @@ SERVICE.Hidden = true
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
 if (CLIENT) then
+	local SYTARB_URL = "https://github.com/zerodytrash/Simple-YouTube-Age-Restriction-Bypass/releases/latest/download/Simple-YouTube-Age-Restriction-Bypass.user.js"
 	local THEATER_URL = "https://www.youtube.com/embed/%s?autoplay=1&muted=1&controls=0&showinfo=0&modestbranding=1&rel=0&iv_load_policy=3&unlock_confirmed=1"
 	local THEATER_JS = [[
 		var checkerInterval = setInterval(function() {
@@ -32,21 +33,15 @@ if (CLIENT) then
 	]]
 	local agebypasser = nil
 
-	-- Simple YouTube Age Restriction Bypass
-	local function fetchAgeBypass()
-		local function onSuccess(body, length, headers, code)
+	do -- Simple YouTube Age Restriction Bypass
+		http.Fetch(SYTARB_URL, function(body, length, headers, code)
 			if not body or code ~= 200 then return end
 
 			agebypasser = body
-		end
-
-		local function onFailure(message)
-			print("[Simple YouTube A.R.B]: " .. message)
-		end
-
-		http.Fetch("https://github.com/zerodytrash/Simple-YouTube-Age-Restriction-Bypass/releases/latest/download/Simple-YouTube-Age-Restriction-Bypass.user.js", onSuccess, onFailure, {})
+		end, function(error)
+			print("[Simple YouTube A.R.B]: " .. error)
+		end, {})
 	end
-	fetchAgeBypass()
 
 	function injectARB(panel)
 		if not IsValid(panel) then return end
