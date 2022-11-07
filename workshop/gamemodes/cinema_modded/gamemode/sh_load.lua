@@ -22,11 +22,11 @@ local function GetFileList( strDirectory, strGamemode )
 end
 
 local function IsLuaFile( strFile )
-	return ( string.sub( strFile, -4 ) == ".lua" )
+	return string.sub( strFile, -4 ) == ".lua"
 end
 
 local function IsDirectory( strDir )
-	return ( string.GetExtensionFromFilename( strDir ) == nil )
+	return string.GetExtensionFromFilename( strDir ) == nil
 end
 
 local function LoadFile( strDirectory, strGamemode, strFile )

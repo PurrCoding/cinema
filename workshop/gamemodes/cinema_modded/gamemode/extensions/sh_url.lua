@@ -516,7 +516,7 @@ function parse_path(path)
         table.insert(parsed, s)
     end)
 
-    for i = 1, table.getn(parsed) do
+    for i = 1, #parsed do
         parsed[i] = unescape(parsed[i])
     end
 
@@ -542,7 +542,7 @@ end
 function build_path(parsed, unsafe)
     local path = ""
     local escape = unsafe and function(x) return x end or protect_segment
-    local n = table.getn(parsed)
+    local n = #parsed
 
     for i = 1, n - 1 do
         if parsed[i] ~= "" or parsed[i + 1] == "" then

@@ -146,7 +146,7 @@ hook.Add("CanPlayerEnterVehicle", "EnterSeat", function(ply, vehicle)
 	if vehicle:GetClass() ~= "prop_vehicle_prisoner_pod" then return end
 
 	if vehicle.Removing then return false end
-	return (vehicle:GetOwner() == ply)
+	return vehicle:GetOwner() == ply
 end)
 
 local airdist = Vector(0,0,48)

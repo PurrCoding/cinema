@@ -1,4 +1,4 @@
-include('sh_init.lua')
+include("sh_init.lua")
 
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 
@@ -106,8 +106,8 @@ function ENT:DrawText()
 	if name ~= CurrentName then
 		CurrentName = name
 		TranslatedName = name
-		if name == 'Invalid' then
-			TranslatedName = T'Invalid'
+		if name == "Invalid" then
+			TranslatedName = T"Invalid"
 		end
 	end
 
@@ -115,8 +115,8 @@ function ENT:DrawText()
 	if title ~= CurrentTitle then
 		CurrentTitle = title
 		TranslatedTitle = title
-		if title == 'NoVideoPlaying' then
-			TranslatedTitle = T'NoVideoPlaying'
+		if title == "NoVideoPlaying" then
+			TranslatedTitle = T"NoVideoPlaying"
 		end
 	end
 

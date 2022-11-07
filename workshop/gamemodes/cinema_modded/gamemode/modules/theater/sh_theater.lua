@@ -844,7 +844,7 @@ if SERVER then
 
 		-- Notify theater players of change
 		self:AnnounceToPlayers( {
-			self:IsQueueLocked() and 'Theater_LockedQueue' or 'Theater_UnlockedQueue',
+			self:IsQueueLocked() and "Theater_LockedQueue" or "Theater_UnlockedQueue",
 			ply:Nick()
 		} )
 

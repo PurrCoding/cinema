@@ -163,7 +163,7 @@ end
 ---------------------------------------------------------*/
 function PANEL:PerformLayout()
 
-	self.Slider:SetPos( 0, ( self:GetTall() / 2 ) )
+	self.Slider:SetPos( 0, self:GetTall() / 2 )
 	self.Slider:SetSize( self:GetWide(), 13 )
 
 	self.Slider:SetSlideX( self:GetFraction() )

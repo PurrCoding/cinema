@@ -80,7 +80,7 @@ if CLIENT then
 	end )
 
 	-- Mute theater on losing focus to Garry's Mod window
-	local FocusState, HasFocus, LastVolume = true, true, theater.GetVolume()
+	local HasFocus, LastVolume = true, theater.GetVolume()
 	hook.Add( "Think", "TheaterMuteOnFocusChange", function()
 
 		if not MuteNoFocus:GetBool() then return end
