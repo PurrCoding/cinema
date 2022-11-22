@@ -30,8 +30,10 @@
     <script>
         var query = new URL(location.href).searchParams;
         var videoID = query.get("v") || "dQw4w9WgXcQ";
-        var startTime = query.get("t") || 0;
-        startTime = parseInt(startTime);
+
+        var startTime = query.get("t") || false;
+        if (!!startTime) { startTime = parseInt(startTime); }
+
         var startTimeSet = false;
 
         var tag = document.createElement("script");
