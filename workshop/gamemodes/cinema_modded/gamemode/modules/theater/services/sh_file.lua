@@ -1,5 +1,5 @@
 --[[
-    This "File" Cinema service was created with time and effort by Shadowsun™ (STEAM_0:1:75888605 | https://steamcommunity.com/id/FarukGamer )
+    This "File" Cinema service was created with time and effort by Shadowsun™ (STEAM_0:1:75888605 | https://bio.link/shadowsun )
     Don't be a bad person who steals other people's works and uses it for their own benefit, keep the credits and don't remove them!
 --]]
 
