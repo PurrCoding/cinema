@@ -1649,6 +1649,10 @@ if CLIENT then
 			return Languages
 		end
 
+		function translations:LanguageSupported()
+			return Languages[self:GetLanguage()] and true or false
+		end
+
 		function translations:Format( key, ... )
 			if not key then return "" end
 			local lang = self:GetLanguage()
