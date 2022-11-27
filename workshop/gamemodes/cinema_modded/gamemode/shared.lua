@@ -16,7 +16,6 @@ include( "sh_load.lua" )
 
 include( "player_shd.lua" )
 include( "player_class/player_lobby.lua" )
-include( "translations.lua" )
 
 Loader.Load( "extensions" )
 Loader.Load( "modules" )
