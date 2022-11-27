@@ -8,7 +8,7 @@ THEATERLIST.TheaterHeight = 56
 
 function THEATERLIST:Init()
 
-	self.Title = Label( T("TheaterList_NowShowing"), self )
+	self.Title = Label( translations:Format("TheaterList_NowShowing"), self )
 	self.Title:SetFont( "ScoreboardTitleSmall" )
 	self.Title:SetColor( Color( 255, 255, 255 ) )
 
@@ -169,7 +169,7 @@ function THEATER:Update()
 
 	self.Title:SetText( string.upper( Theater:Name() ) )
 	self.Time:SetText( Theater:VideoTime() )
-	self.Video:SetText( T( Theater:VideoTitle() ) )
+	self.Video:SetText( translations:Format( Theater:VideoTitle() ) )
 
 end
 

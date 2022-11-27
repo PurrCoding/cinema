@@ -7,11 +7,11 @@ SETTINGS.TitleHeight = 88
 
 function SETTINGS:Init()
 
-	self.Title = Label( T("Settings_Title"), self )
+	self.Title = Label( translations:Format("Settings_Title"), self )
 	self.Title:SetFont( "ScoreboardTitleSmall" )
 	self.Title:SetColor( Color( 255, 255, 255 ) )
 
-	self.Help = Label( T("Settings_ClickActivate"), self )
+	self.Help = Label( translations:Format("Settings_ClickActivate"), self )
 	self.Help:SetFont( "ScoreboardHelp" )
 	self.Help:SetColor( Color( 255, 255, 255, 150 ) )
 
@@ -107,8 +107,8 @@ end
 function SETTINGS:Create()
 
 	-- Volume slider
-	local Volume = self:NewSetting( "TheaterNumSlider", T("Volume"), "cinema_volume" )
-	Volume:SetTooltip( T("Settings_VolumeTooltip") )
+	local Volume = self:NewSetting( "TheaterNumSlider", translations:Format("Volume"), "cinema_volume" )
+	Volume:SetTooltip( translations:Format("Settings_VolumeTooltip") )
 	Volume:SetMinMax( 0, 100 )
 	Volume:SetDecimals( 0 )
 	Volume:SetWide( 256 - 32 )
@@ -117,8 +117,8 @@ function SETTINGS:Create()
 	Volume:AlignTop( self.TitleHeight - 20 )
 
 	-- Video Smoother
-	local VideoSmoother = self:NewSetting( "TheaterCheckBoxLabel", T("Settings_SmoothVideoLabel"), "cinema_smoother" )
-	VideoSmoother:SetTooltip( T("Settings_SmoothVideoTooltip") )
+	local VideoSmoother = self:NewSetting( "TheaterCheckBoxLabel", translations:Format("Settings_SmoothVideoLabel"), "cinema_smoother" )
+	VideoSmoother:SetTooltip( translations:Format("Settings_SmoothVideoTooltip") )
 	VideoSmoother:AlignLeft( 16 )
 	VideoSmoother:AlignTop( self.TitleHeight + 34 )
 	VideoSmoother.Label:SetFont( "LabelFont" )
@@ -126,8 +126,8 @@ function SETTINGS:Create()
 	VideoSmoother.Label:SetTall(50)
 
 	-- Hide Players
-	local HidePlayers = self:NewSetting( "TheaterCheckBoxLabel", T("Settings_HidePlayersLabel"), "cinema_hideplayers" )
-	HidePlayers:SetTooltip( T("Settings_HidePlayersTooltip") )
+	local HidePlayers = self:NewSetting( "TheaterCheckBoxLabel", translations:Format("Settings_HidePlayersLabel"), "cinema_hideplayers" )
+	HidePlayers:SetTooltip( translations:Format("Settings_HidePlayersTooltip") )
 	HidePlayers:AlignLeft( 16 )
 	HidePlayers:AlignTop( self.TitleHeight + 64 )
 	HidePlayers.Label:SetFont( "LabelFont" )
@@ -135,8 +135,8 @@ function SETTINGS:Create()
 	HidePlayers.Label:SetTall(50)
 
 	-- Hide Players
-	local MuteAltTab = self:NewSetting( "TheaterCheckBoxLabel", T("Settings_MuteFocusLabel"), "cinema_mute_nofocus" )
-	MuteAltTab:SetTooltip( T("Settings_MuteFocusTooltip") )
+	local MuteAltTab = self:NewSetting( "TheaterCheckBoxLabel", translations:Format("Settings_MuteFocusLabel"), "cinema_mute_nofocus" )
+	MuteAltTab:SetTooltip( translations:Format("Settings_MuteFocusTooltip") )
 	MuteAltTab:AlignLeft( 16 )
 	MuteAltTab:AlignTop( self.TitleHeight + 94 )
 	MuteAltTab.Label:SetFont( "LabelFont" )
@@ -151,8 +151,8 @@ function SETTINGS:Create()
 
 	-- Add language options
 	local CurrentLanguage = translations.GetLanguage()
-	for idx, lang in pairs( translations.GetLanguages() ) do
-		LanguageSelect:AddLanguage( lang, CurrentLanguage == lang.Id )
+	for Id, lang in pairs( translations.GetLanguages() ) do
+		LanguageSelect:AddLanguage( lang, CurrentLanguage == Id )
 	end
 
 end

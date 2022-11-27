@@ -16,8 +16,8 @@ hook.Add( "InitPostEntity", "CheckMapSupport", function()
 		if not Location.GetLocations() then
 
 			warning.Set(
-				T("Warning_Unsupported_Line1"),
-				T("Warning_Unsupported_Line2")
+				translations:Format("Warning_Unsupported_Line1"),
+				translations:Format("Warning_Unsupported_Line2")
 			)
 
 			control.Add( KEY_F1, function( enabled, held )

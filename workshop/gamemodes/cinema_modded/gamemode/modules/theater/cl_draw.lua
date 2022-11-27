@@ -34,7 +34,7 @@ InfoScale = 1
 w = 0
 h = 0
 
-local LoadingStr = T("Loading")
+local LoadingStr = translations:Format("Loading")
 
 function DrawActiveTheater( bDrawingDepth, bDrawingSkybox )
 
@@ -114,20 +114,20 @@ function DrawVideoInfo( w, h, scale )
 	surface.DrawRect(0, -2, w, 4)
 
 	-- Title
-	if LastTitle ~= T( Video:Title() ) or WasFullscreen ~= theater.Fullscreen then
-		LastTitle = T( Video:Title() )
+	if LastTitle ~= translations:Format( Video:Title() ) or WasFullscreen ~= theater.Fullscreen then
+		LastTitle = translations:Format( Video:Title() )
 		WasFullscreen = theater.Fullscreen
 		Title = string.reduce( LastTitle, "VideoInfoMedium", w )
 	end
 	draw.TheaterText( Title, "VideoInfoMedium", 10, 10, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 
 	-- Volume
-	draw.TheaterText( T("Volume"):upper(), "VideoInfoSmall", w - 72, 120, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+	draw.TheaterText( translations:Format("Volume"):upper(), "VideoInfoSmall", w - 72, 120, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 	draw.TheaterText( GetVolume() .. "%", "VideoInfoMedium", w - 72, 136, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 
 	-- Vote Skips
 	if NumVoteSkips > 0 then
-		draw.TheaterText( T("Voteskips"):upper(), "VideoInfoSmall", w - 72, 230, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+		draw.TheaterText( translations:Format("Voteskips"):upper(), "VideoInfoSmall", w - 72, 230, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 		draw.TheaterText( NumVoteSkips .. "/" .. ReqVoteSkips, "VideoInfoMedium", w - 72, 246, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 	end
 
