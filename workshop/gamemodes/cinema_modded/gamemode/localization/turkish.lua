@@ -87,5 +87,5 @@ LANG.Service_EmbedDisabled                 = "Talep edilen videoda gomme kapalid
 LANG.Service_PurchasableContent = "Talep edilen video satin alinabilir icerik icerdigi icin acilamamaktadir."
 LANG.Service_StreamOffline                 = "Sectiginiz canli yayin aktif degil."
 
--- Version 1.1
+-- Credits
 LANG.TranslationsCredit = "Ceviri %s tarafindan yapildi"

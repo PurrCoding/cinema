@@ -88,5 +88,5 @@ LANG.Service_EmbedDisabled      = "A kért videó beágyazása nem megengedett."
 LANG.Service_PurchasableContent = "A kért videó egy megvásárolandó elem és nem lejátszható."
 LANG.Service_StreamOffline      = "A kért stream jelenleg offline."
 
--- Version 1.1
+-- Credits
 LANG.TranslationsCredit = "A fordítást készítette: %s"

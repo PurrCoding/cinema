@@ -88,5 +88,5 @@ LANG.Service_EmbedDisabled 		= "Požadované video má zakázáno vkládání."
 LANG.Service_PurchasableContent = "Požadované video je zakoupitelný obsah a nemůže být přehráno."
 LANG.Service_StreamOffline 		= "Požadovaný stream je offline."
 
--- Version 1.1
+-- Credits
 LANG.TranslationsCredit = "Překlad: %s"

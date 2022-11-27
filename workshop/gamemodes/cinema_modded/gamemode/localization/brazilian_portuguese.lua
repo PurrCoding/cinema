@@ -94,5 +94,5 @@ LANG.Service_StreamOffline      = "O conteúdo solicitado está fora do ar."
 -- modules/taunts/sv_commands.lua
 LANG.ActCommand = C(ColHighlight,"%s",ColDefault," %ss") -- e.g. Sam dances
 
--- Version 1.1
+-- Credits
 LANG.TranslationsCredit = "Tradução feita por %s"

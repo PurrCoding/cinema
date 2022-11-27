@@ -92,5 +92,5 @@ LANG.Service_StreamOffline 		= "所請求的直播已離線."
 -- modules/taunts/sv_commands.lua
 LANG.ActCommand = C(ColHighlight,"%s",ColDefault," %ss") -- e.g. Sam dances
 
--- Version 1.1
+-- Credits
 LANG.TranslationsCredit = "由 %s 翻譯"

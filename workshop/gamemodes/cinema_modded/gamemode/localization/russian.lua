@@ -90,5 +90,5 @@ LANG.Service_EmbedDisabled 		= "Запрещено вставлять выбра
 LANG.Service_PurchasableContent = "Данное видео имеет запрещённый контент, и не может быть вставлено в очередь."
 LANG.Service_StreamOffline 		= "Запрашиваемый стрим не в сети."
 
--- Version 1.1
+-- Credits
 LANG.TranslationsCredit = "Перевод запилили: %s"

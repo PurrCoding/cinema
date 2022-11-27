@@ -88,5 +88,5 @@ LANG.Service_EmbedDisabled = "Il video richiesto non è abilitato all'incorporaz
 LANG.Service_PurchasableContent = "Il video richiesto è acquistabile e non può essere riprodotto."
 LANG.Service_StreamOffline = "Lo stream richiesto è attualmente offline."
 
--- Version 1.1
+-- Credits
 LANG.TranslationsCredit = "Traduzioni di %s"

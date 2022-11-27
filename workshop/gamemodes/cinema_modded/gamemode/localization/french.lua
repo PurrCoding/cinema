@@ -92,5 +92,5 @@ LANG.Service_StreamOffline      = "Le stream proposé est hors-ligne."
 -- modules/taunts/sv_commands.lua
 LANG.ActCommand = C(ColHighlight,"%s",ColDefault," %ss") -- e.g. Sam dances
 
--- Version 1.1
+-- Credits
 LANG.TranslationsCredit = "Traductions par %s"

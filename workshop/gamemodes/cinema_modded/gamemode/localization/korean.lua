@@ -92,5 +92,5 @@ LANG.Service_StreamOffline      = "스트리밍 서비스가 오프라인입니�
 -- modules/taunts/sv_commands.lua
 LANG.ActCommand = C(ColHighlight,"%s",ColDefault," %ss") -- e.g. Sam dances
 
--- Version 1.1
+-- Credits
 LANG.TranslationsCredit = "번역 %s"

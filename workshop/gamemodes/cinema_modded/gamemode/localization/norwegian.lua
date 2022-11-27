@@ -88,5 +88,5 @@ LANG.Service_EmbedDisabled              = "Innholdet til den følgende videoen e
 LANG.Service_PurchasableContent         = "Den forespurte videoen er kjøpt innhold og kan ikke bli spilt av."
 LANG.Service_StreamOffline              = "Den forespurte stream er offline."
 
--- Version 1.1
+-- Credits
 LANG.TranslationsCredit                 = "Oversettelse av %s"

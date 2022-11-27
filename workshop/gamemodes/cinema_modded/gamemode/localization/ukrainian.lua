@@ -88,5 +88,5 @@ LANG.Service_EmbedDisabled              = "Заборонено вставлят
 LANG.Service_PurchasableContent = "Дане відео має заборонений контент, і не може бути поставлено в чергу."
 LANG.Service_StreamOffline              = "Запитуваний стрім оффлайн."
 
--- Version 1.1
+-- Credits
 LANG.TranslationsCredit = "Переклад виконав %s"
