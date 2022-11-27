@@ -24,14 +24,19 @@ local credit = [[
 	{@TransInsert} 
 ]]
 
-if CLIENT then
-	credit = credit:Replace("{@TransInsert}",
-		("- %s translation by %s"):format(
-			translations:Format("Name"),
-			translations:Format("Author")
-		))
-else
-	credit = credit:Replace("{@TransInsert}", "")
-end
+hook.Add("PostGamemodeLoaded", "Cinema.Credits", function()
 
-print(credit)
+	if CLIENT and (translations and translations.LanguageSupported
+		and translations:LanguageSupported()) then
+
+		credit = credit:Replace("{@TransInsert}",
+			("- %s translation by %s"):format(
+				translations:Format("Name"),
+				translations:Format("Author")
+			))
+	else
+		credit = credit:Replace("{@TransInsert}", "")
+	end
+
+	print(credit)
+end)
