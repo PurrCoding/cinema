@@ -2,7 +2,6 @@ GM.Name 		= "Cinema"
 GM.Author		= "pixelTail Games"
 GM.Email 		= "contact@pixeltailgames.com"
 GM.Website 		= "www.pixeltailgames.com"
-GM.Version 		= "1.2"
 GM.TeamBased 	= false
 
 -- Enable sandbox functionalities
