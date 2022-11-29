@@ -150,8 +150,8 @@ function SETTINGS:Create()
 	LanguageSelect:AlignTop( self.TitleHeight + 124 )
 
 	-- Add language options
-	local CurrentLanguage = translations.GetLanguage()
-	for Id, lang in pairs( translations.GetLanguages() ) do
+	local CurrentLanguage = translations:GetLanguage()
+	for Id, lang in pairs( translations:GetLanguages() ) do
 		LanguageSelect:AddLanguage( lang, CurrentLanguage == Id )
 	end
 
