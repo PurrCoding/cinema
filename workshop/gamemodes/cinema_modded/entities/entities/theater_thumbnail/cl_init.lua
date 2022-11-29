@@ -107,7 +107,7 @@ function ENT:DrawText()
 		CurrentName = name
 		TranslatedName = name
 		if name == "Invalid" then
-			TranslatedName = T"Invalid"
+			TranslatedName = translations:Format("Invalid")
 		end
 	end
 
@@ -116,7 +116,7 @@ function ENT:DrawText()
 		CurrentTitle = title
 		TranslatedTitle = title
 		if title == "NoVideoPlaying" then
-			TranslatedTitle = T"NoVideoPlaying"
+			TranslatedTitle = translations:Format("NoVideoPlaying")
 		end
 	end
 
