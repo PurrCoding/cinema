@@ -4,12 +4,21 @@
 	"title"			"Cinema (Fixed Edition)"
 	"menusystem" 	"1"
 	"maps" 			"theater|theater_|cinema_"
-	"category"	"other"
+	"category"		"other"
 	"workshopid"	"2419005587"
 
 "settings"
 	{
 		1
+		{
+			"name"		"cinema_enable_sandbox"
+			"text"		"Enable Sandbox"
+			"help"		"(Experimental) Enables the sandbox functionalities"
+			"type"		"CheckBox"
+			"default"	"0"
+			"singleplayer" "1"
+		}
+		2
 		{
 			"name"		"cinema_allow_3dvoice"
 			"text"		"Allow 3D Voice"
@@ -17,7 +26,7 @@
 			"type"		"CheckBox"
 			"default"	"1"
 		}
-		2
+		3
 		{
 			"name"		"cinema_allow_voice"
 			"text"		"Allow Voice in Theater"
@@ -25,19 +34,11 @@
 			"type"		"CheckBox"
 			"default"	"0"
 		}
-		3
+		4
 		{
 			"name"		"cinema_allow_reset"
 			"text"		"Allow Reset"
 			"help"		"Reset the theater after all players have left."
-			"type"		"CheckBox"
-			"default"	"0"
-		}
-		4
-		{
-			"name"		"cinema_enable_sandbox"
-			"text"		"Enable Sandbox"
-			"help"		"(Experimental) Enables the sandbox functionalities"
 			"type"		"CheckBox"
 			"default"	"0"
 		}
