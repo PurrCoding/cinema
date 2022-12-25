@@ -16,19 +16,6 @@ Since 2018, the [original Cinema](https://github.com/pixeltailgames/cinema) addo
 * Automated detection of video durations
 * (Experimental) Optional Sandbox derivation
 
-#### Supported Services ####
-| Service                	| Needs x86-64 	| Needs Codec Fix 	| Other Notes                	|
-|------------------------	|--------------	|-----------------	|----------------------------	|
-| YouTube                	| x            	|                 	| Codecs for Live            	|
-| Twitch                 	| x            	| x               	| no VOD (Video on Deman)    	|
-| SoundCloud             	| x            	|                 	|                            	|
-| Vimeo                  	| x            	| x               	|                            	|
-| Dailymotion            	| x            	| x               	| blocked in RU, CN, KP, ... 	|
-| Internet Archive       	| x            	| x               	| Sometimes slow             	|
-| AniMix Play            	| x            	| x               	|                            	|
-| File URL               	| x            	| x               	| .mp4, .webm + audio        	|
-| VK, Sibnet, Ok, Rutube 	| x            	| x               	|                            	|
-
 #### Credits ####
 * The original developers of the [Cinema addon](https://github.com/pixeltailgames/cinema) by [PixelTail Games](https://steamcommunity.com/groups/pixelTail).
 * YouTube Workaround by [Veitikka](https://github.com/veitikka) (https://github.com/samuelmaddock/gm-mediaplayer/pull/34)
