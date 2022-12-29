@@ -40,17 +40,17 @@ hook.Add("PreVideoLoad", "ShowDependencyWarning", function(Video)
 
 	local service = theater.Services[Video:Type()]
 	if not service or not service.Dependency or
-		service.Dependency == DEPENDECY_NONE then return end
+		service.Dependency == DEPENDENCY_NONE then return end
 
 	local reason = nil
 	local panel = theater.ActivePanel()
 	if IsValid(panel) then
 
-		if service.Dependency == DEPENDECY_PARTIAL and not HasBetaBranch then
+		if service.Dependency == DEPENDENCY_PARTIAL and not HasBetaBranch then
 			reason = "x86-64 Beta"
 		end
 
-		if service.Dependency == DEPENDECY_COMPLETE and (not HasBetaBranch or not HasCodecFix) then
+		if service.Dependency == DEPENDENCY_COMPLETE and (not HasBetaBranch or not HasCodecFix) then
 			reason = "x86-64 Beta & CEF Codec Fix"
 		end
 

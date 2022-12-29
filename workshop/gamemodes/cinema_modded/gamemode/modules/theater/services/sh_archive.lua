@@ -15,7 +15,7 @@ local VALID_FORMATS = {
 
 SERVICE.Name = "Internet Archive"
 SERVICE.IsTimed = true
-SERVICE.Dependency = DEPENDECY_COMPLETE
+SERVICE.Dependency = DEPENDENCY_COMPLETE
 
 --[[
 	Uncomment this line below to restrict Videostreaming

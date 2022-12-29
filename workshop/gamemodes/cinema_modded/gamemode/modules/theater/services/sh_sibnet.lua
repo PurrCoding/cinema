@@ -7,7 +7,7 @@ local SERVICE = {}
 
 SERVICE.Name = "Sibnet"
 SERVICE.IsTimed = true
-SERVICE.Dependency = DEPENDECY_COMPLETE
+SERVICE.Dependency = DEPENDENCY_COMPLETE
 
 --[[
 	Uncomment this line below to restrict Videostreaming

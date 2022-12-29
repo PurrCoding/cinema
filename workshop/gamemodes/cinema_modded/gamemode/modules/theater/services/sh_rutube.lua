@@ -6,7 +6,7 @@
 local SERVICE = {}
 SERVICE.Name = "Rutube"
 SERVICE.IsTimed = true
-SERVICE.Dependency = DEPENDECY_COMPLETE
+SERVICE.Dependency = DEPENDENCY_COMPLETE
 
 --[[
 	Uncomment this line below to restrict Videostreaming
@@ -117,7 +117,7 @@ theater.RegisterService( "rutube", SERVICE )
 theater.RegisterService( "rutubelive", {
 	Name = "Rutube Live",
 	IsTimed = false,
-	Dependency = DEPENDECY_COMPLETE,
+	Dependency = DEPENDENCY_COMPLETE,
 	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )

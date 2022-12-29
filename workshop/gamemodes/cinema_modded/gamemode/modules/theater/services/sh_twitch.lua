@@ -4,7 +4,7 @@ local THUMB_URL = "https://static-cdn.jtvnw.net/previews-ttv/live_user_%s-1280x7
 
 SERVICE.Name = "Twitch.TV Stream"
 SERVICE.IsTimed = false
-SERVICE.Dependency = DEPENDECY_COMPLETE
+SERVICE.Dependency = DEPENDENCY_COMPLETE
 
 --[[
 	Uncomment this line below to restrict Livestreaming

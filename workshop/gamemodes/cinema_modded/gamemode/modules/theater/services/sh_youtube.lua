@@ -7,7 +7,7 @@ local SERVICE = {}
 
 SERVICE.Name = "YouTube"
 SERVICE.IsTimed = true
-SERVICE.Dependency = DEPENDECY_PARTIAL
+SERVICE.Dependency = DEPENDENCY_PARTIAL
 
 local METADATA_URL = "https://www.youtube.com/watch?v=%s"
 local THEATER_URL = "https://gmod-cinema.pages.dev/cinema/youtube.html?v=%s"
@@ -163,7 +163,7 @@ theater.RegisterService( "youtube", SERVICE )
 theater.RegisterService( "youtubelive", {
 	Name = "YouTube Live",
 	IsTimed = false,
-	Dependency = DEPENDECY_COMPLETE,
+	Dependency = DEPENDENCY_COMPLETE,
 	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )
