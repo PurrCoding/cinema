@@ -152,9 +152,12 @@ function RemovePanels()
 	LastTheater = nil
 
 end
-net.Receive( "PlayerLeaveTheater", theater.RemovePanels )
 hook.Add( "OnReloaded", "RemoveAllPanels", theater.RemovePanels )
 hook.Add( "OnGamemodeLoaded", "RemoveAllPanels2", theater.RemovePanels )
+net.Receive( "PlayerLeaveTheater", function()
+	RemovePanels()
+	hook.Run( "OnTheaterLeft" )
+end )
 
 function CurrentVideo()
 	return LastVideo

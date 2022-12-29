@@ -6,6 +6,7 @@
 local SERVICE = {}
 SERVICE.Name = "Dailymotion"
 SERVICE.IsTimed = true
+SERVICE.Dependency = DEPENDECY_COMPLETE
 
 --[[
 	Uncomment this line below to restrict Videostreaming
@@ -115,6 +116,7 @@ theater.RegisterService( "dailymotion", SERVICE )
 theater.RegisterService( "dailymotionlive", {
 	Name = "Dailymotion Live",
 	IsTimed = false,
+	Dependency = DEPENDECY_COMPLETE,
 	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )

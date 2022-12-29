@@ -58,3 +58,11 @@ function Add( key, onToggle )
 	}
 
 end
+
+function Remove( key )
+
+	if not key then return end
+
+	KeyControls[ key ] = nil
+
+end

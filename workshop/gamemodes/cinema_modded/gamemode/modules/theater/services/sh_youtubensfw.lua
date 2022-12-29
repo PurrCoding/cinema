@@ -6,8 +6,9 @@
 local SERVICE = {}
 
 SERVICE.Name = "YouTube NSFW"
-SERVICE.ParentClass = "youtube"
 SERVICE.IsTimed = true
+SERVICE.ParentClass = "youtube"
+SERVICE.Dependency = DEPENDECY_COMPLETE
 SERVICE.Hidden = true
 
 --[[

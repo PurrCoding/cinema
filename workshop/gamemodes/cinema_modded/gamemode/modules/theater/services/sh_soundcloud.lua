@@ -6,6 +6,7 @@
 local SERVICE = {}
 SERVICE.Name = "Soundcloud"
 SERVICE.IsTimed = true
+SERVICE.Dependency = DEPENDECY_PARTIAL
 
 --[[
 	Uncomment this line below to restrict Audiostreaming

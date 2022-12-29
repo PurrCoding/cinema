@@ -75,6 +75,9 @@ if CLIENT then
 			Warning_Unsupported_Line1 = "The current map is unsupported by the Cinema gamemode",
 			Warning_Unsupported_Line2 = "Press F1 to open the official map on the Steam Workshop",
 
+			Dependency_Missing_Line1 = "Oops... you are missing something!",
+			Dependency_Missing_Line2 = "Press F4 to open the instructions video.",
+
 			-- Queue
 			Queue_Title = "QUEUE",
 			Request_Video = "Request video",
@@ -662,6 +665,9 @@ if CLIENT then
 			-- Warnings
 			Warning_Unsupported_Line1 = "Die aktuelle Map wird nicht vom Cinema Gamemode unterstützt.",
 			Warning_Unsupported_Line2 = "Drücke F1 um die offizielle Map im Workshop zu öffnen.",
+
+			Dependency_Missing_Line1 = "Ups... du hast etwas übersehen!",
+			Dependency_Missing_Line2 = "Drücke F4 um die Anleitungsvideo zu öffnen.",
 
 			-- Queue
 			-- In English the 2nd Words are also written with capital Letters.

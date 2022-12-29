@@ -32,3 +32,11 @@ function GM:PostVideoLoad( Video )
 	theater.LastVideo = Video
 
 end
+
+/*---------------------------------------------------------------------------
+	Name: OnTheaterLeft
+	Desc: Called after the theater is left.
+---------------------------------------------------------------------------*/
+function GM:OnTheaterLeft()
+
+end

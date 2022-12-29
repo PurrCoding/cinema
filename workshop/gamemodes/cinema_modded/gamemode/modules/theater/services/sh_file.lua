@@ -6,6 +6,7 @@
 local SERVICE = {}
 SERVICE.Name = "File"
 SERVICE.IsTimed = true
+SERVICE.Dependency = DEPENDECY_COMPLETE
 SERVICE.ExtentedVideoInfo = true
 
 --[[

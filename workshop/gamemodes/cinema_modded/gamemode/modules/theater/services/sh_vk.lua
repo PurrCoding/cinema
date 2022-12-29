@@ -7,6 +7,7 @@ local SERVICE = {}
 
 SERVICE.Name = "VKontakte"
 SERVICE.IsTimed = true
+SERVICE.Dependency = DEPENDECY_COMPLETE
 
 --[[
 	Uncomment this line below to restrict Videostreaming

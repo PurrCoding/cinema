@@ -7,6 +7,7 @@ local SERVICE = {}
 
 SERVICE.Name = "OK"
 SERVICE.IsTimed = true
+SERVICE.Dependency = DEPENDECY_COMPLETE
 
 local ValidTypes = {
 	["video"] = true,
@@ -129,6 +130,7 @@ theater.RegisterService( "ok", SERVICE )
 theater.RegisterService( "oklive", {
 	Name = "Ok Live",
 	IsTimed = false,
+	Dependency = DEPENDECY_COMPLETE,
 	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )
