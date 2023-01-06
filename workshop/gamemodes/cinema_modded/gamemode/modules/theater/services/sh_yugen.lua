@@ -19,6 +19,23 @@ function SERVICE:Match( url )
 	return url.host and url.host:match("yugen.to")
 end
 
+local function extractUrlInfo(data)
+	local urlinfo = string.Explode(",", data)
+
+	return urlinfo[1], urlinfo[2], urlinfo[3]
+end
+
+local function getBase64Path(data)
+	local entry, anime, episode = extractUrlInfo(data)
+	local path = ("%d|%d"):format(entry, episode)
+
+	if anime:match("-dub", -4) then
+		path = path .. "|dub"
+	end
+
+	return util.Base64Encode(path)
+end
+
 if (CLIENT) then
 	local BASE_URL = "https://yugen.to/e/%s/"
 
@@ -49,23 +66,6 @@ if (CLIENT) then
 			console.log("METADATA:" + JSON.stringify(metadata));
 		});
 	]])
-
-	local function extractUrlInfo(data)
-		local urlinfo = string.Explode(",", data)
-
-		return urlinfo[1], urlinfo[2], urlinfo[3]
-	end
-
-	local function getBase64Path(data)
-		local entry, anime, episode = extractUrlInfo(data)
-		local path = ("%d|%d"):format(entry, episode)
-
-		if anime:match("-dub", -4) then
-			path = path .. "|dub"
-		end
-
-		return util.Base64Encode(path)
-	end
 
 	function SERVICE:LoadProvider( Video, panel )
 
@@ -115,13 +115,13 @@ end
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
-	local _, anime, episode = extractUrlInfo(data:Data())
-
 	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
 
 		if metadata.err then
 			return onFailure(metadata.err)
 		end
+
+		local _, anime, episode = extractUrlInfo(data:Data())
 
 		local info = {}
 		info.title = ("%s - Episode %s"):format(anime, episode)
