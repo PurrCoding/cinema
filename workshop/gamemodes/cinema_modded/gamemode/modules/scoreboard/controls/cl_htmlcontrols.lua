@@ -135,9 +135,19 @@ function PANEL:SetHTML( html )
 	self.AddressBar:SetText( self.HomeURL )
 	self:UpdateHistory( self.HomeURL )
 
+	self.HTML.OnBeginLoadingDocument = function( panel, url )
+		self.HTML.URL2 = url
+	end
+
 	self.HTML.OnFinishLoading = function( panel )
 
 		local url = self.HTML:GetURL()
+		local Theater = LocalPlayer():GetTheater()
+
+		if self.HTML.URL2 ~= url and theater.ExtractURLData( self.HTML.URL2, Theater ) then
+			url = self.HTML.URL2
+			self.HTML:SetURL(url)
+		end
 
 		self.AddressBar:SetText( url )
 		self:FinishedLoading()
