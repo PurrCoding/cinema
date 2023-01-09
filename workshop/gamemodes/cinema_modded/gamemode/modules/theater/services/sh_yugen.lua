@@ -65,7 +65,18 @@ if (CLIENT) then
 			var metadata = { duration: player.duration };
 			console.log("METADATA:" + JSON.stringify(metadata));
 		});
+		player.addEventListener('error', (event) => {
+			console.log("ERROR:" + player.error.code )
+		});
 	]])
+
+	local MEDIA_ERR = { -- https://developer.mozilla.org/en-US/docs/Web/API/MediaError
+		[1] = "The user canceled the media.", -- MEDIA_ERR_ABORTED
+		[2] = "A network error occurred while fetching the media.", -- MEDIA_ERR_NETWORK
+		[3] = "An error occurred while decoding the media.", -- MEDIA_ERR_DECODE
+		[4] = "The audio is missing or is in a format not supported by your browser.", -- MEDIA_ERR_SRC_NOT_SUPPORTED
+		[5] = "An unknown error occurred.", -- MEDIA_ERR_UNKOWN
+	}
 
 	function SERVICE:LoadProvider( Video, panel )
 
@@ -97,6 +108,12 @@ if (CLIENT) then
 				panel:Remove()
 			end
 
+			if msg:StartWith("ERROR:") then
+				local code = tonumber(string.sub(msg, 7))
+
+				callback({ err = MEDIA_ERR[code] or MEDIA_ERR[5] })
+				panel:Remove()
+			end
 		end
 
 		panel:OpenURL(BASE_URL:format(getBase64Path(data)))
