@@ -56,9 +56,11 @@ function GetRequestHistory(filter)
 	local results = Query(q) or {}
 
 	if #results > 0 then
-		results.duration = tonumber(results.duration)
-		results.count = tonumber(results.count)
-		results.lastRequest = tonumber(results.lastRequest)
+		for _, result in ipairs(results) do
+			result.duration = tonumber(result.duration)
+			result.count = tonumber(result.count)
+			result.lastRequest = tonumber(result.lastRequest)
+		end
 	end
 
 	return results
