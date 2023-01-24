@@ -105,6 +105,13 @@ if CLIENT then
 			Request_PlayCount = "%d request(s)", -- e.g. 10 request(s)
 			Request_Url = "Request URL",
 			Request_Url_Tooltip = "Press to request a valid video URL.\nThe button will be red when the URL is valid.",
+			Request_Filter_AllServices = "All Services",
+			Request_Filter_SortBy_LastRequest = "Last request",
+			Request_Filter_SortBy_Alphabet = "Alphabetically",
+			Request_Filter_SortBy_Duration = "Duration",
+			Request_Filter_SortBy_RequestCount = "Request count",
+			Request_Paginator_ResultCount = "%s results",
+			Request_Paginator_PageOf = "Page %d of %d",
 
 			-- Scoreboard settings panel
 			Settings_Title = "SETTINGS",
