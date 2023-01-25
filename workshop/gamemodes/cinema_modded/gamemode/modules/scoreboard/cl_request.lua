@@ -134,6 +134,7 @@ vgui.Register( "VideoRequestFrame", PANEL, "EditablePanel" )
 
 
 -- Custom search and page function made by Shadowsun™ (STEAM_0:1:75888605).
+-- Additional filters and tweaks added by Chev (STEAM_0:0:71541002).
 local HISTORY = {}
 HISTORY.TitleHeight = 64
 HISTORY.VidHeight = 32 -- 48
