@@ -134,6 +134,7 @@ vgui.Register( "VideoRequestFrame", PANEL, "EditablePanel" )
 
 
 -- Custom search and page function made by Shadowsun™ (STEAM_0:1:75888605).
+-- Additional filters and tweaks added by Chev (STEAM_0:0:71541002).
 local HISTORY = {}
 HISTORY.TitleHeight = 64
 HISTORY.VidHeight = 32 -- 48
@@ -156,57 +157,22 @@ function HISTORY:Init()
 	self.Title:SetFont( "ScoreboardTitle" )
 	self.Title:SetColor( Color( 255, 255, 255 ) )
 	self.Title:SetContentAlignment(5)
+	self.Title:SetTall(self.TitleHeight)
+	self.Title:Dock(TOP)
 
 	self.SearchFrame = vgui.Create( "DPanel", self )
-	self.SearchFrame:DockMargin(4,4,4,4)
+	self.SearchFrame:DockMargin(4, 4, 4, 4)
 	self.SearchFrame:SetPaintBackground(false)
+	self.SearchFrame:SetTall(20)
+	self.SearchFrame:Dock(TOP)
 
 	self.SearchField = vgui.Create( "DTextEntry", self.SearchFrame )
-	self.SearchField:DockMargin(0,0,10,0)
+	self.SearchField:DockMargin(0, 0, 0, 0)
+	self.SearchField:Dock(FILL)
 	self.SearchField:SetPlaceholderText( "Search.." )
 	self.SearchField:SetUpdateOnType(true)
 	self.SearchField.OnChange = function(pnl)
-		self.History = nil -- Clear History table on Change
-
-		local text = pnl:GetValue()
-		self:Search(text)
-	end
-
-	-- Page Forward
-	self.PagerRight = vgui.Create( "DButton", self.SearchFrame )
-	self.PagerRight:SetText( "" )
-	self.PagerRight:SetTooltip( "Next Page" )
-	self.PagerRight:SetMaterial(arrowRight)
-	self.PagerRight:SetPaintBackground(false)
-	self.PagerRight:SetSize( 20, 16 )
-	self.PagerRight.DoClick = function()
-		if self.History[self.CurrentPageCount] then
-			self.CurrentPageCount = self.CurrentPageCount + 1
-		end
-
-		self:Search()
-	end
-
-	-- Page Backward
-	self.PagerLeft = vgui.Create( "DButton", self.SearchFrame )
-	self.PagerLeft:SetText( "" )
-	self.PagerLeft:SetTooltip( "Previous Page" )
-	self.PagerLeft:SetMaterial(arrowLeft)
-	self.PagerLeft:SetPaintBackground(false)
-	self.PagerLeft:SetSize( 20, 16 )
-	self.PagerLeft.DoClick = function()
-		if self.History[self.CurrentPageCount] then
-			self.CurrentPageCount = self.CurrentPageCount - 1
-		end
-
-		self:Search()
-	end
-
-	-- Page Info
-	self.PagerInfo = Label( "0/0", self.SearchFrame )
-	self.PagerInfo:SetColor( Color( 255, 255, 255 ) )
-	self.PagerInfo.UpdateText = function(child, curPage, totalPage)
-		child:SetText(("%d/%d"):format(curPage, totalPage))
+		self:NewSearch()
 	end
 
 	-- Clear Button
@@ -216,7 +182,8 @@ function HISTORY:Init()
 	self.ClearButton:SetMaterial(binempty)
 	self.ClearButton:SetPaintBackground(false)
 	self.ClearButton:SetSize( 20, 16 )
-	self.ClearButton:DockMargin(0,0,15,0)
+	self.ClearButton:DockMargin(0, 0, 0, 0)
+	self.ClearButton:Dock(RIGHT)
 	self.ClearButton.DoClick = function()
 		local queryPnl = Derma_Query("Woah, hold on!\nYou are about to delete all your history, do you really want to do that?", "Info",
 			"Yes", function()
@@ -231,16 +198,141 @@ function HISTORY:Init()
 		end
 	end
 
+	self.FilterFrame = vgui.Create("DPanel", self)
+	self.FilterFrame:DockMargin(4, 4, 4, 4)
+	self.FilterFrame:Dock(TOP)
+	self.FilterFrame:SetTall(20)
+	self.FilterFrame.Paint = nil
+
+	self.VideoTypeLabel = vgui.Create("DLabel", self.FilterFrame)
+	self.VideoTypeLabel:SetText("Service:")
+	self.VideoTypeLabel:SizeToContents()
+	self.VideoTypeLabel:SetContentAlignment(4)
+	self.VideoTypeLabel:DockMargin(2, 0, 4, 0)
+	self.VideoTypeLabel:Dock(LEFT)
+
+	self.VideoType = vgui.Create("DComboBox", self.FilterFrame)
+	self.VideoType:SetWide(128)
+	self.VideoType:Dock(LEFT)
+
+	self.VideoType:AddChoice(translations:Format("Request_Filter_AllServices"), nil, true, "icon16/film.png")
+
+	for _, serviceClass in ipairs(theater.GetServiceClasses()) do
+		local serviceTb = theater.GetServiceByClass(serviceClass)
+
+		-- Hide hidden services as well as the 'base' service - the player doesn't need to see these
+		if serviceTb.Hidden or serviceClass == "base" then continue end
+
+		self.VideoType:AddChoice(serviceTb.Name or serviceClass, serviceClass, false, "icon16/film.png")
+	end
+
+	self.VideoType.OnSelect = function(panel, index, value, data)
+		self:NewSearch()
+	end
+
+	self.SortByLabel = vgui.Create("DLabel", self.FilterFrame)
+	self.SortByLabel:SetText("Sort by:")
+	self.SortByLabel:SizeToContents()
+	self.SortByLabel:SetContentAlignment(5)
+	self.SortByLabel:DockMargin(4, 0, 4, 0)
+	self.SortByLabel:Dock(LEFT)
+
+	self.SortByBox = vgui.Create("DComboBox", self.FilterFrame)
+	self.SortByBox:Dock(FILL)
+
+	self.SortByBox:SetSortItems(false)
+
+	self.SortByBox:AddChoice(translations:Format("Request_Filter_SortBy_LastRequest"), "lastRequest", true, "icon16/database_table.png")
+	self.SortByBox:AddChoice(translations:Format("Request_Filter_SortBy_Alphabet"), "title", false, "icon16/database_table.png")
+	self.SortByBox:AddChoice(translations:Format("Request_Filter_SortBy_Duration"), "duration", false, "icon16/database_table.png")
+	self.SortByBox:AddChoice(translations:Format("Request_Filter_SortBy_RequestCount"), "count", false, "icon16/database_table.png")
+
+	self.SortByBox.OnSelect = function(panel, index, value, data)
+		self:NewSearch()
+	end
+
+	self.BottomFrame = vgui.Create("DPanel", self)
+	self.BottomFrame:DockMargin(4, 4, 4, 4)
+	self.BottomFrame.Paint = nil
+	self.BottomFrame:SetTall(20)
+	self.BottomFrame:Dock(BOTTOM)
+
+	-- Page Forward
+	self.PagerRight = vgui.Create( "DButton", self.BottomFrame )
+	self.PagerRight:SetText( "" )
+	self.PagerRight:SetTooltip( "Next Page" )
+	self.PagerRight:SetMaterial(arrowRight)
+	self.PagerRight:SetPaintBackground(false)
+	self.PagerRight:SetSize( 20, 16 )
+	self.PagerRight:Dock(RIGHT)
+	self.PagerRight.DoClick = function()
+		if self.History[self.CurrentPageCount] then
+			self.CurrentPageCount = self.CurrentPageCount + 1
+		end
+
+		self:Search()
+	end
+
+	-- Page Backward
+	self.PagerLeft = vgui.Create( "DButton", self.BottomFrame )
+	self.PagerLeft:SetText( "" )
+	self.PagerLeft:SetTooltip( "Previous Page" )
+	self.PagerLeft:SetMaterial(arrowLeft)
+	self.PagerLeft:SetPaintBackground(false)
+	self.PagerLeft:SetSize( 20, 16 )
+	self.PagerLeft:Dock(LEFT)
+	self.PagerLeft.DoClick = function()
+		if self.History[self.CurrentPageCount] then
+			self.CurrentPageCount = self.CurrentPageCount - 1
+		end
+
+		self:Search()
+	end
+
+	-- Page Info
+	self.PagerInfo = Label( translations:Format("Request_Paginator_PageOf", 1, 1), self.BottomFrame )
+	self.PagerInfo:SetContentAlignment(5)
+	self.PagerInfo:SetColor( Color( 255, 255, 255 ) )
+	self.PagerInfo:Dock(FILL)
+	self.PagerInfo.UpdateText = function(child, curPage, totalPage)
+		-- Prevents showing "Page 1 of 0" results, corrects it to "Page 1 of 1"
+		totalPage = math.max(totalPage, 1)
+
+		child:SetText(translations:Format("Request_Paginator_PageOf", curPage, totalPage))
+	end
+
+	self.ResultsLabel = vgui.Create("DLabel", self)
+	self.ResultsLabel:SetContentAlignment(5)
+	self.ResultsLabel:SetText(translations:Format("Request_Paginator_ResultCount", 0))
+	self.ResultsLabel:DockMargin(4, 8, 4, 8)
+	self.ResultsLabel:Dock(BOTTOM)
+
 	self.VideoList = vgui.Create( "TheaterList", self )
 	self.VideoList:DockMargin(0, 2, 0, 0)
+	self.VideoList:Dock(FILL)
 
-	self:Search()
+	self:NewSearch()
 end
 
-function HISTORY:Search(filter)
+-- Clears the history cache and begins a new search with the user's selected settings
+function HISTORY:NewSearch()
+	-- Clear History table on Change
+	self.History = nil
+
+	local searchQuery = self.SearchField:GetText()
+	local _, serviceType = self.VideoType:GetSelected()
+	local _, sortBy = self.SortByBox:GetSelected()
+
+	self:Search(searchQuery, serviceType, sortBy)
+end
+
+function HISTORY:Search(filter, serviceType, sortBy)
 
 	self.Videos = {}
 	self.VideoList:Clear(true)
+
+	-- Default to last request sort
+	sortBy = sortBy or "lastRequest"
 
 	-- Check if not History table exists and cache it!
 	if not self.History then
@@ -254,18 +346,40 @@ function HISTORY:Search(filter)
 			if not a then return false end
 			if not b then return true end
 
-			return a.lastRequest > b.lastRequest
+			-- Title sorts ascending while other sort methods are descending
+			if sortBy == "title" then
+				return a[sortBy] < b[sortBy]
+			else
+				return a[sortBy] > b[sortBy]
+			end
 
 		end )
 
+		local service_filtered_history = {}
+
+		if serviceType then
+			for _, videoData in pairs(raw_history) do
+				if videoData.type == serviceType then
+					service_filtered_history[#service_filtered_history + 1] = videoData
+				end
+			end
+		else
+			service_filtered_history = raw_history
+		end
+
+		local resultsCount = #service_filtered_history
+		local resultsText = translations:Format("Request_Paginator_ResultCount", string.Comma(resultsCount))
+		self.ResultsLabel:SetText(resultsText)
+		self.ResultsLabel:SizeToContents()
+
 		-- Split table into multidimensional tables
 		-- Each Keynumber represents a "Page" 
-		for i = 1,#raw_history do
+		for i = 1, resultsCount do
 			if not memArray[memArrayCount] then
 				memArray[memArrayCount] = {}
 			end
 
-			memArray[memArrayCount][memCount] = raw_history[i]
+			memArray[memArrayCount][memCount] = service_filtered_history[i]
 
 			if memCount == rowLimit then
 				memArrayCount = memArrayCount + 1
@@ -287,7 +401,7 @@ function HISTORY:Search(filter)
 
 	-- Create and Add video items
 	if history then
-		for i = 1,#history do
+		for i = 1, #history do
 			self:AddVideo( history[i] )
 		end
 	end
@@ -340,22 +454,6 @@ function HISTORY:Paint( w, h )
 end
 
 function HISTORY:PerformLayout()
-
-	self.Title:SetTall( self.TitleHeight )
-	self.Title:Dock(TOP)
-
-	self.SearchFrame:SetTall(20)
-	self.SearchFrame:Dock(TOP)
-
-	self.SearchField:Dock(FILL)
-
-	self.ClearButton:Dock(RIGHT)
-	self.PagerInfo:Dock(RIGHT)
-	self.PagerRight:Dock(RIGHT)
-	self.PagerLeft:Dock(RIGHT)
-
-	self.VideoList:Dock( FILL )
-
 end
 
 vgui.Register( "RequestHistory", HISTORY )

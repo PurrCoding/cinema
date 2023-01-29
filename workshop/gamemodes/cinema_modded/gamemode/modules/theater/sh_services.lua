@@ -19,6 +19,12 @@ function RegisterService( class, object, base )
 
 end
 
+function GetServiceClasses()
+
+	return table.GetKeys( Services )
+
+end
+
 function GetServiceByClass( class )
 
 	return Services [ class ]
