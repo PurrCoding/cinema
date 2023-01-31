@@ -220,3 +220,23 @@ hook.Add( "GUIMousePressed", "RequestClose", function( key )
 	end
 
 end )
+
+local function ApplyLangChanges()
+
+	if IsValid( Gui ) then
+		Gui:Remove()
+		Gui = nil
+	end
+
+	if IsValid( GuiQueue ) then
+		GuiQueue:Remove()
+		GuiQueue = nil
+	end
+
+	if IsValid( GuiAdmin ) then
+		GuiAdmin:Remove()
+		GuiAdmin = nil
+	end
+
+end
+concommand.Add("cinema_langupdate", ApplyLangChanges )

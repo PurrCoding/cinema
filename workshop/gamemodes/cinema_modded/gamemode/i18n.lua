@@ -1723,7 +1723,10 @@ if CLIENT then
 	end
 
 	cvars.AddChangeCallback("gmod_language", function(_, value_old, value_new)
+		if not CLIENT then return end
+
 		CurrentId = Languages[value_new] and value_new or DefaultId
+		RunConsoleCommand("cinema_langupdate")
 	end)
 
 end
