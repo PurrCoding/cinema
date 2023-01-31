@@ -143,18 +143,6 @@ function SETTINGS:Create()
 	MuteAltTab.Label:SetColor( color_white )
 	MuteAltTab.Label:SetTall(50)
 
-	-- Languages
-	local LanguageSelect = self:NewSetting( "DLanguageSelect" )
-	LanguageSelect:SetWidth( 224 )
-	LanguageSelect:AlignLeft( 16 )
-	LanguageSelect:AlignTop( self.TitleHeight + 124 )
-
-	-- Add language options
-	local CurrentLanguage = translations:GetLanguage()
-	for Id, lang in pairs( translations:GetLanguages() ) do
-		LanguageSelect:AddLanguage( lang, CurrentLanguage == Id )
-	end
-
 end
 
 vgui.Register( "ScoreboardSettings", SETTINGS )
