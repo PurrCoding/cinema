@@ -134,7 +134,7 @@ if CLIENT then
 			ActCommand = Compile(ColHighlight, "%s", ColDefault, " %ss"), -- e.g. Sam dances
 
 			-- Credits
-			TranslationsCredit = "Translations by %s",
+			TranslationsCredit = "Translations made by %s",
 		},
 		["pt-BR"] = {
 			-- Basic information
