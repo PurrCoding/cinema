@@ -59,10 +59,10 @@ if CLIENT then
 			Theater_ProcessingRequest = Compile("Processing ", ColHighlight, "%s", ColDefault, " request..."),
 			Theater_RequestFailed = "There was a problem processing the requested video.",
 			Theater_Voteskipped = "The current video has been voteskipped.",
-			Theater_ForceSkipped = Compile(ColHighlight, "%s", ColDefault, " has forced to skip the current video."),
+			Theater_ForceSkipped = Compile(ColHighlight, "%s", ColDefault, " has forced the current video to be skipped."),
 			Theater_PlayerReset = Compile(ColHighlight, "%s", ColDefault, " has reset the theater."),
 			Theater_LostOwnership = "You have lost theater ownership due to leaving the theater.",
-			Theater_NotifyOwnership = "You're now the owner of the private theater.",
+			Theater_NotifyOwnership = "You are now the owner of the private theater.",
 			Theater_OwnerLockedQueue = "The owner of the theater has locked the queue.",
 			Theater_LockedQueue = Compile(ColHighlight, "%s", ColDefault, " has locked the theater queue."),
 			Theater_UnlockedQueue = Compile(ColHighlight, "%s", ColDefault, " has unlocked the theater queue."),
@@ -72,10 +72,10 @@ if CLIENT then
 			Theater_VideoAddedToQueue = Compile(ColHighlight, "%s", ColDefault, " has been added to the queue."),
 
 			-- Warnings
-			Warning_Unsupported_Line1 = "The current map is unsupported by the Cinema gamemode",
-			Warning_Unsupported_Line2 = "Press F1 to open the official map on the Steam Workshop",
+			Warning_Unsupported_Line1 = "The current map is unsupported by the Cinema gamemode.",
+			Warning_Unsupported_Line2 = "Press F1 to open the official map on the Steam Workshop.",
 
-			Dependency_Missing_Line1 = "Oops... you are missing something!",
+			Dependency_Missing_Line1 = "Oops! You are missing something...",
 			Dependency_Missing_Line2 = "Press F4 to open the instructions video.",
 
 			-- Queue
@@ -96,7 +96,7 @@ if CLIENT then
 			Theater_SeekQuery = "HH:MM:SS or number of seconds (e.g. 1:30:00 or 5400)",
 
 			-- Theater list
-			TheaterList_NowShowing = "NOW SHOWING",
+			TheaterList_NowShowing = "NOW PLAYING",
 
 			-- Request Panel
 			Request_History = "HISTORY",
@@ -104,8 +104,8 @@ if CLIENT then
 			Request_DeleteTooltip = "Remove this video from history",
 			Request_PlayCount = "%d request(s)", -- e.g. 10 request(s)
 			Request_Url = "Request URL",
-			Request_Url_Tooltip = "Press to request a valid video URL.\nThe button will be red when the URL is valid.",
-			Request_Filter_AllServices = "All Services",
+			Request_Url_Tooltip = "Press to request a video from a valid URL.\nThe button will turn red when the URL is valid.",
+			Request_Filter_AllServices = "All services",
 			Request_Filter_SortBy_LastRequest = "Last request",
 			Request_Filter_SortBy_Alphabet = "Alphabetically",
 			Request_Filter_SortBy_Duration = "Duration",
@@ -117,24 +117,24 @@ if CLIENT then
 			Settings_Title = "SETTINGS",
 			Settings_ClickActivate = "CLICK TO ACTIVATE YOUR MOUSE",
 			Settings_VolumeLabel = "Volume",
-			Settings_VolumeTooltip = "Use the + and - keys to increase/decrease volume.",
+			Settings_VolumeTooltip = "Use the \"+\" and \"-\" keys to increase or decrease the volume.",
 			Settings_HidePlayersLabel = "Hide players in theaters",
 			Settings_HidePlayersTooltip = "Reduces player visibility inside of theaters.",
 			Settings_MuteFocusLabel = "Mute audio while alt-tabbed",
-			Settings_MuteFocusTooltip = "Mutes theater volume while Garry's Mod is out-of-focus (e.g. you alt-tabbed).",
+			Settings_MuteFocusTooltip = "Mutes theater volume while Garry's Mod is out-of-focus (e.g. while alt-tabbed).",
 			Settings_SmoothVideoLabel = "Smooth video playback",
 			Settings_SmoothVideoTooltip = "Make some videos smoother at the cost of FPS.",
 
 			-- Video Services
-			Service_EmbedDisabled = "The requested video is embed disabled.",
-			Service_PurchasableContent = "The requested video is purchasable content and can't be played.",
+			Service_EmbedDisabled = "The requested video has disabled embed support.",
+			Service_PurchasableContent = "The requested video is a paid content and cannot be played.",
 			Service_StreamOffline = "The requested stream is offline.",
 
 			-- Act command (don't bother translating this)
 			ActCommand = Compile(ColHighlight, "%s", ColDefault, " %ss"), -- e.g. Sam dances
 
 			-- Credits
-			TranslationsCredit = "Translations by %s",
+			TranslationsCredit = "Translations made by %s",
 		},
 		["pt-BR"] = {
 			-- Basic information
@@ -158,21 +158,24 @@ if CLIENT then
 			Theater_ProcessingRequest = Compile("Processando solicitação do(a) ", ColHighlight, "%s", ColDefault, "..."),
 			Theater_RequestFailed = "Houve um problema ao processar o vídeo solicitado.",
 			Theater_Voteskipped = "O vídeo atual foi pulado por meio de votação.",
-			Theater_ForceSkipped = Compile(ColHighlight, "%s", ColDefault, " forçou a pular o vídeo atual."),
+			Theater_ForceSkipped = Compile(ColHighlight, "%s", ColDefault, " forçou o vídeo atual a ser pulado."),
 			Theater_PlayerReset = Compile(ColHighlight, "%s", ColDefault, " redefiniu o teatro."),
 			Theater_LostOwnership = "Você perdeu a posse do teatro por ter saído dele.",
 			Theater_NotifyOwnership = "Você tomou posse do teatro privado.",
-			Theater_OwnerLockedQueue = "O dono do teatro bloqueou a fila.",
-			Theater_LockedQueue = Compile(ColHighlight, "%s", ColDefault, " bloqueou a fila do teatro."),
-			Theater_UnlockedQueue = Compile(ColHighlight, "%s", ColDefault, " desbloqueou a fila do teatro."),
-			Theater_OwnerUseOnly = "Somente o dono do teatro pode usar isso.",
+			Theater_OwnerLockedQueue = "O dono do teatro travou a fila.",
+			Theater_LockedQueue = Compile(ColHighlight, "%s", ColDefault, " travou a fila do teatro."),
+			Theater_UnlockedQueue = Compile(ColHighlight, "%s", ColDefault, " destravou a fila do teatro."),
+			Theater_OwnerUseOnly = "Somente o dono do teatro pode usar isto.",
 			Theater_PublicVideoLength = "Solicitações feitas em teatros públicos são limitadas a %s segundos de duração.",
 			Theater_PlayerVoteSkipped = Compile(ColHighlight, "%s", ColDefault, " votou para pular ", ColHighlight, "(%s/%s)", ColDefault, "."),
 			Theater_VideoAddedToQueue = Compile(ColHighlight, "%s", ColDefault, " foi adicionado à fila."),
 
 			-- Warnings
-			Warning_Unsupported_Line1 = "O mapa atual é incompatível com o modo de jogo Cinema",
-			Warning_Unsupported_Line2 = "Pressione F1 para abrir o mapa oficial na Oficina Steam",
+			Warning_Unsupported_Line1 = "O mapa atual é incompatível com o modo de jogo Cinema.",
+			Warning_Unsupported_Line2 = "Pressione F1 para abrir o mapa oficial na Oficina Steam.",
+
+			Dependency_Missing_Line1 = "Opa! Alguma coisa está faltando...",
+			Dependency_Missing_Line2 = "Pressione F4 para abrir o vídeo com as instruções.",
 
 			-- Queue
 			Queue_Title = "FILA",
@@ -188,7 +191,7 @@ if CLIENT then
 			Theater_Seek = "Avançar",
 			Theater_Reset = "Redefinir",
 			Theater_ChangeName = "Alterar nome",
-			Theater_QueueLock = "Alternar bloqueio da fila",
+			Theater_QueueLock = "Alternar travamento da fila",
 			Theater_SeekQuery = "HH:MM:SS ou número de segundos (por exemplo: 1:30:00 ou 5400)",
 
 			-- Theater list
@@ -201,16 +204,23 @@ if CLIENT then
 			Request_PlayCount = "%d solicitação(ões)", -- e.g. 10 request(s)
 			Request_Url = "Solicitar URL",
 			Request_Url_Tooltip = "Clique para solicitar um vídeo de um URL válido.\nO botão ficará vermelho quando o URL for válido.",
+			Request_Filter_AllServices = "Todos os serviços",
+			Request_Filter_SortBy_LastRequest = "Última solicitação",
+			Request_Filter_SortBy_Alphabet = "Alfabeticamente",
+			Request_Filter_SortBy_Duration = "Duração",
+			Request_Filter_SortBy_RequestCount = "Número de solicitações",
+			Request_Paginator_ResultCount = "%s resultados",
+			Request_Paginator_PageOf = "Página %d de %d",
 
 			-- Scoreboard settings panel
 			Settings_Title = "CONFIGURAÇÕES",
-			Settings_ClickActivate = "CLIQUE PARA ATIVAR O SEU MOUSE",
+			Settings_ClickActivate = "CLIQUE PARA ATIVAR O MOUSE",
 			Settings_VolumeLabel = "Volume",
-			Settings_VolumeTooltip = "Use as teclas + e - para aumentar ou diminuir o volume.",
+			Settings_VolumeTooltip = "Use as teclas \"+\" e \"-\" para aumentar ou diminuir o volume.",
 			Settings_HidePlayersLabel = "Ocultar jogadores em teatros",
 			Settings_HidePlayersTooltip = "Reduz a visiblidade dos jogadores dentro de teatros.",
-			Settings_MuteFocusLabel = "Silenciar áudio enquanto minimizado",
-			Settings_MuteFocusTooltip = "Silencia os vídeos enquanto o Garry's Mod estiver em segundo plano (por exemplo, ao minimizar).",
+			Settings_MuteFocusLabel = "Silenciar áudio em segundo plano",
+			Settings_MuteFocusTooltip = "Silencia os vídeos enquanto o Garry's Mod estiver em segundo plano (por exemplo, ao minimizar o jogo).",
 			Settings_SmoothVideoLabel = "Reproduzir vídeos suavemente",
 			Settings_SmoothVideoTooltip = "Torna a reprodução de vídeos mais suave, mas reduz o desempenho do jogo.",
 
