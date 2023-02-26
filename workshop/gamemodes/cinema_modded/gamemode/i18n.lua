@@ -355,8 +355,8 @@ if CLIENT then
 			Warning_Unsupported_Line1 = "当前地图不支持Cinema模式",
 			Warning_Unsupported_Line2 = "按下 F1 来打开创意工坊的 Cinema 官方地图",
 
-			Dependency_Missing_Line1 = "Oops! You are missing something...",
-			Dependency_Missing_Line2 = "Press F4 to open the instructions video.",
+			Dependency_Missing_Line1 = "哎呀！你好像丢失了某些东西...",
+			Dependency_Missing_Line2 = "按下 F4 来打开介绍视频",
 
 			-- Queue
 			Queue_Title = "点播列表",
@@ -397,7 +397,7 @@ if CLIENT then
 			Settings_Title = "设置",
 			Settings_ClickActivate = "按一下左键来呼出鼠标",
 			Settings_VolumeLabel = "音量",
-			Settings_VolumeTooltip = "使用 +/- 鍵来 增加/减小 音量",
+			Settings_VolumeTooltip = "使用 +/- 键来 增加/减小 音量",
 			Settings_HidePlayersLabel = "隐藏其他玩家",
 			Settings_HidePlayersTooltip = "降低其他玩家的可见性",
 			Settings_MuteFocusLabel = "失去焦点时静音",
@@ -406,8 +406,8 @@ if CLIENT then
 			Settings_SmoothVideoTooltip = "通过降低FPS来提升视频流畅度",
 
 			-- Video Services
-			Service_EmbedDisabled = "所請求的影片禁用了嵌入式播放的使用.",
-			Service_PurchasableContent = "所請求的影片是可購買內容因此不能被播放.",
+			Service_EmbedDisabled = "你所点播的视频禁止嵌入式播放！",
+			Service_PurchasableContent = "你所点播的视频可能是付费内容",
 			Service_StreamOffline = "直播已停止",
 
 			-- Credits
