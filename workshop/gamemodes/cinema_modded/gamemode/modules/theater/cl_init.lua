@@ -1,5 +1,5 @@
 -- Increment Volume
-control.Add( KEY_EQUAL, function( enabled )
+local function IncrementVolume( enabled )
 	-- If they're typing in Chat, ignore it
 	if LocalPlayer():IsTyping() then return end
 
@@ -12,10 +12,12 @@ control.Add( KEY_EQUAL, function( enabled )
 
 	end
 
-end )
+end
+control.Add( KEY_EQUAL, IncrementVolume )
+control.Add( KEY_PAD_PLUS, IncrementVolume )
 
 -- Decrement Volume
-control.Add( KEY_MINUS, function( enabled )
+local function DecrementVolume( enabled )
 	-- If they're typing in Chat, ignore it
 	if LocalPlayer():IsTyping() then return end
 
@@ -28,7 +30,9 @@ control.Add( KEY_MINUS, function( enabled )
 
 	end
 
-end )
+end
+control.Add( KEY_MINUS, DecrementVolume )
+control.Add( KEY_PAD_MINUS, DecrementVolume )
 
 module( "theater", package.seeall )
 
