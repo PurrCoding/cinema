@@ -63,10 +63,6 @@ function PANEL:Init()
 		end )
 	end
 
-	self:AddFunction( "gmod", "getUrl", function( href )
-		self:SetURL( href )
-	end )
-
 	self:AddFunction( "window", "open", function()
 		-- prevents popups from opening
 	end)
@@ -156,7 +152,7 @@ function PANEL:Think()
 end
 
 function PANEL:FetchPageURL()
-	local js = "if (typeof gmod !== 'undefined') { gmod.getUrl(window.location.href); }"
+	local js = "console.log(\"GETURL:\" + window.location.href )"
 	self:RunJavascript(js)
 end
 
@@ -235,6 +231,13 @@ PANEL.Call = PANEL.QueueJavascript
 function PANEL:ConsoleMessage( msg, func )
 
 	if ( not isstring( msg ) ) then msg = "*js variable*" end
+
+	if msg:StartWith("GETURL:") then
+		local url = string.sub(msg, 8)
+
+		self:SetURL( url )
+		return
+	end
 
 	-- Filter messages output to the console
 	-- 'console.gmod' always gets output
