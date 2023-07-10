@@ -33,7 +33,7 @@ function VIDEO:Init( info, ply )
 
 	o._VideoTitle = string.gsub(info.Title or "(Unknown)", "%%", "%%%%")
 	o._VideoDuration = info.Duration or 0
-	o._VideoThumbnail = info.Thumbnail or ""
+	o._VideoThumbnail = info.Thumbnail and isstring(info.Thumbnail) and info.Thumbnail or ""
 
 	return o
 

@@ -1,18 +1,9 @@
---[[
-    This "Soundcloud" Cinema service was created with time and effort by Shadowsun™ (STEAM_0:1:75888605 | https://bio.link/shadowsun )
-    Don't be a bad person who steals other people's works and uses it for their own benefit, keep the credits and don't remove them!
---]]
-
 local SERVICE = {}
+
 SERVICE.Name = "Soundcloud"
 SERVICE.IsTimed = true
-SERVICE.Dependency = DEPENDENCY_PARTIAL
 
---[[
-	Uncomment this line below to restrict Audiostreaming
-	only to Private Theaters.
-]]--
--- SERVICE.TheaterType = THEATER_PRIVATE
+SERVICE.Dependency = DEPENDENCY_PARTIAL
 
 local API_URL = "https://api-widget.soundcloud.com/resolve?url=%s&format=json&client_id=%s"
 local SRV_API_KEY = "LBCcHmRB8XSStWL6wKH2HPACspQlXg2P"
@@ -72,7 +63,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 		local info = {}
 		info.title = response.title
-		info.thumbnail = ( response.artwork_url and response.artwork_url:Replace("-large.jpg", "-original.jpg") ) or self.PlaceholderThumb
+		info.thumbnail = ( response.artwork_url and response.artwork_url:Replace("-large.jpg", "-original.jpg") ) or ""
 		info.duration = math.ceil(response.duration / 1000)
 
 		if onSuccess then

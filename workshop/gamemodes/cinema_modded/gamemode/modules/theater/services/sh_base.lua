@@ -2,9 +2,12 @@ local SERVICE = {}
 
 SERVICE.Name 		= "Base"
 SERVICE.IsTimed 	= true
+
+-- Defaut Variables
 SERVICE.IsCacheable = true -- Return false to prevent from storing into cinema_history on server
-SERVICE.PlaceholderThumb = "https://cataas.com/cat?width=1280&height=720"
+SERVICE.Dependency = DEPENDENCY_NONE -- DEPENDENCY_NONE = Normal | DEPENDENCY_PARTIAL = x86-64 Beta | DEPENDENCY_COMPLETE = x86-64 Beta + CEF Codec Fix
 SERVICE.ExtentedVideoInfo = false -- Passes the complete video data instead of just the Data ID in GetVideoInfo
+SERVICE.TheaterType = THEATER_NONE  -- THEATER_NONE = Normal | THEATER_PRIVATE = Private only
 
 function SERVICE:GetName()
 	return self.Name
@@ -25,10 +28,7 @@ end
 local HttpHeaders = {
 	["Cache-Control"] = "no-cache",
 	-- ["Connection"] = "keep-alive",
-
-	-- Don't use improperly formatted GMod user agent in case anything actually
-	-- checks the user agent.
-	["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36"
+	["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.7.8254.20 Safari/537.36"
 }
 
 function SERVICE:Fetch( url, onReceive, onFailure, headers )

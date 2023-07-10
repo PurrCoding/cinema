@@ -1,9 +1,10 @@
---[[
-    This "Internet Archive" Cinema service was created with time and effort by Shadowsun™ (STEAM_0:1:75888605 | https://bio.link/shadowsun )
-    Don't be a bad person who steals other people's works and uses it for their own benefit, keep the credits and don't remove them!
---]]
-
 local SERVICE = {}
+
+SERVICE.Name = "Internet Archive"
+SERVICE.IsTimed = true
+
+SERVICE.Dependency = DEPENDENCY_COMPLETE
+
 local METADATA_URL = "https://archive.org/metadata/%s/files/"
 local DOWNLOAD_URL = "https://cors.archive.org/download/%s/%s"
 local VALID_FORMATS = {
@@ -12,16 +13,6 @@ local VALID_FORMATS = {
 	["h.264 IA"] = true,
 	["Ogg Video"] = true,
 }
-
-SERVICE.Name = "Internet Archive"
-SERVICE.IsTimed = true
-SERVICE.Dependency = DEPENDENCY_COMPLETE
-
---[[
-	Uncomment this line below to restrict Videostreaming
-	only to Private Theaters.
-]]--
--- SERVICE.TheaterType = THEATER_PRIVATE
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("archive.org")
@@ -141,7 +132,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		local info, thumbnail = {}, self:GetThumbnail(response, file or name)
 		info.title = name
 		info.duration = math.Round(duration)
-		info.thumbnail = thumbnail and DOWNLOAD_URL:format(identifier, thumbnail) or self.PlaceholderThumb
+		info.thumbnail = thumbnail and DOWNLOAD_URL:format(identifier, thumbnail)
 
 		if onSuccess then
 			pcall(onSuccess, info)

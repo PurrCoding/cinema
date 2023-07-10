@@ -1,19 +1,10 @@
---[[
-    This "Image" Cinema service was created with time and effort by Shadowsun™ (STEAM_0:1:75888605 | https://bio.link/shadowsun )
-    Don't be a bad person who steals other people's works and uses it for their own benefit, keep the credits and don't remove them!
---]]
-
 local SERVICE = {}
+
 SERVICE.Name = "Image"
 SERVICE.IsTimed = false
+
 SERVICE.IsCacheable = false
 SERVICE.Dependency = DEPENDENCY_NONE
-
---[[
-	Uncomment this line below to restrict Image
-	only to Private Theaters.
-]]--
--- SERVICE.TheaterType = THEATER_PRIVATE
 
 local validExtensions = {
 	["jpg"] = true,
@@ -51,7 +42,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 	local info = {}
 	info.title = ("Image: %s"):format(data)
-	info.thumbnail = self.PlaceholderThumb
 
 	local duration = GetConVar("cinema_service_imageduration"):GetInt()
 	if duration > 0 then

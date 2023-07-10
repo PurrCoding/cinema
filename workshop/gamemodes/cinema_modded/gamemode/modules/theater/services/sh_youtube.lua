@@ -1,12 +1,8 @@
---[[
-Credits to veitikka (https://github.com/veitikka) for fixing YouTube service and writing the
-Workaround with a Metadata parser.
---]]
-
 local SERVICE = {}
 
 SERVICE.Name = "YouTube"
 SERVICE.IsTimed = true
+
 SERVICE.Dependency = DEPENDENCY_PARTIAL
 
 local METADATA_URL = "https://www.youtube.com/watch?v=%s"
@@ -65,6 +61,11 @@ function SERVICE:GetURLInfo( url )
 
 	return info.Data and info or false
 end
+
+--[[
+	Credits to veitikka (https://github.com/veitikka) for fixing YouTube service and writing the
+	Workaround with a Metadata parser.
+--]]
 
 -- Lua search patterns to find metadata from the html
 local patterns = {
@@ -149,13 +150,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 end
 
 theater.RegisterService( "youtube", SERVICE )
-
-
---[[
-	Uncomment this line below to restrict Livestreaming
-	only to Private Theaters.
-]]--
--- SERVICE.TheaterType = THEATER_PRIVATE
 
 -- Implementation is found in 'youtube' service.
 -- GetVideoInfo switches to 'youtubelive'

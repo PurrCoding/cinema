@@ -1,17 +1,11 @@
 local SERVICE = {}
 
-local THUMB_URL = "https://static-cdn.jtvnw.net/previews-ttv/live_user_%s-1280x720.jpg"
-
 SERVICE.Name = "Twitch.TV Stream"
 SERVICE.IsTimed = false
+
 SERVICE.Dependency = DEPENDENCY_COMPLETE
 
---[[
-	Uncomment this line below to restrict Livestreaming
-	only to Private Theaters.
-]]--
--- SERVICE.TheaterType = THEATER_PRIVATE
-
+local THUMB_URL = "https://static-cdn.jtvnw.net/previews-ttv/live_user_%s-1280x720.jpg"
 local Ignored = {
 	["video"] = true,
 	["directory"] = true,
@@ -26,7 +20,7 @@ if (CLIENT) then
 	local TWITCH_URL = "https://player.twitch.tv/?channel=%s&parent=pixeltailgames.com"
 	local THEATER_JS = [[
 		var checkerInterval = setInterval(function() {
-			var matureAccept = document.querySelectorAll("[data-a-target=\"player-overlay-mature-accept\"]")[0]
+			var matureAccept = document.querySelectorAll("[data-a-target=\"content-classification-gate-overlay-start-watching-button\"]")[0]
 			if (!!matureAccept) {matureAccept.click(); return;}
 
 			var player = document.getElementsByTagName('video')[0];

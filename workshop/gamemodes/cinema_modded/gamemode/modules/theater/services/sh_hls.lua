@@ -1,23 +1,12 @@
---[[
-    This "HLS" Cinema service was created with time and effort by Shadowsun™ (STEAM_0:1:75888605 | https://bio.link/shadowsun )
-    Don't be a bad person who steals other people's works and uses it for their own benefit, keep the credits and don't remove them!
---]]
-
 local SERVICE = {}
+
 SERVICE.Name = "HLS Video"
 SERVICE.IsTimed = true
+
 SERVICE.Dependency = DEPENDENCY_COMPLETE
 SERVICE.ExtentedVideoInfo = true
 
---[[
-	Uncomment this line below to restrict Videostreaming
-	only to Private Theaters.
-]]--
--- SERVICE.TheaterType = THEATER_PRIVATE
-
 local validExtensions = {
-
-	-- Video
 	["m3u8"] = true,
 }
 
@@ -146,7 +135,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 		local info = {}
 		info.title = ("HLS: %s"):format(data:Data())
-		info.thumbnail = self.PlaceholderThumb
 
 		if metadata.live then
 			info.type = "hls_live"

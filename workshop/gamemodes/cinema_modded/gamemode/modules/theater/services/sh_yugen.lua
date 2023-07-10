@@ -1,19 +1,10 @@
---[[
-    This "YugenAnime" Cinema service was created with time and effort by Shadowsun™ (STEAM_0:1:75888605 | https://bio.link/shadowsun )
-    Don't be a bad person who steals other people's works and uses it for their own benefit, keep the credits and don't remove them!
---]]
-
 local SERVICE = {}
+
 SERVICE.Name = "YugenAnime"
 SERVICE.IsTimed = true
+
 SERVICE.Dependency = DEPENDENCY_COMPLETE
 SERVICE.ExtentedVideoInfo = true
-
---[[
-	Uncomment this line below to restrict Videostreaming
-	only to Private Theaters.
-]]--
--- SERVICE.TheaterType = THEATER_PRIVATE
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("yugenanime.tv")
@@ -70,14 +61,6 @@ if (CLIENT) then
 		});
 	]])
 
-	local MEDIA_ERR = { -- https://developer.mozilla.org/en-US/docs/Web/API/MediaError
-		[1] = "The user canceled the media.", -- MEDIA_ERR_ABORTED
-		[2] = "A network error occurred while fetching the media.", -- MEDIA_ERR_NETWORK
-		[3] = "An error occurred while decoding the media.", -- MEDIA_ERR_DECODE
-		[4] = "The audio is missing or is in a format not supported by your browser.", -- MEDIA_ERR_SRC_NOT_SUPPORTED
-		[5] = "An unknown error occurred.", -- MEDIA_ERR_UNKOWN
-	}
-
 	function SERVICE:LoadProvider( Video, panel )
 
 		local url = BASE_URL:format(getBase64Path(Video:Data()))
@@ -111,7 +94,7 @@ if (CLIENT) then
 			if msg:StartWith("ERROR:") then
 				local code = tonumber(string.sub(msg, 7))
 
-				callback({ err = MEDIA_ERR[code] or MEDIA_ERR[5] })
+				callback({ err = util.MEDIA_ERR[code] or util.MEDIA_ERR[5] })
 				panel:Remove()
 			end
 		end
@@ -142,7 +125,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 		local info = {}
 		info.title = ("%s - Episode %s"):format(anime, episode)
-		info.thumbnail = self.PlaceholderThumb
 		info.duration = math.Round(tonumber(metadata.duration))
 
 		if onSuccess then

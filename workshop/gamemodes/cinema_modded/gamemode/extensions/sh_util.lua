@@ -2,6 +2,14 @@
 
 module("util", package.seeall)
 
+MEDIA_ERR = { -- https://developer.mozilla.org/en-US/docs/Web/API/MediaError
+	[1] = "The user canceled the media.", -- MEDIA_ERR_ABORTED
+	[2] = "A network error occurred while fetching the media.", -- MEDIA_ERR_NETWORK
+	[3] = "An error occurred while decoding the media.", -- MEDIA_ERR_DECODE
+	[4] = "The audio is missing or is in a format not supported by your browser.", -- MEDIA_ERR_SRC_NOT_SUPPORTED
+	[5] = "An unknown error occurred.", -- MEDIA_ERR_UNKOWN
+}
+
 -- Helper function for converting ISO 8601 time strings; this is the formatting
 -- http://en.wikipedia.org/wiki/ISO_8601#Durations
 function ISO_8601ToSeconds(str)
