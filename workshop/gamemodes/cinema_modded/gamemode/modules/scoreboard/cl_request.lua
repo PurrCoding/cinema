@@ -74,7 +74,7 @@ function PANEL:Init()
 	self.Browser = vgui.Create( "TheaterHTML", self.BrowserContainer )
 	self.Browser.isContainer = true
 
-	self.Browser:OpenURL( "https://gmod-cinema.pages.dev/cinema/search/" )
+	self.Browser:OpenURL( GetConVar("cinema_url"):GetString() .. "search/" )
 
 	self.Controls = vgui.Create( "TheaterHTMLControls", self.BrowserContainer )
 	self.Controls:SetHTML( self.Browser )

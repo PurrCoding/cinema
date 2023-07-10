@@ -32,7 +32,7 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
-	local PLAYER_URL = "https://gmod-cinema.pages.dev/cinema/soundcloud.html?url=https://soundcloud.com/%s/%s"
+	local PLAYER_URL = GetConVar("cinema_url"):GetString() .. "soundcloud.html?url=https://soundcloud.com/%s/%s"
 
 	function SERVICE:LoadProvider( Video, panel )
 
