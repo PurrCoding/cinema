@@ -16,7 +16,7 @@ SERVICE.ExtentedVideoInfo = true
 -- SERVICE.TheaterType = THEATER_PRIVATE
 
 function SERVICE:Match( url )
-	return url.host and url.host:match("yugen.to")
+	return url.host and url.host:match("yugenanime.tv")
 end
 
 local function extractUrlInfo(data)
@@ -37,7 +37,7 @@ local function getBase64Path(data)
 end
 
 if (CLIENT) then
-	local BASE_URL = "https://yugen.to/e/%s/"
+	local BASE_URL = "https://yugenanime.tv/e/%s/"
 
 	local JS_BASE = [[
 		var checkerInterval = setInterval(function() {
