@@ -48,9 +48,10 @@ function LogVideo( Video, Theater )
 	local Type = Video:Type()
 
 	-- Streams can be offline, so caching results isn't a good idea
-	if not IsVideoTimed( Type ) then
-		return
-	end
+	if not IsVideoTimed( Type ) then return end
+
+	-- Some services prefer to not be cached
+	if not IsVideoCacheable( Type ) then return end
 
 	local title = sql.SQLStr(Video:Title())
 	local data = sql.SQLStr(Video:Data())

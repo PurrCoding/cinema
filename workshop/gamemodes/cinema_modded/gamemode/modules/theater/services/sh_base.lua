@@ -2,6 +2,7 @@ local SERVICE = {}
 
 SERVICE.Name 		= "Base"
 SERVICE.IsTimed 	= true
+SERVICE.IsCacheable = true -- Return false to prevent from storing into cinema_history on server
 SERVICE.PlaceholderThumb = "https://cataas.com/cat?width=1280&height=720"
 SERVICE.ExtentedVideoInfo = false -- Passes the complete video data instead of just the Data ID in GetVideoInfo
 

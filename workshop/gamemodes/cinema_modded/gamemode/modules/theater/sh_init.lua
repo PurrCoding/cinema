@@ -113,6 +113,10 @@ function IsVideoTimed(type)
 	return Services[type] and Services[type].IsTimed or false
 end
 
+function IsVideoCacheable(type)
+	return Services[type] and Services[type].IsCacheable or false
+end
+
 function IsFlagSupported( Theater, flag )
 	return bit.band( Theater:GetFlags(), flag ) == flag
 end
