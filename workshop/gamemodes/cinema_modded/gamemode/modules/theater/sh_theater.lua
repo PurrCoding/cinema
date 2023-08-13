@@ -497,7 +497,7 @@ if SERVER then
 		if not IsVideoTimed(self:VideoType()) then return end
 
 		-- Get the plus or minus sign for later.
-		local frontsign = seconds[1]
+		local frontsign = seconds[1] or ""
 
 		-- Seconds isn't a number, check HH:MM:SS
 		if not tonumber(seconds) then
@@ -516,8 +516,10 @@ if SERVER then
 		end
 
 		-- If it's not one of those two things then it will fall trough wihtout any changes.
-		if frontsign == "+" or frontsign == "-" then
-			seconds = self:VideoCurrentTime(true) + seconds
+		if frontsign == "+" then
+			seconds = self:VideoCurrentTime(true) + math.abs(seconds)
+		elseif frontsign == "-" then
+			seconds = self:VideoCurrentTime(true) - math.abs(seconds)
 		end
 
 		-- Clamp video seek time between 0 and video duration
@@ -531,6 +533,7 @@ if SERVER then
 		net.Start("TheaterSeek")
 			net.WriteFloat( self:VideoStartTime() )
 		net.Send(self.Players)
+
 	end
 
 	function THEATER:SendVideo( ply )
