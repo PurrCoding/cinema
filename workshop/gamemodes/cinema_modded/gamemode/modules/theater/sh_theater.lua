@@ -502,7 +502,6 @@ if SERVER then
 		-- Seconds isn't a number, check HH:MM:SS
 		if not tonumber(seconds) then
 			local hr, min, sec = string.match(seconds, hhmmss)
-			--local curtime = self:VideoCurrentTime(true)
 
 			-- Not in HH:MM:SS, try MM:SS
 			if not hr then
@@ -514,7 +513,6 @@ if SERVER then
 			seconds = tonumber(hr) * 3600 +
 				tonumber(min) * 60 +
 				tonumber(sec)
-
 		end
 
 		-- If it's not one of those two things then it will fall trough wihtout any changes.
