@@ -18,8 +18,8 @@ Since 2018, the [original Cinema](https://github.com/pixeltailgames/cinema) addo
 
 #### Credits ####
 * The original developers of the [Cinema addon](https://github.com/pixeltailgames/cinema) by [PixelTail Games](https://steamcommunity.com/groups/pixelTail).
+* [PurrCoding](https://github.com/PurrCoding/) for maintaining the addon.
 * YouTube Workaround by [Veitikka](https://github.com/veitikka) (https://github.com/samuelmaddock/gm-mediaplayer/pull/34)
-* [Shadowsun™](https://steamcommunity.com/id/FarukGamer/) for maintaining the addon.
 * [Ket'Ta-Lani](https://steamcommunity.com/profiles/76561198086801172) & [ArtarOs](https://steamcommunity.com/profiles/76561198132261322) for Sandbox in Cinema
 
 
