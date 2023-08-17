@@ -27,4 +27,4 @@ Since 2018, the [original Cinema](https://github.com/pixeltailgames/cinema) addo
 * [Addon on Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587)
 * [GMod CEF Codec Fix](https://github.com/solsticegamestudios/GModCEFCodecFix)
 
-![Alt](https://repobeats.axiom.co/api/embed/5a55d0e6ef6d4b6ad83fb4be316b882a8816dc5c.svg "Repobeats analytics image")
+![Alt](https://repobeats.axiom.co/api/embed/dd859ae6e95243ab32a7770dd3d0e2e6983b84d1.svg "Repobeats analytics image")
