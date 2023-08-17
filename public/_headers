@@ -1,6 +1,0 @@
-/*
-Cache-Control: public, max-age=3600, must-revalidate
-X-Frame-Options: DENY
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-# Referrer-Policy: no-referrer
