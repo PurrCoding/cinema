@@ -496,6 +496,9 @@ if SERVER then
 
 		if not IsVideoTimed(self:VideoType()) then return end
 
+		-- Get the plus or minus sign for later.
+		local frontsign = seconds[1] or ""
+
 		-- Seconds isn't a number, check HH:MM:SS
 		if not tonumber(seconds) then
 			local hr, min, sec = string.match(seconds, hhmmss)
@@ -510,6 +513,13 @@ if SERVER then
 			seconds = tonumber(hr) * 3600 +
 				tonumber(min) * 60 +
 				tonumber(sec)
+		end
+
+		-- If it's not one of those two things then it will fall trough wihtout any changes.
+		if frontsign == "+" then
+			seconds = self:VideoCurrentTime(true) + math.abs(seconds)
+		elseif frontsign == "-" then
+			seconds = self:VideoCurrentTime(true) - math.abs(seconds)
 		end
 
 		-- Clamp video seek time between 0 and video duration
