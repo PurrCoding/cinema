@@ -6,7 +6,7 @@ SERVICE.IsTimed = true
 SERVICE.Dependency = DEPENDENCY_PARTIAL
 
 local METADATA_URL = "https://www.youtube.com/watch?v=%s"
-local THEATER_URL = GetConVar("cinema_url"):GetString() .. "screen/youtube.html?v=%s"
+local THEATER_URL = GetConVar("cinema_url"):GetString() .. "youtube.html?v=%s"
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("youtu.?be[.com]?")

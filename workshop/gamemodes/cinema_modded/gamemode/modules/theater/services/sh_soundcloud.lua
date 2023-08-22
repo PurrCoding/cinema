@@ -23,7 +23,7 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
-	local PLAYER_URL = GetConVar("cinema_url"):GetString() .. "screen/soundcloud.html?url=https://soundcloud.com/%s/%s"
+	local PLAYER_URL = GetConVar("cinema_url"):GetString() .. "soundcloud.html?url=https://soundcloud.com/%s/%s"
 
 	function SERVICE:LoadProvider( Video, panel )
 

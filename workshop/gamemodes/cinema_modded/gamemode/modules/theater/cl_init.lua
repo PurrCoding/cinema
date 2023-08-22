@@ -391,7 +391,7 @@ function LoadVideo( Video )
 
 	if not Video then return end
 
-	local theaterUrl = GetConVar( "cinema_url" ):GetString() .. "screen/"
+	local theaterUrl = GetConVar( "cinema_url" ):GetString()
 
 	local panel = ActivePanel()
 	if not IsValid( panel ) then
