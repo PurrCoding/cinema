@@ -1,4 +1,4 @@
-CreateConVar( "cinema_url", "https://gmod-cinema.pages.dev/cinema/", FCVAR_REPLICATED, "Cinema url to load on theater screens." )
+CreateConVar( "cinema_url", "https://purrcoding.github.io/cinema/", FCVAR_REPLICATED, "Cinema url to load on theater screens." )
 CreateConVar( "cinema_queue_mode", 1, { FCVAR_ARCHIVE, FCVAR_DONTRECORD, FCVAR_REPLICATED }, "1 = Videos may be voted up or down\n2 = Videos are played in the order they're requested" )
 
 if CLIENT then
