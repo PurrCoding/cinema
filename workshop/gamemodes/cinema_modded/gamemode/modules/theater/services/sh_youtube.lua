@@ -6,7 +6,6 @@ SERVICE.IsTimed = true
 SERVICE.Dependency = DEPENDENCY_PARTIAL
 
 local METADATA_URL = "https://www.youtube.com/watch?v=%s"
-local THEATER_URL = GetConVar("cinema_url"):GetString() .. "youtube.html?v=%s"
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("youtu.?be[.com]?")
@@ -16,7 +15,8 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		panel:OpenURL( THEATER_URL:format( Video:Data() ) ..
+		local url = GetGlobal2String( "cinema_url", "" ) .. "youtube.html?v=%s"
+		panel:OpenURL( url:format( Video:Data() ) ..
 			(self.IsTimed and ("&t=%s"):format(
 				math.Round(CurTime() - Video:StartTime())
 			) or "")

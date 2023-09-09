@@ -1,4 +1,3 @@
-CreateConVar( "cinema_url", "https://purrcoding.github.io/cinema/", FCVAR_REPLICATED, "Cinema url to load on theater screens." )
 CreateConVar( "cinema_queue_mode", 1, { FCVAR_ARCHIVE, FCVAR_DONTRECORD, FCVAR_REPLICATED }, "1 = Videos may be voted up or down\n2 = Videos are played in the order they're requested" )
 
 if CLIENT then
@@ -114,6 +113,19 @@ else
 	CreateConVar( "cinema_allow_reset", 0, fcvar, "Reset the theater after all players have left." )
 	CreateConVar( "cinema_allow_voice", 0, fcvar, "Allow theater viewers to talk amongst themselves." )
 	CreateConVar( "cinema_allow_3dvoice", 1, fcvar, "Use 3D voice chat." )
+
+	local function SetSyncedCvarString(name, value, helptext )
+		local cvar = CreateConVar( name, value, fcvar, helptext )
+
+		SetGlobal2String( name, cvar:GetString() )
+		cvars.AddChangeCallback( name, function(cmd, old, new)
+			SetGlobal2String( name, new )
+		end)
+	end
+
+	-- Synced Server ConVars
+	SetSyncedCvarString("cinema_url", "https://purrcoding.github.io/cinema/", "Cinema url to load on theater screens.")
+	SetSyncedCvarString("cinema_url_search", "https://purrcoding.github.io/cinema/search/", "Search url for the request menu.")
 
 	concommand.Add("cinema_fullscreen_freeze", function(ply,cmd,args)
 		ply:Freeze(tobool(args[1]))

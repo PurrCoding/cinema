@@ -23,13 +23,13 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
-	local PLAYER_URL = GetConVar("cinema_url"):GetString() .. "soundcloud.html?url=https://soundcloud.com/%s/%s"
 
 	function SERVICE:LoadProvider( Video, panel )
 
 		local path = string.Explode(",", Video:Data())
+		local url = GetGlobal2String( "cinema_url", "" ) .. "soundcloud.html?url=https://soundcloud.com/%s/%s"
 
-		panel:OpenURL(PLAYER_URL:format( path[1], path[2] ))
+		panel:OpenURL(url:format( path[1], path[2] ))
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
 		end
