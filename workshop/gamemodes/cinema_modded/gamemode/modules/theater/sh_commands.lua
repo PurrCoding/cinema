@@ -119,7 +119,6 @@ else
 
 		-- Check if String is empty
 		if #cvar:GetString() == 0 then
-			value = cvar:GetDefault()
 			cvar:SetString(value)
 		end
 
