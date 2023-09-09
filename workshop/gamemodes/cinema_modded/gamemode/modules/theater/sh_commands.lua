@@ -117,6 +117,12 @@ else
 	local function SetSyncedCvarString(name, value, helptext )
 		local cvar = CreateConVar( name, value, fcvar, helptext )
 
+		-- Check if String is empty
+		if #cvar:GetString() == 0 then
+			value = cvar:GetDefault()
+			cvar:SetString(value)
+		end
+
 		SetGlobal2String( name, cvar:GetString() )
 		cvars.AddChangeCallback( name, function(cmd, old, new)
 			SetGlobal2String( name, new )
