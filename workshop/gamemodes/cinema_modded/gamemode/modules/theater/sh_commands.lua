@@ -113,7 +113,7 @@ else
 	CreateConVar( "cinema_allow_reset", 0, fcvar, "Reset the theater after all players have left." )
 	CreateConVar( "cinema_allow_voice", 0, fcvar, "Allow theater viewers to talk amongst themselves." )
 	CreateConVar( "cinema_allow_3dvoice", 1, fcvar, "Use 3D voice chat." )
-	CreateConVar( "cinema_force_extention_bypass", 0, fcvar, "Bypass file extention check when using direct file streaming" )
+	CreateConVar( "cinema_force_extension_bypass", 0, fcvar, "Bypass file extention check when using direct file streaming" )
 
 	local function SetSyncedCvarString(name, value, helptext )
 		local cvar = CreateConVar( name, value, fcvar, helptext )
