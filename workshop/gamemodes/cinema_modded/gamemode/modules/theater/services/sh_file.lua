@@ -20,7 +20,7 @@ local validExtensions = {
 }
 
 function SERVICE:Match( url )
-	return validExtensions[ string.GetExtensionFromFilename( url.path ) ]
+	return validExtensions[ string.GetExtensionFromFilename( url.path ) ] or GetConVar( "cinema_force_extension_bypass" ):GetBool()
 end
 
 if (CLIENT) then
