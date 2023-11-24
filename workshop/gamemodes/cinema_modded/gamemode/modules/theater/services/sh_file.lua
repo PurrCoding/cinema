@@ -6,6 +6,8 @@ SERVICE.IsTimed = true
 SERVICE.Dependency = DEPENDENCY_COMPLETE
 SERVICE.ExtentedVideoInfo = true
 
+-- Which endings are allowed to go through 
+-- the match (regardless of whether CEF Codec Fix is present or not)
 local validExtensions = {
 
 	-- Video 
@@ -15,6 +17,18 @@ local validExtensions = {
 	-- Audio
 	["mp3"] = true,
 	["m4a"] = true,
+	["wav"] = true,
+	["ogg"] = true,
+}
+
+-- Which extensions are allowed if CEF Codec Fix is not present.
+local limitedExtensions = {
+
+	-- Video 
+	["webm"] = true,
+
+	-- Audio
+	["mp3"] = true,
 	["wav"] = true,
 	["ogg"] = true,
 }
@@ -155,6 +169,10 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		info.title = ("File: %s"):format(data:Data())
 		info.duration = math.Round(tonumber(metadata.duration))
 
+		if limitedExtensions[ string.GetExtensionFromFilename( data:Data() ) ] then
+			info.type = "file_limited"
+		end
+
 		if onSuccess then
 			pcall(onSuccess, info)
 		end
@@ -163,3 +181,12 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 end
 
 theater.RegisterService( "file", SERVICE )
+
+-- Responsible that at least audio and WEBM videos without CEF codec work fix
+theater.RegisterService( "file_limited", {
+	Name = "File (Limited)",
+	IsTimed = true,
+	Dependency = DEPENDENCY_PARTIAL,
+	Hidden = true,
+	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
+} )
