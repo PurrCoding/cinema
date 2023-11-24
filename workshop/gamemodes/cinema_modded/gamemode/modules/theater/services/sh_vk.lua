@@ -4,44 +4,87 @@ SERVICE.Name = "VKontakte"
 SERVICE.IsTimed = true
 
 SERVICE.Dependency = DEPENDENCY_COMPLETE
-
-local API_URL = "https://vk.com/video?z=%s"
+SERVICE.ExtentedVideoInfo = true
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("vk.com")
 end
 
 if (CLIENT) then
-	local THEATER_JS = [[
+	local EMBED_URL = "https://vk.com/video_ext.php?oid=-%s&id=%s&autoplay=1"
+
+	local JS_BASE = [[
 		var checkerInterval = setInterval(function() {
-			var player = document.getElementsByTagName('video')[0];
-			if (!!player) {
-
-				if (player.paused) { player.play(); }
-				if (!player.paused && player.readyState === 4) {
-					if (player.muted) {player.muted = false}
-
-					clearInterval(checkerInterval);
-
-					window.cinema_controller = player;
-					exTheater.controllerReady();
-
-					document.body.style.backgroundColor = "black";
-
-					player.addEventListener("seeking", function () {
-						if (!player.paused) { player.pause() }
-
-						this.addEventListener("progress", function progessCheck() {
-							if (player.paused && player.readyState === 4) {
-								this.removeEventListener("progress", progessCheck);
-								player.play();
-							}
-						});
-					});
-				}
+			var player = document.getElementsByTagName('video')[0]
+			if (typeof (player) != 'undefined') {
+				{@JS_Content}
 			}
 		}, 50);
 	]]
+
+	local THEATER_JS = JS_BASE:Replace("{@JS_Content}", [[
+		var player = document.getElementsByTagName('video')[0];
+		if (!!player) {
+
+			if (player.paused) { player.play(); }
+			if (!player.paused && player.readyState === 4) {
+				if (player.muted) {player.muted = false}
+
+				clearInterval(checkerInterval);
+
+				window.cinema_controller = player;
+				exTheater.controllerReady();
+
+				document.body.style.backgroundColor = "black";
+
+				player.addEventListener("seeking", function () {
+					if (!player.paused) { player.pause() }
+
+					this.addEventListener("progress", function progessCheck() {
+						if (player.paused && player.readyState === 4) {
+							this.removeEventListener("progress", progessCheck);
+							player.play();
+						}
+					});
+				});
+			}
+		}
+	]])
+
+	local METADATA_JS = JS_BASE:Replace("{@JS_Content}", [[
+		player.muted = true;
+		clearInterval(checkerInterval);
+		if (window.metaevent_set) {return;}
+
+		var title = document.getElementsByClassName("videoplayer_title_link _clickable")[0].innerText
+
+		player.addEventListener('loadedmetadata', (event) => {
+			window.metaevent_set = true;
+
+			setInterval(function() {
+
+				var thumb = document.getElementsByClassName("videoplayer_thumb")[0].style.backgroundImage.slice(4, -1).replace(/["']/g, "")
+				var duration = player.duration
+
+				var metadata = {
+					title: title,
+					thumbnail: thumb,
+					duration: player.duration || "inf",
+				};
+	
+				console.log("METADATA:" + JSON.stringify(metadata));
+			}, 1000);
+
+		});
+		player.addEventListener('error', (event) => {
+			console.log("ERROR:" + player.error.code )
+		});
+	]])
+
+	local function extractData(data)
+		local oid, id = data:match("video%-(%d+)_(%d+)")
+		return oid, id
+	end
 
 	function SERVICE:LoadProvider( Video, panel )
 
@@ -50,12 +93,50 @@ if (CLIENT) then
 			startTime = util.SecondsToISO_8601(startTime)
 		else startTime = 0 end
 
-		panel:OpenURL( Video:Data() .. "&autoplay=1" .. (self.IsTimed and "&t=" .. startTime or "" ))
+		local url = EMBED_URL:format(extractData(Video:Data())) ..
+			(self.IsTimed and "&t=" .. startTime or "") 
+
+		panel:OpenURL(url)
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
 			pnl:QueueJavascript(THEATER_JS)
 		end
 
+	end
+
+	function SERVICE:GetMetadata( data, callback )
+
+		local panel = vgui.Create("DHTML")
+		panel:SetSize(100,100)
+		panel:SetAlpha(0)
+		panel:SetMouseInputEnabled(false)
+
+		panel.OnDocumentReady = function(pnl)
+			pnl:QueueJavascript(METADATA_JS)
+		end
+
+		function panel:ConsoleMessage(msg)
+			if msg:StartWith("METADATA:") then
+				local metadata = util.JSONToTable(string.sub(msg, 10))
+
+				callback(metadata)
+				panel:Remove()
+			end
+
+			if msg:StartWith("ERROR:") then
+				local code = tonumber(string.sub(msg, 7))
+
+				callback({ err = util.MEDIA_ERR[code] or util.MEDIA_ERR[5] })
+				panel:Remove()
+			end
+		end
+		panel:OpenURL(EMBED_URL:format(extractData(data)))
+
+		timer.Simple(10, function()
+			if IsValid(panel) then
+				panel:Remove()
+			end
+		end)
 	end
 end
 
@@ -89,56 +170,20 @@ function SERVICE:GetURLInfo( url )
 	return info.Data and info or false
 end
 
--- Lua search patterns to find metadata from the html
-local patterns = {
-	["title"] = "<meta%sitemprop=\"name\"%s-content=%b\"\"%s/>",
-	["thumb"] = "<link%sitemprop=\"thumbnailUrl\"%s-href=%b\"\"%s/>",
-	["duration"] = "<meta%sitemprop=\"duration\"%s-content=%b\"\"%s/>",
-	["live"] = "<meta%sitemprop=\"isLiveBroadcast\"%s-content=%b\"\"%s/>",
-	["age_restriction"] = "<meta%sitemprop=\"isFamilyFriendly\"%s-content=%b\"\"%s/>",
-	["embed"] = "<link%sitemprop=\"embedUrl\"%s-href=%b\"\"%s/>",
-}
-
----
--- Function to parse video metadata straight from the html instead of using the API
---
-local function ParseMetaDataFromHTML( html )
-	local metadata, html = {}, html
-
-	metadata.title = util.ParseElementAttribute(html:match(patterns["title"]), "content")
-	metadata.title = url.htmlentities_decode(metadata.title) -- Parse HTML entities in the title into symbols
-
-	metadata.thumbnail = util.ParseElementAttribute(html:match(patterns["thumb"]), "href")
-	metadata.familyfriendly = util.ParseElementAttribute(html:match(patterns["age_restriction"]), "content") or ""
-	metadata.embed = util.ParseElementAttribute(html:match(patterns["embed"]), "href")
-
-	local isLiveBroadcast = tobool(util.ParseElementAttribute(html:match(patterns["live"]), "content"))
-	local durationISO8601 = util.ParseElementAttribute(html:match(patterns["duration"]), "content")
-	local duration = util.ISO_8601ToSeconds(durationISO8601)
-
-	if isLiveBroadcast and duration == 0 then
-		metadata.duration = 0 -- Mark as live video
-	else
-		metadata.duration = math.max(1, duration)
-	end
-
-	return metadata
-end
-
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
-	local onReceive = function( body, length, headers, code )
-		local status, metadata = pcall(ParseMetaDataFromHTML, body)
-		if not status  then
-			return onFailure( "Theater_RequestFailed" )
+	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
+
+		if metadata.err then
+			return onFailure(metadata.err)
 		end
 
 		local info = {}
 		info.title = metadata.title
 		info.thumbnail = metadata.thumbnail
-		info.data = metadata.embed
 
-		if metadata.duration == 0 then
+		local duration = metadata.duration
+		if not duration or (isnumber(duration) and duration == 0) then
 			info.type = "vklive"
 			info.duration = 0
 		else
@@ -148,11 +193,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		if onSuccess then
 			pcall(onSuccess, info)
 		end
-
-	end
-
-	local url = API_URL:format(data)
-	self:Fetch( url, onReceive, onFailure )
+	end)
 
 end
 
