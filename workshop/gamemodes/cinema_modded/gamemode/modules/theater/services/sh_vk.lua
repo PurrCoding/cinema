@@ -61,19 +61,15 @@ if (CLIENT) then
 		player.addEventListener('loadedmetadata', (event) => {
 			window.metaevent_set = true;
 
-			setInterval(function() {
+			var thumb = document.getElementsByClassName("videoplayer_thumb")[0].style.backgroundImage.slice(4, -1).replace(/["']/g, "")
 
-				var thumb = document.getElementsByClassName("videoplayer_thumb")[0].style.backgroundImage.slice(4, -1).replace(/["']/g, "")
-				var duration = player.duration
+			var metadata = {
+				title: title,
+				thumbnail: thumb,
+				duration: player.duration,
+			};
 
-				var metadata = {
-					title: title,
-					thumbnail: thumb,
-					duration: player.duration || "inf",
-				};
-	
-				console.log("METADATA:" + JSON.stringify(metadata));
-			}, 1000);
+			console.log("METADATA:" + JSON.stringify(metadata));
 
 		});
 		player.addEventListener('error', (event) => {
@@ -94,7 +90,7 @@ if (CLIENT) then
 		else startTime = 0 end
 
 		local url = EMBED_URL:format(extractData(Video:Data())) ..
-			(self.IsTimed and "&t=" .. startTime or "") 
+			(self.IsTimed and "&t=" .. startTime or "")
 
 		panel:OpenURL(url)
 		panel.OnDocumentReady = function(pnl)
@@ -107,7 +103,7 @@ if (CLIENT) then
 	function SERVICE:GetMetadata( data, callback )
 
 		local panel = vgui.Create("DHTML")
-		panel:SetSize(100,100)
+		panel:SetSize(512,512)
 		panel:SetAlpha(0)
 		panel:SetMouseInputEnabled(false)
 
@@ -131,12 +127,6 @@ if (CLIENT) then
 			end
 		end
 		panel:OpenURL(EMBED_URL:format(extractData(data)))
-
-		timer.Simple(10, function()
-			if IsValid(panel) then
-				panel:Remove()
-			end
-		end)
 	end
 end
 
