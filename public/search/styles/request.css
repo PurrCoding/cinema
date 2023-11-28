@@ -87,6 +87,11 @@ h1 {
 }
 .logo-yugen {
 	background-image: url(../images/logos/yugen.png);
+	background-size: 50px;
+}
+.logo-rumble {
+	background-image: url(../images/logos/rumble.png);
+	background-size: 50px;
 }
 .logo-vk {
 	background-image: url(../images/logos/vk.png);
