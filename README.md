@@ -1,5 +1,3 @@
-[![](https://www.cloudflare.com/media/images/web-badges/cf-web-badges-f-1.png)](https://pages.cloudflare.com/)
-
 Cinema (Fixed Edition)
 ======
 > Remember sitting down on a lazy afternoon with your friends, drinking a cup of hot cocoa and watching a movie? It's a magical bonding experience between people, a timeless ritual that not many are able to do with some of their friends...
@@ -18,7 +16,6 @@ Since 2018, the [original Cinema](https://github.com/pixeltailgames/cinema) addo
 
 #### Credits ####
 * The original developers of the [Cinema addon](https://github.com/pixeltailgames/cinema) by [PixelTail Games](https://steamcommunity.com/groups/pixelTail).
-* [PurrCoding](https://github.com/PurrCoding/) for maintaining the addon.
 * YouTube Workaround by [Veitikka](https://github.com/veitikka) (https://github.com/samuelmaddock/gm-mediaplayer/pull/34)
 * [Ket'Ta-Lani](https://steamcommunity.com/profiles/76561198086801172) & [ArtarOs](https://steamcommunity.com/profiles/76561198132261322) for Sandbox in Cinema
 
@@ -26,5 +23,3 @@ Since 2018, the [original Cinema](https://github.com/pixeltailgames/cinema) addo
 #### Links ####
 * [Addon on Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587)
 * [GMod CEF Codec Fix](https://github.com/solsticegamestudios/GModCEFCodecFix)
-
-![Alt](https://repobeats.axiom.co/api/embed/dd859ae6e95243ab32a7770dd3d0e2e6983b84d1.svg "Repobeats analytics image")
