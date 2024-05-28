@@ -4,7 +4,7 @@ Cinema (Fixed Edition)
 >
 > -- <cite>[pixelTail Games](https://github.com/pixeltailgames/)</cite>
 
-Since 2018, the [original Cinema](https://github.com/pixeltailgames/cinema) addon has not been further developed and maintained. This add-on focuses on keeping the gamemode alive and improvising it with quality of life updates.
+This is the unofficial successor of the discontinued [Cinema](https://github.com/pixeltailgames/cinema) addon, the focus here is to keep the Cinema gamemode alive and enrich it with new features.
 
 #### Features ####
 * All previous known featuers
