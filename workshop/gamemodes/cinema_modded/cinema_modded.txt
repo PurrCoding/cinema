@@ -42,5 +42,13 @@
 			"type"		"CheckBox"
 			"default"	"0"
 		}
+		5
+		{
+			"name"		"cinema_force_extension_bypass"
+			"text"		"Bypass extension check"
+			"help"		"(Experimental) Skips the file extension check for direct links"
+			"type"		"CheckBox"
+			"default"	"0"
+		}
 	}
 }
