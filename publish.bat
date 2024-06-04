@@ -9,7 +9,7 @@ set "publish_gma=workshop.gma"
 set "publish_id=2419005587"
 
 call %gmad% create -folder %publish_path%
-call %gmpublish% update -addon %publish_gma% -id %publish_id% -changes "See https://github.com/PurrCode/cinema"
+call %gmpublish% update -addon %publish_gma% -id %publish_id% -changes "See https://github.com/PurrCoding/cinema"
 del %publish_gma%
 
 pause
