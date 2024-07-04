@@ -1,5 +1,4 @@
 CreateConVar( "cinema_queue_mode", 1, { FCVAR_ARCHIVE, FCVAR_DONTRECORD, FCVAR_REPLICATED }, "1 = Videos may be voted up or down\n2 = Videos are played in the order they're requested" )
-CreateConVar( "cinema_force_extension_bypass", 0, { FCVAR_ARCHIVE, FCVAR_DONTRECORD, FCVAR_REPLICATED }, "Bypass file extension check when using direct file streaming" )
 
 if CLIENT then
 
