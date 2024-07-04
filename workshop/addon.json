@@ -3,6 +3,7 @@
 	"type"		:	"gamemode",
 	"tags"		:	[ "fun", "roleplay" ],
 	"ignore"	:   [
-		"*.md"
+		"*.md",
+		"*.vtx"
 	]
 }
