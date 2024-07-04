@@ -84,7 +84,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 end
 
 theater.RegisterService( "vimeo", SERVICE )
-
 theater.RegisterService( "vimeolive", {
 	Name = "Vimeo Live",
 	IsTimed = false,

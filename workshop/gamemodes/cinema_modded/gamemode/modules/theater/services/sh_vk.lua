@@ -188,7 +188,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 end
 
 theater.RegisterService( "vk", SERVICE )
-
 theater.RegisterService( "vklive", {
 	Name = "VKontakte Live",
 	IsTimed = false,
