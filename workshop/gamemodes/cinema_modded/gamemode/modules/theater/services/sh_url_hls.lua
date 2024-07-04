@@ -1,6 +1,6 @@
 local SERVICE = {}
 
-SERVICE.Name = "HLS Video"
+SERVICE.Name = "URL (HLS Video)"
 SERVICE.IsTimed = true
 
 SERVICE.Dependency = DEPENDENCY_COMPLETE
@@ -137,7 +137,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		info.title = ("HLS: %s"):format(data:Data())
 
 		if metadata.live then
-			info.type = "hls_live"
+			info.type = "url_hlslive"
 			info.duration = 0
 		else
 			info.duration = math.Round(tonumber(metadata.duration))
@@ -150,9 +150,9 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 end
 
-theater.RegisterService( "hls", SERVICE )
-theater.RegisterService( "hls_live", {
-	Name = "HLS Live",
+theater.RegisterService( "url_hls", SERVICE )
+theater.RegisterService( "url_hlslive", {
+	Name = "URL (HLS Live)",
 	IsTimed = false,
 	Dependency = DEPENDENCY_COMPLETE,
 	Hidden = true,

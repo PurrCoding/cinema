@@ -1,40 +1,50 @@
 local SERVICE = {}
 
-SERVICE.Name = "File"
+SERVICE.Name = "URL"
 SERVICE.IsTimed = true
+SERVICE.Hidden = true
 
 SERVICE.Dependency = DEPENDENCY_COMPLETE
 SERVICE.ExtentedVideoInfo = true
 
--- Which endings are allowed to go through 
--- the match (regardless of whether CEF Codec Fix is present or not)
-local validExtensions = {
-
-	-- Video 
-	["mp4"] = true,
-	["webm"] = true,
-
-	-- Audio
-	["mp3"] = true,
-	["m4a"] = true,
-	["wav"] = true,
-	["ogg"] = true,
+-- Don't use the domains of the other Services.
+local excludedDomains = {
+	GetConVar("cinema_url_search"):GetString(),
+	"youtu.?be[.com]?",
+	"bilibili.com",
+	"b23.tv",
+	"dailymotion.com",
+	"archive.org",
+	"ok.ru",
+	"rutube.ru",
+	"rumble.com",
+	"sibnet.ru",
+	"vimeo.com",
+	"vk.com",
+	"twitch.tv"
 }
 
--- Which extensions are allowed if CEF Codec Fix is not present.
-local limitedExtensions = {
-
-	-- Video 
-	["webm"] = true,
-
-	-- Audio
-	["mp3"] = true,
-	["wav"] = true,
-	["ogg"] = true,
+local validImageExtensions = {
+	["jpg"] = true,
+	["png"] = true,
+	["bmp"] = true,
+	["jpeg"] = true,
+	["gif"] = true,
 }
 
 function SERVICE:Match( url )
-	return validExtensions[ string.GetExtensionFromFilename( url.path ) ] or GetConVar( "cinema_force_extension_bypass" ):GetBool()
+	local allowed = false
+
+	for _, domain in pairs( excludedDomains ) do
+		allowed = false
+
+		if url.host and url.encoded:find(domain) then
+			allowed = true
+			break
+		end
+	end
+
+	return not allowed
 end
 
 if (CLIENT) then
@@ -57,28 +67,28 @@ if (CLIENT) then
 			</style>
 
 			<div id="player-wrapper"></div>
-		
+
 			<script>
 				var video = document.createElement("video");
 				video.src = "{@VideoURL}";
 				video.autoplay = true;
 				video.controls = true;
 				video.muted = false;
-				
+
 				document.getElementById("player-wrapper").appendChild(video);
 			</script>
-		
+
 			<script>
-				var checkerInterval = setInterval(function() {			
+				var checkerInterval = setInterval(function() {
 					if (!video.paused && video.readyState === 4) {
 						clearInterval(checkerInterval);
-					
+
 						window.cinema_controller = video;
 						exTheater.controllerReady();
 					}
 				}, 50);
 			</script>
-		
+
 		</body>
 		</html>
 	]]
@@ -151,13 +161,36 @@ end
 
 function SERVICE:GetURLInfo( url )
 	if url and url.encoded then
-		return { Data = url.encoded }
+		local info = {}
+
+		info.Data = url.encoded
+		return info
 	end
 
 	return false
 end
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
+
+	-- Image Service
+	if validImageExtensions[ string.GetExtensionFromFilename( data:Data() ) ] then
+		local info = {}
+		info.title = ("Image: %s"):format(data:Data())
+
+		local duration = GetConVar("cinema_service_imageduration"):GetInt()
+		if duration > 0 then
+			info.type = "image_timed"
+			info.duration = duration
+		else
+			info.type = "image"
+		end
+
+		if onSuccess then
+			pcall(onSuccess, info)
+		end
+
+		return
+	end
 
 	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
 
@@ -166,12 +199,8 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		end
 
 		local info = {}
-		info.title = ("File: %s"):format(data:Data())
+		info.title = ("URL: %s"):format(data:Data())
 		info.duration = math.Round(tonumber(metadata.duration))
-
-		if limitedExtensions[ string.GetExtensionFromFilename( data:Data() ) ] then
-			info.type = "file_limited"
-		end
 
 		if onSuccess then
 			pcall(onSuccess, info)
@@ -180,13 +209,4 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 end
 
-theater.RegisterService( "file", SERVICE )
-
--- Responsible that at least audio and WEBM videos without CEF codec work fix
-theater.RegisterService( "file_limited", {
-	Name = "File (Limited)",
-	IsTimed = true,
-	Dependency = DEPENDENCY_PARTIAL,
-	Hidden = true,
-	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
-} )
+theater.RegisterService( "url", SERVICE )
