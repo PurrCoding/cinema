@@ -1,9 +1,5 @@
 local WarningSet, HasBetaBranch, HasCodecFix
-local InstructionVideo = {
-	["Windows"] = "https://youtu.be/QfPAVTtOzgA",
-	["Linux"] = "https://youtu.be/Nsilmi0YiWw",
-	["OSX"] = "https://youtu.be/VL8sIokUulU",
-}
+local InstructionSite = "https://www.solsticegamestudios.com/fixmedia/"
 
 local HTML_Code = [[
 <html><body>
@@ -67,7 +63,7 @@ hook.Add("PreVideoLoad", "ShowDependencyWarning", function(Video)
 
 			control.Add( KEY_F4, function( enabled, held )
 				if enabled and not held then
-					gui.OpenURL(InstructionVideo[jit.os])
+					gui.OpenURL(InstructionSite)
 				end
 			end )
 
