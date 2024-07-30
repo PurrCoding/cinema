@@ -18,7 +18,7 @@ This is the unofficial successor of the defunct [Cinema](https://github.com/pixe
 * The original developers of the [Cinema addon](https://github.com/pixeltailgames/cinema) by [PixelTail Games](https://steamcommunity.com/groups/pixelTail).
 * YouTube Workaround by [Veitikka](https://github.com/veitikka) (https://github.com/samuelmaddock/gm-mediaplayer/pull/34)
 * [Ket'Ta-Lani](https://steamcommunity.com/profiles/76561198086801172) & [ArtarOs](https://steamcommunity.com/profiles/76561198132261322) for Sandbox in Cinema
-* [Solstice Game Studios](https://github.com/solsticegamestudios) for the x86-64 / GModCEFCodecFix Guide
+* [Akiko Kumagara](https://www.youtube.com/@AkikoKumagara) & [Solstice Game Studios](https://github.com/solsticegamestudios) for the x86-64 / GModCEFCodecFix Guide
 
 
 #### Links ####
