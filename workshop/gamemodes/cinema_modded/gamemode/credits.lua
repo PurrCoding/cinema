@@ -21,6 +21,8 @@ local credit = [[
 	- PurrCoding (https://github.com/PurrCoding/) for maintaining the addon
 	- YouTube Workaround by Veitikka (https://github.com/veitikka)
 	- Ket'Ta-Lani (STEAM_0:0:63267722) & Artar0s (STEAM_0:0:85997797) for Sandbox in Cinema
+	- Akiko Kumagara (https://www.youtube.com/@AkikoKumagara) &
+		Solstice Game Studios (https://github.com/solsticegamestudios) for the x86-64 / GModCEFCodecFix Guide
 	{@TransInsert} 
 ]]
 
