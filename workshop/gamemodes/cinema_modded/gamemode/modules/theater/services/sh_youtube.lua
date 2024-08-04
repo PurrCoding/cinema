@@ -32,14 +32,14 @@ if (CLIENT) then
 
 	local embedUrlParser = {
 		["youtube"] = function( Video )
-			return ("https://" .. hostname .. "/embed/%s?autoplay=1&thin_mode=1&controls=0&quality=auto&volume=1&t=%s"):format(
+			return ("https://" .. hostname .. "/embed/%s?autoplay=0&thin_mode=1&controls=0&quality=auto&volume=1&t=%s"):format(
 					Video:Data(),
 					math.Round(CurTime() - Video:StartTime()
 				)
 			)
 		end,
 		["youtubelive"] = function( Video )
-			return ("https://" .. hostname .. "/embed/%s?autoplay=1&thin_mode=1&controls=0&quality=auto&volume=1"):format(
+			return ("https://" .. hostname .. "/embed/%s?autoplay=0&thin_mode=1&controls=0&quality=auto&volume=1"):format(
 				Video:Data()
 			)
 		end
