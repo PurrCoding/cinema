@@ -43,17 +43,6 @@ function PANEL:Init()
 		self.Navigating = true
 	end
 
-	self.OptionsButton = vgui.Create( "DImageButton", self )
-	self.OptionsButton:SetSize( ButtonSize, ButtonSize )
-	self.OptionsButton:SetMaterial( "icon32/tool.png" )
-	self.OptionsButton:Dock( LEFT )
-	self.OptionsButton:DockMargin( Spacing, Margins, Spacing, Margins )
-	self.OptionsButton.DoClick = function()
-		local menu = DermaMenu()
-		menu:AddOption( "YouTube Instance Switcher", function() RunConsoleCommand( "cinema_invidious_switch" ) end )
-		menu:Open()
-	end
-
 	self.RefreshButton = vgui.Create( "DImageButton", self )
 	self.RefreshButton:SetSize( ButtonSize, ButtonSize )
 	self.RefreshButton:SetMaterial( "gui/HTML/refresh" )
