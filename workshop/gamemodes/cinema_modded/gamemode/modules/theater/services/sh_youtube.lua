@@ -3,7 +3,7 @@ local SERVICE = {}
 SERVICE.Name = "YouTube"
 SERVICE.IsTimed = true
 
-SERVICE.Dependency = DEPENDENCY_PARTIAL
+SERVICE.Dependency = DEPENDENCY_COMPLETE
 SERVICE.ExtentedVideoInfo = true
 
 local hostname = ""
