@@ -10,6 +10,8 @@ SERVICE.ExtentedVideoInfo = true
 -- Don't use the domains of the other Services.
 local excludedDomains = {
 	GetConVar("cinema_url_search"):GetString(),
+	"tiktok.com",
+	"www.tiktok.com",
 	"youtu.?be[.com]?",
 	"bilibili.com",
 	"b23.tv",
