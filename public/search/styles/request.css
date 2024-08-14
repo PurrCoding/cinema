@@ -69,6 +69,10 @@ h1 {
 .logo-youtube {
 	background-image: url(../images/logos/youtube.png);
 }
+.logo-tiktok {
+	background-image: url(../images/logos/tiktok.png);
+	background-size: 190px;
+}
 .logo-twitch {
 	background-image: url(../images/logos/twitch.png);
 }
