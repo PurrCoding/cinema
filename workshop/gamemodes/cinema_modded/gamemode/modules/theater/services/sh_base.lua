@@ -28,10 +28,13 @@ end
 local HttpHeaders = {
 	["Cache-Control"] = "no-cache",
 	-- ["Connection"] = "keep-alive",
-	["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.7.8254.20 Safari/537.36"
 }
 
 function SERVICE:Fetch( url, onReceive, onFailure, headers )
+
+	if SERVER then
+		HttpHeaders["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.7.8254.20 Safari/537.36"
+	end
 
 	local request = {
 		url			= url,

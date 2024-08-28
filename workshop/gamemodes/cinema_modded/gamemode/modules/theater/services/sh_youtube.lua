@@ -293,10 +293,7 @@ do
 				print("[Invidious API]: " .. message)
 			end
 
-			http.Fetch("https://api.invidious.io/instances.json?sort_by=type,users", onSuccess, onFailure, {
-				["Accept-Encoding"] = "gzip, deflate",
-				["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.99 Safari/537.36",
-			})
+			http.Fetch("https://api.invidious.io/instances.json?sort_by=type,users", onSuccess, onFailure, {})
 		end
 		fetchInstances()
 
