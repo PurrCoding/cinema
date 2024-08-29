@@ -186,7 +186,7 @@ function PLAYER:UpdatePlayer()
 	self.Name:SetText( self.Player:Name() )
 	self.Location:SetText( string.upper( self.Player:GetLocationName() or "Unknown" ) )
 
-	--[[ 
+	--[[
 		Info: Code taken from 'base' gamemode
 		Desc: Change the icon of the mute button based on state
 	--]]
@@ -206,9 +206,11 @@ function PLAYER:UpdatePlayer()
 		end
 
 		self.Mute.PaintOver = function( s, w, h )
-			if not IsValid(self.Player) then return end
+			if ( not IsValid( self.Player ) ) then return end
 
 			local a = 255 - math.Clamp( CurTime() - ( s.LastTick or 0 ), 0, 3 ) * 255
+			if ( a <= 0 ) then return end
+
 			draw.RoundedBox( 4, 0, 0, w, h, Color( 0, 0, 0, a * 0.75 ) )
 			draw.SimpleText( math.ceil( self.Player:GetVoiceVolumeScale() * 100 ) .. "%", "DermaDefaultBold", w / 2, h / 2, Color( 255, 255, 255, a ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		end
