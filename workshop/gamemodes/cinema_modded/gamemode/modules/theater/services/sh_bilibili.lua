@@ -1,15 +1,7 @@
---[[
-                Cinema Modded Bilibili Support
-                   Powered by OriginalSnow
-
-        You can edit this code.But you cant upload anymore.
-]]
--- Last update : 2023/8/4
 local SERVICE = {}
-SERVICE.Name = "哔哩哔哩" -- 服务名称
-SERVICE.IsTimed = true -- 是否是计时视频
+SERVICE.Name = "哔哩哔哩"
+SERVICE.IsTimed = true
 SERVICE.Dependency = DEPENDENCY_COMPLETE
--- 目前支持AV号与BV号
 local META_URL = "https://www.bilibili.com/video/%s"
 function SERVICE:Match(url) -- 匹配B站网址
     local bv = url.host:match("www.bilibili.com") and string.match(url.path, "BV[%w*]+")
@@ -18,16 +10,21 @@ function SERVICE:Match(url) -- 匹配B站网址
 end
 
 if CLIENT then
-    local PLAYURL = "www.bilibili.com/blackboard/html5mobileplayer.html?bvid=%s&autoplay=1&p=%s"
+    local PLAYURL = "https://player.bilibili.com/blackboard/newplayer.html?bvid=%s&page=%s&autoplay=1&t=0.1"
     local JS = [[
+        var Checked = false
         var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName('video')[0];
-			if (!!player && player.paused == false && player.readyState == 4) {
+			if (!!player && player.paused == false && player.readyState == 4 && !Checked) {
+                Checked = true
 				clearInterval(checkerInterval);
-
+                document.getElementsByClassName("bilibili-player-iconfont bilibili-player-iconfont-subtitle")[0].click();
+                document.getElementsByClassName('bilibili-player-video-btn bilibili-player-video-web-fullscreen')[0].click();
 				document.body.style.backgroundColor = "black";
 				window.cinema_controller = player;
-
+                if(document.getElementsByClassName("bilibili-player-iconfont-volume-min")[0] && document.getElementsByTagName("video")[0].muted){
+                    document.getElementsByClassName("bilibili-player-iconfont-volume-min")[0].click()
+                }
 				exTheater.controllerReady();
 			}
 		}, 50);
@@ -37,9 +34,9 @@ if CLIENT then
         local vid = string.Split(vedioID, " ")
         p:OpenURL(PLAYURL:format(vid[1], vid[2]))
         p.OnDocumentReady = function(pnl)
-            self:LoadExFunctions(pnl)
-            pnl:QueueJavascript(JS)
-        end
+			self:LoadExFunctions(pnl)
+			pnl:QueueJavascript(JS)
+		end
     end
 end
 
@@ -51,9 +48,10 @@ function SERVICE:GetURLInfo(url)
     else
         bp = 1
     end
-
-    if url.host:match("www.bilibili.com") or url.host:match("b23.tv") then info.Data = string.match(url.path, "BV[%w*]+") .. " " .. bp end
-    return info.Data and info or false
+    if url.host:match("www.bilibili.com") or url.host:match("b23.tv") then
+        info.Data = string.match(url.path,"BV[%w*]+").." "..bp
+    end
+	return info.Data and info or false
 end
 
 function SERVICE:GetVideoInfo(d, onSuccess, onFailure)
