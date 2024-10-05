@@ -23,6 +23,7 @@ if (CLIENT) then
 
 					window.cinema_controller = player;
 					player.style = "width:100%; height: 100%;";
+					player.style.zIndex = 999
 
 					exTheater.controllerReady();
 				}
@@ -30,24 +31,9 @@ if (CLIENT) then
 		}, 50);
 	]]
 
-	local embedUrlParser = {
-		["youtube"] = function( Video )
-			return ("https://" .. hostname .. "/embed/%s?autoplay=0&thin_mode=1&controls=0&quality=auto&volume=1&t=%s"):format(
-					Video:Data(),
-					math.Round(CurTime() - Video:StartTime()
-				)
-			)
-		end,
-		["youtubelive"] = function( Video )
-			return ("https://" .. hostname .. "/embed/%s?autoplay=0&thin_mode=1&controls=0&quality=auto&volume=1"):format(
-				Video:Data()
-			)
-		end
-	}
-
 	function SERVICE:LoadProvider( Video, panel )
 
-		panel:OpenURL( embedUrlParser[Video:Type()](Video) )
+		panel:OpenURL( ("https://%s/embed/%s"):format(hostname, Video:Data()) )
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
 			pnl:QueueJavascript(THEATER_JS)
@@ -57,28 +43,20 @@ if (CLIENT) then
 
 	function SERVICE:GetMetadata( data, callback )
 
-		local url = ("https://%s/api/v1/videos/%s"):format(hostname, data)
+		local url = ("https://%s/api/player/?id=%s"):format(hostname, data)
 
 		http.Fetch(url, function(body, length, headers, code)
-			if not body or code ~= 200 then
-				callback({ err = ("Not expected response received from API (Code: %d, Try diffrent Instance)"):format(code) })
-				return
-			end
-
 			local response = util.JSONToTable(body)
-			if not response then
-				callback({ err = "Failed to parse MetaData from YouTube" })
-				return
-			end
+
+			if not response then callback({ err = "Failed to parse/receive Metadata from YouTube" }) return end
+			if response.error or response.status ~= "OK" then callback({ err = ("%s (%s, %s)"):format(response.error.message, response.error.code, response.status) }) return end
+
+			local details = response.data.details
 
 			callback({
-				title = response.title,
-				premium = response.premium,
-				lengthSeconds = response.lengthSeconds,
-				isListed = response.isListed,
-				liveNow = response.liveNow,
-				isUpcoming = response.isUpcoming,
-				isFamilyFriendly = response.isFamilyFriendly,
+				title = details.title,
+				isLive = details.isLive,
+				length = util.ConvertTimeToSeconds(details.length),
 			})
 
 		end, function(error)
@@ -129,31 +107,15 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 			return onFailure(metadata.err)
 		end
 
-		if not metadata.isListed then
-			return onFailure( "Service_EmbedDisabled" )
-		end
-
-		if metadata.premium then
-			return onFailure( "Service_PurchasableContent" )
-		end
-
-		if metadata.prisUpcomingemium then
-			return onFailure( "Service_StreamOffline" )
-		end
-
 		local info = {}
 		info.title = metadata.title
 		info.thumbnail = ("https://img.youtube.com/vi/(%s)/hqdefault.jpg"):format(data)
 
-		if (metadata.liveNow and metadata.lengthSeconds == 0) then
+		if (metadata.isLive and metadata.length == 0) then
 			info.type = "youtubelive"
 			info.duration = 0
 		else
-			if not metadata.isFamilyFriendly then
-				info.type = "youtubensfw"
-			end
-
-			info.duration = metadata.lengthSeconds
+			info.duration = metadata.length
 		end
 
 		if onSuccess then
@@ -176,12 +138,11 @@ theater.RegisterService( "youtubelive", {
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )
 
-
 do
-	if not (CLIENT) then return end
+	if not CLIENT then return end
 
-	local instances, description = {}, "Invidious is a de-googled alternative to YouTube, it allows you to watch videos without ads and restrictions. It reduces the data sent to Google when watching videos."
-	local cInstance = CreateClientConVar("cinema_invidious_instance", "invidious.fdn.fr", true, false)
+	local instances, description = {}, "LightTube is a privacy-respecting lightweight, ad-free YouTube frontend. It allows you to watch videos without ads and restrictions, it reduces the data sent to Google when watching videos."
+	local cInstance = CreateClientConVar("cinema_youtube_instance", "lighttube.kuylar.dev", true, false)
 
 	hostname = cInstance:GetString()
 
@@ -189,22 +150,11 @@ do
 		hostname = newValue
 	end, cInstance:GetName())
 
-	do -- Invidious Switcher menu
-		local function createButton(parent, pos, size, text, callback )
-			local button = vgui.Create( "DButton", parent )
-			button:SetPos( pos[1], pos[2] )
-			button:SetSize( size[1], size[2] )
-			button:SetText(text)
-			button:SizeToContents()
-			button.DoClick = callback
-
-			return button
-		end
-
+	do -- LightTube Switcher menu
 		local function switcher()
 			local Frame = vgui.Create( "DFrame" )
-			Frame:SetTitle("(YouTube) Invidious Instance Switcher")
-			Frame:SetSize( 500, 500 )
+			Frame:SetTitle("(YouTube) LightTube Instance Switcher")
+			Frame:SetSize( 500, 300 )
 			Frame:Center()
 			Frame:MakePopup()
 
@@ -225,10 +175,9 @@ do
 				InstanceList:SetMultiSelect( false )
 				InstanceList:SetSortable( true )
 
-				InstanceList:AddColumn( "Instance" )
-				InstanceList:AddColumn( "Users" )
-				InstanceList:AddColumn( "Location" )
-				InstanceList:AddColumn( "Health" )
+				InstanceList:AddColumn( "Hostname" )
+				InstanceList:AddColumn( "Country" )
+				InstanceList:AddColumn( "Proxies" )
 
 				function InstanceList:DoDoubleClick(lineID, line)
 					cInstance:SetString( line:GetColumnText(1) )
@@ -240,9 +189,7 @@ do
 
 				local lines = {}
 				for host,tbl in pairs(instances) do
-					if tbl["api"] then
-						lines[host] = InstanceList:AddLine(host, tbl["users"], tbl["region"], tbl["uptime"])
-					end
+					lines[host] = InstanceList:AddLine(host, tbl["country"], tbl["proxyEnabled"])
 				end
 
 				InstanceList:SortByColumn( 2, true ) -- Sort by Users count
@@ -254,7 +201,7 @@ do
 			end
 
 		end
-		concommand.Add("cinema_invidious_switch", switcher, nil, "Switch the Invidious instance")
+		concommand.Add("cinema_youtube_switch", switcher, nil, "Switch the LightTube instance")
 	end
 
 	do -- Instance fetcher & updater
@@ -267,37 +214,28 @@ do
 
 				instances = {} -- Clear instance list
 
-				for k,v in pairs(response) do
-					local name, tbl = v[1], v[2]
+				for _,tbl in pairs(response) do
 
-					if tbl.type ~= "https" then
-						continue
-					end
+					if tbl.scheme ~= "https" then continue end
+					if not tbl.apiEnabled or not tbl.isCloudflare then continue end
 
-					local api = tbl["api"]
-					local region = tbl["region"]
-					local users = (tbl["stats"] and tbl["stats"]["usage"] and tbl["stats"]["usage"]["users"] and tbl["stats"]["usage"]["users"]["total"] or "-")
-					local uptime = (tbl["monitor"] and tbl["monitor"]["uptime"] and tbl["monitor"]["uptime"] or "-")
-
-					instances[name] = {
-						api = api,
-						region = util.getCountryName(region),
-						users = users,
-						uptime = uptime,
+					instances[tbl.host] = {
+						country = util.getCountryName(tbl.country),
+						proxyEnabled = tbl.proxyEnabled,
 					}
 
 				end
 			end
 
 			local function onFailure(message)
-				print("[Invidious API]: " .. message)
+				print("[LightTube API]: " .. message)
 			end
 
-			http.Fetch("https://api.invidious.io/instances.json?sort_by=type,users", onSuccess, onFailure, {})
+			http.Fetch("https://lighttube.kuylar.dev/instances", onSuccess, onFailure, {})
 		end
 		fetchInstances()
 
-		if timer.Exists("Invidious.Update") then timer.Remove("Invidious.Update") end
-		timer.Create("Invidious.Update", 300, 0, fetchInstances)
+		if timer.Exists("LightTube.Update") then timer.Remove("LightTube.Update") end
+		timer.Create("LightTube.Update", 300, 0, fetchInstances)
 	end
 end
