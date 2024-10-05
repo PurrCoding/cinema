@@ -490,8 +490,6 @@ if SERVER then
 
 	end
 
-	local hhmmss = "(%d+):(%d+):(%d+)"
-	local mmss = "(%d+):(%d+)"
 	function THEATER:Seek( seconds )
 
 		if not IsVideoTimed(self:VideoType()) then return end
@@ -501,18 +499,7 @@ if SERVER then
 
 		-- Seconds isn't a number, check HH:MM:SS
 		if not tonumber(seconds) then
-			local hr, min, sec = string.match(seconds, hhmmss)
-
-			-- Not in HH:MM:SS, try MM:SS
-			if not hr then
-			    min, sec = string.match(seconds, mmss)
-			    if not min then return end -- Not in MM:SS, give up
-			    hr = 0
-			end
-
-			seconds = tonumber(hr) * 3600 +
-				tonumber(min) * 60 +
-				tonumber(sec)
+			seconds = util.ConvertTimeToSeconds(seconds)
 		end
 
 		-- If it's not one of those two things then it will fall trough wihtout any changes.
