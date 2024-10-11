@@ -60,13 +60,6 @@ function QUEUE:Init()
 	end
 	self.Options:AddItem(RefreshButton)
 
-	local InstanceButton = vgui.Create( "TheaterButton" )
-	InstanceButton:SetText( "YouTube Instance Switcher" )
-	InstanceButton.DoClick = function(self)
-		RunConsoleCommand( "cinema_youtube_switch" )
-	end
-	self.Options:AddItem(InstanceButton)
-
 end
 
 function QUEUE:AddVideo( vid )
