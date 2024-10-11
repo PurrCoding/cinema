@@ -30,6 +30,24 @@ function SecondsToISO_8601(seconds)
 	return (t.h and t.h .. "h" or "") .. (t.m and t.m .. "m" or "") .. (t.s and t.s .. "s" or "")
 end
 
+-- Helper function for converting HH:MM:SS time strings
+local hhmmss = "(%d+):(%d+):(%d+)"
+local mmss = "(%d+):(%d+)"
+function ConvertTimeToSeconds(time)
+	local hr, min, sec = string.match(time, hhmmss)
+
+	-- Not in HH:MM:SS, try MM:SS
+	if not hr then
+		min, sec = string.match(time, mmss)
+		if not min then return end -- Not in MM:SS, give up
+		hr = 0
+	end
+
+	return tonumber(hr) * 3600 +
+		tonumber(min) * 60 +
+		tonumber(sec)
+end
+
 -- Get the value for an attribute from a html element
 function ParseElementAttribute( element, attribute )
 	if not element then return end
