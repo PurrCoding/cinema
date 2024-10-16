@@ -10,7 +10,7 @@ function SERVICE:Match(url) -- 匹配B站网址
 end
 
 if CLIENT then
-    local PLAYURL = "https://player.bilibili.com/blackboard/newplayer.html?bvid=%s&page=%s&autoplay=1&t=0.1"
+    local PLAYURL = "https://www.bilibili.com/blackboard/newplayer.html?bvid=%s&page=%s&autoplay=1&t=0.1"
     local JS = [[
         var Checked = false
         var checkerInterval = setInterval(function() {
@@ -18,16 +18,16 @@ if CLIENT then
 			if (!!player && player.paused == false && player.readyState == 4 && !Checked) {
                 Checked = true
 				clearInterval(checkerInterval);
-                document.getElementsByClassName("bilibili-player-iconfont bilibili-player-iconfont-subtitle")[0].click();
-                document.getElementsByClassName('bilibili-player-video-btn bilibili-player-video-web-fullscreen')[0].click();
 				document.body.style.backgroundColor = "black";
 				window.cinema_controller = player;
-                if(document.getElementsByClassName("bilibili-player-iconfont-volume-min")[0] && document.getElementsByTagName("video")[0].muted){
-                    document.getElementsByClassName("bilibili-player-iconfont-volume-min")[0].click()
-                }
 				exTheater.controllerReady();
 			}
 		}, 50);
+        setInterval(function(){
+            document.getElementsByClassName("bpx-player-top-wrap")[0].hidden = true 
+            document.getElementsByClassName("bpx-player-control-wrap")[0].hidden = true
+            document.getElementsByClassName("bpx-player-relation-button")[0].style.opacity = 0
+        }, 1000)
     ]]
     function SERVICE:LoadProvider(vi, p)
         local vedioID = vi:Data()
