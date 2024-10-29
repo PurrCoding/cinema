@@ -18,6 +18,9 @@ if (CLIENT) then
 			if (document.querySelector(".np_DialogConsent-accept")) {
 				document.querySelector(".np_DialogConsent-accept").click();
 			}
+			if (document.querySelector(".consent_screen-button.consent_screen-accept")) {
+				document.querySelector(".consent_screen-button.consent_screen-accept").click();
+			}
 
 			var player = document.querySelector("video#video");
 			if (!!player && player.paused == false && player.readyState == 4) {
