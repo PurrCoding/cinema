@@ -4,7 +4,7 @@ local SERVICE = {}
 
 SERVICE.Name = "URL"
 SERVICE.IsTimed = true
-SERVICE.Hidden = true
+SERVICE.Hidden = false
 
 SERVICE.Dependency = DEPENDENCY_COMPLETE
 SERVICE.ExtentedVideoInfo = true
