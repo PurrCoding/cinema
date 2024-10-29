@@ -1,3 +1,5 @@
+local url2 = url -- keep reference for extracting url data
+
 local SERVICE = {}
 
 SERVICE.Name = "URL"
@@ -7,9 +9,9 @@ SERVICE.Hidden = true
 SERVICE.Dependency = DEPENDENCY_COMPLETE
 SERVICE.ExtentedVideoInfo = true
 
--- Don't use the domains of the other Services.
-local excludedDomains = {
-	CLIENT and GetConVar("cinema_url_search"):GetString() or "",
+-- Don't use the hosts of the other Services.
+local isCinemaURLincluded = false
+local excludedHosts = {
 	"youtu.?be[.com]?",
 	"bilibili.com",
 	"b23.tv",
@@ -24,27 +26,55 @@ local excludedDomains = {
 	"twitch.tv"
 }
 
-local validImageExtensions = {
+-- Used for matching
+local validExtensions = {}
+
+local imageExtensions = {
 	["jpg"] = true,
 	["png"] = true,
 	["bmp"] = true,
 	["jpeg"] = true,
 	["gif"] = true,
 }
+validExtensions = table.Merge(validExtensions, imageExtensions)
+
+local videoExtensions = {
+	["mp4"] = true,
+	["webm"] = true,
+	["mov"] = true,
+}
+validExtensions = table.Merge(validExtensions, videoExtensions)
+
 
 function SERVICE:Match( url )
-	local allowed = false
+	local allowed = true
 
-	for _, domain in pairs( excludedDomains ) do
-		allowed = false
+	if url.file and validExtensions[ url.file.ext ] then
+		allowed = true
+	end
 
-		if url.host and url.encoded:find(domain) then
-			allowed = true
-			break
+	if url.host then
+		if CLIENT and not isCinemaURLincluded then
+			isCinemaURLincluded = true
+
+			local status, data2 = pcall( url2.parse2, url )
+			if not status then
+				isCinemaURLincluded = false
+				return
+			end
+
+			table.insert(excludedHosts, data2.host )
+		end
+
+		for _, tld in pairs( excludedHosts ) do
+			if url.host and url.host:find(tld) then
+				allowed = false
+				break
+			end
 		end
 	end
 
-	return not allowed
+	return allowed
 end
 
 if (CLIENT) then
@@ -172,10 +202,17 @@ end
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
-	-- Image Service
-	if validImageExtensions[ string.GetExtensionFromFilename( data:Data() ) ] then
+	local status, data2 = pcall( url2.parse2, data:Data() )
+	if not status then
+		return onFailure( "ERROR:\n" .. tostring(data2) )
+	end
+
+	local fileext = data2.file.ext
+	local filename = data2.file.name
+
+	if validImageExtensions[ fileext ] then
 		local info = {}
-		info.title = ("Image: %s"):format(data:Data())
+		info.title = ("Image: %s"):format(filename)
 
 		local duration = GetConVar("cinema_service_imageduration"):GetInt()
 		if duration > 0 then
@@ -192,20 +229,22 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		return
 	end
 
-	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
+	if validVideoExtensions[ fileext ] then
+		theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
 
-		if metadata.err then
-			return onFailure(metadata.err)
-		end
+			if metadata.err then
+				return onFailure(metadata.err)
+			end
 
-		local info = {}
-		info.title = ("URL: %s"):format(data:Data())
-		info.duration = math.Round(tonumber(metadata.duration))
+			local info = {}
+			info.title = ("URL: %s"):format(filename)
+			info.duration = math.Round(tonumber(metadata.duration))
 
-		if onSuccess then
-			pcall(onSuccess, info)
-		end
-	end)
+			if onSuccess then
+				pcall(onSuccess, info)
+			end
+		end)
+	end
 
 end
 
