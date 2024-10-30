@@ -45,7 +45,6 @@ local videoExtensions = {
 }
 validExtensions = table.Merge(validExtensions, videoExtensions)
 
-
 function SERVICE:Match( url )
 	local allowed = true
 
@@ -210,7 +209,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	local fileext = data2.file.ext
 	local filename = data2.file.name
 
-	if validImageExtensions[ fileext ] then
+	if imageExtensions[ fileext ] then
 		local info = {}
 		info.title = ("Image: %s"):format(filename)
 
@@ -229,7 +228,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		return
 	end
 
-	if validVideoExtensions[ fileext ] then
+	if videoExtensions[ fileext ] then
 		theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
 
 			if metadata.err then
