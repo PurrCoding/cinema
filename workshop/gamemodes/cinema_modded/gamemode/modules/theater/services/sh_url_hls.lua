@@ -11,7 +11,12 @@ local validExtensions = {
 }
 
 function SERVICE:Match( url )
-	return validExtensions[ string.GetExtensionFromFilename( url.path ) ]
+
+	if url.file and validExtensions[ url.file.ext ] then
+		return true
+	end
+
+	return false
 end
 
 if (CLIENT) then

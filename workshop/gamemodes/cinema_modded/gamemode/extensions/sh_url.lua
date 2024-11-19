@@ -316,6 +316,14 @@ function parse(url, default)
     -- path is whatever was left
     if url ~= "" then
         parsed.path = url
+
+        -- get file information
+        if string.GetFileFromFilename(url) then
+            parsed.file = {
+                name = string.GetFileFromFilename(url),
+                ext = string.GetExtensionFromFilename(url)
+            }
+        end
     else
         parsed.path = "/"
     end

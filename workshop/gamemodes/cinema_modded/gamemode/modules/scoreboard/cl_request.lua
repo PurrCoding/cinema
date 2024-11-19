@@ -283,7 +283,9 @@ function HISTORY:Init()
 	self.PagerLeft:Dock(LEFT)
 	self.PagerLeft.DoClick = function()
 		if self.History[self.CurrentPageCount] then
-			self.CurrentPageCount = self.CurrentPageCount - 1
+			local page = self.CurrentPageCount - 1
+
+			self.CurrentPageCount = (page == 0 and #self.History or page)
 		end
 
 		self:Search()
