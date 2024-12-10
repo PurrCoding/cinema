@@ -26,6 +26,7 @@
 
 @PointClass base(Targetname, Origin, Angles) studioprop() = theater_door : "Door to teleport players between locations"
 [
+	model(studio) : "Door Model" : : "The door model of the target"
 	teleportentity(target_destination) : "Teleport To" : : "The name of the teleport entity." 
 	opendoorsound(sound) : "Door Open sound" : : "The sound the door will make when it opens."
 	closedoorsound(sound) : "Door Close sound" : : "The sound the door will make when it closes."
