@@ -120,6 +120,8 @@ if (CLIENT) then
 
 					player.style.backgroundColor = "#000";
 					player.style.height = "100vh";
+					player.style.left = '0px';
+					player.style.width = '100%';
 
 					let countAmt = 0
 					let resizeTimer = setInterval(function() {
