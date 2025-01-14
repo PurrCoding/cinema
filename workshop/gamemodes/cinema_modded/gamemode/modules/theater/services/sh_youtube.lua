@@ -15,6 +15,8 @@ local ADBLOCK_JS = "" -- see end of file (https://github.com/Vendicated/Vencord/
 --[[
 	Credits to veitikka (https://github.com/veitikka) for fixing YouTube service and writing the
 	Workaround with a Metadata parser.
+
+	Src: https://github.com/samuelmaddock/gm-mediaplayer/pull/34
 --]]
 
 -- Lua search patterns to find metadata from the html
