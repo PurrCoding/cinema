@@ -21,7 +21,6 @@ local excludedHosts = {
 	"rutube.ru",
 	"rumble.com",
 	"sibnet.ru",
-	"vimeo.com",
 	"vk.com",
 	"twitch.tv"
 }
