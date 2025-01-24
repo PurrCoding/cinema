@@ -4,6 +4,7 @@
 	"tags"		:	[ "fun", "roleplay" ],
 	"ignore"	:   [
 		"*.md",
-		"*.vtx"
+		"*.sw.vtx",
+		"*.fgd"
 	]
 }
