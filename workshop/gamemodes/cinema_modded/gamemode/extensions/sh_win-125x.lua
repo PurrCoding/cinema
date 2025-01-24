@@ -6,7 +6,7 @@
 --    str_win  = util.utf8_to_win(str_utf8)
 --    str_utf8 = util.win_to_utf8(str_win)
 ---------------------------------------------------------------------
--- Src: https://gist.github.com/Egor-Skriptunoff/44a88f64f9a497919db4ad8c28259a8f#file-win-125x-lua
+-- Src: @Egor-Skriptunoff - https://gist.github.com/Egor-Skriptunoff/44a88f64f9a497919db4ad8c28259a8f#file-win-125x-lua
 -- Info: This code has been slightly modified to work with the Cinema gamemode.
 
 module("util", package.seeall)
