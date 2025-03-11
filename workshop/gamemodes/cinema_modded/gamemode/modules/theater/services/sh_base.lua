@@ -8,6 +8,7 @@ SERVICE.IsCacheable = true -- Return false to prevent from storing into cinema_h
 SERVICE.Dependency = DEPENDENCY_NONE -- DEPENDENCY_NONE = Normal | DEPENDENCY_PARTIAL = x86-64 Beta | DEPENDENCY_COMPLETE = x86-64 Beta + CEF Codec Fix
 SERVICE.ExtentedVideoInfo = false -- Passes the complete video data instead of just the Data ID in GetVideoInfo
 SERVICE.TheaterType = THEATER_NONE  -- THEATER_NONE = Normal | THEATER_PRIVATE = Private only
+SERVICE.ControllerSet = false
 
 function SERVICE:GetName()
 	return self.Name
@@ -113,12 +114,15 @@ if CLIENT then
 				("if (window.theater) theater.setVolume(%s)"):format( theater.GetVolume() )
 			)
 
+			self.ControllerSet = true
 		end )
 	end
 
 	function SERVICE:LoadVideo( Video, panel )
 		panel.OnDocumentReady = function() end -- Clear any possible remainings of Service code
 		panel:Stop() -- Stops all panel animations by clearing its animation list. This also clears all delayed animations.
+
+		panel:RunJavascript("if(typeof checkerInterval !== \"undefined\") { clearInterval(checkerInterval); }") -- Stop any remaining Intervals
 
 		if self.LoadProvider then
 			self:LoadProvider(Video, panel)
