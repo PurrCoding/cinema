@@ -72,6 +72,10 @@ h1 {
 .logo-twitch {
 	background-image: url(../images/logos/twitch.png);
 }
+.logo-tiktok {
+	background-image: url(../images/logos/tiktok.png);
+	background-size: 190px;
+}
 .logo-dailymotion {
 	background-image: url(../images/logos/dailymotion.png);
 }
