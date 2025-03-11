@@ -28,11 +28,11 @@ LastInfoDraw = 0
 InfoDrawDelay = 3
 
 LastTheater = nil
-Pos = Vector(0,0,0)
-Ang = Angle(0,0,0)
-InfoScale = 1
-w = 0
-h = 0
+local Pos = Vector(0,0,0)
+local Ang = Angle(0,0,0)
+local InfoScale = 1
+local w = 0
+local h = 0
 
 local LoadingStr = translations:Format("Loading")
 
