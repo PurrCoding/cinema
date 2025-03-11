@@ -22,7 +22,11 @@ local excludedHosts = {
 	"rumble.com",
 	"sibnet.ru",
 	"vk.com",
-	"twitch.tv"
+	"twitch.tv",
+	"drive.google.com",
+	"mega.nz",
+	"dlive.tv",
+	"kick.com"
 }
 
 -- Used for matching
