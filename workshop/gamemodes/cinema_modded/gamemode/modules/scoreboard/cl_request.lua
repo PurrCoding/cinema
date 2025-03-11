@@ -74,6 +74,31 @@ function PANEL:Init()
 	self.Browser = vgui.Create( "TheaterHTML", self.BrowserContainer )
 	self.Browser.isContainer = true
 
+	function self.Browser:OnDocumentReady( url )
+		// Blocking Elements
+		if string.find( url, "tiktok.com", 1, true ) then
+			self:RunJavascript( [[ 
+				setInterval(() => {
+					const guestModeContainer = document.querySelector('[class*="DivGuestModeContainer"]');
+					if (guestModeContainer) {
+						console.log('DivGuestModeContainer found:', guestModeContainer);
+				
+						const boxContainer = guestModeContainer.querySelector('[class*="DivBoxContainer"]');
+						if (boxContainer) {
+							boxContainer.click();
+							console.log('DivBoxContainer clicked:', boxContainer);
+						} else {
+							console.log('DivBoxContainer not found inside DivGuestModeContainer');
+						}
+					} else {
+						console.log('DivGuestModeContainer not found');
+					}
+				}, 500); 
+			]] )
+			print( "Blocking TIKTOK registe popup" )
+		end
+		
+	end
 	self.Browser:OpenURL( GetGlobal2String( "cinema_url_search", "" ) )
 
 	self.Controls = vgui.Create( "TheaterHTMLControls", self.BrowserContainer )
