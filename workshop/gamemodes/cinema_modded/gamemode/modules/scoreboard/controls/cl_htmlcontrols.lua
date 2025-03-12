@@ -162,9 +162,10 @@ function PANEL:SetHTML( html )
 		self:UpdateHistory( url )
 
 		local Theater = LocalPlayer():GetTheater()
+		local isSearch = url == self.HTML.searchUrl
 
 		-- Check for valid URL
-		if theater.ExtractURLData( url, Theater ) then
+		if theater.ExtractURLData( url, Theater ) and not isSearch then
 			self.RequestButton:SetDisabled( false )
 		else
 			self.RequestButton:SetDisabled( true )
@@ -205,7 +206,7 @@ function PANEL:UpdateHistory( url )
 
 	end
 
-	if !table.HasValue(self.History, url) then -- It spams the same entry multiple times...
+	if not table.HasValue(self.History, url) then -- It spams the same entry multiple times...
 		self.Cur = table.insert( self.History, url )
 	end
 

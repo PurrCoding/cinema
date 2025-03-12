@@ -74,7 +74,11 @@ function PANEL:Init()
 	self.Browser = vgui.Create( "TheaterHTML", self.BrowserContainer )
 	self.Browser.isContainer = true
 
+	local searchURL = GetGlobal2String( "cinema_url_search", "" )
 	function self.Browser:OnDocumentReady( url )
+		if (not self.searchUrl) then self.searchUrl = searchURL end
+		if (url == searchURL) then return end
+
 		if IsValid(self) then
 			local service = theater.GetServiceByURL(url)
 
@@ -84,7 +88,7 @@ function PANEL:Init()
 		end
 	end
 
-	self.Browser:OpenURL( GetGlobal2String( "cinema_url_search", "" ) )
+	self.Browser:OpenURL( searchURL )
 
 	self.Controls = vgui.Create( "TheaterHTMLControls", self.BrowserContainer )
 	self.Controls:SetHTML( self.Browser )
