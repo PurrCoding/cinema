@@ -199,6 +199,31 @@ function ExtractURLData( url, Theater )
 
 end
 
+function GetServiceByURL( url )
+	-- Parse url
+	local status, data = pcall( url2.parse2, url )
+	if not status then
+		print( "ERROR:\n" .. tostring(data) )
+		return false
+	end
+
+	if not data then
+		return false
+	end
+
+	-- Keep reference to original url
+	data.encoded = url
+
+	-- Iterate through each service to check if the url is a valid request
+	for _, service in pairs( Services ) do
+
+		if service:Match( data ) then
+			return service
+		end
+
+	end
+end
+
 function GetQueueMode()
 	return GetConVar("cinema_queue_mode"):GetInt()
 end
