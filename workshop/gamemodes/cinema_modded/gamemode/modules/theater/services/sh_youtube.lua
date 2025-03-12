@@ -67,53 +67,55 @@ if (CLIENT) then
 			var checkerInterval = setInterval(function () {
 				if (!YT || !YT.get) { return; }
 
-				var player = YT.get("widget2");
+				if (typeof YT === 'object') {
+					var player = YT.get("widget2");
 
-				if (!!player && !!player.getDuration) {
-					clearInterval(checkerInterval);
+					if (!!player && !!player.getDuration) {
+						clearInterval(checkerInterval);
 
-					{ // Native video controll
-						player.volume = 0;
-						player.currentTime = 0;
-						player.duration = player.getDuration();
+						{ // Native video controll
+							player.volume = 0;
+							player.currentTime = 0;
+							player.duration = player.getDuration();
 
-						Object.defineProperty(player, "volume", {
-							get() {
-								return player.getVolume();
-							},
-							set(volume) {
-								if (player.isMuted()) {
-									player.unMute();
-								}
-								player.setVolume(volume * 100);
-							},
-						});
+							Object.defineProperty(player, "volume", {
+								get() {
+									return player.getVolume();
+								},
+								set(volume) {
+									if (player.isMuted()) {
+										player.unMute();
+									}
+									player.setVolume(volume * 100);
+								},
+							});
 
-						Object.defineProperty(player, "currentTime", {
-							get() {
-								return Number(player.getCurrentTime());
-							},
-							set(time) {
-								player.seekTo(time, true);
-							},
-						});
+							Object.defineProperty(player, "currentTime", {
+								get() {
+									return Number(player.getCurrentTime());
+								},
+								set(time) {
+									player.seekTo(time, true);
+								},
+							});
+						}
+
+						{ // Player resizer
+							var frame = player.g;
+
+							document.body.appendChild(frame);
+
+							frame.style.backgroundColor = "#000";
+							frame.style.height = "100vh";
+							frame.style.left = "0px";
+							frame.style.width = "100%";
+
+							document.getElementById("root").remove();
+						}
+
+						window.cinema_controller = player;
+						exTheater.controllerReady();
 					}
-
-					{ // Player resizer
-						var frame = player.g;
-
-						document.body.appendChild(frame);
-
-						frame.style.backgroundColor = "#000";
-						frame.style.height = "100vh";
-						frame.style.left = "0px";
-						frame.style.width = "100%";
-
-						document.getElementById("root").remove();
-					}
-
-					window.cinema_controller = player;
-					exTheater.controllerReady();
 				}
 			}, 50);
 		})();
