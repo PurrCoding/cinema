@@ -397,7 +397,7 @@ function LoadVideo( Video )
 
 	-- Always destroy previous panels to avoid weird bugs
 	if IsValid(panel) then
-		panel:Remove()
+		RemovePanels()
 	end
 
 	if not IsValid( panel ) then
