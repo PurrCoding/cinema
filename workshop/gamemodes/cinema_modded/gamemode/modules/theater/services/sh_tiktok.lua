@@ -1,3 +1,4 @@
+-- TikTok service for Cinema created by agentsix1 ( https://github.com/agentsix1 )
 local SERVICE = {}
 
 SERVICE.Name = "Tiktok"
