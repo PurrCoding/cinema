@@ -118,6 +118,10 @@ if CLIENT then
 		end )
 	end
 
+	function SERVICE:SearchFunctions( browser )
+		-- Use in Service
+	end
+
 	function SERVICE:LoadVideo( Video, panel )
 		panel.OnDocumentReady = function() end -- Clear any possible remainings of Service code
 		panel:Stop() -- Stops all panel animations by clearing its animation list. This also clears all delayed animations.
