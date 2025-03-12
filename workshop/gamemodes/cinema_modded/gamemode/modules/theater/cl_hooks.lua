@@ -16,17 +16,21 @@ end
 ---------------------------------------------------------------------------*/
 function GM:PostVideoLoad( Video )
 
-	local startTime = CurTime() - Video:StartTime()
+	-- Print nothing if nothing is played
+	if tostring(Video:Title()) ~= "NoVideoPlaying" then
 
-	-- Output debug information
-	Msg("Loaded Video\n")
-	Msg("\tTitle:\t\t" .. tostring(Video:Title()) .. "\n")
-	Msg("\tType:\t\t" .. tostring(Video:Type()) .. "\n")
-	Msg("\tData:\t\t" .. tostring(Video:Data()) .. "\n")
-	Msg("\tTime:\t\t" .. tostring(startTime) .. "\n")
-	Msg("\tDuration:\t" .. tostring(Video:Duration()) .. "\n")
-	Msg( string.format("\tRequested by %s (%s)", Video:GetOwnerName(),
-		Video:GetOwnerSteamID() ) .. "\n" )
+		local startTime = CurTime() - Video:StartTime()
+
+		-- Output debug information
+		Msg("Loaded Video\n")
+		Msg("\tTitle:\t\t" .. tostring(Video:Title()) .. "\n")
+		Msg("\tType:\t\t" .. tostring(Video:Type()) .. "\n")
+		Msg("\tData:\t\t" .. tostring(Video:Data()) .. "\n")
+		Msg("\tTime:\t\t" .. tostring(startTime) .. "\n")
+		Msg("\tDuration:\t" .. tostring(Video:Duration()) .. "\n")
+		Msg( string.format("\tRequested by %s (%s)", Video:GetOwnerName(),
+			Video:GetOwnerSteamID() ) .. "\n" )
+	end
 
 	-- Keep previous video for refreshing the theater
 	theater.LastVideo = Video
