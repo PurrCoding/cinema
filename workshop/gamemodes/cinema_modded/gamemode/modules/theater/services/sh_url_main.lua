@@ -9,26 +9,6 @@ SERVICE.Hidden = false
 SERVICE.Dependency = DEPENDENCY_COMPLETE
 SERVICE.ExtentedVideoInfo = true
 
--- Don't use the hosts of the other Services.
-local isCinemaURLincluded = false
-local excludedHosts = {
-	"youtu.?be[.com]?",
-	"bilibili.com",
-	"b23.tv",
-	"dailymotion.com",
-	"archive.org",
-	"ok.ru",
-	"rutube.ru",
-	"rumble.com",
-	"sibnet.ru",
-	"vk.com",
-	"twitch.tv",
-	"drive.google.com",
-	"mega.nz",
-	"dlive.tv",
-	"kick.com"
-}
-
 -- Used for matching
 local validExtensions = {}
 
@@ -55,24 +35,15 @@ function SERVICE:Match( url )
 		allowed = true
 	end
 
-	if url.host then
-		if CLIENT and not isCinemaURLincluded then
-			isCinemaURLincluded = true
-
-			local status, data2 = pcall( url2.parse2, url )
-			if not status then
-				isCinemaURLincluded = false
-				return
-			end
-
-			table.insert(excludedHosts, data2.host )
+	for class, obj in pairs(theater.Services) do
+		if (obj.Name == self.Name) or
+			(obj.Name == "Base") or obj.Hidden then
+			continue
 		end
 
-		for _, tld in pairs( excludedHosts ) do
-			if url.host and url.host:find(tld) then
-				allowed = false
-				break
-			end
+		if obj:Match(url) then
+			allowed = false
+			break
 		end
 	end
 
