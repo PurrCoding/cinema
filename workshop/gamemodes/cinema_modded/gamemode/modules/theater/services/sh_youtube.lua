@@ -102,6 +102,7 @@ if (CLIENT) then
 
 						{ // Player resizer
 							var frame = player.g;
+							var root = document.getElementById("root")
 
 							document.body.appendChild(frame);
 
@@ -110,7 +111,7 @@ if (CLIENT) then
 							frame.style.left = "0px";
 							frame.style.width = "100%";
 
-							document.getElementById("root").remove();
+							if (!!root) { root.remove(); }
 						}
 
 						window.cinema_controller = player;
