@@ -21,9 +21,7 @@ local patterns = {
 	["age_restriction"] = "<meta%sproperty=\"og:restrictions:age\"%s-content=%b\"\">"
 }
 
----
 -- Function to parse video metadata straight from the html instead of using the API
---
 local function ParseMetaDataFromHTML( html )
 	--MetaData table to return when we're done
 	local metadata, html = {}, html
