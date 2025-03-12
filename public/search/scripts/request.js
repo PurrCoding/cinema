@@ -57,3 +57,17 @@ function selectService(elem) {
     var href = elem.dataset.href;
     window.location.href = href;
 }
+
+/**
+ * Called when a user selects a service to open in steam ui.
+ *
+ * @param  {HTMLElement} elem DOM element.
+ */
+function openService(elem) {
+    playUISound(true);
+
+    var href = elem.dataset.href;
+    if (typeof gmod !== 'undefined' && gmod.openUrl) {
+        gmod.openUrl(href);
+    }
+}

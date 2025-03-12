@@ -15,30 +15,55 @@
 
             <div class="services">
 
-                <span class="media-service logo-youtube" data-href="https://www.youtube.com/"
+                <span class="media-service subtext logo-youtube" data-href="https://youtube.com/"
                     onclick="selectService(this);" onmouseover="hoverService();">&nbsp;</span>
 
-                <span class="media-service subtext logo-twitch" data-href="https://www.twitch.tv/"
+                <span class="media-service subtext logo-tiktok" data-href="https://tiktok.com/"
+                    onclick="selectService(this);" onmouseover="hoverService();">TikTok</span>
+
+                <span class="media-service subtext logo-soundcloud" data-href="https://soundcloud.com/"
                     onclick="selectService(this);" onmouseover="hoverService();">&nbsp;</span>
 
                 <span class="media-service subtext logo-dailymotion" data-href="https://www.dailymotion.com/"
-                    onclick="selectService(this);" onmouseover="hoverService();">&nbsp;</span>
+                    onclick="selectService(this);" onmouseover="hoverService();">Dailymotion</span>
 
-                <span class="media-service subtext logo-archive" data-href="https://archive.org/details/movies"
+                <span class="media-service subtext logo-twitch" data-href="https://www.twitch.tv/"
                     onclick="selectService(this);" onmouseover="hoverService();">&nbsp;</span>
 
                 <span class="media-service subtext logo-rumble" data-href="https://rumble.com/"
                     onclick="selectService(this);" onmouseover="hoverService();">Rumble</span>
 
-                <span class="media-service subtext logo-ru" data-href="./ru.html"
-                    onclick="selectService(this);" onmouseover="hoverService();">Российские потоки</span>
+                <span class="media-service subtext logo-dlive" data-href="https://dlive.tv/"
+                    onclick="selectService(this);" onmouseover="hoverService();">&nbsp</span>
+
+                <span class="media-service subtext logo-kick" data-href="https://kick.com/"
+                    onclick="selectService(this);" onmouseover="hoverService();">&nbsp</span>
+
+                <span class="media-service subtext logo-bilibili" data-href="https://www.bilibili.tv/"
+                    onclick="openService(this);" onmouseover="hoverService();">&nbsp</span>
+
+                <span class="media-service subtext logo-archive" data-href="https://archive.org/details/movies"
+                    onclick="selectService(this);" onmouseover="hoverService();">&nbsp;</span>
+
+                <span class="media-service subtext logo-vk" data-href="https://vk.com/video"
+                    onclick="selectService(this);" onmouseover="hoverService();">VKontakte</span>
+
+                <span class="media-service subtext logo-sibnet" data-href="https://video.sibnet.ru/rub/anime/"
+                    onclick="selectService(this);" onmouseover="hoverService();">(Аниме)</span>
+
+                <span class="media-service subtext logo-ok" data-href="https://ok.ru/video"
+                    onclick="selectService(this);" onmouseover="hoverService();">&nbsp;</span>
+
+                <span class="media-service subtext logo-rutube" data-href="https://rutube.ru/"
+                    onclick="selectService(this);" onmouseover="hoverService();">Rutube</span>
 
             </div>
 
             <div class="url-container">
                 <h1 class="url-notice">Or request a supported URL</h1>
-                <input id="urlinput" type="text" class="url-input" placeholder="webm, mp4, jpg, png, ..." autofocus="true"
-                    onkeydown="onUrlKeyDown(event);"><a href="javascript:requestUrl();" class="url-submit">Request</a>
+                <input id="urlinput" type="text" class="url-input" placeholder="Mega, GDrive, Direct, Image (.webm, .mp4, .m3u8, .jpg, .png, ..)"
+                    autofocus="true" onkeydown="onUrlKeyDown(event);"><a href="javascript:requestUrl();"
+                    class="url-submit">Request</a>
             </div>
 
         </section>
