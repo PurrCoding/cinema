@@ -99,28 +99,10 @@ if (CLIENT) then
 	end
 
 	function SERVICE:GetMetadata( data, callback )
-		local panel = vgui.Create("HTML")
-		panel:SetSize(100,100)
-		panel:SetAlpha(0)
-		panel:SetMouseInputEnabled(false)
 
-		function panel:ConsoleMessage(msg)
-			if msg:StartWith("METADATA:") then
-				local metadata = util.JSONToTable(string.sub(msg, 10))
-
-				callback(metadata)
-				panel:Remove()
-			end
-
-			if msg:StartWith("ERROR:") then
-				local code = tonumber(string.sub(msg, 7))
-
-				callback({ err = util.MEDIA_ERR[code] or util.MEDIA_ERR[5] })
-				panel:Remove()
-			end
-		end
-
+		local panel = self:CreateWebCrawler(callback)
 		panel:SetHTML(HTML_METADATA:Replace( "{@VideoSrc}", data ))
+
 	end
 end
 

@@ -97,29 +97,7 @@ if (CLIENT) then
 
 	function SERVICE:GetMetadata( data, callback )
 
-		local panel = vgui.Create("DHTML")
-		panel:SetSize(100,100)
-		panel:SetAlpha(0)
-		panel:SetMouseInputEnabled(false)
-
-		function panel:ConsoleMessage(msg)
-
-			if msg:StartWith("METADATA:") then
-				local metadata = util.JSONToTable(string.sub(msg, 10))
-
-				callback(metadata)
-				panel:Remove()
-			end
-
-			if msg:StartWith("ERROR:") then
-				local errmsg = string.sub(msg, 7)
-
-				callback({ err = errmsg })
-				panel:Remove()
-			end
-		end
-
-		panel:OpenURL(PREVIEW_URL:format(data))
+		local panel = self:CreateWebCrawler(callback)
 
 		function panel:OnDocumentReady(url)
 			if IsValid(panel) then
@@ -127,11 +105,7 @@ if (CLIENT) then
 			end
 		end
 
-		timer.Simple(10, function()
-			if IsValid(panel) then
-				panel:Remove()
-			end
-		end )
+		panel:OpenURL(PREVIEW_URL:format(data))
 
 	end
 end

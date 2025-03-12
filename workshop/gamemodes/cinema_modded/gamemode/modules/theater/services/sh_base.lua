@@ -104,6 +104,47 @@ if CLIENT then
 		}
 	]]
 
+	function SERVICE:SearchFunctions( browser )
+		-- Use in Service
+	end
+
+	function SERVICE:CreateWebCrawler(callback)
+
+		local panel = vgui.Create("DHTML")
+		panel:SetSize(100,100)
+		panel:SetAlpha(0)
+		panel:SetMouseInputEnabled(false)
+
+		function panel:ConsoleMessage(msg)
+
+			if GetConVar("cinema_html_filter"):GetBool() then
+				print(("[%s - Debug]: %s"):format(self.Name, msg))
+			end
+
+			if msg:StartWith("METADATA:") then
+				local metadata = util.JSONToTable(string.sub(msg, 10))
+
+				callback(metadata)
+				panel:Remove()
+			end
+
+			if msg:StartWith("ERROR:") then
+				local errmsg = string.sub(msg, 7)
+
+				callback({ err = errmsg })
+				panel:Remove()
+			end
+		end
+
+		timer.Simple(10, function()
+			if IsValid(panel) then
+				panel:Remove()
+			end
+		end )
+
+		return panel
+	end
+
 	function SERVICE:LoadExFunctions(panel)
 		panel:QueueJavascript(THEATER_INTERFACE)
 
@@ -114,10 +155,6 @@ if CLIENT then
 			)
 
 		end )
-	end
-
-	function SERVICE:SearchFunctions( browser )
-		-- Use in Service
 	end
 
 	function SERVICE:LoadVideo( Video, panel )

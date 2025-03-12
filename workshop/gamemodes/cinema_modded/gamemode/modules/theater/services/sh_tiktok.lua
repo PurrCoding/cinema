@@ -54,7 +54,7 @@ if CLIENT then
 
 		setTimeout(function(){
 			(async () => {
-				{@Extras} // Added via LUA
+				var contentID = "{@contentID}"
 				var videosrc = await document.querySelector(`[href$=\"${contentID}\"]`)
 
 				const response = await fetch(`https://www.tiktok.com/oembed?url=${videosrc.href}`)
@@ -68,10 +68,10 @@ if CLIENT then
 						thumbnail: json.thumbnail_url,
 						title: title
 					}
-					
-					console.log("METADATA:" + JSON.stringify(metadata))	
+
+					console.log("METADATA:" + JSON.stringify(metadata))
 				}
-			})()	
+			})()
 		}, 500)
 	]]
 
@@ -91,7 +91,7 @@ if CLIENT then
 			} else {
 				console.log('DivGuestModeContainer not found');
 			}
-		}, 500); 
+		}, 500);
 	]]
 
 	function SERVICE:LoadProvider(Video, panel)
@@ -107,48 +107,19 @@ if CLIENT then
 
 	function SERVICE:GetMetadata( data, callback )
 
-		local panel = vgui.Create("DHTML")
-		panel:SetSize(500,500)
-		panel:SetAlpha(0)
-		panel:SetMouseInputEnabled(false)
+		local panel = self:CreateWebCrawler(callback)
+		local js = METADATA_JS
+		js = js:Replace("{@contentID}", data)
 
-		function panel:ConsoleMessage(msg)
-
-			if msg:StartWith("METADATA:") then
-				local metadata = util.JSONToTable(string.sub(msg, 10))
-
-				callback(metadata)
-				panel:Remove()
-			end
-
-			if msg:StartWith("ERROR:") then
-				local errmsg = string.sub(msg, 7)
-
-				callback({ err = errmsg })
-				panel:Remove()
+		function panel:OnDocumentReady(url)
+			if IsValid(panel) then
+				panel:QueueJavascript(js)
 			end
 		end
 
 		panel:OpenURL(EMBED_URL:format(data) ..
 			EMBED_PARAM .. "&autoplay=0"
 		)
-
-		function panel:OnDocumentReady(url)
-			if IsValid(panel) then
-				panel:QueueJavascript(METADATA_JS:Replace("{@Extras}", ([[
-					var contentID = "%s"
-				]]):format(
-						data
-					)
-				))
-			end
-		end
-
-		timer.Simple(10, function()
-			if IsValid(panel) then
-				panel:Remove()
-			end
-		end )
 	end
 
 	function SERVICE:SearchFunctions( browser )
