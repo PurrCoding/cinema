@@ -1,11 +1,12 @@
 -- TikTok service for Cinema created by agentsix1 ( https://github.com/agentsix1 )
-local SERVICE = {}
+local SERVICE = {
+	Name = "Tiktok",
+	IsTimed = true,
 
-SERVICE.Name = "Tiktok"
-SERVICE.IsTimed = true
+	Dependency = DEPENDENCY_COMPLETE,
+	ExtentedVideoInfo = true
+}
 
-SERVICE.Dependency = DEPENDENCY_COMPLETE
-SERVICE.ExtentedVideoInfo = true
 
 local EMBED_URL = "https://www.tiktok.com/embed/v3/%s"
 local EMBED_PARAM = "?controls=0&fullscreen_button=0&play_button=0&volume_control=0&timestamp=0&loop=0&description=0&music_info=0&rel=0"
@@ -61,7 +62,7 @@ if CLIENT then
 
 				var player = document.getElementsByTagName("VIDEO")[0]
 				if (!!player) {
-					var title = (json.title.length == 0 && `@${json.author_name} (${contentID})` || json.title.substr(0, 50)) + " ..."
+					var title = json.title.length == 0 && `@${json.author_name} (${contentID})` || json.title.substr(0, 75) + " ..."
 					var metadata = {
 						duration: Math.round(player.duration),
 						thumbnail: json.thumbnail_url,

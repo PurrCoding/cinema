@@ -1,14 +1,13 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "Base",
+	IsTimed = true,
 
-SERVICE.Name 		= "Base"
-SERVICE.IsTimed 	= true
-
--- Defaut Variables
-SERVICE.IsCacheable = true -- Return false to prevent from storing into cinema_history on server
-SERVICE.Dependency = DEPENDENCY_NONE -- DEPENDENCY_NONE = Normal | DEPENDENCY_PARTIAL = x86-64 Beta | DEPENDENCY_COMPLETE = x86-64 Beta + CEF Codec Fix
-SERVICE.ExtentedVideoInfo = false -- Passes the complete video data instead of just the Data ID in GetVideoInfo
-SERVICE.TheaterType = THEATER_NONE  -- THEATER_NONE = Normal | THEATER_PRIVATE = Private only
-SERVICE.ControllerSet = false
+	-- Defaut Variables
+	IsCacheable = true, -- Return false to prevent from storing into cinema_history on server
+	Dependency = DEPENDENCY_NONE, -- DEPENDENCY_NONE = Normal | DEPENDENCY_PARTIAL = x86-64 Beta | DEPENDENCY_COMPLETE = x86-64 Beta + CEF Codec Fix
+	ExtentedVideoInfo = false, -- Passes the complete video data instead of just the Data ID in GetVideoInfo
+	TheaterType = THEATER_NONE  -- THEATER_NONE = Normal | THEATER_PRIVATE = Private only
+}
 
 function SERVICE:GetName()
 	return self.Name
@@ -114,7 +113,6 @@ if CLIENT then
 				("if (window.theater) theater.setVolume(%s)"):format( theater.GetVolume() )
 			)
 
-			self.ControllerSet = true
 		end )
 	end
 
