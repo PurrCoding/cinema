@@ -1,10 +1,10 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "VKontakte",
+	IsTimed = true,
 
-SERVICE.Name = "VKontakte"
-SERVICE.IsTimed = true
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
-SERVICE.ExtentedVideoInfo = true
+	Dependency = DEPENDENCY_COMPLETE,
+	ExtentedVideoInfo = true
+}
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("vk.com")

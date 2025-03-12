@@ -1,9 +1,9 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "Dailymotion",
+	IsTimed = true,
 
-SERVICE.Name = "Dailymotion"
-SERVICE.IsTimed = true
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
+	Dependency = DEPENDENCY_COMPLETE
+}
 
 local API_URL = "https://api.dailymotion.com/video/%s?fields=id,title,duration,thumbnail_url,status,mode,private"
 

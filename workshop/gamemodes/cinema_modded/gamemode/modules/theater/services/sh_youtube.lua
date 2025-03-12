@@ -1,17 +1,15 @@
-local SERVICE = {}
-
-SERVICE.Name = "YouTube"
-SERVICE.IsTimed = true
-
-SERVICE.Dependency = DEPENDENCY_PARTIAL
-SERVICE.ExtentedVideoInfo = true
-
 --[[
-	Credits to veitikka (https://github.com/veitikka) for fixing YouTube service and writing the
-	Workaround with a Metadata parser.
-
+	Workaround with a Metadata parser made by veitikka (https://github.com/veitikka)
 	Src: https://github.com/samuelmaddock/gm-mediaplayer/pull/34
 --]]
+
+local SERVICE = {
+	Name = "YouTube",
+	IsTimed = true,
+
+	Dependency = DEPENDENCY_PARTIAL,
+	ExtentedVideoInfo = true,
+}
 
 -- Lua search patterns to find metadata from the html
 local patterns = {

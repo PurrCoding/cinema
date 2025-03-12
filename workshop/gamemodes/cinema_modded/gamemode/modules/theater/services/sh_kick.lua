@@ -1,9 +1,9 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "Kick",
+	IsTimed = false,
 
-SERVICE.Name = "Kick"
-SERVICE.IsTimed = false
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
+	Dependency = DEPENDENCY_COMPLETE
+}
 
 local Ignored = {
 	["category"] = true,

@@ -1,9 +1,9 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "Rutube",
+	IsTimed = true,
 
-SERVICE.Name = "Rutube"
-SERVICE.IsTimed = true
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
+	Dependency = DEPENDENCY_COMPLETE
+}
 
 local API_URL = "https://rutube.ru/api/video/%s/?format=json"
 

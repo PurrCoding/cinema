@@ -1,15 +1,17 @@
 --[[
-            Cinema Modded Bilibili Legacy Support
-                   Powered by OriginalSnow
-
-        You can edit this code.But you cant upload anymore.
+	Bilibili Support Legacy by OriginalSnow
+	Note: You can edit this code. But you cant upload anymore.
 ]]
--- Last update : 2023/8/4
-local SERVICE = {}
-SERVICE.Name = "哔哩哔哩Legacy"
-SERVICE.IsTimed = true
-SERVICE.Dependency = DEPENDENCY_COMPLETE
+
+local SERVICE = {
+    Name = "哔哩哔哩Legacy",
+    IsTimed = true,
+
+    Dependency = DEPENDENCY_COMPLETE
+}
+
 local META_URL = "https://www.bilibili.com/video/%s"
+
 function SERVICE:Match(url)
     local av = url.host:match("www.bilibili.com") and string.match(url.path, "av[%w*]+")
     return av or b23 or false

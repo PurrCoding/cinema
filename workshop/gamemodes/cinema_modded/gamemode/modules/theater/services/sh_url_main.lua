@@ -1,16 +1,13 @@
+local SERVICE = {
+	Name = "URL",
+	IsTimed = true,
+
+	Dependency = DEPENDENCY_COMPLETE,
+	ExtentedVideoInfo = true
+}
+
 local url2 = url -- keep reference for extracting url data
-
-local SERVICE = {}
-
-SERVICE.Name = "URL"
-SERVICE.IsTimed = true
-SERVICE.Hidden = false
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
-SERVICE.ExtentedVideoInfo = true
-
--- Used for matching
-local validExtensions = {}
+local validExtensions = {} -- Used for matching
 
 local imageExtensions = {
 	["jpg"] = true,
@@ -29,25 +26,7 @@ local videoExtensions = {
 validExtensions = table.Merge(validExtensions, videoExtensions)
 
 function SERVICE:Match( url )
-	local allowed = true
-
-	if url.file and validExtensions[ url.file.ext ] then
-		allowed = true
-	end
-
-	for class, obj in pairs(theater.Services) do
-		if (obj.Name == self.Name) or
-			(obj.Name == "Base") or obj.Hidden then
-			continue
-		end
-
-		if obj:Match(url) then
-			allowed = false
-			break
-		end
-	end
-
-	return allowed
+	return (url.file and validExtensions[ url.file.ext ] and true or false)
 end
 
 if (CLIENT) then
@@ -110,21 +89,8 @@ if (CLIENT) then
 		</body></html>
 	]]
 
-	local function DropboxParse(url)
-		url = url:gsub([[^http%://dl%.dropboxusercontent%.com/]], [[https://dl.dropboxusercontent.com/]])
-		url = url:gsub([[^https?://dl.dropbox.com/]], [[https://www.dropbox.com/]])
-		url = url:gsub([[^https?://www.dropbox.com/s/(.+)%?dl%=[01]$]], [[https://dl.dropboxusercontent.com/s/%1]])
-		url = url:gsub([[^https?://www.dropbox.com/s/(.+)$]], [[https://dl.dropboxusercontent.com/s/%1]])
-
-		return url
-	end
-
 	function SERVICE:LoadProvider( Video, panel )
 		local url = Video:Data()
-
-		if url:find("dropbox", 1, true) then
-			url = DropboxParse(url)
-		end
 
 		panel:SetHTML(HTML_BASE:Replace("{@VideoURL}", url))
 		panel.OnDocumentReady = function(pnl)
@@ -137,10 +103,6 @@ if (CLIENT) then
 		panel:SetSize(100,100)
 		panel:SetAlpha(0)
 		panel:SetMouseInputEnabled(false)
-
-		if data:find("dropbox", 1, true) then
-			data = DropboxParse(data)
-		end
 
 		function panel:ConsoleMessage(msg)
 			if msg:StartWith("METADATA:") then

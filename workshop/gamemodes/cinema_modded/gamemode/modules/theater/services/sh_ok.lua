@@ -1,9 +1,9 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "OK",
+	IsTimed = true,
 
-SERVICE.Name = "OK"
-SERVICE.IsTimed = true
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
+	Dependency = DEPENDENCY_COMPLETE
+}
 
 local ValidTypes = {
 	["video"] = true,

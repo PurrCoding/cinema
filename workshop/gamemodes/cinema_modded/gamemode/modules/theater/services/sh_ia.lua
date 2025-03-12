@@ -1,9 +1,9 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "Internet Archive",
+	IsTimed = true,
 
-SERVICE.Name = "Internet Archive"
-SERVICE.IsTimed = true
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
+	Dependency = DEPENDENCY_COMPLETE
+}
 
 local METADATA_URL = "https://archive.org/metadata/%s/files/"
 local DOWNLOAD_URL = "https://cors.archive.org/download/%s/%s"

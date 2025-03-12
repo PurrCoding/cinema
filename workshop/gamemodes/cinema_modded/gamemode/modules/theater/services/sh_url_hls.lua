@@ -1,10 +1,10 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "URL (HLS Video)",
+	IsTimed = true,
 
-SERVICE.Name = "URL (HLS Video)"
-SERVICE.IsTimed = true
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
-SERVICE.ExtentedVideoInfo = true
+	Dependency = DEPENDENCY_COMPLETE,
+	ExtentedVideoInfo = true
+}
 
 local validExtensions = {
 	["m3u8"] = true,

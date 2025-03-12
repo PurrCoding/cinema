@@ -1,9 +1,9 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "Rumble",
+	IsTimed = true,
 
-SERVICE.Name = "Rumble"
-SERVICE.IsTimed = true
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
+	Dependency = DEPENDENCY_COMPLETE,
+}
 
 local API_URL = "https://rumble.com/api/Media/oembed.json?url=https://rumble.com/%s"
 

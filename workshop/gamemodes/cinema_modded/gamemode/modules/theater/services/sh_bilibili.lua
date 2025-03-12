@@ -1,16 +1,18 @@
 --[[
-                Cinema Modded Bilibili Support
-                   Powered by OriginalSnow
-
-        You can edit this code.But you cant upload anymore.
+	Bilibili Support by OriginalSnow
+	Note: You can edit this code. But you cant upload anymore.
 ]]
--- Last update : 2023/8/4
-local SERVICE = {}
-SERVICE.Name = "哔哩哔哩" -- 服务名称
-SERVICE.IsTimed = true -- 是否是计时视频
-SERVICE.Dependency = DEPENDENCY_COMPLETE
+
+local SERVICE = {
+    Name = "哔哩哔哩", -- 服务名称
+    IsTimed = true, -- 是否是计时视频
+
+    Dependency = DEPENDENCY_COMPLETE
+}
+
 -- 目前支持AV号与BV号
 local META_URL = "https://www.bilibili.com/video/%s"
+
 function SERVICE:Match(url) -- 匹配B站网址
     local bv = url.host:match("www.bilibili.com") and string.match(url.path, "BV[%w*]+")
     local b23 = url.host:match("b23.tv") and string.match(url.path, "BV[%w*]+")

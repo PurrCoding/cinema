@@ -1,10 +1,10 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "Google Drive",
+	IsTimed = true,
 
-SERVICE.Name = "Google Drive"
-SERVICE.IsTimed = true
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
-SERVICE.ExtentedVideoInfo = true
+	Dependency = DEPENDENCY_COMPLETE,
+	ExtentedVideoInfo = true
+}
 
 local PREVIEW_URL = "https://drive.google.com/file/d/%s/preview?autoplay=true"
 

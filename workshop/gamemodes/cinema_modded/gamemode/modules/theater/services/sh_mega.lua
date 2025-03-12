@@ -1,10 +1,10 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "Mega",
+	IsTimed = true,
 
-SERVICE.Name = "Mega"
-SERVICE.IsTimed = true
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
-SERVICE.ExtentedVideoInfo = true
+	Dependency = DEPENDENCY_COMPLETE,
+	ExtentedVideoInfo = true
+}
 
 local PREVIEW_URL = "https://mega.nz/embed/%s"
 

@@ -1,12 +1,11 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "URL (Image)",
+	IsTimed = false,
+	Hidden = true,
 
-SERVICE.Name = "URL (Image)"
-SERVICE.IsTimed = false
-SERVICE.Hidden = true
-
-SERVICE.IsCacheable = false
-SERVICE.Dependency = DEPENDENCY_NONE
-
+	IsCacheable = false,
+	Dependency = DEPENDENCY_NONE
+}
 
 if (CLIENT) then
 	function SERVICE:LoadProvider( Video, panel )

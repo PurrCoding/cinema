@@ -1,9 +1,9 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "Twitch.TV Stream",
+	IsTimed = false,
 
-SERVICE.Name = "Twitch.TV Stream"
-SERVICE.IsTimed = false
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
+	Dependency = DEPENDENCY_COMPLETE
+}
 
 local THUMB_URL = "https://static-cdn.jtvnw.net/previews-ttv/live_user_%s-1280x720.jpg"
 local Ignored = {

@@ -1,9 +1,9 @@
-local SERVICE = {}
+local SERVICE = {
+	Name = "Sibnet",
+	IsTimed = true,
 
-SERVICE.Name = "Sibnet"
-SERVICE.IsTimed = true
-
-SERVICE.Dependency = DEPENDENCY_COMPLETE
+	Dependency = DEPENDENCY_COMPLETE
+}
 
 local API_URL = "https://video.sibnet.ru/shell.php?videoid=%s"
 
