@@ -152,8 +152,11 @@ function PANEL:Think()
 end
 
 function PANEL:FetchPageURL()
-	local js = "console.log(\"GETURL:\" + window.location.href )"
-	self:RunJavascript(js)
+	self:RunJavascript([[
+		(async () => {
+			console.log("GETURL:" + window.location.href)
+		})();
+	]])
 end
 
 function PANEL:OpenURL( url, ignoreHistory )
