@@ -17,23 +17,23 @@ end
 
 if CLIENT then
 	local THEATER_JS = [[
-			var done = false
+			var cookieClicked = false
 			var checkerInterval = setInterval(function () {
 
 				var player = document.getElementsByTagName("VIDEO")[0]
 				if (!!player) {
 
 					var banner = document.querySelector("tiktok-cookie-banner")
-					if (!!banner && !done) {
+					if (!!banner && !cookieClicked) {
 						var buttons = banner.shadowRoot.querySelectorAll(".tiktok-cookie-banner .button-wrapper button")
 
-						if (!!buttons && !!buttons[1]) {
-							var consent = buttons[1]
+						if (!!buttons && !!buttons[0]) {
+							var consent = buttons[0]
 
 							consent.click()
-							done = true
+							cookieClicked = true
 						} else {
-							done = true
+							cookieClicked = true
 						}
 
 						return;
@@ -76,21 +76,43 @@ if CLIENT then
 	]]
 
 	local BROWSER_JS = [[
-		setInterval(() => {
-			const guestModeContainer = document.querySelector('[class*="DivGuestModeContainer"]');
-			if (guestModeContainer) {
-				console.log('DivGuestModeContainer found:', guestModeContainer);
+		var cookieClicked = false
 
-				const boxContainer = guestModeContainer.querySelector('[class*="DivBoxContainer"]');
-				if (boxContainer) {
-					boxContainer.click();
-					console.log('DivBoxContainer clicked:', boxContainer);
+		setInterval(() => {
+			{ // Guestmode 
+				const guestModeContainer = document.querySelector('[class*="DivGuestModeContainer"]');
+				if (guestModeContainer) {
+					console.log('DivGuestModeContainer found:', guestModeContainer);
+
+					const boxContainer = guestModeContainer.querySelector('[class*="DivBoxContainer"]');
+					if (boxContainer) {
+						boxContainer.click();
+						console.log('DivBoxContainer clicked:', boxContainer);
+					} else {
+						console.log('DivBoxContainer not found inside DivGuestModeContainer');
+					}
 				} else {
-					console.log('DivBoxContainer not found inside DivGuestModeContainer');
+					console.log('DivGuestModeContainer not found');
 				}
-			} else {
-				console.log('DivGuestModeContainer not found');
 			}
+
+			{ // Cookie Consent
+				var banner = document.querySelector("tiktok-cookie-banner")
+					if (!!banner && !cookieClicked) {
+						var buttons = banner.shadowRoot.querySelectorAll(".tiktok-cookie-banner .button-wrapper button")
+
+						if (!!buttons && !!buttons[0]) {
+							var consent = buttons[0]
+
+							consent.click()
+							cookieClicked = true
+						} else {
+							cookieClicked = true
+						}
+
+						return;
+					}
+				}
 		}, 500);
 	]]
 
