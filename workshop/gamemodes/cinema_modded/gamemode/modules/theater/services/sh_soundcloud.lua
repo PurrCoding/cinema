@@ -109,7 +109,7 @@ if CLIENT then
 
 	local BROWSER_JS = [[
 		setInterval(() => {
-			var cookieBanner = document.querySelector("#onetrust-banner-sdk #onetrust-accept-btn-handler")
+			var cookieBanner = document.querySelector("#onetrust-banner-sdk #onetrust-reject-all-handler")
 			if (!!cookieBanner) {cookieBanner.click()}
 		}, 500);
 	]]
