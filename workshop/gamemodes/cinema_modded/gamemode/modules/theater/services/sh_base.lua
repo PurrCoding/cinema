@@ -115,10 +115,11 @@ if CLIENT then
 		panel:SetAlpha(0)
 		panel:SetMouseInputEnabled(false)
 
+		local serviceName = self:GetName()
 		function panel:ConsoleMessage(msg)
 
 			if GetConVar("cinema_html_filter"):GetBool() then
-				print(("[%s - Debug]: %s"):format(self.Name, msg))
+				print(("[%s - Debug]: %s"):format(serviceName, msg))
 			end
 
 			if msg:StartWith("METADATA:") then
