@@ -107,6 +107,13 @@ if CLIENT then
 		</html>
 	]]
 
+	local BROWSER_JS = [[
+		setInterval(() => {
+			var cookieBanner = document.querySelector("#onetrust-banner-sdk #onetrust-accept-btn-handler")
+			if (!!cookieBanner) {cookieBanner.click()}
+		}, 500);
+	]]
+
 	function SERVICE:LoadProvider(Video, panel)
 		local html = EMBED_HTML
 		html = html:Replace("{@audioPath}", Video:Data())
@@ -130,6 +137,12 @@ if CLIENT then
 
 		panel:SetHTML(html)
 
+	end
+
+	function SERVICE:SearchFunctions( browser )
+		if not IsValid( browser ) then return end
+
+		browser:RunJavascript(BROWSER_JS)
 	end
 end
 
