@@ -7,6 +7,11 @@ local SERVICE = {
 	ExtentedVideoInfo = true
 }
 
+local Ignored = {
+	["sets"] = true,
+}
+
+
 function SERVICE:Match(url)
 	return url.host and url.host:match("soundcloud.com")
 end
@@ -149,8 +154,8 @@ end
 function SERVICE:GetURLInfo(url)
 
 	if url.path then
-		local author, song = url.path:match("/([%a%d-_]+)/([%a%d-_]+)$")
-		if author and song then return { Data = ("%s/%s"):format(author, song)} end
+		local path1, path2 = url.path:match("/([%a%d-_]+)/([%a%d-_]+)$")
+		if path1 and not Ignored[path1] and path2 then return { Data = ("%s/%s"):format(path1, path2)} end
 	end
 
 	return false
