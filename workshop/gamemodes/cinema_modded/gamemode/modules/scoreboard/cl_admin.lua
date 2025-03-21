@@ -26,6 +26,16 @@ function ADMIN:Init()
 	self.Options:SetPadding( 4 )
 	self.Options:SetSpacing( 4 )
 
+	if Theater and theater.IsVideoTimed(Theater._Video._VideoType) then
+
+		-- SeekBox Panel
+		local SeekBox = vgui.Create( "TheaterSeekBox", self )
+		self.Options:AddItem(SeekBox)
+
+		local SeekButtons = vgui.Create( "TheaterSeekButtons", self )
+		self.Options:AddItem(SeekButtons)
+	end
+
 	-- Skip the current video
 	local VoteSkipButton = vgui.Create( "TheaterButton" )
 	VoteSkipButton:SetText( translations:Format("Theater_Skip") )
@@ -33,22 +43,6 @@ function ADMIN:Init()
 		RunConsoleCommand( "cinema_forceskip" )
 	end
 	self.Options:AddItem(VoteSkipButton)
-
-	-- Seek
-	local SeekButton = vgui.Create( "TheaterButton" )
-	SeekButton:SetText( translations:Format("Theater_Seek") )
-	SeekButton.DoClick = function(self)
-
-		Derma_StringRequest( translations:Format("Theater_Seek"),
-			translations:Format("Theater_SeekQuery"),
-			"0",
-			function( strTextOut ) RunConsoleCommand( "cinema_seek", strTextOut ) end,
-			function( strTextOut ) end,
-			translations:Format("Theater_Seek"),
-			translations:Format("Cancel") )
-
-	end
-	self.Options:AddItem(SeekButton)
 
 	-- Admin-only options
 	if LocalPlayer():IsAdmin() then
