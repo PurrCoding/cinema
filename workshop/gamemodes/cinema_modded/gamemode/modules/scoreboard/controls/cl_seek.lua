@@ -1,3 +1,6 @@
+surface.CreateFont( "ScoreboardSeekDuration", { font = "Open Sans Condensed", size = 18, weight = 200 } )
+surface.CreateFont( "ScoreboardSeekDurationSmall", { font = "Open Sans Condensed", size = 16, weight = 200 } )
+
 local ceil = math.ceil
 local clamp = math.Clamp
 
@@ -51,18 +54,18 @@ function SEEKBOX:Init()
 	end
 
 	self.TimeLbl = vgui.Create( "DLabel", self )
-	self.TimeLbl:SetFont( "MP.MediaTime" )
+	self.TimeLbl:SetFont( "ScoreboardSeekDuration" )
 	self.TimeLbl:SetText( "" )
 	self.TimeLbl:SetTextColor( color_white )
 
 	self.DividerLbl = vgui.Create( "DLabel", self )
 	self.DividerLbl:SetText( "/" )
-	self.DividerLbl:SetFont( "MP.MediaDuration" )
+	self.DividerLbl:SetFont( "ScoreboardSeekDurationSmall" )
 	-- self.DividerLbl:SetTextColor( color_white )
 
 	self.DurationLbl = vgui.Create( "DLabel", self )
 	self.DurationLbl:SetText( "" )
-	self.DurationLbl:SetFont( "MP.MediaDuration" )
+	self.DurationLbl:SetFont( "ScoreboardSeekDurationSmall" )
 	-- self.DurationLbl:SetTextColor( color_white )
 
 end
