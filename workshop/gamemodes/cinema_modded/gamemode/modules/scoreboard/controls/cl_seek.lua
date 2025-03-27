@@ -46,7 +46,19 @@ function SEEKBOX:Init()
 
 		RunConsoleCommand( "cinema_seek", seekTime )
 	end
-
+	
+	-- Handling mouse clicks on the slider because some silly people not knows you need to hold the knob like me
+	self.SeekBar.OnMousePressed = function(panel, mousecode)
+		local x, y = panel:CursorPos()
+		local newSlideX = x / panel:GetWide()
+		panel:SetSlideX(newSlideX)
+	
+		local seekTime = ceil(newSlideX * self.Media.duration)
+		self.TimeLbl:SetText(FormatSeconds(seekTime))
+	
+		RunConsoleCommand("cinema_seek", seekTime)
+        end
+	
 	for _, child in pairs( self.SeekBar:GetChildren() ) do
 		if child ~= self.SeekBar.Knob then
 			child:Remove()
