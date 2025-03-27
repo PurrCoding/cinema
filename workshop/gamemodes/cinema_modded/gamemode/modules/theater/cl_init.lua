@@ -249,6 +249,11 @@ function ReceiveVideo()
 	if IsVideoTimed(info.Type) then
 		info.StartTime = net.ReadFloat()
 		info.Duration = net.ReadInt(32)
+		info.Paused = net.ReadBool()
+
+		if info.Paused then
+			info.PauseTime = net.ReadFloat()
+		end
 	end
 
 	local Video = VIDEO:Init(info)
@@ -275,6 +280,45 @@ function ReceiveVideo()
 end
 net.Receive( "TheaterVideo", ReceiveVideo )
 
+function ReceivePlayPause()
+
+	local paused = net.ReadBool()
+	local startTime
+
+	local panel = ActivePanel()
+	local Video = CurrentVideo()
+	local Theater = LocalPlayer():GetTheater()
+
+	if not IsValid(panel) or not Video or not Theater then return end
+
+	if paused then
+		pausetime = net.ReadFloat()
+
+		Theater._Video._PauseTime = pausetime
+		LastVideo._PauseTime = pausetime
+
+		startTime = RealTime() - (pausetime - Video:StartTime())
+
+		if startTime then
+			Theater._Video._VideoStart = startTime
+			LastVideo._VideoStart = startTime
+
+			local js = string.format( "if(window.theater) theater.seek(%s);", RealTime() - startTime )
+			panel:QueueJavascript( js )
+		end
+	end
+
+	Theater._Video._Paused = paused
+	LastVideo._Paused = paused
+
+	local js = string.format( "if(window.theater) theater.pause(%s);", paused and "true" or "false" )
+	panel:QueueJavascript( js )
+
+	PollServer()
+
+end
+net.Receive( "TheaterPlayPause", ReceivePlayPause )
+
 function ReceiveSeek()
 
 	local seconds = net.ReadFloat()
@@ -288,7 +332,7 @@ function ReceiveSeek()
 	Video._VideoStart = seconds
 	Theater._VideoStart = seconds
 
-	local js = string.format( "if(window.theater) theater.seek(%s);", CurTime() - seconds )
+	local js = string.format( "if(window.theater) theater.seek(%s);", RealTime() - seconds )
 	panel:QueueJavascript( js )
 
 	PollServer()

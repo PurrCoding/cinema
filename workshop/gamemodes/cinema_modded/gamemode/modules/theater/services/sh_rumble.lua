@@ -41,7 +41,7 @@ if (CLIENT) then
 				return onFail("API Error")
 			end
 
-			local startTime = math.Round(CurTime() - Video:StartTime())
+			local startTime = math.Round(RealTime() - Video:StartTime())
 			local embed = response.html:match("(https://rumble.com/embed/[%a%d-_]+/)")
 				.. "?pub=7a20&rel=5&autoplay=2"
 				.. (self.IsTimed and "&t=" .. startTime or "" )

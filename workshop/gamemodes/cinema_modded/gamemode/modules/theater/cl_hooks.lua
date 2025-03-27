@@ -19,7 +19,7 @@ function GM:PostVideoLoad( Video )
 	-- Print nothing if nothing is played
 	if tostring(Video:Title()) ~= "NoVideoPlaying" then
 
-		local startTime = CurTime() - Video:StartTime()
+		local startTime = RealTime() - Video:StartTime()
 
 		-- Output debug information
 		Msg("Loaded Video\n")

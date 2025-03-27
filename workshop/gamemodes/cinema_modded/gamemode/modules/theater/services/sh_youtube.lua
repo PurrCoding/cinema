@@ -69,32 +69,50 @@ if (CLIENT) then
 					if (!!player && !!player.getDuration) {
 						clearInterval(checkerInterval);
 
-						{ // Native video controll
-							player.volume = 0;
-							player.currentTime = 0;
-							player.duration = player.getDuration();
+						player.addEventListener("onReady", function () {
+							player.setVolume(0)
+							player.pauseVideo();
 
-							Object.defineProperty(player, "volume", {
-								get() {
-									return player.getVolume();
-								},
-								set(volume) {
-									if (player.isMuted()) {
-										player.unMute();
-									}
-									player.setVolume(volume * 100);
-								},
-							});
+							player.removeEventListener("onReady")
 
-							Object.defineProperty(player, "currentTime", {
-								get() {
-									return Number(player.getCurrentTime());
-								},
-								set(time) {
-									player.seekTo(time, true);
-								},
-							});
-						}
+							{ // Native video controll
+								player.volume = 0;
+								player.currentTime = 0;
+								player.duration = player.getDuration();
+
+								player.play = (() => {
+									player.playVideo()
+								})
+
+								player.pause = (() => {
+									player.pauseVideo()
+								})
+
+								Object.defineProperty(player, "volume", {
+									get() {
+										return player.getVolume();
+									},
+									set(volume) {
+										if (player.isMuted()) {
+											player.unMute();
+										}
+										player.setVolume(volume * 100);
+									},
+								});
+
+								Object.defineProperty(player, "currentTime", {
+									get() {
+										return Number(player.getCurrentTime());
+									},
+									set(time) {
+										player.seekTo(time, true);
+									},
+								});
+							}
+
+							window.cinema_controller = player;
+							exTheater.controllerReady();
+						})
 
 						{ // Player resizer
 							var frame = player.g;
@@ -110,8 +128,6 @@ if (CLIENT) then
 							if (!!root) { root.remove(); }
 						}
 
-						window.cinema_controller = player;
-						exTheater.controllerReady();
 					}
 				}
 			}, 50);

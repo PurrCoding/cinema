@@ -13,7 +13,7 @@ function VIDEO:Init( info, ply )
 		o.id = -1 			-- set by theater
 		o.theaterId = -1 	-- set by theater
 
-		o._RequestTime = CurTime()
+		o._RequestTime = RealTime()
 		o._Owner = ply
 		o._OwnerName = IsValid(ply) and ply:Nick() or "" -- in case they disconnect
 		o._OwnerSteamID = IsValid(ply) and ply:SteamID() or ""
@@ -30,6 +30,8 @@ function VIDEO:Init( info, ply )
 	o._VideoType = info.Type or ""
 	o._VideoData = info.Data or ""
 	o._VideoStart = info.StartTime or 0
+	o._PauseTime = info.PauseTime or nil
+	o._Paused = info.Paused or false
 
 	o._VideoTitle = string.gsub(info.Title or "(Unknown)", "%%", "%%%%")
 	o._VideoDuration = info.Duration or 0
@@ -56,7 +58,28 @@ function VIDEO:Duration()
 end
 
 function VIDEO:StartTime()
-	return self._VideoStart
+	if isnumber(seconds) then
+		if self._PauseTime then
+			self._PauseTime = RealTime()
+		end
+
+		self._VideoStart = seconds
+	end
+
+	if self._PauseTime then
+		local diff = self._PauseTime - self._VideoStart
+		return RealTime() - diff
+	else
+		return self._VideoStart
+	end
+end
+
+function VIDEO:PauseTime()
+	return self._PauseTime
+end
+
+function VIDEO:IsPaused()
+	return self._Paused
 end
 
 function VIDEO:Thumbnail()

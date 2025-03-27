@@ -88,6 +88,22 @@ if CLIENT then
 					}
 				}
 
+				pause(state) {
+					if (!!this.player) {
+
+						switch (state) {
+							case true:
+								this.player.pause();
+								break;
+							case false:
+								this.player.play();
+								break;
+							default:
+								break;
+						}
+					}
+				}
+
 				sync(time) {
 					if (!!this.player && !!this.player.currentTime && !!time) {
 
@@ -147,14 +163,30 @@ if CLIENT then
 	end
 
 	function SERVICE:LoadExFunctions(panel)
+
 		panel:QueueJavascript(THEATER_INTERFACE)
 
 		panel:AddFunction( "exTheater", "controllerReady", function(data)
+			if self.ControllerLoaded then return end
 
-			panel:QueueJavascript(
-				("if (window.theater) theater.setVolume(%s)"):format( theater.GetVolume() )
-			)
+			timer.Simple(0.1, function()
+				local video = theater.CurrentVideo()
+				if video then
+					local paused = video:IsPaused()
 
+					panel:QueueJavascript(
+						("if(window.theater) theater.pause(%s);"):format( paused and "true" or "false" )
+					)
+
+					if not paused then
+						panel:QueueJavascript(
+							("if (window.theater) theater.setVolume(%s)"):format( theater.GetVolume() )
+						)
+					end
+				end
+			end)
+
+			self.ControllerLoaded = true
 		end )
 	end
 
@@ -163,6 +195,8 @@ if CLIENT then
 		panel:Stop() -- Stops all panel animations by clearing its animation list. This also clears all delayed animations.
 
 		panel:RunJavascript("if(typeof checkerInterval !== \"undefined\") { clearInterval(checkerInterval); }") -- Stop any remaining Intervals
+
+		self.ControllerLoaded = false
 
 		if self.LoadProvider then
 			self:LoadProvider(Video, panel)

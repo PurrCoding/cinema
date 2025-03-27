@@ -297,6 +297,12 @@ else
 
 	end )
 
+	TheaterPrivilegedCommand( "cinema_playpause", function( Theater, ply, cmd, args )
+
+		Theater:PlayPause( ply )
+
+	end )
+
 	/*
 		Parse URLs in the chat for video requests
 	*/

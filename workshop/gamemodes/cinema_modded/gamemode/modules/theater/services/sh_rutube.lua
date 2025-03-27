@@ -43,7 +43,7 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		local startTime = math.Round(CurTime() - Video:StartTime())
+		local startTime = math.Round(RealTime() - Video:StartTime())
 		if startTime > 0 then
 			startTime = startTime
 		else startTime = 0 end

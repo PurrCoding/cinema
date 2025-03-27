@@ -32,6 +32,14 @@ if (CLIENT) then
 						player.currentTime = 0;
 						player.duration = player.getDuration();
 
+						player.play = (() => {
+							player.playVideo()
+						})
+
+						player.pause = (() => {
+							player.pauseVideo()
+						})
+
 						Object.defineProperty(player, "volume", {
 							get() {
 								return player.getVolume();

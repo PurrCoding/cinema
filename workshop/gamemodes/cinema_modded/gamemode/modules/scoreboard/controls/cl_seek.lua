@@ -88,9 +88,9 @@ function SEEKBOX:Update()
 	local Theater = LocalPlayer():GetTheater() -- get player's theater from their location
 	if Theater and Theater._Video then
 
-		local media = Theater._Video
-		local current = math.Round(CurTime() - media._VideoStart)
-		local duration = math.Round(media._VideoDuration)
+		-- local media = Theater._Video
+		local current = Theater:VideoCurrentTime(true)
+		local duration = math.Round(Theater:VideoDuration())
 
 		self.Media = {
 			current = current,

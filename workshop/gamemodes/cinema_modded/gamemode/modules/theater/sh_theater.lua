@@ -18,6 +18,9 @@ function THEATER:Init( locId, info )
 	o._Width = info.Width or 128
 	o._Height = info.Height or math.Round(o._Width * (9 / 16))
 
+	o._PauseTime = info.PauseTime or nil
+	o._Paused = info.Paused or false
+
 	if SERVER then
 
 		-- Keep for resetting the theater
@@ -114,7 +117,7 @@ function THEATER:SetVideo( Video, PreventDefault )
 
 	if SERVER then
 
-		self._Video._VideoStart = (CurTime() - Video:StartTime()) + 1
+		self._Video._VideoStart = (RealTime() - Video:StartTime()) + 1
 
 		if IsValid( self._ThumbEnt ) then
 			self._ThumbEnt:SetTitle( Video:Title() )
@@ -142,6 +145,10 @@ function THEATER:IsPlaying()
 	end
 end
 
+function THEATER:IsPaused()
+	return self:VideoPauseTime() ~= nil
+end
+
 function THEATER:VideoType()
 	return self._Video and self._Video:Type() or ""
 end
@@ -151,10 +158,18 @@ function THEATER:VideoData()
 end
 
 function THEATER:VideoCurrentTime( clean )
-	if clean then
-		return math.Clamp(math.Round(CurTime() - self:VideoStartTime()), 0, self:VideoDuration())
+	local startTime = self:VideoStartTime()
+
+	if self:VideoPauseTime() then
+		startTime = self:VideoPauseTime() - startTime
 	else
-		return CurTime() - self:VideoStartTime()
+		startTime = RealTime() - startTime
+	end
+
+	if clean then
+		return math.Clamp(math.Round(startTime), 0, self:VideoDuration())
+	else
+		return startTime
 	end
 end
 
@@ -178,6 +193,10 @@ end
 
 function THEATER:VideoStartTime()
 	return self._Video and self._Video:StartTime() or 0
+end
+
+function THEATER:VideoPauseTime()
+	return self._Video and self._Video:PauseTime() or nil
 end
 
 function THEATER:VideoOwnerName()
@@ -213,15 +232,13 @@ function THEATER:Think()
 
 		-- Synchronize clientside video playback
 		if self:IsPlaying() and IsVideoTimed( self:VideoType() ) and
-			( not self.NextSync or self.NextSync < RealTime() ) then
+			( not self.NextSync or self.NextSync < RealTime() )  then
 
 			local time = self:VideoCurrentTime()
 			local panel = ActivePanel()
-			if time > 5 and IsValid(panel) then
+			if time > 5 and IsValid(panel) and not self:IsPaused() then
 
-				local str = string.format(
-					"if(window.theater) theater.sync(%s);", time )
-				panel:QueueJavascript( str )
+				panel:QueueJavascript( ("if(window.theater) theater.sync(%s);"):format( time ) )
 
 				self.NextSync = RealTime() + 5
 
@@ -417,7 +434,6 @@ if SERVER then
 			} )
 		end
 
-
 		-- Create video object and check if the page is valid
 		local vid = VIDEO:Init(info, ply)
 		local VideoType = vid:Type()
@@ -463,6 +479,7 @@ if SERVER then
 
 			-- Successful request, queue video
 			self:QueueVideo( vid )
+			-- PrintTable(vid)
 
 			-- Send video info to player who requested the video
 			-- Used to store request history
@@ -514,7 +531,7 @@ if SERVER then
 
 		-- Convert seek seconds to time after video start
 		if self._Video then
-			self._Video._VideoStart = CurTime() - seconds
+			self._Video._VideoStart = RealTime() - seconds
 		end
 
 		net.Start("TheaterSeek")
@@ -548,6 +565,11 @@ if SERVER then
 				if IsVideoTimed(self:VideoType()) then
 					net.WriteFloat( self:VideoStartTime() )
 					net.WriteInt( self:VideoDuration(), 32 )
+					net.WriteBool( self:IsPaused() )
+
+					if self:IsPaused() and self:VideoPauseTime() then
+						net.WriteFloat( self:VideoPauseTime() )
+					end
 				end
 
 				-- Private theater owner
@@ -559,6 +581,23 @@ if SERVER then
 
 		end )
 
+	end
+
+	function THEATER:PlayPause( ply )
+
+		self._Video._PauseTime = not self:IsPaused() and RealTime() or nil
+		self._Video._Paused = not self:IsPaused() and true or false
+
+		-- Delay for networking latency
+		timer.Simple(0.1, function()
+			net.Start("TheaterPlayPause")
+				net.WriteBool(self:IsPaused())
+
+				if self:IsPaused() and self:VideoPauseTime() then
+					net.WriteFloat( self:VideoPauseTime() )
+				end
+			net.Send(self.Players)
+		end)
 	end
 
 	/*

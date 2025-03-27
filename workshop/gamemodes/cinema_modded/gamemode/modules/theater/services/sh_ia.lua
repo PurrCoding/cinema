@@ -23,7 +23,7 @@ if (CLIENT) then
 		var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName("VIDEO")[0]
 			if (!!player) {
-				if (player.paused) {player.play();}
+				//if (player.paused) {player.play();}
 				if (player.paused === false && player.readyState === 4) {
 					clearInterval(checkerInterval);
 

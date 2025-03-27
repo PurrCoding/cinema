@@ -34,6 +34,13 @@ function ADMIN:Init()
 
 		local SeekButtons = vgui.Create( "TheaterSeekButtons", self )
 		self.Options:AddItem(SeekButtons)
+
+		local PlayPauseButton = vgui.Create( "TheaterButton" )
+		PlayPauseButton:SetText( "Play/Pause" )
+		PlayPauseButton.DoClick = function(self)
+			RunConsoleCommand( "cinema_playpause" )
+		end
+		self.Options:AddItem(PlayPauseButton)
 	end
 
 	-- Skip the current video

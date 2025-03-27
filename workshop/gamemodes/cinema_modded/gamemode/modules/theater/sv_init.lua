@@ -6,6 +6,7 @@ util.AddNetworkString( "TheaterMetadata" )
 util.AddNetworkString( "TheaterInfo" )
 util.AddNetworkString( "TheaterQueue" )
 util.AddNetworkString( "TheaterSeek" )
+util.AddNetworkString( "TheaterPlayPause" )
 util.AddNetworkString( "TheaterVoteSkips" )
 util.AddNetworkString( "TheaterAnnouncement" )
 util.AddNetworkString( "TheaterDoorLoad" )
@@ -119,7 +120,9 @@ function RequestTheaterInfo( ply, force )
 			Data = Theater:VideoData(),
 			Title = Theater:VideoTitle(),
 			Duration = Theater:VideoDuration(),
-			StartTime = Theater:VideoStartTime()
+			StartTime = Theater:VideoStartTime(),
+			PauseTime = Theater:VideoPauseTime(),
+			Paused = Theater:IsPaused()
 		}
 
 		th.Width, th.Height = Theater:GetSize()
