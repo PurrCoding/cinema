@@ -18,9 +18,6 @@ function THEATER:Init( locId, info )
 	o._Width = info.Width or 128
 	o._Height = info.Height or math.Round(o._Width * (9 / 16))
 
-	o._PauseTime = info.PauseTime or nil
-	o._Paused = info.Paused or false
-
 	if SERVER then
 
 		-- Keep for resetting the theater
@@ -146,7 +143,7 @@ function THEATER:IsPlaying()
 end
 
 function THEATER:IsPaused()
-	return self:VideoPauseTime() ~= nil
+	return self._Video and self._Video:IsPaused() or false
 end
 
 function THEATER:VideoType()
@@ -232,11 +229,12 @@ function THEATER:Think()
 
 		-- Synchronize clientside video playback
 		if self:IsPlaying() and IsVideoTimed( self:VideoType() ) and
-			( not self.NextSync or self.NextSync < RealTime() )  then
+			( not self.NextSync or self.NextSync < RealTime() )  and
+				not self:IsPaused() then
 
 			local time = self:VideoCurrentTime()
 			local panel = ActivePanel()
-			if time > 5 and IsValid(panel) and not self:IsPaused() then
+			if time > 5 and IsValid(panel) then
 
 				panel:QueueJavascript( ("if(window.theater) theater.sync(%s);"):format( time ) )
 

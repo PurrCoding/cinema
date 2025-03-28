@@ -1,3 +1,17 @@
+local surface_SetDrawColor = surface.SetDrawColor
+local surface_DrawRect = surface.DrawRect
+local surface_SetTexture = surface.SetTexture
+local surface_DrawTexturedRect = surface.DrawTexturedRect
+local surface_DrawTexturedRectRotated = surface.DrawTexturedRectRotated
+local draw_RoundedBox = draw.RoundedBox
+local draw_SimpleText = draw.SimpleText
+local cam_Start3D2D = cam.Start3D2D
+local cam_End3D2D = cam.End3D2D
+local math_Clamp = math.Clamp
+local math_Round = math.Round
+
+local color_white = color_white
+
 surface.CreateFont( "VideoInfoLarge", {
 	font      = "Open Sans Condensed",
 	size      = 148,
@@ -25,18 +39,96 @@ local refreshTexture = surface.GetTextureID("gui/html/refresh")
 module( "theater", package.seeall )
 
 LastInfoDraw = 0
-InfoDrawDelay = 3
+local InfoDrawDelay = 3
 
-LastTheater = nil
+local LastTheater = nil
 local Pos = Vector(0,0,0)
 local Ang = Angle(0,0,0)
 local InfoScale = 1
-local w = 0
-local h = 0
+local w, h = 0, 0
 
 local LoadingStr = translations:Format("Loading")
 
-function DrawActiveTheater( bDrawingDepth, bDrawingSkybox )
+local LastTitle, Title = "", ""
+local WasFullscreen = false
+local panel
+
+
+function setLastTheater(th)
+	LastTheater = th
+end
+
+local function DrawVideoInfo( w, h, scale )
+
+	panel = ActivePanel()
+	if not IsValid(panel) then return end
+
+	local Theater = LocalPlayer():GetTheater()
+	if not Theater then return end
+
+	scale = scale and (1 / scale) * 0.1 or 1 -- scale for screen size fix
+
+	w = w and w * scale or panel:GetWide()
+	h = h and h * scale or panel:GetTall()
+
+	-- TODO: Animate things
+	-- local fade = math_Clamp((lastInfoView - CurTime()) / 2, 0, 1) * 255
+
+	/* Top Info Background */
+	surface_SetDrawColor(0,0,0,255)
+	surface_SetTexture(gradientDown)
+	surface_DrawTexturedRect(0, 0, w, h)
+
+	-- Attempt to fix white line rendering artifact
+	surface_DrawRect(0, -2, w, 4)
+
+	-- Title
+	if LastTitle ~= translations:Format( Theater:VideoTitle() ) or WasFullscreen ~= theater.Fullscreen then
+		LastTitle = translations:Format( Theater:VideoTitle() )
+		WasFullscreen = theater.Fullscreen
+		Title = string.reduce( LastTitle, "VideoInfoMedium", w )
+	end
+	draw.TheaterText( Title, "VideoInfoMedium", 10, 10, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+
+	-- Volume
+	draw.TheaterText( translations:Format("Volume"):upper(), "VideoInfoSmall", w - 72, 120, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+	draw.TheaterText( GetVolume() .. "%", "VideoInfoMedium", w - 72, 136, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+
+	-- Vote Skips
+	if NumVoteSkips > 0 then
+		draw.TheaterText( translations:Format("Voteskips"):upper(), "VideoInfoSmall", w - 72, 230, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+		draw.TheaterText( NumVoteSkips .. "/" .. ReqVoteSkips, "VideoInfoMedium", w - 72, 246, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+	end
+
+	-- Timed video info
+	if theater.IsVideoTimed(Theater:VideoType()) then
+		local current, duration = Theater:VideoCurrentTime(), Theater:VideoDuration()
+		local percent = math_Clamp( (current / duration ) * 100, 0, 100 )
+
+		-- Bar
+		local bh = h * 1 / 32
+		draw_RoundedBox( 0, 0, h - bh, w, bh, Color(0,0,0,200) )
+		draw_RoundedBox( 0, 0, h - bh, w * (percent / 100), bh, color_white )
+
+		-- Current Time
+		local strSeconds = string.FormatSeconds(math_Clamp(math_Round(current), 0, duration))
+		draw.TheaterText( strSeconds, "VideoInfoMedium", 16, h - bh, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
+
+		-- Duration
+		local strDuration = string.FormatSeconds(duration)
+		draw.TheaterText( strDuration, "VideoInfoMedium", w - 16, h - bh, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
+	end
+
+	-- Loading indicater
+	if panel:IsLoading() then
+		surface_SetDrawColor(color_white)
+		surface_SetTexture(refreshTexture)
+		surface_DrawTexturedRectRotated( 32, 128, 64, 64, RealTime() * -256 )
+	end
+
+end
+
+local function DrawActiveTheater( bDrawingDepth, bDrawingSkybox )
 
 	if input.IsKeyDown(KEY_Q) then
 		LastInfoDraw = CurTime()
@@ -65,101 +157,29 @@ function DrawActiveTheater( bDrawingDepth, bDrawingSkybox )
 
 	end
 
-	cam.Start3D2D( Pos, Ang, 0.1 )
+	cam_Start3D2D( Pos, Ang, 0.1 )
 
 		-- Draw 'Loading...' incase page takes too long to load
-		surface.SetDrawColor( 0, 0, 0, 255 )
-		surface.DrawRect( 0, 0, w, h )
-		draw.SimpleText( LoadingStr, "VideoInfoLarge", w / 2, h / 2, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		surface_SetDrawColor( 0, 0, 0, 255 )
+		surface_DrawRect( 0, 0, w, h )
+		draw_SimpleText( LoadingStr, "VideoInfoLarge", w / 2, h / 2, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 
 		draw.HTMLTexture( theater.ActivePanel(), w, h )
 
-	cam.End3D2D()
+	cam_End3D2D()
 
 	if LastInfoDraw + InfoDrawDelay > CurTime() then
-		cam.Start3D2D( Pos, Ang, InfoScale )
-				pcall( theater.DrawVideoInfo, w, h, InfoScale )
-		cam.End3D2D()
+		cam_Start3D2D( Pos, Ang, InfoScale )
+			DrawVideoInfo(w, h, InfoScale)
+				-- pcall( theater.DrawVideoInfo, w, h, InfoScale )
+		cam_End3D2D()
 	end
 
 end
 hook.Add( "PostDrawOpaqueRenderables", "DrawTheaterScreen", DrawActiveTheater )
 
-local LastTitle = ""
-local WasFullscreen = false
-local Title = ""
-local panel
-function DrawVideoInfo( w, h, scale )
 
-	panel = ActivePanel()
-	if not IsValid(panel) then return end
-
-	local Video = CurrentVideo()
-	if not Video then return end
-
-	scale = scale and (1 / scale) * 0.1 or 1 -- scale for screen size fix
-
-	w = w and w * scale or panel:GetWide()
-	h = h and h * scale or panel:GetTall()
-
-	-- TODO: Animate things
-	-- local fade = math.Clamp((lastInfoView - CurTime()) / 2, 0, 1) * 255
-
-	/* Top Info Background */
-	surface.SetDrawColor(0,0,0,255)
-	surface.SetTexture(gradientDown)
-	surface.DrawTexturedRect(0, 0, w, h)
-
-	-- Attempt to fix white line rendering artifact
-	surface.DrawRect(0, -2, w, 4)
-
-	-- Title
-	if LastTitle ~= translations:Format( Video:Title() ) or WasFullscreen ~= theater.Fullscreen then
-		LastTitle = translations:Format( Video:Title() )
-		WasFullscreen = theater.Fullscreen
-		Title = string.reduce( LastTitle, "VideoInfoMedium", w )
-	end
-	draw.TheaterText( Title, "VideoInfoMedium", 10, 10, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-
-	-- Volume
-	draw.TheaterText( translations:Format("Volume"):upper(), "VideoInfoSmall", w - 72, 120, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
-	draw.TheaterText( GetVolume() .. "%", "VideoInfoMedium", w - 72, 136, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
-
-	-- Vote Skips
-	if NumVoteSkips > 0 then
-		draw.TheaterText( translations:Format("Voteskips"):upper(), "VideoInfoSmall", w - 72, 230, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
-		draw.TheaterText( NumVoteSkips .. "/" .. ReqVoteSkips, "VideoInfoMedium", w - 72, 246, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
-	end
-
-	-- Timed video info
-	if theater.IsVideoTimed(Video:Type()) then
-		local current = (RealTime() - Video:StartTime())
-		local percent = math.Clamp( (current / Video:Duration() ) * 100, 0, 100 )
-
-		-- Bar
-		local bh = h * 1 / 32
-		draw.RoundedBox( 0, 0, h - bh, w, bh, Color(0,0,0,200) )
-		draw.RoundedBox( 0, 0, h - bh, w * (percent / 100), bh, Color( 255, 255, 255, 255 ) )
-
-		-- Current Time
-		local strSeconds = string.FormatSeconds(math.Clamp(math.Round(current), 0, Video:Duration()))
-		draw.TheaterText( strSeconds, "VideoInfoMedium", 16, h - bh, Color(255,255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM )
-
-		-- Duration
-		local strDuration = string.FormatSeconds(Video:Duration())
-		draw.TheaterText( strDuration, "VideoInfoMedium", w - 16, h - bh, Color(255,255,255,255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM )
-	end
-
-	-- Loading indicater
-	if panel:IsLoading() then
-		surface.SetDrawColor(255,255,255,255)
-		surface.SetTexture(refreshTexture)
-		surface.DrawTexturedRectRotated( 32, 128, 64, 64, RealTime() * -256 )
-	end
-
-end
-
-function DrawFullscreen()
+local function DrawFullscreen()
 
 	if Fullscreen then
 

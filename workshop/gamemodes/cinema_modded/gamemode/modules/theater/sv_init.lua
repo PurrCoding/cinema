@@ -120,9 +120,7 @@ function RequestTheaterInfo( ply, force )
 			Data = Theater:VideoData(),
 			Title = Theater:VideoTitle(),
 			Duration = Theater:VideoDuration(),
-			StartTime = Theater:VideoStartTime(),
-			PauseTime = Theater:VideoPauseTime(),
-			Paused = Theater:IsPaused()
+			StartTime = Theater:VideoStartTime()
 		}
 
 		th.Width, th.Height = Theater:GetSize()

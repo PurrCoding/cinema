@@ -153,7 +153,7 @@ function RemovePanels()
 	end
 
 	-- Remove theater drawing info
-	LastTheater = nil
+	setLastTheater(nil)
 
 end
 hook.Add( "OnReloaded", "RemoveAllPanels", theater.RemovePanels )
@@ -237,7 +237,7 @@ end
 
 function ReceiveVideo()
 
-	LastTheater = nil -- see cl_draw.lua
+	setLastTheater(nil) -- see cl_draw.lua
 
 	local info = {}
 	info.Type = net.ReadString()

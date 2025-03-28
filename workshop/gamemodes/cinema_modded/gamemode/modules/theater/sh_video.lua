@@ -58,14 +58,6 @@ function VIDEO:Duration()
 end
 
 function VIDEO:StartTime()
-	if isnumber(seconds) then
-		if self._PauseTime then
-			self._PauseTime = RealTime()
-		end
-
-		self._VideoStart = seconds
-	end
-
 	if self._PauseTime then
 		local diff = self._PauseTime - self._VideoStart
 		return RealTime() - diff
@@ -79,7 +71,7 @@ function VIDEO:PauseTime()
 end
 
 function VIDEO:IsPaused()
-	return self._Paused
+	return self._PauseTime ~= nil
 end
 
 function VIDEO:Thumbnail()
