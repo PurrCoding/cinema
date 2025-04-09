@@ -111,6 +111,10 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
+		--[[
+			This site is hosted on a private repo with Cloudflare as CDN, changes have been made to work better with Garry's Mod.
+			It is based on @9oelM's YouTube-Lite work. Src: https://github.com/9oelM/youtube-lite
+		--]]
 		panel:OpenURL(("https://gmod-youtube.pages.dev/#/watch?v=%s"):format(Video:Data()))
 
 		panel.OnDocumentReady = function(pnl)
