@@ -96,20 +96,6 @@ if (CLIENT) then
 							});
 						}
 
-						{ // Player resizer
-							var frame = player.g;
-							var root = document.getElementById("root")
-
-							document.body.appendChild(frame);
-
-							frame.style.backgroundColor = "#000";
-							frame.style.height = "100vh";
-							frame.style.left = "0px";
-							frame.style.width = "100%";
-
-							if (!!root) { root.remove(); }
-						}
-
 						window.cinema_controller = player;
 						exTheater.controllerReady();
 					}
@@ -125,7 +111,7 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		panel:OpenURL(("https://youtube-lite.js.org/#/watch?v=%s"):format(Video:Data()))
+		panel:OpenURL(("https://gmod-youtube.pages.dev/#/watch?v=%s"):format(Video:Data()))
 
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
