@@ -69,65 +69,43 @@ if (CLIENT) then
 					if (!!player && !!player.getDuration) {
 						clearInterval(checkerInterval);
 
-						player.addEventListener("onReady", function () {
-							player.setVolume(0)
-							player.pauseVideo();
+						{ // Native video controll
+							player.volume = 0;
+							player.currentTime = 0;
+							player.duration = player.getDuration();
 
-							player.removeEventListener("onReady")
+							player.play = (() => {
+								player.playVideo()
+							})
 
-							{ // Native video controll
-								player.volume = 0;
-								player.currentTime = 0;
-								player.duration = player.getDuration();
+							player.pause = (() => {
+								player.pauseVideo()
+							})
 
-								player.play = (() => {
-									player.playVideo()
-								})
+							Object.defineProperty(player, "volume", {
+								get() {
+									return player.getVolume();
+								},
+								set(volume) {
+									if (player.isMuted()) {
+										player.unMute();
+									}
+									player.setVolume(volume * 100);
+								},
+							});
 
-								player.pause = (() => {
-									player.pauseVideo()
-								})
-
-								Object.defineProperty(player, "volume", {
-									get() {
-										return player.getVolume();
-									},
-									set(volume) {
-										if (player.isMuted()) {
-											player.unMute();
-										}
-										player.setVolume(volume * 100);
-									},
-								});
-
-								Object.defineProperty(player, "currentTime", {
-									get() {
-										return Number(player.getCurrentTime());
-									},
-									set(time) {
-										player.seekTo(time, true);
-									},
-								});
-							}
-
-							window.cinema_controller = player;
-							exTheater.controllerReady();
-						})
-
-						{ // Player resizer
-							var frame = player.g;
-							var root = document.getElementById("root")
-
-							document.body.appendChild(frame);
-
-							frame.style.backgroundColor = "#000";
-							frame.style.height = "100vh";
-							frame.style.left = "0px";
-							frame.style.width = "100%";
-
-							if (!!root) { root.remove(); }
+							Object.defineProperty(player, "currentTime", {
+								get() {
+									return Number(player.getCurrentTime());
+								},
+								set(time) {
+									player.seekTo(time, true);
+								},
+							});
 						}
 
+						window.cinema_controller = player;
+						exTheater.controllerReady();
 					}
 				}
 			}, 50);
@@ -141,7 +119,7 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		panel:OpenURL(("https://youtube-lite.js.org/#/watch?v=%s"):format(Video:Data()))
+		panel:OpenURL(("https://gmod-youtube.pages.dev/#/watch?v=%s"):format(Video:Data()))
 
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
