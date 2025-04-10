@@ -57,20 +57,13 @@ if (CLIENT) then
 				video.controls = true;
 				video.muted = false;
 
+				video.addEventListener("play", (event) => {
+					window.cinema_controller = video;
+					exTheater.controllerReady();
+				});
+
 				document.getElementById("player-wrapper").appendChild(video);
 			</script>
-
-			<script>
-				var checkerInterval = setInterval(function() {
-					if (!video.paused && video.readyState === 4) {
-						clearInterval(checkerInterval);
-
-						window.cinema_controller = video;
-						exTheater.controllerReady();
-					}
-				}, 50);
-			</script>
-
 		</body>
 		</html>
 	]]
