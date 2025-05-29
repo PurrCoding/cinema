@@ -1,24 +1,108 @@
+local url2 = url -- keep reference for extracting url data
+
 local SERVICE = {
 	Name = "Internet Archive",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE
+	Dependency = DEPENDENCY_COMPLETE,
+	ExtentedVideoInfo = true
 }
 
-local METADATA_URL = "https://archive.org/metadata/%s/files/"
+-- API endpoints
+local METADATA_URL = "https://archive.org/metadata/%s"
 local DOWNLOAD_URL = "https://cors.archive.org/download/%s/%s"
+
+-- format support
 local VALID_FORMATS = {
 	["MPEG4"] = true,
 	["h.264"] = true,
 	["h.264 IA"] = true,
 	["Ogg Video"] = true,
+	["WebM"] = true,
+	["MP4"] = true,
+	["AVI"] = true,
+	["MOV"] = true,
+	["MKV"] = true
 }
 
-function SERVICE:Match( url )
+-- file selection logic
+local function FindBestVideoFile(files, requestedFile)
+	local candidates = {}
+
+	for _, file in pairs(files) do
+		if VALID_FORMATS[file.format] and file.name then
+			-- Prioritize requested file
+			if requestedFile then
+				local normalizedRequested = requestedFile:gsub("+", " ")
+				local normalizedFile = file.name:gsub("+", " ")
+
+				if file.original == normalizedRequested or
+				   file.name == requestedFile or
+				   normalizedFile == normalizedRequested then
+					return file
+				end
+			end
+
+			table.insert(candidates, file)
+		end
+	end
+
+	if #candidates == 0 then return nil end
+
+	-- If no file was requested, take the first one from the list
+	return candidates[1]
+end
+
+-- title generation
+local function GenerateTitle(response, file, identifier)
+	if response.metadata and response.metadata.title then
+		local title = response.metadata.title
+		if istable(title) then
+			title = title[1] or identifier
+		end
+
+		-- Add file info if it's part of a collection
+		if file.name and file.name ~= title then
+			local fileName = file.name:gsub("%.%w+$", "") -- Remove extension
+			fileName = fileName:gsub("+", " ") -- Replace + with spaces
+			return title .. " - " .. fileName
+		end
+
+		return title
+	end
+
+	-- Fallback to file name
+	if file.name then
+		local title = file.name:gsub("%.%w+$", ""):gsub("+", " ")
+		return title
+	end
+
+	return "Internet Archive: " .. identifier
+end
+
+-- thumbnail handling
+local function GetThumbnail(files, videoFileName)
+	local baseName = videoFileName:gsub("%.%w+$", "")
+
+	for _, file in pairs(files) do
+		if file.format == "Thumbnail" then
+			-- Look for thumbnails matching the video file
+			if file.original and file.original:find(baseName, 1, true) then
+				return file.name
+			end
+
+		end
+	end
+
+	-- no thumbnail
+	return nil
+end
+
+function SERVICE:Match(url)
 	return url.host and url.host:match("archive.org")
 end
 
-if (CLIENT) then
+if CLIENT then
 	local THEATER_JS = [[
 		var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName("VIDEO")[0]
@@ -36,113 +120,79 @@ if (CLIENT) then
 		}, 50);
 	]]
 
-	function SERVICE:LoadProvider( Video, panel )
+	function SERVICE:LoadProvider(Video, panel)
+		local parts = string.Explode(",", Video:Data())
+		local identifier = parts[1]
+		local fileName = parts[2]
 
-		local Data = string.Explode(",", Video:Data())
-		local identifier, file = Data[1], ( Data[2] and Data[2] or nil )
-		local url = DOWNLOAD_URL:format(identifier, Video:Title() )
+		if not fileName then
+			return -- Should not happen with metadata handling
+		end
 
-		panel:OpenURL( url )
+		local videoUrl = DOWNLOAD_URL:format(identifier, fileName)
+
+		panel:OpenURL(videoUrl)
 		panel.OnDocumentReady = function(pnl)
-			self:LoadExFunctions( pnl )
+			self:LoadExFunctions(pnl)
 			pnl:QueueJavascript(THEATER_JS)
 		end
-
-	end
-
-
-end
-
-function SERVICE:GetURLInfo( url )
-
-	if url.path then
-		local identifier = url.path:match("^/details/([%w%-%._]+)")
-		if identifier then
-			local file = ("^/details/%s/([%%w%%-%%.%%/%%+%%&_]+)"):format(identifier)
-			file = url.path:match(file)
-
-			return { Data = ("%s%s"):format(identifier, file and "," .. file or "") }
-		end
-	end
-
-	return false
-end
-
-if (SERVER) then
-	function SERVICE:GetThumbnail(response, file)
-		local thumbnail
-		for k, v in pairs(response) do
-			if not thumbnail and (v.format == "Thumbnail" and v.original == file) then
-				thumbnail = v.name
-				break
-			end
-		end
-
-		return thumbnail
 	end
 end
 
-function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
-	local Data = string.Explode(",", data)
-	local identifier, file = Data[1], ( Data[2] and Data[2] or nil )
+function SERVICE:GetURLInfo(url)
+	if not url.path then return false end
 
-	local onReceive = function( body, length, headers, code )
-		if not body or code ~= 200 then
-			return onFailure( "Theater_RequestFailed" )
+	-- Extract identifier
+	local identifier = url.path:match("^/details/([^/]+)")
+	if not identifier then return false end
+
+	-- Extract specific file if present
+	local file = url.path:match("^/details/[^/]+/(.+)$")
+
+	-- Handle URL encoding
+	if file then
+		file = url2.unescape(file)
+	end
+
+	return {
+		Data = identifier .. (file and "," .. file or ""),
+	}
+end
+
+function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
+	local parts = string.Explode(",", data:Data())
+	local identifier = parts[1]
+	local requestedFile = parts[2]
+
+	local function processMetadata(body, length, headers, code)
+		if code ~= 200 or not body then
+			return onFailure("Failed to fetch metadata from Internet Archive")
 		end
 
 		local response = util.JSONToTable(body)
-		if not response or not response.result then
-			return onFailure( "Theater_RequestFailed" )
+		if not response or not response.files then
+			return onFailure("Invalid metadata response")
 		end
 
-		response = response.result
-		local name, duration
-
-		if file then
-			oFile = file
-			file = file:Replace("+", " ")
+		local bestMatch = FindBestVideoFile(response.files, requestedFile)
+		if not bestMatch then
+			return onFailure("No compatible video files found")
 		end
 
-		for k, v in pairs(response) do
-
-			if file then
-
-				if (v.original and v.original == file and VALID_FORMATS[v.format]) then
-					name, duration = v.name, v.length
-					break
-				end
-
-				if (v.name and v.name == oFile and VALID_FORMATS[v.format]) then
-					name, duration = v.name, v.length
-				end
-
-			else
-				if (v.format and VALID_FORMATS[v.format]) then
-					name, duration = v.name, v.length
-					break
-				end
-			end
-		end
-
-		if not name or not duration  then -- Do we have everything that we want?
-			return onFailure( "Theater_RequestFailed" )
-		end
-
-		local info, thumbnail = {}, self:GetThumbnail(response, file or name)
-		info.title = name
-		info.duration = math.Round(duration)
-		info.thumbnail = thumbnail and DOWNLOAD_URL:format(identifier, thumbnail)
+		local info = {
+			title = GenerateTitle(response, bestMatch, identifier),
+			duration = math.Round(bestMatch.length or 0),
+			thumbnail = GetThumbnail(response.files, bestMatch.name),
+			data = identifier .. "," .. bestMatch.name
+		}
 
 		if onSuccess then
 			pcall(onSuccess, info)
 		end
-
 	end
 
-	local url = METADATA_URL:format( identifier )
-	self:Fetch( url, onReceive, onFailure )
-
+	local url = METADATA_URL:format(identifier)
+	self:Fetch(url, processMetadata, onFailure)
 end
 
-theater.RegisterService( "archive", SERVICE )
+theater.RegisterService("ia", SERVICE)

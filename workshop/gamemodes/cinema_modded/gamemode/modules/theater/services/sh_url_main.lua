@@ -1,6 +1,7 @@
 local SERVICE = {
 	Name = "URL",
 	IsTimed = true,
+	Hidden = true,
 
 	Dependency = DEPENDENCY_COMPLETE,
 	ExtentedVideoInfo = true
@@ -25,7 +26,20 @@ local videoExtensions = {
 }
 validExtensions = table.Merge(validExtensions, videoExtensions)
 
+local blacklistedPaths = {
+	"archive.org/details/(*.+)"
+}
+
 function SERVICE:Match( url )
+
+	if url.path then
+
+		-- Do not register the details path as a direct link because the media have file endings.
+		if url.host == "archive.org" and url.path:match("^/details/(.+)$") then
+			return false
+		end
+	end
+
 	return (url.file and validExtensions[ url.file.ext ] and true or false)
 end
 
