@@ -26,10 +26,6 @@ local videoExtensions = {
 }
 validExtensions = table.Merge(validExtensions, videoExtensions)
 
-local blacklistedPaths = {
-	"archive.org/details/(*.+)"
-}
-
 function SERVICE:Match( url )
 
 	if url.path then
