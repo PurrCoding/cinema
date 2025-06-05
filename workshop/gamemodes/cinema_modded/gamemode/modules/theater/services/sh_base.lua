@@ -122,17 +122,18 @@ if CLIENT then
 				print(("[%s - Debug]: %s"):format(serviceName, msg))
 			end
 
-			if msg:StartWith("METADATA:") then
-				local metadata = util.JSONToTable(string.sub(msg, 10))
-
-				callback(metadata)
-				panel:Remove()
-			end
-
 			if msg:StartWith("ERROR:") then
 				local errmsg = string.sub(msg, 7)
 
 				callback({ err = errmsg })
+				panel:Remove()
+				return
+			end
+
+			if msg:StartWith("METADATA:") then
+				local metadata = util.JSONToTable(string.sub(msg, 10))
+
+				callback(metadata)
 				panel:Remove()
 			end
 		end
