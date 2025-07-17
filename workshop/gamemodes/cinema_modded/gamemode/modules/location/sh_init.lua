@@ -125,12 +125,13 @@ function GetLocations(strMap)
 	end
 end
 
--- Optimized GetLocationNameByIndex - O(1) lookup
+-- Returns the location string of the index
 function GetLocationNameByIndex(iIndex)
 	return LocationNameCache[iIndex] or "Unknown"
 end
 
--- Optimized GetLocationByIndex - O(1) lookup
+-- Find a location by index
+-- indexes get networked
 function GetLocationByIndex(iIndex, strMap)
 	if not strMap and LocationCache[iIndex] then
 		return LocationCache[iIndex].data
@@ -145,14 +146,13 @@ function GetLocationByIndex(iIndex, strMap)
 	end
 end
 
--- Get location by name
+-- find a location by name
 function GetLocationByName(strName, strMap)
 	local locations = GetLocations(strMap)
 	if not locations then return end
 	return locations[strName]
 end
 
--- Optimized GetPlayersInLocation - O(1) lookup
 function GetPlayersInLocation(iIndex)
 	return PlayersByLocation[iIndex] or {}
 end
@@ -183,7 +183,7 @@ local function UpdatePlayerLocation(ply, steamID, oldLocation, newLocation, pos)
 	}
 end
 
--- Optimized Find function with spatial grid and caching
+-- returns the index of the player's current location
 function Find(ply)
 	if not IsValid(ply) then return 0 end
 
@@ -227,7 +227,7 @@ function Find(ply)
 	return newLocation
 end
 
--- Teleport functions (unchanged from original)
+-- Teleport functions
 local function GetTeleportBy(func, nameOrIndex, strMap)
 	local tblLoc = func(nameOrIndex, strMap)
 
