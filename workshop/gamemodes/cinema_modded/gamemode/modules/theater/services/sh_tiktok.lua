@@ -3,7 +3,7 @@ local SERVICE = {
 	Name = "Tiktok",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 	ExtentedVideoInfo = true
 }
 

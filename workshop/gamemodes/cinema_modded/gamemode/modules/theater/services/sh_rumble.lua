@@ -2,7 +2,7 @@ local SERVICE = {
 	Name = "Rumble",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 }
 
 local API_URL = "https://rumble.com/api/Media/oembed.json?url=https://rumble.com/%s"

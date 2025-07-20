@@ -7,7 +7,7 @@ local SERVICE = {
     Name = "哔哩哔哩", -- 服务名称
     IsTimed = true, -- 是否是计时视频
 
-    Dependency = DEPENDENCY_COMPLETE
+    NeedsCodecFix = true
 }
 
 -- 目前支持AV号与BV号

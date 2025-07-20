@@ -2,7 +2,7 @@ local SERVICE = {
 	Name = "Kick",
 	IsTimed = false,
 
-	Dependency = DEPENDENCY_COMPLETE
+	NeedsCodecFix = true
 }
 
 local Ignored = {

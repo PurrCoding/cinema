@@ -1,4 +1,4 @@
-local WarningSet, HasBetaBranch, HasCodecFix
+local WarningSet, HasCodecFix
 local InstructionSite = "https://www.solsticegamestudios.com/fixmedia/"
 
 local HTML_Code = [[
@@ -20,9 +20,7 @@ local function CheckServiceDependency()
 
 	function panel:ConsoleMessage(msg)
 		if msg:StartWith("SUPPORT:") then
-			HasBetaBranch = BRANCH and BRANCH == "x86-64" or false
 			HasCodecFix = msg[9] == "1"
-
 			self:Remove()
 		end
 	end
@@ -35,19 +33,15 @@ hook.Add("OnReloaded", "CheckServiceDependency", CheckServiceDependency)
 hook.Add("PreVideoLoad", "ShowDependencyWarning", function(Video)
 
 	local service = theater.Services[Video:Type()]
-	if not service or not service.Dependency or
-		service.Dependency == DEPENDENCY_NONE then return end
+	if not service or not service.NeedsCodecFix or
+		service.NeedsCodecFix == false then return end
 
 	local reason = nil
 	local panel = theater.ActivePanel()
 	if IsValid(panel) then
 
-		if service.Dependency == DEPENDENCY_PARTIAL and not HasBetaBranch then
-			reason = "x86-64 Beta"
-		end
-
-		if service.Dependency == DEPENDENCY_COMPLETE and (not HasBetaBranch or not HasCodecFix) then
-			reason = "x86-64 Beta & CEF Codec Fix"
+		if service.NeedsCodecFix == true and not HasCodecFix then
+			reason = "GModPatchTool / GModCEFCodecFix"
 		end
 
 		if reason then

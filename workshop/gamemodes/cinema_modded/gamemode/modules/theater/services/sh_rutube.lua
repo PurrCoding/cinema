@@ -2,7 +2,7 @@ local SERVICE = {
 	Name = "Rutube",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE
+	NeedsCodecFix = true
 }
 
 local API_URL = "https://rutube.ru/api/video/%s/?format=json"
@@ -108,7 +108,7 @@ theater.RegisterService( "rutube", SERVICE )
 theater.RegisterService( "rutubelive", {
 	Name = "Rutube Live",
 	IsTimed = false,
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )

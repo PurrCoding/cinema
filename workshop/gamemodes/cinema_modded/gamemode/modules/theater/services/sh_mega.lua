@@ -2,7 +2,7 @@ local SERVICE = {
 	Name = "Mega",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 	ExtentedVideoInfo = true
 }
 

@@ -2,7 +2,7 @@ local SERVICE = {
 	Name = "DLive",
 	IsTimed = false,
 
-	Dependency = DEPENDENCY_COMPLETE
+	NeedsCodecFix = true
 }
 
 local Ignored = {

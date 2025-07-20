@@ -4,7 +4,7 @@ local SERVICE = {
 
 	-- Defaut Variables
 	IsCacheable = true, -- Return false to prevent from storing into cinema_history on server
-	Dependency = DEPENDENCY_NONE, -- DEPENDENCY_NONE = Normal | DEPENDENCY_PARTIAL = x86-64 Beta | DEPENDENCY_COMPLETE = x86-64 Beta + CEF Codec Fix
+	NeedsCodecFix = false, -- If true it requires the GModPatchTool / GModCEFCodecFix
 	ExtentedVideoInfo = false, -- Passes the complete video data instead of just the Data ID in GetVideoInfo
 	TheaterType = THEATER_NONE  -- THEATER_NONE = Normal | THEATER_PRIVATE = Private only
 }

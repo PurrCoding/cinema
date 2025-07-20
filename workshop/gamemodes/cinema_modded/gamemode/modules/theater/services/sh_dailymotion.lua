@@ -2,7 +2,7 @@ local SERVICE = {
 	Name = "Dailymotion",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE
+	NeedsCodecFix = true
 }
 
 local API_URL = "https://api.dailymotion.com/video/%s?fields=id,title,duration,thumbnail_url,status,mode,private"
@@ -110,7 +110,7 @@ theater.RegisterService( "dailymotion", SERVICE )
 theater.RegisterService( "dailymotionlive", {
 	Name = "Dailymotion Live",
 	IsTimed = false,
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )

@@ -2,7 +2,7 @@ local SERVICE = {
 	Name = "OK",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE
+	NeedsCodecFix = true
 }
 
 local ValidTypes = {
@@ -120,7 +120,7 @@ theater.RegisterService( "ok", SERVICE )
 theater.RegisterService( "oklive", {
 	Name = "Ok Live",
 	IsTimed = false,
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )

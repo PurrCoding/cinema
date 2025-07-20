@@ -4,7 +4,7 @@ local SERVICE = {
 	Hidden = true,
 
 	IsCacheable = false,
-	Dependency = DEPENDENCY_NONE
+	NeedsCodecFix = false
 }
 
 if (CLIENT) then
@@ -22,7 +22,7 @@ theater.RegisterService( "image_timed", {
 	Name = SERVICE.Name,
 	IsTimed = true,
 	IsCacheable = false,
-	Dependency = SERVICE.Dependency,
+	NeedsCodecFix = SERVICE.NeedsCodecFix,
 	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )

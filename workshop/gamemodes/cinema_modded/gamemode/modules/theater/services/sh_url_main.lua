@@ -3,7 +3,7 @@ local SERVICE = {
 	IsTimed = true,
 	Hidden = true,
 
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 	ExtentedVideoInfo = true
 }
 

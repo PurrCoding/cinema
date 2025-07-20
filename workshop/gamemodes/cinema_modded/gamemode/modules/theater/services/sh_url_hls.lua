@@ -2,7 +2,7 @@ local SERVICE = {
 	Name = "URL (HLS Video)",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 	ExtentedVideoInfo = true
 }
 
@@ -141,7 +141,7 @@ theater.RegisterService( "url_hls", SERVICE )
 theater.RegisterService( "url_hlslive", {
 	Name = "URL (HLS Live)",
 	IsTimed = false,
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )
