@@ -21,7 +21,7 @@ local IMAGE_FORMATS = {
 
 local BASIC_VIDEO_AUDIO_FORMATS = {
 	-- Open video format (no CEF codec fix needed)
-	webm = true,
+	webm = true, -- (VP8, VP9, AV1)
 	-- Browser-supported audio formats
 	mp3 = true, wav = true, ogg = true, m4a = true, aac = true, flac = true,
 }
@@ -122,7 +122,6 @@ local HTML_METADATA = [[
 </html>
 ]]
 
--- Service factory function with comprehensive error handling
 local function createService(name, codecSupport, formats)
 	return {
 		Name = name,
