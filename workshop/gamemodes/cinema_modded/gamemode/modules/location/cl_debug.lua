@@ -1,8 +1,9 @@
 --[[
 
-	The Cinema location system is built from old
-	GMod Tower code. Credit goes to Voided for
-	the beautiful debugging system.
+	Original debug system from the old 
+	GMod Tower code, credits go to Void.
+
+	Now with Spatial grid visualization!
 
 ]]
 
@@ -25,8 +26,14 @@ DebugLocEnd = nil
 -- we use this so that the bottom of a box will be lower than the player's position
 FootOffset = Vector( 0, 0, -5 )
 
+--[[
+	Location editing utilities
 
---	Location editing utilities
+	These two concommands are designed to simplify location creation.
+	Simply run cinema_loc_start, move to create a desired box, then run cinema_loc_end and grab the lua printed to the console.
+	This requires you to be an admin!
+]]
+
 concommand.Add( "cinema_loc_start", function( ply, cmd, args )
 	if not ply:IsAdmin() then return end
 
