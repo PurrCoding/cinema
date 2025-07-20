@@ -124,6 +124,12 @@ if CLIENT then
 
 			if msg:StartWith("ERROR:") then
 				local errmsg = string.sub(msg, 7)
+				local code = tonumber(errmsg)
+
+				-- If it's just a number, translate using MediaError codes
+				if code then
+					errmsg = util.MEDIA_ERR[code] or util.MEDIA_ERR[5]
+				end
 
 				callback({ err = errmsg })
 				panel:Remove()
