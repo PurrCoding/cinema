@@ -2,7 +2,7 @@ local SERVICE = {
 	Name = "Twitch.TV Stream",
 	IsTimed = false,
 
-	Dependency = DEPENDENCY_COMPLETE
+	NeedsCodecFix = true
 }
 
 local THUMB_URL = "https://static-cdn.jtvnw.net/previews-ttv/live_user_%s-1280x720.jpg"

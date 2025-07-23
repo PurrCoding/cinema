@@ -4,7 +4,7 @@ local SERVICE = {
 	Name = "Internet Archive",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 	ExtentedVideoInfo = true
 }
 

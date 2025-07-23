@@ -3,7 +3,7 @@ local SERVICE = {
 	Name = "Soundcloud",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = false,
 	ExtentedVideoInfo = true
 }
 

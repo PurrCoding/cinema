@@ -2,7 +2,7 @@ local SERVICE = {
 	Name = "Sibnet",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE
+	NeedsCodecFix = true
 }
 
 local API_URL = "https://video.sibnet.ru/shell.php?videoid=%s"

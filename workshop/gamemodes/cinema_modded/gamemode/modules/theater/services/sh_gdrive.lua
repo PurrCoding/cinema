@@ -2,7 +2,7 @@ local SERVICE = {
 	Name = "Google Drive",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 	ExtentedVideoInfo = true
 }
 

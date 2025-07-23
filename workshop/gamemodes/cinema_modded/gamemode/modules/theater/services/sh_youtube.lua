@@ -7,7 +7,7 @@ local SERVICE = {
 	Name = "YouTube",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_PARTIAL,
+	NeedsCodecFix = false,
 	ExtentedVideoInfo = true,
 }
 
@@ -223,7 +223,7 @@ theater.RegisterService( "youtube", SERVICE )
 theater.RegisterService( "youtubelive", {
 	Name = "YouTube Live",
 	IsTimed = false,
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )
@@ -231,7 +231,7 @@ theater.RegisterService( "youtubelive", {
 -- theater.RegisterService( "youtubensfw", {
 -- 	Name = "YouTube NSFW",
 -- 	IsTimed = true,
--- 	Dependency = DEPENDENCY_PARTIAL,
+-- 	NeedsCodecFix = false,
 -- 	Hidden = true,
 -- 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 -- } )

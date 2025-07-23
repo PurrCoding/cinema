@@ -2,7 +2,7 @@ local SERVICE = {
 	Name = "VKontakte",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE,
+	NeedsCodecFix = true,
 	ExtentedVideoInfo = true
 }
 

@@ -7,7 +7,7 @@ local SERVICE = {
 	Name = "哔哩哔哩番剧",
 	IsTimed = true,
 
-	Dependency = DEPENDENCY_COMPLETE
+	NeedsCodecFix = true
 }
 
 local META_URL = "https://www.bilibili.com/bangumi/play/ep%s"
