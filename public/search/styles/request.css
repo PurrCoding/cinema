@@ -96,30 +96,6 @@ body {
 	66% { transform: translateY(10px) rotate(240deg); }
 }
 
-/* Header */
-.header {
-	text-align: center;
-	margin-bottom: 2rem;
-}
-
-.title-main {
-	display: block;
-	font-size: clamp(2.5rem, 5vw, 4rem);
-	font-weight: 700;
-	background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: transparent;
-	background-clip: text;
-	margin-bottom: 0.5rem;
-}
-
-.title-sub {
-	display: block;
-	font-size: 1.2rem;
-	font-weight: 300;
-	color: var(--text-secondary);
-}
-
 /* Services Section */
 .services-section {
 	width: 100%;
@@ -570,10 +546,6 @@ body {
 		grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
 		gap: 1rem;
 		padding: 1.5rem;
-	}
-
-	.title-main {
-		font-size: 2.5rem;
 	}
 
 	.input-group {
