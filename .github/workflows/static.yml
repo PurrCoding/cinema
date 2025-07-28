@@ -31,6 +31,7 @@ jobs:
         uses: actions/setup-node@v4  
         with:  
           node-version: '18'  
+          # No npm cache since there's no package.json  
         
       - name: Install dependencies  
         run: |  
@@ -38,85 +39,142 @@ jobs:
           npm install -g html-minifier-terser clean-css-cli terser  
           echo "::endgroup::"  
         
+      - name: Verify public directory  
+        run: |  
+          echo "::group::Verifying public directory contents"  
+          echo "Files in public directory:"  
+          find public -type f | head -20  
+          echo "Total files: $(find public -type f | wc -l)"  
+          echo "::endgroup::"  
+        
       - name: Calculate original sizes  
         run: |  
           echo "::group::Calculating original file sizes"  
             
-          # Create size tracking files  
-          echo "# Original Sizes" > original_sizes.txt  
-          echo "# Optimized Sizes" > optimized_sizes.txt  
-            
           # Calculate original sizes by type  
-          html_original=$(find public -name "*.html" -exec stat -c%s {} + | awk '{sum+=$1} END {print sum+0}')  
-          css_original=$(find public -name "*.css" -exec stat -c%s {} + | awk '{sum+=$1} END {print sum+0}')  
-          js_original=$(find public -name "*.js" -exec stat -c%s {} + | awk '{sum+=$1} END {print sum+0}')  
+          html_original=$(find public -name "*.html" -exec stat -c%s {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}')  
+          css_original=$(find public -name "*.css" -exec stat -c%s {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}')  
+          js_original=$(find public -name "*.js" -exec stat -c%s {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}')  
           total_original=$((html_original + css_original + js_original))  
             
-          echo "HTML_ORIGINAL=$html_original" >> original_sizes.txt  
-          echo "CSS_ORIGINAL=$css_original" >> original_sizes.txt  
-          echo "JS_ORIGINAL=$js_original" >> original_sizes.txt  
-          echo "TOTAL_ORIGINAL=$total_original" >> original_sizes.txt  
+          # Store in environment for later use  
+          echo "HTML_ORIGINAL=$html_original" >> $GITHUB_ENV  
+          echo "CSS_ORIGINAL=$css_original" >> $GITHUB_ENV  
+          echo "JS_ORIGINAL=$js_original" >> $GITHUB_ENV  
+          echo "TOTAL_ORIGINAL=$total_original" >> $GITHUB_ENV  
             
           echo "Original sizes - HTML: ${html_original}B, CSS: ${css_original}B, JS: ${js_original}B"  
           echo "::endgroup::"  
         
-      - name: Minify JavaScript files (basic)  
+      - name: Minify JavaScript files (safe)  
         run: |  
-          echo "::group::Minifying JavaScript files (basic optimization)"  
-          find public -name "*.js" -type f | while read file; do  
-            echo "Processing: $file"  
-            original_size=$(stat -c%s "$file")  
-              
-            # Basic Terser minification without aggressive optimizations  
-            terser "$file" \  
-              --compress \  
-              --mangle \  
-              --output "$file"  
-              
-            new_size=$(stat -c%s "$file")  
-            savings=$((original_size - new_size))  
-            percentage=$(awk "BEGIN {printf \"%.1f\", ($savings/$original_size)*100}")  
-            echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B, ${percentage}%)"  
-          done  
+          echo "::group::Minifying JavaScript files (safe optimization)"  
+          js_files_found=false  
+            
+          if find public -name "*.js" -type f -print0 2>/dev/null | grep -zq .; then  
+            find public -name "*.js" -type f -print0 | while IFS= read -r -d '' file; do  
+              if [[ -f "$file" && -s "$file" ]]; then  
+                js_files_found=true  
+                echo "Processing: $file"  
+                original_size=$(stat -c%s "$file")  
+                  
+                # Create backup and minify with safe options  
+                cp "$file" "${file}.backup"  
+                if terser "$file" --compress --mangle --output "$file.tmp" 2>/dev/null; then  
+                  mv "$file.tmp" "$file"  
+                  new_size=$(stat -c%s "$file")  
+                  savings=$((original_size - new_size))  
+                  if [ $original_size -gt 0 ]; then  
+                    percentage=$(awk "BEGIN {printf \"%.1f\", ($savings/$original_size)*100}")  
+                  else  
+                    percentage="0.0"  
+                  fi  
+                  echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B, ${percentage}%)"  
+                  rm "${file}.backup"  
+                else  
+                  echo "⚠️ Failed to minify $file, restoring original"  
+                  mv "${file}.backup" "$file"  
+                fi  
+              fi  
+            done  
+          fi  
+            
+          if [ "$js_files_found" = false ]; then  
+            echo "No JavaScript files found to minify"  
+          fi  
           echo "::endgroup::"  
         
       - name: Minify HTML files  
         run: |  
           echo "::group::Minifying HTML files"  
-          find public -name "*.html" -type f | while read file; do  
-            echo "Processing: $file"  
-            original_size=$(stat -c%s "$file")  
-            html-minifier-terser \  
-              --collapse-whitespace \  
-              --remove-comments \  
-              --remove-optional-tags \  
-              --remove-redundant-attributes \  
-              --remove-script-type-attributes \  
-              --remove-tag-whitespace \  
-              --use-short-doctype \  
-              --minify-css true \  
-              --minify-js true \  
-              --output "$file" \  
-              "$file"  
-            new_size=$(stat -c%s "$file")  
-            savings=$((original_size - new_size))  
-            percentage=$(awk "BEGIN {printf \"%.1f\", ($savings/$original_size)*100}")  
-            echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B, ${percentage}%)"  
-          done  
+          html_files_found=false  
+            
+          if find public -name "*.html" -type f -print0 2>/dev/null | grep -zq .; then  
+            find public -name "*.html" -type f -print0 | while IFS= read -r -d '' file; do  
+              if [[ -f "$file" && -s "$file" ]]; then  
+                html_files_found=true  
+                echo "Processing: $file"  
+                original_size=$(stat -c%s "$file")  
+                  
+                html-minifier-terser \  
+                  --collapse-whitespace \  
+                  --remove-comments \  
+                  --remove-optional-tags \  
+                  --remove-redundant-attributes \  
+                  --remove-script-type-attributes \  
+                  --remove-tag-whitespace \  
+                  --use-short-doctype \  
+                  --minify-css true \  
+                  --minify-js true \  
+                  --output "$file" \  
+                  "$file" 2>/dev/null || echo "⚠️ Failed to minify $file"  
+                  
+                new_size=$(stat -c%s "$file")  
+                savings=$((original_size - new_size))  
+                if [ $original_size -gt 0 ]; then  
+                  percentage=$(awk "BEGIN {printf \"%.1f\", ($savings/$original_size)*100}")  
+                else  
+                  percentage="0.0"  
+                fi  
+                echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B, ${percentage}%)"  
+              fi  
+            done  
+          fi  
+            
+          if [ "$html_files_found" = false ]; then  
+            echo "No HTML files found to minify"  
+          fi  
           echo "::endgroup::"  
         
       - name: Minify CSS files  
         run: |  
           echo "::group::Minifying CSS files"  
-          find public -name "*.css" -type f | while read file; do  
-            echo "Processing: $file"  
-            original_size=$(stat -c%s "$file")  
-            cleancss --output "$file" "$file"  
-            new_size=$(stat -c%s "$file")  
-            savings=$((original_size - new_size))  
-            percentage=$(awk "BEGIN {printf \"%.1f\", ($savings/$original_size)*100}")  
-            echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B, ${percentage}%)"  
-          done  
+          css_files_found=false  
+            
+          if find public -name "*.css" -type f -print0 2>/dev/null | grep -zq .; then  
+            find public -name "*.css" -type f -print0 | while IFS= read -r -d '' file; do  
+              if [[ -f "$file" && -s "$file" ]]; then  
+                css_files_found=true  
+                echo "Processing: $file"  
+                original_size=$(stat -c%s "$file")  
+                  
+                cleancss --output "$file" "$file" 2>/dev/null || echo "⚠️ Failed to minify $file"  
+                  
+                new_size=$(stat -c%s "$file")  
+                savings=$((original_size - new_size))  
+                if [ $original_size -gt 0 ]; then  
+                  percentage=$(awk "BEGIN {printf \"%.1f\", ($savings/$original_size)*100}")  
+                else  
+                  percentage="0.0"  
+                fi  
+                echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B, ${percentage}%)"  
+              fi  
+            done  
+          fi  
+            
+          if [ "$css_files_found" = false ]; then  
+            echo "No CSS files found to minify"  
+          fi  
           echo "::endgroup::"  
         
       - name: Generate comprehensive build report  
@@ -124,13 +182,10 @@ jobs:
           echo "::group::Build Summary with Before/After Comparison"  
             
           # Calculate optimized sizes  
-          html_optimized=$(find public -name "*.html" -exec stat -c%s {} + | awk '{sum+=$1} END {print sum+0}')  
-          css_optimized=$(find public -name "*.css" -exec stat -c%s {} + | awk '{sum+=$1} END {print sum+0}')  
-          js_optimized=$(find public -name "*.js" -exec stat -c%s {} + | awk '{sum+=$1} END {print sum+0}')  
+          html_optimized=$(find public -name "*.html" -exec stat -c%s {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}')  
+          css_optimized=$(find public -name "*.css" -exec stat -c%s {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}')  
+          js_optimized=$(find public -name "*.js" -exec stat -c%s {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}')  
           total_optimized=$((html_optimized + css_optimized + js_optimized))  
-            
-          # Load original sizes  
-          source original_sizes.txt  
             
           # Calculate savings  
           html_savings=$((HTML_ORIGINAL - html_optimized))  
@@ -138,11 +193,30 @@ jobs:
           js_savings=$((JS_ORIGINAL - js_optimized))  
           total_savings=$((TOTAL_ORIGINAL - total_optimized))  
             
-          # Calculate percentages  
-          html_percent=$(awk "BEGIN {printf \"%.1f\", ($html_savings/$HTML_ORIGINAL)*100}")  
-          css_percent=$(awk "BEGIN {printf \"%.1f\", ($css_savings/$CSS_ORIGINAL)*100}")  
-          js_percent=$(awk "BEGIN {printf \"%.1f\", ($js_savings/$JS_ORIGINAL)*100}")  
-          total_percent=$(awk "BEGIN {printf \"%.1f\", ($total_savings/$TOTAL_ORIGINAL)*100}")  
+          # Calculate percentages (avoid division by zero)  
+          if [ $HTML_ORIGINAL -gt 0 ]; then  
+            html_percent=$(awk "BEGIN {printf \"%.1f\", ($html_savings/$HTML_ORIGINAL)*100}")  
+          else  
+            html_percent="0.0"  
+          fi  
+            
+          if [ $CSS_ORIGINAL -gt 0 ]; then  
+            css_percent=$(awk "BEGIN {printf \"%.1f\", ($css_savings/$CSS_ORIGINAL)*100}")  
+          else  
+            css_percent="0.0"  
+          fi  
+            
+          if [ $JS_ORIGINAL -gt 0 ]; then  
+            js_percent=$(awk "BEGIN {printf \"%.1f\", ($js_savings/$JS_ORIGINAL)*100}")  
+          else  
+            js_percent="0.0"  
+          fi  
+            
+          if [ $TOTAL_ORIGINAL -gt 0 ]; then  
+            total_percent=$(awk "BEGIN {printf \"%.1f\", ($total_savings/$TOTAL_ORIGINAL)*100}")  
+          else  
+            total_percent="0.0"  
+          fi  
             
           # Generate detailed report  
           echo "## 📊 Build Optimization Report" >> $GITHUB_STEP_SUMMARY  
@@ -157,9 +231,9 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY  
             
           # File count summary  
-          html_count=$(find public -name "*.html" | wc -l)  
-          css_count=$(find public -name "*.css" | wc -l)  
-          js_count=$(find public -name "*.js" | wc -l)  
+          html_count=$(find public -name "*.html" 2>/dev/null | wc -l)  
+          css_count=$(find public -name "*.css" 2>/dev/null | wc -l)  
+          js_count=$(find public -name "*.js" 2>/dev/null | wc -l)  
           total_files=$((html_count + css_count + js_count))  
             
           echo "### File Count Summary" >> $GITHUB_STEP_SUMMARY  
@@ -174,13 +248,13 @@ jobs:
           echo "### 🚀 Optimizations Applied" >> $GITHUB_STEP_SUMMARY  
           echo "- **HTML**: Whitespace removal, comment stripping, tag optimization" >> $GITHUB_STEP_SUMMARY  
           echo "- **CSS**: Minification and optimization" >> $GITHUB_STEP_SUMMARY  
-          echo "- **JavaScript**: Basic minification and compression" >> $GITHUB_STEP_SUMMARY  
+          echo "- **JavaScript**: Safe minification and compression" >> $GITHUB_STEP_SUMMARY  
           echo "" >> $GITHUB_STEP_SUMMARY  
             
           if [ $total_savings -gt 0 ]; then  
             echo "✅ **Optimization successful!** Saved ${total_savings} bytes (${total_percent}% reduction)" >> $GITHUB_STEP_SUMMARY  
           else  
-            echo "⚠️ **No size reduction achieved** - files may already be optimized" >> $GITHUB_STEP_SUMMARY  
+            echo "ℹ️ **Files already optimized** - no significant size reduction achieved" >> $GITHUB_STEP_SUMMARY  
           fi  
             
           echo "Build completed successfully with $total_files files totaling $total_optimized bytes"  
