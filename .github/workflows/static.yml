@@ -1,283 +1,120 @@
-name: Deploy static content to Pages  
+name: Deploy optimized static content to Pages  
   
 on:  
+  # Runs on pushes targeting the default branch  
   push:  
     branches: ["master"]  
+  
+  # Allows you to run this workflow manually from the Actions tab  
   workflow_dispatch:  
   
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages  
 permissions:  
   contents: read  
   pages: write  
   id-token: write  
   
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.  
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.  
 concurrency:  
   group: "pages"  
   cancel-in-progress: false  
   
 jobs:  
+  # Build and deploy job with optimization  
   build-and-deploy:  
     environment:  
       name: github-pages  
       url: ${{ steps.deployment.outputs.page_url }}  
     runs-on: ubuntu-latest  
-      
     steps:  
-      - name: Checkout repository  
+      - name: Checkout  
         uses: actions/checkout@v4  
-        with:  
-          fetch-depth: 0  
-        
+          
       - name: Setup Node.js  
         uses: actions/setup-node@v4  
         with:  
           node-version: '18'  
-          # No npm cache since there's no package.json  
-        
-      - name: Install dependencies  
+            
+      - name: Install minification tools  
         run: |  
-          echo "::group::Installing minification tools"  
           npm install -g html-minifier-terser clean-css-cli terser  
-          echo "::endgroup::"  
-        
-      - name: Verify public directory  
+            
+      - name: Create optimized directory  
         run: |  
-          echo "::group::Verifying public directory contents"  
-          echo "Files in public directory:"  
-          find public -type f | head -20  
-          echo "Total files: $(find public -type f | wc -l)"  
-          echo "::endgroup::"  
-        
-      - name: Calculate original sizes  
+          mkdir -p optimized  
+          cp -r public/* optimized/  
+            
+      - name: Measure original sizes  
         run: |  
-          echo "::group::Calculating original file sizes"  
+          echo "## Original File Sizes" >> size_comparison.md  
+          echo "| File | Size |" >> size_comparison.md  
+          echo "|------|------|" >> size_comparison.md  
+          find public -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) -exec sh -c 'echo "| {} | $(du -h "$1" | cut -f1) |"' _ {} \; >> size_comparison.md  
             
-          # Calculate original sizes by type  
-          html_original=$(find public -name "*.html" -exec stat -c%s {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}')  
-          css_original=$(find public -name "*.css" -exec stat -c%s {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}')  
-          js_original=$(find public -name "*.js" -exec stat -c%s {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}')  
-          total_original=$((html_original + css_original + js_original))  
-            
-          # Store in environment for later use  
-          echo "HTML_ORIGINAL=$html_original" >> $GITHUB_ENV  
-          echo "CSS_ORIGINAL=$css_original" >> $GITHUB_ENV  
-          echo "JS_ORIGINAL=$js_original" >> $GITHUB_ENV  
-          echo "TOTAL_ORIGINAL=$total_original" >> $GITHUB_ENV  
-            
-          echo "Original sizes - HTML: ${html_original}B, CSS: ${css_original}B, JS: ${js_original}B"  
-          echo "::endgroup::"  
-        
-      - name: Minify JavaScript files (safe)  
-        run: |  
-          echo "::group::Minifying JavaScript files (safe optimization)"  
-          js_files_found=false  
-            
-          if find public -name "*.js" -type f -print0 2>/dev/null | grep -zq .; then  
-            find public -name "*.js" -type f -print0 | while IFS= read -r -d '' file; do  
-              if [[ -f "$file" && -s "$file" ]]; then  
-                js_files_found=true  
-                echo "Processing: $file"  
-                original_size=$(stat -c%s "$file")  
-                  
-                # Create backup and minify with safe options  
-                cp "$file" "${file}.backup"  
-                if terser "$file" --compress --mangle --output "$file.tmp" 2>/dev/null; then  
-                  mv "$file.tmp" "$file"  
-                  new_size=$(stat -c%s "$file")  
-                  savings=$((original_size - new_size))  
-                  if [ $original_size -gt 0 ]; then  
-                    percentage=$(awk "BEGIN {printf \"%.1f\", ($savings/$original_size)*100}")  
-                  else  
-                    percentage="0.0"  
-                  fi  
-                  echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B, ${percentage}%)"  
-                  rm "${file}.backup"  
-                else  
-                  echo "⚠️ Failed to minify $file, restoring original"  
-                  mv "${file}.backup" "$file"  
-                fi  
-              fi  
-            done  
-          fi  
-            
-          if [ "$js_files_found" = false ]; then  
-            echo "No JavaScript files found to minify"  
-          fi  
-          echo "::endgroup::"  
-        
       - name: Minify HTML files  
         run: |  
-          echo "::group::Minifying HTML files"  
-          html_files_found=false  
-            
-          if find public -name "*.html" -type f -print0 2>/dev/null | grep -zq .; then  
-            find public -name "*.html" -type f -print0 | while IFS= read -r -d '' file; do  
-              if [[ -f "$file" && -s "$file" ]]; then  
-                html_files_found=true  
-                echo "Processing: $file"  
-                original_size=$(stat -c%s "$file")  
-                  
-                html-minifier-terser \  
-                  --collapse-whitespace \  
-                  --remove-comments \  
-                  --remove-optional-tags \  
-                  --remove-redundant-attributes \  
-                  --remove-script-type-attributes \  
-                  --remove-tag-whitespace \  
-                  --use-short-doctype \  
-                  --minify-css true \  
-                  --minify-js true \  
-                  --output "$file" \  
-                  "$file" 2>/dev/null || echo "⚠️ Failed to minify $file"  
-                  
-                new_size=$(stat -c%s "$file")  
-                savings=$((original_size - new_size))  
-                if [ $original_size -gt 0 ]; then  
-                  percentage=$(awk "BEGIN {printf \"%.1f\", ($savings/$original_size)*100}")  
-                else  
-                  percentage="0.0"  
-                fi  
-                echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B, ${percentage}%)"  
-              fi  
-            done  
-          fi  
-            
-          if [ "$html_files_found" = false ]; then  
-            echo "No HTML files found to minify"  
-          fi  
-          echo "::endgroup::"  
-        
+          find optimized -name "*.html" -type f -exec html-minifier-terser \  
+            --collapse-whitespace \  
+            --remove-comments \  
+            --remove-optional-tags \  
+            --remove-redundant-attributes \  
+            --remove-script-type-attributes \  
+            --remove-tag-whitespace \  
+            --use-short-doctype \  
+            --minify-css true \  
+            --minify-js true \  
+            --output {} {} \;  
+              
       - name: Minify CSS files  
         run: |  
-          echo "::group::Minifying CSS files"  
-          css_files_found=false  
+          find optimized -name "*.css" -type f -exec sh -c 'cleancss -o "$1" "$1"' _ {} \;  
             
-          if find public -name "*.css" -type f -print0 2>/dev/null | grep -zq .; then  
-            find public -name "*.css" -type f -print0 | while IFS= read -r -d '' file; do  
-              if [[ -f "$file" && -s "$file" ]]; then  
-                css_files_found=true  
-                echo "Processing: $file"  
-                original_size=$(stat -c%s "$file")  
-                  
-                cleancss --output "$file" "$file" 2>/dev/null || echo "⚠️ Failed to minify $file"  
-                  
-                new_size=$(stat -c%s "$file")  
-                savings=$((original_size - new_size))  
-                if [ $original_size -gt 0 ]; then  
-                  percentage=$(awk "BEGIN {printf \"%.1f\", ($savings/$original_size)*100}")  
-                else  
-                  percentage="0.0"  
-                fi  
-                echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B, ${percentage}%)"  
-              fi  
-            done  
-          fi  
-            
-          if [ "$css_files_found" = false ]; then  
-            echo "No CSS files found to minify"  
-          fi  
-          echo "::endgroup::"  
-        
-      - name: Generate comprehensive build report  
+      - name: Minify JavaScript files  
         run: |  
-          echo "::group::Build Summary with Before/After Comparison"  
+          find optimized -name "*.js" -type f -exec sh -c 'terser "$1" --compress --mangle --output "$1"' _ {} \;  
             
-          # Calculate optimized sizes  
-          html_optimized=$(find public -name "*.html" -exec stat -c%s {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}')  
-          css_optimized=$(find public -name "*.css" -exec stat -c%s {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}')  
-          js_optimized=$(find public -name "*.js" -exec stat -c%s {} + 2>/dev/null | awk '{sum+=$1} END {print sum+0}')  
-          total_optimized=$((html_optimized + css_optimized + js_optimized))  
+      - name: Measure optimized sizes and calculate savings  
+        run: |  
+          echo "" >> size_comparison.md  
+          echo "## Optimized File Sizes" >> size_comparison.md  
+          echo "| File | Size | Savings |" >> size_comparison.md  
+          echo "|------|------|---------|" >> size_comparison.md  
             
-          # Calculate savings  
-          html_savings=$((HTML_ORIGINAL - html_optimized))  
-          css_savings=$((CSS_ORIGINAL - css_optimized))  
-          js_savings=$((JS_ORIGINAL - js_optimized))  
-          total_savings=$((TOTAL_ORIGINAL - total_optimized))  
+          for file in $(find optimized -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \)); do  
+            original_file="public/${file#optimized/}"  
+            if [ -f "$original_file" ]; then  
+              original_size=$(stat -c%s "$original_file")  
+              optimized_size=$(stat -c%s "$file")  
+              savings=$((original_size - optimized_size))  
+              savings_percent=$(( savings * 100 / original_size ))  
+              echo "| $file | $(du -h "$file" | cut -f1) | ${savings_percent}% ($(numfmt --to=iec $savings)) |" >> size_comparison.md  
+            fi  
+          done  
             
-          # Calculate percentages (avoid division by zero)  
-          if [ $HTML_ORIGINAL -gt 0 ]; then  
-            html_percent=$(awk "BEGIN {printf \"%.1f\", ($html_savings/$HTML_ORIGINAL)*100}")  
-          else  
-            html_percent="0.0"  
-          fi  
+          # Calculate total savings  
+          original_total=$(find public -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) -exec stat -c%s {} \; | awk '{sum+=$1} END {print sum}')  
+          optimized_total=$(find optimized -type f \( -name "*.html" -o -name "*.css" -o -name "*.js" \) -exec stat -c%s {} \; | awk '{sum+=$1} END {print sum}')  
+          total_savings=$((original_total - optimized_total))  
+          total_savings_percent=$(( total_savings * 100 / original_total ))  
             
-          if [ $CSS_ORIGINAL -gt 0 ]; then  
-            css_percent=$(awk "BEGIN {printf \"%.1f\", ($css_savings/$CSS_ORIGINAL)*100}")  
-          else  
-            css_percent="0.0"  
-          fi  
+          echo "" >> size_comparison.md  
+          echo "## Total Savings" >> size_comparison.md  
+          echo "- Original total: $(numfmt --to=iec $original_total)" >> size_comparison.md  
+          echo "- Optimized total: $(numfmt --to=iec $optimized_total)" >> size_comparison.md  
+          echo "- Total savings: ${total_savings_percent}% ($(numfmt --to=iec $total_savings))" >> size_comparison.md  
             
-          if [ $JS_ORIGINAL -gt 0 ]; then  
-            js_percent=$(awk "BEGIN {printf \"%.1f\", ($js_savings/$JS_ORIGINAL)*100}")  
-          else  
-            js_percent="0.0"  
-          fi  
-            
-          if [ $TOTAL_ORIGINAL -gt 0 ]; then  
-            total_percent=$(awk "BEGIN {printf \"%.1f\", ($total_savings/$TOTAL_ORIGINAL)*100}")  
-          else  
-            total_percent="0.0"  
-          fi  
-            
-          # Generate detailed report  
-          echo "## 📊 Build Optimization Report" >> $GITHUB_STEP_SUMMARY  
-          echo "" >> $GITHUB_STEP_SUMMARY  
-          echo "### File Type Analysis" >> $GITHUB_STEP_SUMMARY  
-          echo "| File Type | Original Size | Optimized Size | Savings | Reduction |" >> $GITHUB_STEP_SUMMARY  
-          echo "|-----------|---------------|----------------|---------|-----------|" >> $GITHUB_STEP_SUMMARY  
-          echo "| HTML | ${HTML_ORIGINAL} bytes | ${html_optimized} bytes | ${html_savings} bytes | ${html_percent}% |" >> $GITHUB_STEP_SUMMARY  
-          echo "| CSS | ${CSS_ORIGINAL} bytes | ${css_optimized} bytes | ${css_savings} bytes | ${css_percent}% |" >> $GITHUB_STEP_SUMMARY  
-          echo "| JavaScript | ${JS_ORIGINAL} bytes | ${js_optimized} bytes | ${js_savings} bytes | ${js_percent}% |" >> $GITHUB_STEP_SUMMARY  
-          echo "| **Total** | **${TOTAL_ORIGINAL} bytes** | **${total_optimized} bytes** | **${total_savings} bytes** | **${total_percent}%** |" >> $GITHUB_STEP_SUMMARY  
-          echo "" >> $GITHUB_STEP_SUMMARY  
-            
-          # File count summary  
-          html_count=$(find public -name "*.html" 2>/dev/null | wc -l)  
-          css_count=$(find public -name "*.css" 2>/dev/null | wc -l)  
-          js_count=$(find public -name "*.js" 2>/dev/null | wc -l)  
-          total_files=$((html_count + css_count + js_count))  
-            
-          echo "### File Count Summary" >> $GITHUB_STEP_SUMMARY  
-          echo "| Type | Count |" >> $GITHUB_STEP_SUMMARY  
-          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY  
-          echo "| HTML files | $html_count |" >> $GITHUB_STEP_SUMMARY  
-          echo "| CSS files | $css_count |" >> $GITHUB_STEP_SUMMARY  
-          echo "| JavaScript files | $js_count |" >> $GITHUB_STEP_SUMMARY  
-          echo "| **Total files processed** | **$total_files** |" >> $GITHUB_STEP_SUMMARY  
-          echo "" >> $GITHUB_STEP_SUMMARY  
-            
-          echo "### 🚀 Optimizations Applied" >> $GITHUB_STEP_SUMMARY  
-          echo "- **HTML**: Whitespace removal, comment stripping, tag optimization" >> $GITHUB_STEP_SUMMARY  
-          echo "- **CSS**: Minification and optimization" >> $GITHUB_STEP_SUMMARY  
-          echo "- **JavaScript**: Safe minification and compression" >> $GITHUB_STEP_SUMMARY  
-          echo "" >> $GITHUB_STEP_SUMMARY  
-            
-          if [ $total_savings -gt 0 ]; then  
-            echo "✅ **Optimization successful!** Saved ${total_savings} bytes (${total_percent}% reduction)" >> $GITHUB_STEP_SUMMARY  
-          else  
-            echo "ℹ️ **Files already optimized** - no significant size reduction achieved" >> $GITHUB_STEP_SUMMARY  
-          fi  
-            
-          echo "Build completed successfully with $total_files files totaling $total_optimized bytes"  
-          echo "::endgroup::"  
-        
+      - name: Display size comparison  
+        run: cat size_comparison.md  
+          
       - name: Setup Pages  
         uses: actions/configure-pages@v5  
-        
+          
       - name: Upload artifact  
         uses: actions/upload-pages-artifact@v3  
         with:  
-          path: 'public/'  
-        
+          path: 'optimized/'  
+            
       - name: Deploy to GitHub Pages  
         id: deployment  
-        uses: actions/deploy-pages@v4  
-        
-      - name: Deployment success notification  
-        if: success()  
-        run: |  
-          echo "::notice::Deployment successful! Site available at ${{ steps.deployment.outputs.page_url }}"  
-        
-      - name: Deployment failure notification  
-        if: failure()  
-        run: |  
-          echo "::error::Deployment failed. Check the logs above for details."
+        uses: actions/deploy-pages@v4
