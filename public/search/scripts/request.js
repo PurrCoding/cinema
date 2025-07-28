@@ -187,6 +187,10 @@ async function requestUrl() {
 	setTimeout(() => {
 		statusIndicator.classList.add('hidden');
 	}, 2000);
+
+	if (typeof gmod !== 'undefined' && gmod.requestUrl) {
+		gmod.requestUrl(url);
+	}
 }
 
 function onUrlKeyDown(event) {
