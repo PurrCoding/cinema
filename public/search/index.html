@@ -1,78 +1,100 @@
-<!doctype html>
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="./styles/request.css">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Cinema - Request Media</title>
+	<link rel="stylesheet" href="./styles/request.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
+	<!-- Codec Requirements Popup -->
+	<div id="codec-popup" class="codec-popup hidden">
+		<div class="popup-overlay" onclick="closeCodecPopup()"></div>
+		<div class="popup-content">
+			<div class="popup-header">
+				<h3>CEF Codec Fix Required</h3>
+				<button class="close-btn" onclick="closeCodecPopup()">×</button>
+			</div>
+			<div class="popup-body">
+				<div class="popup-icon">🎥</div>
+				<p><strong id="service-name-popup"></strong> requires the CEF Codec Fix to function properly.</p>
+				<div class="instructions">
+					<h4>To enable this service:</h4>
+					<ol>
+						<li>Download and install the CEF Codec Fix</li>
+						<li>Restart Garry's Mod completely</li>
+						<li>Return to Cinema and try again</li>
+					</ol>
+				</div>
+			</div>
+			<div class="popup-actions">
+				<button onclick="closeCodecPopup()" class="btn-secondary">Cancel</button>
+				<button onclick="openCodecInstructions()" class="btn-primary">Get Codec Fix</button>
+			</div>
+		</div>
+	</div>
 
-    <div style="position:absolute;top:0;left:0;right:0;bottom:0;">
-        <section class="content-container">
+	<!-- Main Container -->
+	<div class="app-container">
+		<!-- Background Effects -->
+		<div class="bg-effects">
+			<div class="gradient-orb orb-1"></div>
+			<div class="gradient-orb orb-2"></div>
+			<div class="gradient-orb orb-3"></div>
+		</div>
 
-            <h1>Share media from one of the selected services</h1>
+		<!-- Header -->
+		<header class="header">
+			<h1 class="title">
+				<span class="title-main">Share Media</span>
+				<span class="title-sub">Choose from supported services</span>
+			</h1>
+		</header>
 
-            <div class="services">
+		<!-- Services Grid -->
+		<section class="services-section">
+			<div class="services-grid" id="services-grid">
+				<!-- Service cards will be populated by JavaScript -->
+			</div>
+		</section>
 
-                <span class="media-service subtext logo-youtube" data-href="https://youtube.com/"
-                    onclick="selectService(this);" onmouseover="hoverService();">&nbsp;</span>
+		<!-- URL Input Section -->
+		<section class="url-section">
+			<div class="url-container">
+				<h2 class="url-title">Or paste a direct URL</h2>
+				<div class="input-group">
+					<input
+						id="urlinput"
+						type="url"
+						class="url-input"
+						placeholder="Paste your video URL here..."
+						autocomplete="off"
+						spellcheck="false"
+					>
+					<button onclick="requestUrl()" class="submit-btn" id="submit-btn">
+						<span class="btn-text">Request</span>
+						<span class="btn-icon">→</span>
+					</button>
+				</div>
+				<div class="supported-formats">
+					<span>Supports common share links from supported services, images (JPG, PNG, GIF, BMP), video files (MP4, MOV, MKV, WebM), audio files (MP3, WAV, OGG, M4A, AAC, FLAC), and streaming formats (DASH, M3U8)</span>
+				</div>
+			</div>
+		</section>
 
-                <span class="media-service subtext logo-tiktok" data-href="https://tiktok.com/"
-                    onclick="selectService(this);" onmouseover="hoverService();">TikTok</span>
+		<!-- Status Indicator -->
+		<div id="status-indicator" class="status-indicator hidden">
+			<div class="status-content">
+				<div class="spinner"></div>
+				<span id="status-text">Checking URL...</span>
+			</div>
+		</div>
+	</div>
 
-                <span class="media-service subtext logo-soundcloud" data-href="https://soundcloud.com/discover"
-                    onclick="selectService(this);" onmouseover="hoverService();">&nbsp;</span>
-
-                <span class="media-service subtext logo-dailymotion" data-href="https://www.dailymotion.com/"
-                    onclick="selectService(this);" onmouseover="hoverService();">Dailymotion</span>
-
-                <span class="media-service subtext logo-twitch" data-href="https://www.twitch.tv/"
-                    onclick="selectService(this);" onmouseover="hoverService();">&nbsp;</span>
-
-                <span class="media-service subtext logo-rumble" data-href="https://rumble.com/"
-                    onclick="selectService(this);" onmouseover="hoverService();">Rumble</span>
-
-                <span class="media-service subtext logo-dlive" data-href="https://dlive.tv/"
-                    onclick="selectService(this);" onmouseover="hoverService();">&nbsp</span>
-
-                <span class="media-service subtext logo-kick" data-href="https://kick.com/"
-                    onclick="selectService(this);" onmouseover="hoverService();">&nbsp</span>
-
-                <span class="media-service subtext logo-bilibili" data-href="https://www.bilibili.tv/"
-                    onclick="openService(this);" onmouseover="hoverService();">&nbsp</span>
-
-                <span class="media-service subtext logo-archive" data-href="https://archive.org/details/movies"
-                    onclick="selectService(this);" onmouseover="hoverService();">&nbsp;</span>
-
-                <span class="media-service subtext logo-vk" data-href="https://vk.com/video"
-                    onclick="selectService(this);" onmouseover="hoverService();">VKontakte</span>
-
-                <span class="media-service subtext logo-sibnet" data-href="https://video.sibnet.ru/rub/anime/"
-                    onclick="selectService(this);" onmouseover="hoverService();">(Аниме)</span>
-
-                <span class="media-service subtext logo-ok" data-href="https://ok.ru/video"
-                    onclick="selectService(this);" onmouseover="hoverService();">&nbsp;</span>
-
-                <span class="media-service subtext logo-rutube" data-href="https://rutube.ru/"
-                    onclick="openService(this);" onmouseover="hoverService();">Rutube</span>
-
-            </div>
-
-            <div class="url-container">
-                <h1 class="url-notice">Or request a supported URL</h1>
-                <input id="urlinput" type="text" class="url-input" placeholder="Mega, GDrive, Direct, Image (.webm, .mp4, .m3u8, .jpg, .png, ..)"
-                    autofocus="true" onkeydown="onUrlKeyDown(event);"><a href="javascript:requestUrl();"
-                    class="url-submit">Request</a>
-            </div>
-
-        </section>
-    </div>
-
-    <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
-
-    <script src="./scripts/request.js"></script>
-
+	<script src="./scripts/request.js"></script>
 </body>
-
 </html>
