@@ -66,13 +66,22 @@ function FetchVideoMedata( ply, service, callback )
 	if not IsValid(ply) then return end
 
 	local type, data = service:Type(), service:Data()
-	local token = util.CRC( math.random(1, 9999999) .. data ) -- Generate a Access Token for callback
+	local istable = (istable(data) and data.id and true or false)
+	local token = util.CRC( math.random(1, 9999999) .. (istable and data.id or data )) -- Generate a Access Token for callback
 
 	metadata_callback[token] = callback
 
 	net.Start("TheaterMetadata")
 		net.WriteString(type) -- Service Type
-		net.WriteString(data) -- Unique Video ID/URL
+
+		if istable then
+			net.WriteBool(true) -- flag indicating table data
+			net.WriteTable(data) -- Table for various content
+		else
+			net.WriteBool(false) -- flag indicating string data
+			net.WriteString(tostring(data)) -- Unique Video ID/URL
+		end
+
 		net.WriteString(token) -- Access Token for callback
 	net.Send(ply)
 

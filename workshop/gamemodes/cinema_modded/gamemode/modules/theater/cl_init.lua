@@ -302,7 +302,8 @@ function ReceiveMetadataJob()
 	local service = GetServiceByClass(type)
 
 	if service then
-		local data = net.ReadString()
+		local isTable = net.ReadBool()
+		local data = isTable and net.ReadTable() or net.ReadString()
 		local token = net.ReadString()
 
 		service:GetMetadata(data, function(metadata)
