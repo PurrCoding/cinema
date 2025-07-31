@@ -11,6 +11,14 @@
 	{
 		1
 		{
+			"name"		"cinema_spawn_popcorn"
+			"text"		"Spawn with Popcorn"
+			"help"		"Give players weapon_popcorn when they spawn"
+			"type"		"CheckBox"
+			"default"	"0"
+		}
+		2
+		{
 			"name"		"cinema_enable_sandbox"
 			"text"		"Enable Sandbox"
 			"help"		"(Experimental) Enables the sandbox functionalities"
@@ -18,7 +26,7 @@
 			"default"	"0"
 			"singleplayer" "1"
 		}
-		2
+		3
 		{
 			"name"		"cinema_allow_3dvoice"
 			"text"		"Allow 3D Voice"
@@ -26,7 +34,7 @@
 			"type"		"CheckBox"
 			"default"	"1"
 		}
-		3
+		4
 		{
 			"name"		"cinema_allow_voice"
 			"text"		"Allow Voice in Theater"
@@ -34,7 +42,7 @@
 			"type"		"CheckBox"
 			"default"	"0"
 		}
-		4
+		5
 		{
 			"name"		"cinema_allow_reset"
 			"text"		"Allow Reset"

@@ -63,6 +63,15 @@ function PLAYER:Loadout()
 	self.Player:RemoveAllAmmo()
 	self.Player:SwitchToDefaultWeapon()
 
+	-- Give popcorn if ConVar is enabled and weapon exists
+	if GetConVar("cinema_spawn_popcorn"):GetBool() then
+		if weapons.Get("weapon_popcorn") then
+			self.Player:Give("weapon_popcorn")
+		else
+			print("Warning: weapon_popcorn does not exist!")
+		end
+	end
+
 end
 
 --
