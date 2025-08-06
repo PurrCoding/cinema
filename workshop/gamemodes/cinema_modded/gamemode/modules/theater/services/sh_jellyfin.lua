@@ -1,0 +1,149 @@
+local SERVICE = {
+	Name = "Jellyfin URL",
+	IsTimed = true,
+	NeedsCodecFix = true,
+	ExtentedVideoInfo = true,
+	IsCacheable = true
+}
+
+local function GetJellyfinBaseURL(url)
+	local protocol = url.scheme or "https"
+	local host = url.host
+	local port = url.port and (":" .. url.port) or ""
+
+	-- Extract path up to "/web/" (excluding "/web/" itself)
+	local basePath = ""
+	if url.path then
+		local webIndex = url.path:find("/web/")
+		if webIndex then
+			basePath = url.path:sub(1, webIndex - 1)
+		end
+	end
+
+	return protocol .. "://" .. host .. port .. basePath
+end
+
+function SERVICE:Match(url)
+	return url.host and url.path and url.path:match("/web/")
+end
+
+function SERVICE:GetURLInfo(url)
+	if not url or not url.encoded then return false end
+
+	local baseURL = GetJellyfinBaseURL(url)
+	local itemId
+
+	-- Extract item ID from query or parsed fragment table
+	if url.query and url.query["id"] then
+		itemId = url.query["id"]
+	elseif url.fragment and istable(url.fragment) then
+		-- Look for keys that contain the path structure like "/details?id"
+		for key, value in pairs(url.fragment) do
+			if key and key:match("/details%?id") then
+				itemId = value
+				break
+			end
+		end
+
+		-- Fallback: check if "id" exists directly in fragment table
+		if not itemId and url.fragment["id"] then
+			itemId = url.fragment["id"]
+		end
+	end
+
+	if itemId then
+		local directURL = baseURL .. "/Videos/" .. itemId .. "/stream?static=true"
+		return { Data = directURL }
+	end
+
+	return false
+end
+
+if CLIENT then
+	function SERVICE:LoadProvider(Video, panel)
+		local html = [[
+		<html>
+		<head>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		</head>
+		<body>
+			<style>
+				* { margin: 0; padding: 0; box-sizing: border-box; }
+				body {
+					margin:0px;
+					background-color:black;
+					overflow:hidden;
+				}
+				video {
+					width: 100%;
+					height: 100%;
+				}
+			</style>
+			<video id="cinema-player" src="]] .. Video:Data() .. [[" autoplay controls preload="metadata"></video>
+			<script>
+				(function() {
+					const video = document.getElementById('cinema-player');
+					video.addEventListener('loadedmetadata', function() {
+						window.cinema_controller = video;
+						exTheater.controllerReady();
+					});
+					video.addEventListener('error', function(e) {
+						console.error('Video error:', e);
+					});
+				})();
+			</script>
+		</body>
+		</html>
+		]]
+
+		panel:SetHTML(html)
+		panel.OnDocumentReady = function(pnl)
+			self:LoadExFunctions(pnl)
+		end
+	end
+
+	function SERVICE:GetMetadata(data, callback)
+		local panel = self:CreateWebCrawler(callback)
+		panel:SetHTML([[
+			<html>
+			<head><meta charset="utf-8"></head>
+			<body>
+				<video id="metadata-video" src="]] .. data .. [[" preload="metadata" style="display:none;"></video>
+				<script>
+					const video = document.getElementById('metadata-video');
+					video.onloadedmetadata = function() {
+						const metadata = {
+							duration: video.duration,
+							videoWidth: video.videoWidth || 0,
+							videoHeight: video.videoHeight || 0
+						};
+						console.log("METADATA:" + JSON.stringify(metadata));
+					};
+					video.onerror = function() {
+						console.log("ERROR:" + (video.error ? video.error.code : 'unknown'));
+					};
+				</script>
+			</body>
+			</html>
+		]])
+	end
+end
+
+function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
+	-- Use the theater's metadata extraction system
+	theater.FetchVideoMedata(data:GetOwner(), data, function(metadata)
+		if metadata.err then
+			return onFailure(metadata.err)
+		end
+
+		local info = {
+			title = "Jellyfin Video",
+			duration = math.max(0, math.Round(tonumber(metadata.duration) or 0))
+		}
+
+		if onSuccess then pcall(onSuccess, info) end
+	end)
+end
+
+theater.RegisterService("jellyfin_url", SERVICE)
