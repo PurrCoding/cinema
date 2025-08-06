@@ -1,7 +1,7 @@
 --[[
 	This is an experimental service implementation for Jellyfin. The code is not elegant, but it works.
 	Shows and movies are currently supported, and every domain with the path “/web/” is taken into account.
-	No titles are recorded, as these API queries require authentication, which is to be avoided here.
+	No titles are fetched, as these API queries require authentication, which is to be avoided here.
 	Please make sure that the video sources can be played without logging in and use the links with “/#/details?id=<videoid>” in them.
 ]]--
 
