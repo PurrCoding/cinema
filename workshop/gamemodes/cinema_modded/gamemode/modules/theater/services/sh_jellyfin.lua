@@ -1,6 +1,6 @@
 --[[
 	This is an experimental service implementation for Jellyfin. The code is not elegant, but it works.
-	Shows and movies are currently supported, and every domain with the path “/web/” is taken into account.
+	Shows and movies are currently supported, and every domain with the path “/web” is taken into account.
 	No titles are fetched, as these API queries require authentication, which is to be avoided here.
 	Please make sure that the video sources can be played without logging in and use the links with “/#/details?id=<videoid>” in them.
 ]]--
@@ -18,10 +18,10 @@ local function GetJellyfinBaseURL(url)
 	local host = url.host
 	local port = url.port and (":" .. url.port) or ""
 
-	-- Extract path up to "/web/" (excluding "/web/" itself)
+	-- Extract path up to "/web" (excluding "/web" itself)
 	local basePath = ""
 	if url.path then
-		local webIndex = url.path:find("/web/")
+		local webIndex = url.path:find("/web")
 		if webIndex then
 			basePath = url.path:sub(1, webIndex - 1)
 		end
@@ -31,31 +31,21 @@ local function GetJellyfinBaseURL(url)
 end
 
 function SERVICE:Match(url)
-	return url.host and url.path and url.path:match("/web/")
+	local params = (url.fragment and url.fragment["params"] )
+
+	return url.host and (params and params["id"] and params["serverId"] )
 end
 
 function SERVICE:GetURLInfo(url)
 	if not url or not url.encoded then return false end
 
 	local baseURL = GetJellyfinBaseURL(url)
+	local params = (url.fragment and url.fragment["params"] )
 	local itemId
 
-	-- Extract item ID from query or parsed fragment table
-	if url.query and url.query["id"] then
-		itemId = url.query["id"]
-	elseif url.fragment and istable(url.fragment) then
-		-- Look for keys that contain the path structure like "/details?id"
-		for key, value in pairs(url.fragment) do
-			if key and key:match("/details%?id") then
-				itemId = value
-				break
-			end
-		end
-
-		-- Fallback: check if "id" exists directly in fragment table
-		if not itemId and url.fragment["id"] then
-			itemId = url.fragment["id"]
-		end
+	-- Extract item ID from parsed fragment table
+	if params then
+		itemId = params["id"]
 	end
 
 	if itemId then
