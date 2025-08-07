@@ -47,6 +47,7 @@ local string_GetExtensionFromFilename = string.GetExtensionFromFilename
 local string_Explode = string.Explode
 local table_insert = table.insert
 local table_concat = table.concat
+local PrintTable = PrintTable
 module("url")
 
 -----------------------------------------------------------------------------
@@ -118,6 +119,16 @@ local entities = {
 	['↓'] = '&darr;', ['♠'] = '&spades;', ['♣'] = '&clubs;', ['♥'] = '&hearts;',
 	['♦'] = '&diams;'
 }
+
+local function removeControlChars(str)
+	-- This effectively does what [\0-\31\127] would do
+	local result = str
+	for i = 0, 31 do
+		result = string_gsub(result, string_char(i), "")
+	end
+	result = string_gsub(result, string_char(127), "")
+	return result
+end
 
 -----------------------------------------------------------------------------
 -- Convert string to HTML entities with error handling
@@ -299,8 +310,8 @@ function sanitizeParam(key, value)
 	end
 
 	-- Remove null bytes and control characters
-	key = string_gsub(key, "[\0-\31\127]", "")
-	value = string_gsub(value, "[\0-\31\127]", "")
+	key = removeControlChars(key)
+	value = removeControlChars(value)
 
 	return key, value
 end
@@ -318,7 +329,7 @@ function sanitizePath(path)
 	end
 
 	-- Remove null bytes and control characters
-	path = string_gsub(path, "[\0-\31\127]", "")
+	path = removeControlChars(path)
 
 	-- Normalize path separators
 	path = string_gsub(path, "\\", "/")
@@ -393,7 +404,7 @@ function sanitizeURL(url_string)
 	-- Remove leading/trailing whitespace and control characters
 	url_string = string_gsub(url_string, "^%s+", "")
 	url_string = string_gsub(url_string, "%s+$", "")
-	url_string = string_gsub(url_string, "[\0-\31\127]", "")
+	url_string = removeControlChars(url_string)
 
 	-- Parse URL to check components
 	local parsed = parse(url_string)
@@ -745,6 +756,7 @@ function parse2(url, default)
 		end
 	end
 
+	PrintTable(parsed)
 	return parsed
 end
 
