@@ -47,7 +47,6 @@ local string_GetExtensionFromFilename = string.GetExtensionFromFilename
 local string_Explode = string.Explode
 local table_insert = table.insert
 local table_concat = table.concat
-local PrintTable = PrintTable
 module("url")
 
 -----------------------------------------------------------------------------
@@ -584,7 +583,7 @@ end
 -- Returns: table with parsed URL components or nil if security validation fails
 --
 -- Security features applied automatically:
--- • Protocol validation (only allows http, https, ftp)
+-- • Protocol validation (only allows http, https)
 -- • Parameter sanitization (removes script injection patterns)
 -- • XSS prevention (escapes dangerous HTML characters)
 -- • Directory traversal protection (blocks ../ path attacks)
@@ -619,7 +618,7 @@ function parse2(url, default)
 	if not parsed then return end
 
 	-- Validate URL protocol against whitelist
-	-- Only http, https, and ftp are allowed to prevent code injection
+	-- Only http and https are allowed to prevent code injection
 	if parsed.scheme and not isAllowedProtocol(parsed.scheme) then
 		return nil  -- Dangerous protocol detected
 	end
@@ -756,7 +755,6 @@ function parse2(url, default)
 		end
 	end
 
-	PrintTable(parsed)
 	return parsed
 end
 
