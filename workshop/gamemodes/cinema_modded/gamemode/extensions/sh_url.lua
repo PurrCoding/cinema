@@ -32,6 +32,21 @@
 -----------------------------------------------------------------------------
 -- Declare module
 -----------------------------------------------------------------------------
+local isstring, istable, tostring, tonumber = isstring, istable, tostring, tonumber
+local pairs, ipairs = pairs, ipairs
+local string_gsub = string.gsub
+local string_format = string.format
+local string_byte = string.byte
+local string_char = string.char
+local string_lower = string.lower
+local string_match = string.match
+local string_gmatch = string.gmatch
+local string_sub = string.sub
+local string_GetFileFromFilename = string.GetFileFromFilename
+local string_GetExtensionFromFilename = string.GetExtensionFromFilename
+local string_Explode = string.Explode
+local table_insert = table.insert
+local table_concat = table.concat
 module("url")
 
 -----------------------------------------------------------------------------
@@ -115,7 +130,7 @@ function htmlentities(s)
 	end
 
 	for k, v in pairs(entities) do
-		s = string.gsub(s, k, v)
+		s = string_gsub(s, k, v)
 	end
 
 	return s
@@ -132,7 +147,7 @@ function htmlentities_decode(s)
 	end
 
 	for k, v in pairs(entities) do
-		s = string.gsub(s, v, k)
+		s = string_gsub(s, v, k)
 	end
 
 	return s
@@ -162,7 +177,7 @@ function htmlentities_secure(s)
 	}
 
 	for char, entity in pairs(xss_entities) do
-		s = string.gsub(s, char, entity)
+		s = string_gsub(s, char, entity)
 	end
 
 	return s
@@ -178,8 +193,8 @@ function escape(s)
 		return s or ""
 	end
 
-	return string.gsub(s, "([^A-Za-z0-9_])", function(c)
-		return string.format("%%%02x", string.byte(c))
+	return string_gsub(s, "([^A-Za-z0-9_])", function(c)
+		return string_format("%%%02x", string_byte(c))
 	end)
 end
 
@@ -201,11 +216,11 @@ end
 local segment_set = make_set{"-", "_", ".", "!", "~", "*", "'", "(", ")", ":", "@", "&", "=", "+", "$", ","}
 
 local function protect_segment(s)
-	return string.gsub(s, "([^A-Za-z0-9_])", function(c)
+	return string_gsub(s, "([^A-Za-z0-9_])", function(c)
 		if segment_set[c] then
 			return c
 		else
-			return string.format("%%%02x", string.byte(c))
+			return string_format("%%%02x", string_byte(c))
 		end
 	end)
 end
@@ -220,10 +235,10 @@ function unescape(s)
 		return s or ""
 	end
 
-	return string.gsub(s, "%%(%x%x)", function(hex)
+	return string_gsub(s, "%%(%x%x)", function(hex)
 		local num = tonumber(hex, 16)
 		if num and num >= 0 and num <= 255 then
-			return string.char(num)
+			return string_char(num)
 		else
 			return "%" .. hex  -- Return original if invalid
 		end
@@ -242,7 +257,7 @@ function isAllowedProtocol(scheme)
 		return false
 	end
 
-	return ALLOWED_PROTOCOLS[string.lower(scheme)] or false
+	return ALLOWED_PROTOCOLS[string_lower(scheme)] or false
 end
 
 -----------------------------------------------------------------------------
@@ -277,15 +292,15 @@ function sanitizeParam(key, value)
 	}
 
 	for _, pattern in ipairs(dangerous_patterns) do
-		if string.match(string.lower(value), pattern) or
-		   string.match(string.lower(key), pattern) then
+		if string_match(string_lower(value), pattern) or
+		   string_match(string_lower(key), pattern) then
 			return nil, nil  -- Reject dangerous content
 		end
 	end
 
 	-- Remove null bytes and control characters
-	key = string.gsub(key, "[\0-\31\127]", "")
-	value = string.gsub(value, "[\0-\31\127]", "")
+	key = string_gsub(key, "[\0-\31\127]", "")
+	value = string_gsub(value, "[\0-\31\127]", "")
 
 	return key, value
 end
@@ -303,10 +318,10 @@ function sanitizePath(path)
 	end
 
 	-- Remove null bytes and control characters
-	path = string.gsub(path, "[\0-\31\127]", "")
+	path = string_gsub(path, "[\0-\31\127]", "")
 
 	-- Normalize path separators
-	path = string.gsub(path, "\\", "/")
+	path = string_gsub(path, "\\", "/")
 
 	-- Remove dangerous sequences
 	local dangerous_sequences = {
@@ -320,19 +335,19 @@ function sanitizePath(path)
 	}
 
 	for _, sequence in ipairs(dangerous_sequences) do
-		path = string.gsub(path, sequence, "/")
+		path = string_gsub(path, sequence, "/")
 	end
 
 	-- Split path into segments for validation
 	local segments = {}
-	for segment in string.gmatch(path, "[^/]+") do
+	for segment in string_gmatch(path, "[^/]+") do
 		-- Skip empty segments and current directory references
 		if segment ~= "" and segment ~= "." then
 			-- Reject parent directory references
 			if segment == ".." then
 				return nil  -- Path traversal attempt detected
 			end
-			table.insert(segments, segment)
+			table_insert(segments, segment)
 		end
 	end
 
@@ -342,7 +357,7 @@ function sanitizePath(path)
 	end
 
 	-- Rebuild clean path
-	local clean_path = "/" .. table.concat(segments, "/")
+	local clean_path = "/" .. table_concat(segments, "/")
 
 	-- Ensure path doesn't end with dangerous extensions
 	local dangerous_extensions = {
@@ -350,7 +365,7 @@ function sanitizePath(path)
 	}
 
 	for _, ext_pattern in ipairs(dangerous_extensions) do
-		if string.match(string.lower(clean_path), ext_pattern) then
+		if string_match(string_lower(clean_path), ext_pattern) then
 			return nil  -- Dangerous file extension
 		end
 	end
@@ -376,9 +391,9 @@ function sanitizeURL(url_string)
 	end
 
 	-- Remove leading/trailing whitespace and control characters
-	url_string = string.gsub(url_string, "^%s+", "")
-	url_string = string.gsub(url_string, "%s+$", "")
-	url_string = string.gsub(url_string, "[\0-\31\127]", "")
+	url_string = string_gsub(url_string, "^%s+", "")
+	url_string = string_gsub(url_string, "%s+$", "")
+	url_string = string_gsub(url_string, "[\0-\31\127]", "")
 
 	-- Parse URL to check components
 	local parsed = parse(url_string)
@@ -409,11 +424,11 @@ end
 -- Returns: corresponding absolute path
 -----------------------------------------------------------------------------
 local function absolute_path(base_path, relative_path)
-	if string.sub(relative_path, 1, 1) == "/" then return relative_path end
-	local path = string.gsub(base_path, "[^/]*$", "")
+	if string_sub(relative_path, 1, 1) == "/" then return relative_path end
+	local path = string_gsub(base_path, "[^/]*$", "")
 	path = path .. relative_path
 
-	path = string.gsub(path, "([^/]*%./)", function(s)
+	path = string_gsub(path, "([^/]*%./)", function(s)
 		if s ~= "./" then
 			return s
 		else
@@ -421,13 +436,13 @@ local function absolute_path(base_path, relative_path)
 		end
 	end)
 
-	path = string.gsub(path, "/%.$", "/")
+	path = string_gsub(path, "/%.$", "/")
 	local reduced
 
 	while reduced ~= path do
 		reduced = path
 
-		path = string.gsub(reduced, "([^/]*/%.%./)", function(s)
+		path = string_gsub(reduced, "([^/]*/%.%./)", function(s)
 			if s ~= "../../" then
 				return ""
 			else
@@ -436,7 +451,7 @@ local function absolute_path(base_path, relative_path)
 		end)
 	end
 
-	path = string.gsub(reduced, "([^/]*/%.%.)$", function(s)
+	path = string_gsub(reduced, "([^/]*/%.%.)$", function(s)
 		if s ~= "../.." then
 			return ""
 		else
@@ -470,31 +485,31 @@ function parse(url, default)
 	if not url or url == "" then return nil, "invalid url" end
 
 	-- Get fragment
-	url = string.gsub(url, "#(.*)$", function(f)
+	url = string_gsub(url, "#(.*)$", function(f)
 		parsed.fragment = f
 		return ""
 	end)
 
 	-- Get scheme with validation
-	url = string.gsub(url, "^([%w][%w%+%-%.]*)%://", function(s)
-		parsed.scheme = string.lower(s)  -- Normalize scheme to lowercase
+	url = string_gsub(url, "^([%w][%w%+%-%.]*)%://", function(s)
+		parsed.scheme = string_lower(s)  -- Normalize scheme to lowercase
 		return ""
 	end)
 
 	-- Get authority
-	url = string.gsub(url, "^([^/%?]*)", function(n)
+	url = string_gsub(url, "^([^/%?]*)", function(n)
 		parsed.authority = n
 		return ""
 	end)
 
 	-- Get query string
-	url = string.gsub(url, "%?(.*)", function(q)
+	url = string_gsub(url, "%?(.*)", function(q)
 		parsed.query = q
 		return ""
 	end)
 
 	-- Get params
-	url = string.gsub(url, "%;(.*)", function(p)
+	url = string_gsub(url, "%;(.*)", function(p)
 		parsed.params = p
 		return ""
 	end)
@@ -504,10 +519,10 @@ function parse(url, default)
 		parsed.path = url
 
 		-- Get file information
-		if string.GetFileFromFilename(url) then
+		if string_GetFileFromFilename(url) then
 			parsed.file = {
-				name = string.GetFileFromFilename(url),
-				ext = string.GetExtensionFromFilename(url)
+				name = string_GetFileFromFilename(url),
+				ext = string_GetExtensionFromFilename(url)
 			}
 		end
 	else
@@ -517,13 +532,13 @@ function parse(url, default)
 	local authority = parsed.authority
 	if not authority then return parsed end
 
-	authority = string.gsub(authority, "^([^@]*)@", function(u)
+	authority = string_gsub(authority, "^([^@]*)@", function(u)
 		parsed.userinfo = u
 		return ""
 	end)
 
 	-- Parse port with validation
-	authority = string.gsub(authority, ":([^:]*)$", function(p)
+	authority = string_gsub(authority, ":([^:]*)$", function(p)
 		local port_num = tonumber(p)
 		if port_num and port_num >= 1 and port_num <= 65535 then
 			parsed.port = p
@@ -532,13 +547,13 @@ function parse(url, default)
 	end)
 
 	if authority ~= "" then
-		parsed.host = string.lower(authority)  -- Normalize host to lowercase
+		parsed.host = string_lower(authority)  -- Normalize host to lowercase
 	end
 
 	local userinfo = parsed.userinfo
 	if not userinfo then return parsed end
 
-	userinfo = string.gsub(userinfo, ":([^:]*)$", function(p)
+	userinfo = string_gsub(userinfo, ":([^:]*)$", function(p)
 		parsed.password = p
 		return ""
 	end)
@@ -612,11 +627,11 @@ function parse2(url, default)
 	-- Each parameter is URL-decoded and checked for malicious content
 	if parsed.query then
 		local query_string = parsed.query
-		local param_pairs = string.Explode("&", query_string)
+		local param_pairs = string_Explode("&", query_string)
 		local params = {}
 
 		for i = 1, #param_pairs do
-			local key_value = string.Explode("=", param_pairs[i], 2)
+			local key_value = string_Explode("=", param_pairs[i], 2)
 			local key = key_value[1]
 			local value = key_value[2] or ""
 
@@ -660,9 +675,9 @@ function parse2(url, default)
 				parsed.fragment.route = clean_route
 
 				-- Parse and sanitize query parameters within the fragment
-				local param_pairs = string.Explode("&", query_part)
+				local param_pairs = string_Explode("&", query_part)
 				for i = 1, #param_pairs do
-					local key_value = string.Explode("=", param_pairs[i], 2)
+					local key_value = string_Explode("=", param_pairs[i], 2)
 					local key = key_value[1]
 					local value = key_value[2] or ""
 
@@ -692,10 +707,10 @@ function parse2(url, default)
 			-- Fragment contains parameters without route (e.g., #param1=value1&param2=value2)
 			-- This is less common but still needs parameter sanitization
 			parsed.fragment.hash_type = "parameters"
-			local param_pairs = string.Explode("&", fragment)
+			local param_pairs = string_Explode("&", fragment)
 
 			for i = 1, #param_pairs do
-				local key_value = string.Explode("=", param_pairs[i], 2)
+				local key_value = string_Explode("=", param_pairs[i], 2)
 				local key = key_value[1]
 				local value = key_value[2] or ""
 
@@ -790,8 +805,8 @@ function build(parsed)
 	end
 
 	-- Remove empty components
-	url = string.gsub(url, "%?$", "")
-	url = string.gsub(url, "/$", "")
+	url = string_gsub(url, "%?$", "")
+	url = string_gsub(url, "/$", "")
 
 	return url
 end
@@ -844,8 +859,8 @@ function parse_path(path)
 	path = path or ""
 
 	-- Get each segment
-	string.gsub(path, "([^/]*)", function(s)
-		table.insert(parsed, s)
+	string_gsub(path, "([^/]*)", function(s)
+		table_insert(parsed, s)
 	end)
 
 	-- Unescape each segment
@@ -853,11 +868,11 @@ function parse_path(path)
 		parsed[i] = unescape(parsed[i])
 	end
 
-	if string.sub(path, 1, 1) == "/" then
+	if string_sub(path, 1, 1) == "/" then
 		parsed.is_absolute = 1
 	end
 
-	if string.sub(path, -1, -1) == "/" then
+	if string_sub(path, -1, -1) == "/" then
 		parsed.is_directory = 1
 	end
 
@@ -972,7 +987,7 @@ function normalizeURL(parsed_url)
 
 	-- Convert host to lowercase
 	if parsed_url.host then
-		parsed_url.host = string.lower(parsed_url.host)
+		parsed_url.host = string_lower(parsed_url.host)
 	end
 
 	-- Remove default ports
