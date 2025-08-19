@@ -7,7 +7,7 @@
 	--bg-card: rgba(255, 255, 255, 0.05);
 	--text-primary: #ffffff;
 	--text-secondary: #b8b8b8;
-	--text-muted: #666666;
+	--text-muted: ;
 	--border-color: rgba(255, 255, 255, 0.1);
 	--shadow-glow: 0 0 20px rgba(0, 212, 255, 0.3);
 	--shadow-card: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -15,7 +15,7 @@
 	--transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Reset and Base Styles */
+/* Base styles */
 * {
 	margin: 0;
 	padding: 0;
@@ -23,18 +23,15 @@
 }
 
 body {
-	font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-	background: -webkit-radial-gradient(center,
-			ellipse cover,
-			#242f3a 0%,
-			#161616 100%);
+	font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+	background: -webkit-radial-gradient(center, ellipse cover, #242f3a 0%, #161616 100%);
 	color: var(--text-primary);
 	min-height: 100vh;
 	overflow-x: hidden;
 	line-height: 1.6;
 }
 
-/* App Container */
+/* App container */
 .app-container {
 	position: relative;
 	min-height: 100vh;
@@ -46,7 +43,7 @@ body {
 	gap: 3rem;
 }
 
-/* Services Section */
+/* Services section */
 .services-section {
 	width: 100%;
 	max-width: 1200px;
@@ -54,14 +51,10 @@ body {
 
 .services-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-	gap: 1.5rem;
-	padding: 2rem;
-	background: var(--bg-card);
-	border: 1px solid var(--border-color);
-	border-radius: var(--border-radius);
-	backdrop-filter: blur(20px);
-	box-shadow: var(--shadow-card);
+	grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+	gap: 1rem;
+	max-width: 800px;
+	margin: 0 auto;
 }
 
 .service-card {
@@ -119,68 +112,23 @@ body {
 	opacity: 0.8;
 }
 
-/* Service Logo Styles */
-.logo-youtube {
-	background-image: url(../images/logos/youtube.png);
-}
+/* Service logos */
+.logo-youtube { background-image: url(../images/logos/youtube.png); }
+.logo-tiktok { background-image: url(../images/logos/tiktok.png); background-size: 75px; }
+.logo-soundcloud { background-image: url(../images/logos/soundcloud.svg); }
+.logo-dailymotion { background-image: url(../images/logos/dailymotion.png); background-size: 55px; }
+.logo-twitch { background-image: url(../images/logos/twitch.png); }
+.logo-rumble { background-image: url(../images/logos/rumble.png); }
+.logo-dlive { background-image: url(../images/logos/dlive.png); }
+.logo-kick { background-image: url(../images/logos/kick.svg); }
+.logo-bilibili { background-image: url(../images/logos/bilibili.svg); }
+.logo-archive { background-image: url(../images/logos/archive.png); }
+.logo-vk { background-image: url(../images/logos/vk.png); background-size: 50px; }
+.logo-sibnet { background-image: url(../images/logos/sibnet.png); }
+.logo-ok { background-image: url(../images/logos/okru.png); }
+.logo-rutube { background-image: url(../images/logos/rutube.jpg); background-size: 50px; }
 
-.logo-tiktok {
-	background-image: url(../images/logos/tiktok.png);
-	background-size: 75px;
-}
-
-.logo-soundcloud {
-	background-image: url(../images/logos/soundcloud.svg);
-}
-
-.logo-dailymotion {
-	background-image: url(../images/logos/dailymotion.png);
-	background-size: 55px;
-}
-
-.logo-twitch {
-	background-image: url(../images/logos/twitch.png);
-}
-
-.logo-rumble {
-	background-image: url(../images/logos/rumble.png);
-}
-
-.logo-dlive {
-	background-image: url(../images/logos/dlive.png);
-}
-
-.logo-kick {
-	background-image: url(../images/logos/kick.svg);
-}
-
-.logo-bilibili {
-	background-image: url(../images/logos/bilibili.svg);
-}
-
-.logo-archive {
-	background-image: url(../images/logos/archive.png);
-}
-
-.logo-vk {
-	background-image: url(../images/logos/vk.png);
-	background-size: 50px;
-}
-
-.logo-sibnet {
-	background-image: url(../images/logos/sibnet.png);
-}
-
-.logo-ok {
-	background-image: url(../images/logos/okru.png);
-}
-
-.logo-rutube {
-	background-image: url(../images/logos/rutube.jpg);
-	background-size: 50px;
-}
-
-/* Disabled Service Styles */
+/* Disabled service styles */
 .service-card.service-disabled {
 	opacity: 0.4;
 	cursor: not-allowed;
@@ -206,7 +154,7 @@ body {
 	font-weight: 600;
 }
 
-/* URL Section */
+/* URL input section */
 .url-section {
 	width: 100%;
 	max-width: 600px;
@@ -255,6 +203,12 @@ body {
 	color: var(--text-muted);
 }
 
+.url-input.auto-filled {
+	border-color: var(--accent-color) !important;
+	box-shadow: 0 0 0 2px rgba(78, 205, 196, 0.3) !important;
+	transition: all 0.3s ease;
+}
+
 .submit-btn {
 	background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
 	border: none;
@@ -288,7 +242,7 @@ body {
 	line-height: 1.4;
 }
 
-/* Codec Requirements Popup */
+/* Codec popup */
 .codec-popup {
 	position: fixed;
 	top: 0;
@@ -446,7 +400,7 @@ body {
 	transform: translateY(-2px);
 }
 
-/* Status Indicator */
+/* Status indicator */
 .status-indicator {
 	position: fixed;
 	bottom: 2rem;
@@ -485,7 +439,7 @@ body {
 	100% { transform: rotate(360deg); }
 }
 
-/* Responsive Design */
+/* Responsive design */
 @media (max-width: 768px) {
 	.app-container {
 		padding: 1rem;

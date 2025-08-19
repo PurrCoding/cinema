@@ -1,6 +1,6 @@
 'use strict';
 
-// Service definitions with dependency requirements
+// Service definitions with codec requirements
 const services = [
 	{ name: 'YouTube', icon: 'youtube', url: 'https://youtube.com/', action: 'select', requiresCodec: false },
 	{ name: 'TikTok', icon: 'tiktok', url: 'https://tiktok.com/', action: 'select', requiresCodec: true },
@@ -18,7 +18,7 @@ const services = [
 	{ name: 'Rutube', icon: 'rutube', url: 'https://rutube.ru/', action: 'open', requiresCodec: true }
 ];
 
-// Simplified codec checking (removed x86-64 requirement)
+// Codec support detection
 let hasCodecSupport = false;
 
 function checkCodecSupport() {
@@ -30,7 +30,7 @@ function checkCodecSupport() {
 	});
 }
 
-// Initialize services grid with codec-based disabling
+// Initialize service grid
 async function initializeServices() {
 	const grid = document.getElementById('services-grid');
 	const codecCheck = await checkCodecSupport();
@@ -42,12 +42,10 @@ async function initializeServices() {
 		card.dataset.action = service.action;
 		card.dataset.serviceName = service.name;
 
-		// Disable service if it requires codec and codec is not available
 		const isDisabled = service.requiresCodec && !codecCheck.hasCodecSupport;
 
 		if (isDisabled) {
 			card.classList.add('service-disabled');
-			// Add click handler for popup instead of title attribute
 			card.addEventListener('click', (e) => {
 				e.preventDefault();
 				showCodecPopup(service.name);
@@ -67,28 +65,21 @@ async function initializeServices() {
 	});
 }
 
-// Show codec requirements popup
 function showCodecPopup(serviceName) {
 	const popup = document.getElementById('codec-popup');
 	const serviceNameElement = document.getElementById('service-name-popup');
 
 	serviceNameElement.textContent = serviceName;
 	popup.classList.remove('hidden');
-
-	// Prevent body scroll when popup is open
 	document.body.style.overflow = 'hidden';
 }
 
-// Close codec popup
 function closeCodecPopup() {
 	const popup = document.getElementById('codec-popup');
 	popup.classList.add('hidden');
-
-	// Restore body scroll
 	document.body.style.overflow = '';
 }
 
-// Open codec fix instructions
 function openCodecInstructions() {
 	const url = 'https://www.solsticegamestudios.com/fixmedia/';
 
@@ -100,10 +91,9 @@ function openCodecInstructions() {
 	closeCodecPopup();
 }
 
-// Simplified service selection (no codec warning, just block disabled services)
 function selectService(elem) {
 	if (elem.classList.contains('service-disabled')) {
-		return; // Do nothing for disabled services
+		return;
 	}
 
 	playUISound(true);
@@ -127,8 +117,7 @@ function openService(elem) {
 	}
 }
 
-// Enhanced URL request with codec checking
-async function requestUrl() {
+function requestUrl() {
 	const elem = document.getElementById('urlinput');
 	const url = elem.value.trim();
 	const statusIndicator = document.getElementById('status-indicator');
@@ -137,55 +126,13 @@ async function requestUrl() {
 
 	if (url.length === 0) return;
 
-	// Show loading state
 	statusIndicator.classList.remove('hidden');
-	statusText.textContent = 'Validating URL...';
+	statusText.textContent = 'Request sent!';
 	submitBtn.disabled = true;
 
-	/* Needs further implementation
-	try {
-		// Basic URL validation
-		new URL(url);
-
-		// Check if URL requires codec support
-		const requiresCodec = url.includes('youtube') || url.includes('bilibili') || url.includes('dailymotion');
-
-		if (requiresCodec && !hasCodecSupport) {
-			statusText.textContent = 'URL requires CEF Codec Fix';
-			setTimeout(() => {
-				statusIndicator.classList.add('hidden');
-			}, 3000);
-			return;
-		}
-
-		statusText.textContent = 'Requesting video...';
-
-		// Call GMod function or fallback
-		if (typeof gmod !== 'undefined' && gmod.requestUrl) {
-			gmod.requestUrl(url);
-		} else {
-			console.log('Would request URL:', url);
-		}
-
-		statusText.textContent = 'Request sent!';
-		setTimeout(() => {
-			statusIndicator.classList.add('hidden');
-		}, 2000);
-
-	} catch (error) {
-		statusText.textContent = 'Invalid URL format';
-		setTimeout(() => {
-			statusIndicator.classList.add('hidden');
-		}, 3000);
-	} finally {
-		submitBtn.disabled = false;
-	}
-	*/
-
-	// This will do for now..
-	statusText.textContent = 'Request sent!';
 	setTimeout(() => {
 		statusIndicator.classList.add('hidden');
+		submitBtn.disabled = false;
 	}, 2000);
 
 	if (typeof gmod !== 'undefined' && gmod.requestUrl) {
@@ -210,12 +157,65 @@ function hoverService() {
 	playUISound(false);
 }
 
-// Initialize when DOM is loaded
+function initializeUrlInput() {
+	const urlInput = document.getElementById('urlinput');
+	if (urlInput) {
+		urlInput.addEventListener('keydown', onUrlKeyDown);
+	}
+}
+
+function initializeAutoInput() {
+	const urlInput = document.getElementById('urlinput');
+	if (!urlInput) return;
+
+	// Focus input on keypress
+	document.addEventListener('keydown', (event) => {
+		if (document.activeElement === urlInput ||
+			event.ctrlKey || event.metaKey || event.altKey ||
+			event.key === 'Tab' || event.key === 'Escape') {
+			return;
+		}
+
+		urlInput.focus();
+	});
+
+	// Handle clipboard paste
+	document.addEventListener('paste', async (event) => {
+		try {
+			const clipboardText = event.clipboardData?.getData('text') ||
+								 await navigator.clipboard.readText();
+
+			if (clipboardText && isValidURL(clipboardText)) {
+				urlInput.value = clipboardText.trim();
+				urlInput.focus();
+
+				urlInput.classList.add('auto-filled');
+				setTimeout(() => urlInput.classList.remove('auto-filled'), 1000);
+			}
+		} catch (error) {
+			// Clipboard access denied
+		}
+	});
+}
+
+function isValidURL(string) {
+	try {
+		new URL(string);
+		return true;
+	} catch {
+		return /^https?:\/\//.test(string) ||
+			   /^www\./.test(string) ||
+			   string.includes('.') && string.length > 5;
+	}
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 	initializeServices();
+	initializeUrlInput();
+	initializeAutoInput();
 });
 
-// Global functions for compatibility
+// Global function exports
 window.requestUrl = requestUrl;
 window.selectService = selectService;
 window.openService = openService;
