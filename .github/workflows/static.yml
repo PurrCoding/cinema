@@ -47,6 +47,31 @@ jobs:
           echo "Total files: $(find public -type f | wc -l)"
           echo "::endgroup::"
 
+      - name: Generate CSS Sprites
+        run: |
+          echo "::group::Generating CSS sprites from service icons"
+          npm install -g spritesmith-cli
+
+          # Generate sprite from logo images
+          spritesmith public/search/images/logos/*.{png,jpg,jpeg,svg} \
+            --cssName public/search/styles/sprites.css \
+            --imgName public/search/images/sprite.png \
+            --cssTemplate scss \
+            --padding 2
+
+          # Backup original CSS
+          cp public/search/styles/request.css public/search/styles/request.css.bak
+
+          # Remove individual logo definitions (lines 123-180)
+          sed -i '123,180d' public/search/styles/request.css
+
+          # Append generated sprite CSS
+          echo "/* Auto-generated sprites */" >> public/search/styles/request.css
+          cat public/search/styles/sprites.css >> public/search/styles/request.css
+
+          echo "✓ Generated sprite with $(ls public/search/images/logos/*.{png,jpg,jpeg,svg} 2>/dev/null | wc -l) icons"
+          echo "::endgroup::"
+
       - name: Minify HTML files
         run: |
           echo "::group::Minifying HTML files in public/"
