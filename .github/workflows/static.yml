@@ -30,7 +30,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
           # cache: 'npm'
 
       - name: Install dependencies
@@ -50,26 +50,27 @@ jobs:
       - name: Generate CSS Sprites
         run: |
           echo "::group::Generating CSS sprites from service icons"
-          npm install -g spritesmith-cli
+          npm install -g sprity sprity-css
 
-          # Generate sprite from logo images
-          spritesmith public/search/images/logos/*.{png,jpg,jpeg,svg} \
-            --cssName public/search/styles/sprites.css \
-            --imgName public/search/images/sprite.png \
-            --cssTemplate scss \
-            --padding 2
+          # Check if logo directory exists and has files
+          if [ -d "public/search/images/logos" ] && [ "$(ls -A public/search/images/logos/*.{png,jpg,jpeg} 2>/dev/null)" ]; then
+            # Generate sprite using sprity (more reliable than spritesmith-cli)
+            sprity create public/search/images/ public/search/images/logos/*.{png,jpg,jpeg} \
+              --style public/search/styles/sprites.css \
+              --processor sprity-css \
+              --margin 2
 
-          # Backup original CSS
-          cp public/search/styles/request.css public/search/styles/request.css.bak
+            # Backup and update CSS
+            cp public/search/styles/request.css public/search/styles/request.css.bak
 
-          # Remove individual logo definitions (lines 123-180)
-          sed -i '123,180d' public/search/styles/request.css
+            # Append generated sprite CSS
+            echo "/* Auto-generated sprites */" >> public/search/styles/request.css
+            cat public/search/styles/sprites.css >> public/search/styles/request.css
 
-          # Append generated sprite CSS
-          echo "/* Auto-generated sprites */" >> public/search/styles/request.css
-          cat public/search/styles/sprites.css >> public/search/styles/request.css
-
-          echo "✓ Generated sprite with $(ls public/search/images/logos/*.{png,jpg,jpeg,svg} 2>/dev/null | wc -l) icons"
+            echo "✓ Generated sprite successfully"
+          else
+            echo "⚠ No logo files found, skipping sprite generation"
+          fi
           echo "::endgroup::"
 
       - name: Minify HTML files
