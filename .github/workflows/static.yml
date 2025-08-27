@@ -47,53 +47,43 @@ jobs:
           echo "Total files: $(find public -type f | wc -l)"
           echo "::endgroup::"
 
-      - name: Generate CSS Sprites  
-        run: |  
-          echo "::group::Generating CSS sprites from service icons"  
-          npm install -g spritesmith-cli  
-            
-          # Create spritesmith configuration file  
-          cat > .spritesmith.js << 'EOF'  
-          module.exports = {  
-            src: ['public/search/images/logos/*.{png,jpg,jpeg,svg}'],  
-            dest: {  
-              image: 'public/search/images/sprite.png',  
-              css: 'public/search/styles/sprites.css'  
-            },  
-            cssTemplate: function(data) {  
-              var shared = '.service-icon { background-image: url(' + data.sprites[0].image + '); }\n';  
-              var perSprite = data.sprites.map(function(sprite) {  
-                return '.logo-' + sprite.name + ' {\n' +  
-                      '  background-position: ' + sprite.px.offset_x + ' ' + sprite.px.offset_y + ';\n' +  
-                      '  width: ' + sprite.px.width + ';\n' +  
-                      '  height: ' + sprite.px.height + ';\n' +  
-                      '}';  
-              }).join('\n');  
-              return shared + perSprite;  
-            },  
-            padding: 2  
-          };  
-          EOF  
-            
-          # Check if logo directory exists and has files  
-          if [ -d "public/search/images/logos" ] && [ "$(ls -A public/search/images/logos/*.{png,jpg,jpeg,svg} 2>/dev/null)" ]; then  
-            # Generate sprite using spritesmith-cli  
-            spritesmith  
-              
-            # Backup original CSS and update with sprites  
-            cp public/search/styles/request.css public/search/styles/request.css.bak  
-              
-            # Remove individual logo definitions (lines 123-181)  
-            sed -i '123,181d' public/search/styles/request.css  
-              
-            # Append generated sprite CSS  
-            echo "/* Auto-generated sprites */" >> public/search/styles/request.css  
-            cat public/search/styles/sprites.css >> public/search/styles/request.css  
-              
-            echo "✓ Generated sprite with $(ls public/search/images/logos/*.{png,jpg,jpeg,svg} 2>/dev/null | wc -l) icons"  
-          else  
-            echo "⚠ No logo files found, skipping sprite generation"  
-          fi  
+      - name: Generate CSS Sprites
+        run: |
+          echo "::group::Generating CSS sprites from service icons"
+          npm install -g spritesmith-cli
+
+          cat > .spritesmith.js << 'EOF'
+          module.exports = {
+            src: ['public/search/images/logos/*.{png,jpg,jpeg,svg}'],
+            dest: {
+              image: 'public/search/images/sprite.png',
+              css: 'public/search/styles/sprites.css'
+            },
+            cssTemplate: function(data) {
+              var shared = '.service-icon { background-image: url(' + data.sprites[0].image + '); }\n';
+              var perSprite = data.sprites.map(function(sprite) {
+                return '.logo-' + sprite.name + ' {\n' +
+                      '  background-position: ' + sprite.px.offset_x + ' ' + sprite.px.offset_y + ';\n' +
+                      '  width: ' + sprite.px.width + ';\n' +
+                      '  height: ' + sprite.px.height + ';\n' +
+                      '}';
+              }).join('\n');
+              return shared + perSprite;
+            },
+            padding: 2
+          };
+          EOF
+
+          if [ -d "public/search/images/logos" ] && [ "$(ls -A public/search/images/logos/*.{png,jpg,jpeg,svg} 2>/dev/null)" ]; then
+            spritesmith
+            cp public/search/styles/request.css public/search/styles/request.css.bak
+            sed -i '123,181d' public/search/styles/request.css
+            echo "/* Auto-generated sprites */" >> public/search/styles/request.css
+            cat public/search/styles/sprites.css >> public/search/styles/request.css
+            echo "✓ Generated sprite with $(ls public/search/images/logos/*.{png,jpg,jpeg,svg} 2>/dev/null | wc -l) icons"
+          else
+            echo "⚠ No logo files found, skipping sprite generation"
+          fi
           echo "::endgroup::"
 
       - name: Minify HTML files
