@@ -178,24 +178,6 @@ function initializeAutoInput() {
 
 		urlInput.focus();
 	});
-
-	// Handle clipboard paste
-	document.addEventListener('paste', async (event) => {
-		try {
-			const clipboardText = event.clipboardData?.getData('text') ||
-								 await navigator.clipboard.readText();
-
-			if (clipboardText && isValidURL(clipboardText)) {
-				urlInput.value = clipboardText.trim();
-				urlInput.focus();
-
-				urlInput.classList.add('auto-filled');
-				setTimeout(() => urlInput.classList.remove('auto-filled'), 1000);
-			}
-		} catch (error) {
-			// Clipboard access denied
-		}
-	});
 }
 
 function isValidURL(string) {
