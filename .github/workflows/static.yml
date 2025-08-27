@@ -47,43 +47,68 @@ jobs:
           echo "Total files: $(find public -type f | wc -l)"
           echo "::endgroup::"
 
-      - name: Generate CSS Sprites
-        run: |
-          echo "::group::Generating CSS sprites from service icons"
-          npm install -g spritesmith-cli
-
-          cat > .spritesmith.js << 'EOF'
-          module.exports = {
-            src: ['public/search/images/logos/*.{png,jpg,jpeg,svg}'],
-            dest: {
-              image: 'public/search/images/sprite.png',
-              css: 'public/search/styles/sprites.css'
-            },
-            cssTemplate: function(data) {
-              var shared = '.service-icon { background-image: url(' + data.sprites[0].image + '); }\n';
-              var perSprite = data.sprites.map(function(sprite) {
-                return '.logo-' + sprite.name + ' {\n' +
-                      '  background-position: ' + sprite.px.offset_x + ' ' + sprite.px.offset_y + ';\n' +
-                      '  width: ' + sprite.px.width + ';\n' +
-                      '  height: ' + sprite.px.height + ';\n' +
-                      '}';
-              }).join('\n');
-              return shared + perSprite;
-            },
-            padding: 2
-          };
-          EOF
-
-          if [ -d "public/search/images/logos" ] && [ "$(ls -A public/search/images/logos/*.{png,jpg,jpeg,svg} 2>/dev/null)" ]; then
-            spritesmith
-            cp public/search/styles/request.css public/search/styles/request.css.bak
-            sed -i '123,181d' public/search/styles/request.css
-            echo "/* Auto-generated sprites */" >> public/search/styles/request.css
-            cat public/search/styles/sprites.css >> public/search/styles/request.css
-            echo "✓ Generated sprite with $(ls public/search/images/logos/*.{png,jpg,jpeg,svg} 2>/dev/null | wc -l) icons"
-          else
-            echo "⚠ No logo files found, skipping sprite generation"
-          fi
+      - name: Generate CSS Sprites  
+        run: |  
+          echo "::group::Generating CSS sprites from service icons"  
+          npm install spritesmith  
+            
+          # Create sprite generation script  
+          cat > generate-sprites.js << 'EOF'  
+          const spritesmith = require('spritesmith');  
+          const fs = require('fs');  
+          const path = require('path');  
+          const glob = require('glob');  
+            
+          // Find logo files  
+          const logoFiles = glob.sync('public/search/images/logos/*.{png,jpg,jpeg,svg}');  
+            
+          if (logoFiles.length === 0) {  
+            console.log('⚠ No logo files found, skipping sprite generation');  
+            process.exit(0);  
+          }  
+            
+          spritesmith.run({  
+            src: logoFiles,  
+            padding: 2  
+          }, function(err, result) {  
+            if (err) {  
+              console.error('Error generating sprite:', err);  
+              process.exit(1);  
+            }  
+              
+            // Write sprite image  
+            fs.writeFileSync('public/search/images/sprite.png', result.image);  
+              
+            // Generate CSS  
+            let css = '.service-icon { background-image: url(../images/sprite.png); }\n';  
+              
+            Object.keys(result.coordinates).forEach(function(file) {  
+              const name = path.basename(file, path.extname(file));  
+              const coords = result.coordinates[file];  
+              css += `.logo-${name} {\n`;  
+              css += `  background-position: -${coords.x}px -${coords.y}px;\n`;  
+              css += `  width: ${coords.width}px;\n`;  
+              css += `  height: ${coords.height}px;\n`;  
+              css += '}\n';  
+            });  
+              
+            fs.writeFileSync('public/search/styles/sprites.css', css);  
+            console.log(`✓ Generated sprite with ${logoFiles.length} icons`);  
+          });  
+          EOF  
+            
+          # Run sprite generation  
+          if [ -d "public/search/images/logos" ]; then  
+            node generate-sprites.js  
+              
+            # Update main CSS file  
+            cp public/search/styles/request.css public/search/styles/request.css.bak  
+            sed -i '123,181d' public/search/styles/request.css  
+            echo "/* Auto-generated sprites */" >> public/search/styles/request.css  
+            cat public/search/styles/sprites.css >> public/search/styles/request.css  
+          else  
+            echo "⚠ Logo directory not found, skipping sprite generation"  
+          fi  
           echo "::endgroup::"
 
       - name: Minify HTML files
