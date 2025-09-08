@@ -2,7 +2,7 @@ AddCSLuaFile( "cl_init.lua" )
 AddCSLuaFile( "player_shd.lua" )
 AddCSLuaFile( "sh_load.lua" )
 AddCSLuaFile( "shared.lua" )
-AddCSLuaFile( "i18n.lua" )
+AddCSLuaFile( "i18n/init.lua" )
 AddCSLuaFile( "credits.lua" )
 
 include( "shared.lua" )

@@ -16,7 +16,7 @@ include( "sh_load.lua" )
 
 include( "player_shd.lua" )
 include( "player_class/player_lobby.lua" )
-include( "i18n.lua" )
+include( "i18n/init.lua" )
 include( "credits.lua" )
 
 Loader.Load( "extensions" )
