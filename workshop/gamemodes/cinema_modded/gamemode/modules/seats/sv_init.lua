@@ -1,47 +1,3 @@
-ChairOffsets = {
-	["models/sunabouzu/lobby_chair.mdl"] = {
-		{ Pos = Vector(5.2, 0, 34.1), Ang = Angle(0, 0, 0) }
-	},
-	["models/gmod_tower/theater_seat.mdl"] = {
-		{ Pos = Vector(1, -5, 23), Ang = Angle(10, 180, 0) }
-	},
-	["models/sunabouzu/theater_curve_couch.mdl"] = {
-		{ Pos = Vector(-73.6, 17.3, 18.8), Ang = Angle(0, -128, 0) },
-		{ Pos = Vector(-65.2, 50.3, 18.8), Ang = Angle(0, -128, 0) },
-		{ Pos = Vector(-37.5, 71.7, 18.8), Ang = Angle(0, -153, 0) },
-		{ Pos = Vector(0, 80, 18.8), Ang = Angle(0, -180, 0) },
-		{ Pos = Vector(37.5, 71.7, 18.8), Ang = Angle(0, 153, 0) },
-		{ Pos = Vector(65.2, 50.3, 18.8), Ang = Angle(0, 128, 0) },
-		{ Pos = Vector(73.6, 17.3, 18.8), Ang = Angle(0, 128, 0) },
-	},
-	["models/sunabouzu/theater_sofa01.mdl"] = {
-		{ Pos = Vector(-16.8, -0.9, 16.2), Ang = Angle(0, -180, 0) },
-		{ Pos = Vector(16.8, -0.9, 16.2), Ang = Angle(0, -180, 0) },
-	},
-	["models/props_trainstation/traincar_seats001.mdl"] = {
-		{ Pos = Vector(4.6150, 41.7277, 18.5313) },
-		{ Pos = Vector(4.7320, 14.4948, 18.5313) },
-		{ Pos = Vector(4.5561, -13.3913, 18.5313) },
-		{ Pos = Vector(5.4507, -40.9903, 18.5313) },
-	},
-	["models/props_warehouse/office_furniture_couch.mdl"] = {
-		{ Pos = Vector(4.6150, 36, -4) },
-		{ Pos = Vector(4.7320, 0, -4) },
-		{ Pos = Vector(5.4507, -36, -4) },
-	},
-	["models/props_warehouse/office_furniture_couch.mdl"] = {
-		{ Pos = Vector(4.6150, 36, -4) },
-		{ Pos = Vector(4.7320, 0, -4) },
-		{ Pos = Vector(5.4507, -36, -4) },
-	},
-	["models/props_c17/furniturechair001a.mdl"] = {
-		{ Pos = Vector(0.30538135766983, 0.14535087347031, -6.69970703125) },
-	},
-	["models/props_combine/breenchair.mdl"] = {
-		{ Pos = Vector(6.8169813156128, -2.8282260894775, 16.551658630371) },
-	},
-}
-
 DefaultSitSound = Sound("sunabouzu/chair_sit.wav")
 ChairSitSounds = {
 	["models/sunabouzu/theater_curve_couch.mdl"] = Sound("sunabouzu/couch_sit.wav"),
@@ -68,6 +24,8 @@ function CreateSeatAtPos(pos, angle)
 	local phys = ent:GetPhysicsObject()
 	if IsValid(phys) then
 		phys:EnableMotion(false)
+		phys:Sleep() -- Put physics object to sleep immediately
+		phys:SetMass(1) -- Minimal mass for better performance
 	end
 
 	ent:SetCollisionGroup( COLLISION_GROUP_DEBRIS_TRIGGER )
