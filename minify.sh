@@ -66,32 +66,16 @@ find public -name "*.js" -type f -print0 | while IFS= read -r -d '' file; do
 	fi
 done
 
-# Move public contents to root and clean up
-echo "Moving public contents to root..."
-# Create a temporary directory to avoid conflicts
-mkdir -p temp_build
-# Move everything from public to temp_build
-cp -r public/* temp_build/ 2>/dev/null || true
-# Remove everything except temp_build
-find . -maxdepth 1 -not -name '.' -not -name 'temp_build' -exec rm -rf {} + 2>/dev/null || true
-# Move contents from temp_build to root
-mv temp_build/* . 2>/dev/null || true
-# Remove temp_build directory
-rmdir temp_build 2>/dev/null || true
-
 # Generate summary
 echo "Build Summary:"
-html_count=$(find . -maxdepth 10 -name "*.html" | wc -l)
-css_count=$(find . -maxdepth 10 -name "*.css" | wc -l)
-js_count=$(find . -maxdepth 10 -name "*.js" | wc -l)
-total_files=$(find . -type f | wc -l)
+html_count=$(find public -name "*.html" | wc -l)
+css_count=$(find public -name "*.css" | wc -l)
+js_count=$(find public -name "*.js" | wc -l)
+total_files=$(find public -type f | wc -l)
 
 echo "HTML files: $html_count"
 echo "CSS files: $css_count"
 echo "JavaScript files: $js_count"
 echo "Total files: $total_files"
 
-echo "Files now in root:"
-find . -maxdepth 2 -type f | head -10
-
-echo "Minification and restructuring completed successfully!"
+echo "Minification completed successfully!"
