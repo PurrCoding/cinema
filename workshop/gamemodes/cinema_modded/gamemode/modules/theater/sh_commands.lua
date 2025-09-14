@@ -129,8 +129,8 @@ else
 	end
 
 	-- Synced Server ConVars
-	SetSyncedCvarString("cinema_url", "https://gm-cinema.pages.dev/", "Cinema url to load on theater screens.") -- don't edit, use console!
-	SetSyncedCvarString("cinema_url_search", "https://gm-cinema.pages.dev/search/", "Search url for the request menu.") -- don't edit, use console!
+	SetSyncedCvarString("cinema_url", "https://purrcoding-cinema.pages.dev/", "Cinema url to load on theater screens.") -- don't edit, use console!
+	SetSyncedCvarString("cinema_url_search", "https://purrcoding-cinema.pages.dev/search/", "Search url for the request menu.") -- don't edit, use console!
 
 	concommand.Add("cinema_fullscreen_freeze", function(ply,cmd,args)
 		ply:Freeze(tobool(args[1]))

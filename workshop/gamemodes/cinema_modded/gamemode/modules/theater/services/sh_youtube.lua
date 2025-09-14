@@ -65,7 +65,7 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		panel:OpenURL(("https://gm-cinema.pages.dev/youtube.html?v=%s"):format(Video:Data()))
+		panel:OpenURL(("https://purrcoding-cinema.pages.dev/youtube.html?v=%s"):format(Video:Data()))
 
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
