@@ -23,44 +23,47 @@ echo "Total files: $(find public -type f | wc -l)"
 echo "Minifying HTML files..."  
 find public -name "*.html" -type f | while read file; do  
     echo "Processing: $file"  
-    original_size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file")  
-    html-minifier-terser \  
-        --collapse-whitespace \  
-        --remove-comments \  
-        --remove-optional-tags \  
-        --remove-redundant-attributes \  
-        --remove-script-type-attributes \  
-        --remove-tag-whitespace \  
-        --use-short-doctype \  
-        --minify-css true \  
-        --minify-js true \  
-        --output "$file" \  
-        "$file"  
-    new_size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file")  
-    savings=$((original_size - new_size))  
-    echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"  
+    if [ -f "$file" ]; then  
+        html-minifier-terser \  
+            --collapse-whitespace \  
+            --remove-comments \  
+            --remove-optional-tags \  
+            --remove-redundant-attributes \  
+            --remove-script-type-attributes \  
+            --remove-tag-whitespace \  
+            --use-short-doctype \  
+            --minify-css true \  
+            --minify-js true \  
+            --output "$file" \  
+            "$file"  
+        echo "✓ $file minified successfully"  
+    else  
+        echo "⚠ Skipping $file - file not found"  
+    fi  
 done  
   
 # Minify CSS files  
 echo "Minifying CSS files..."  
 find public -name "*.css" -type f | while read file; do  
     echo "Processing: $file"  
-    original_size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file")  
-    cleancss --output "$file" "$file"  
-    new_size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file")  
-    savings=$((original_size - new_size))  
-    echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"  
+    if [ -f "$file" ]; then  
+        cleancss --output "$file" "$file"  
+        echo "✓ $file minified successfully"  
+    else  
+        echo "⚠ Skipping $file - file not found"  
+    fi  
 done  
   
 # Minify JavaScript files  
 echo "Minifying JavaScript files..."  
 find public -name "*.js" -type f | while read file; do  
     echo "Processing: $file"  
-    original_size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file")  
-    terser "$file" --compress --mangle --output "$file"  
-    new_size=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file")  
-    savings=$((original_size - new_size))  
-    echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"  
+    if [ -f "$file" ]; then  
+        terser "$file" --compress --mangle --output "$file"  
+        echo "✓ $file minified successfully"  
+    else  
+        echo "⚠ Skipping $file - file not found"  
+    fi  
 done  
   
 # Generate summary  
