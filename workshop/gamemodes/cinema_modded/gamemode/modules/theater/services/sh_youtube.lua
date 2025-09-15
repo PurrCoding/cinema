@@ -65,8 +65,8 @@ if (CLIENT) then
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		panel:OpenURL(theater.GetCinemaURL() ..
-			("youtube.html?v=%s"):format(Video:Data())
+		panel:OpenURL(theater.GetCinemaURL("youtube.html") ..
+			("?v=%s"):format(Video:Data())
 		)
 
 		panel.OnDocumentReady = function(pnl)
