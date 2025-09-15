@@ -74,7 +74,7 @@ function PANEL:Init()
 	self.Browser = vgui.Create( "TheaterHTML", self.BrowserContainer )
 	self.Browser.isContainer = true
 
-	local searchURL = GetGlobal2String( "cinema_url_search", "" )
+	local searchURL = theater.GetCinemaURL("search/")
 	function self.Browser:OnDocumentReady( url )
 		if (not self.searchUrl) then self.searchUrl = searchURL end
 		if (url == searchURL) then return end

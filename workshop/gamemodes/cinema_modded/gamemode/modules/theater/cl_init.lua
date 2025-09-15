@@ -392,7 +392,7 @@ function LoadVideo( Video )
 
 	if not Video then return end
 
-	local theaterUrl = GetGlobal2String( "cinema_url", "" )
+	local theaterUrl = theater.GetCinemaURL()
 
 	local panel = ActivePanel()
 

@@ -47,7 +47,7 @@ hook.Add("PreVideoLoad", "ShowDependencyWarning", function(Video)
 		if reason then
 			if WarningSet then return true end
 
-			panel:OpenURL( GetGlobal2String( "cinema_url", "" ) ) -- Fallback to idle screen
+			panel:OpenURL( theater.GetCinemaURL() ) -- Fallback to idle screen
 
 			warning.Set(
 				translations:Format("Dependency_Missing_Line1"),

@@ -227,3 +227,13 @@ end
 function GetQueueMode()
 	return GetConVar("cinema_queue_mode"):GetInt()
 end
+
+function GetCinemaURL(path)
+	local url = GetConVar("cinema_url"):GetString()
+
+	if path then
+		url = url .. path
+	end
+
+	return url
+end
