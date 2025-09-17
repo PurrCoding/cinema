@@ -1,8 +1,3 @@
---[[
-	Workaround with a Metadata parser made by veitikka (https://github.com/veitikka)
-	Src: https://github.com/samuelmaddock/gm-mediaplayer/pull/34
---]]
-
 local SERVICE = {
 	Name = "YouTube",
 	IsTimed = true,
@@ -10,47 +5,6 @@ local SERVICE = {
 	NeedsCodecFix = false,
 	ExtentedVideoInfo = true,
 }
-
--- Lua search patterns to find metadata from the html
-local patterns = {
-	["title"] = "<meta%sproperty=\"og:title\"%s-content=%b\"\">",
-	["title_fallback"] = "<title>.-</title>",
-	["duration"] = "<meta%sitemprop%s-=%s-\"duration\"%s-content%s-=%s-%b\"\">",
-	["live"] = "<meta%sitemprop%s-=%s-\"isLiveBroadcast\"%s-content%s-=%s-%b\"\">",
-	["live_enddate"] = "<meta%sitemprop%s-=%s-\"endDate\"%s-content%s-=%s-%b\"\">",
-	["age_restriction"] = "<meta%sproperty=\"og:restrictions:age\"%s-content=%b\"\">"
-}
-
--- Function to parse video metadata straight from the html instead of using the API
-local function ParseMetaDataFromHTML( html )
-	--MetaData table to return when we're done
-	local metadata, html = {}, html
-
-	-- Fetch title, with fallbacks if needed
-	metadata.title = util.ParseElementAttribute(html:match(patterns["title"]), "content")
-		or util.ParseElementContent(html:match(patterns["title_fallback"]))
-
-	-- Parse HTML entities in the title into symbols
-	metadata.title = url.htmlentities_decode(metadata.title)
-
-	metadata.familyfriendly = util.ParseElementAttribute(html:match(patterns["age_restriction"]), "content") or ""
-
-	-- See if the video is an ongoing live broadcast
-	-- Set duration to 0 if it is, otherwise use the actual duration
-	local isLiveBroadcast = tobool(util.ParseElementAttribute(html:match(patterns["live"]), "content"))
-	local broadcastEndDate = html:match(patterns["live_enddate"])
-	if isLiveBroadcast and not broadcastEndDate then
-		-- Mark as live video
-		metadata.duration = 0
-	else
-		local durationISO8601 = util.ParseElementAttribute(html:match(patterns["duration"]), "content")
-		if isstring(durationISO8601) then
-			metadata.duration = math.max(1, util.ISO_8601ToSeconds(durationISO8601))
-		end
-	end
-
-	return metadata
-end
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("youtu.?be[.com]?")
@@ -76,22 +30,11 @@ if (CLIENT) then
 
 	function SERVICE:GetMetadata( data, callback )
 
-		http.Fetch(("https://www.youtube.com/watch?v=%s"):format(data), function(body, length, headers, code)
-			if not body or code ~= 200 then
-				callback({ err = ("Not expected response received from YouTube (Code: %d)"):format(code) })
-				return
-			end
+		local panel = self:CreateWebCrawler(callback)
 
-			local status, metadata = pcall(ParseMetaDataFromHTML, body)
-			if not status  then
-				callback({ err = "Failed to parse MetaData from YouTube" })
-				return
-			end
-
-			callback(metadata)
-		end, function(error)
-			callback({ err = ("YouTube Error: %s"):format(error) })
-		end, {})
+		panel:OpenURL(theater.GetCinemaURL("youtube_meta.html") ..
+			("?v=%s"):format(data)
+		)
 
 	end
 
@@ -148,15 +91,10 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		info.title = metadata.title
 		info.thumbnail = ("https://img.youtube.com/vi/(%s)/hqdefault.jpg"):format(data)
 
-		if metadata.duration == 0 then
+		if metadata.isLive then
 			info.type = "youtubelive"
 			info.duration = 0
 		else
-			if metadata.familyfriendly == "18+" then
-				-- info.type = "youtubensfw"
-				return onFailure( "YouTube age-restricted content is currently not supported." )
-			end
-
 			info.duration = metadata.duration
 		end
 
