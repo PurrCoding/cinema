@@ -79,7 +79,12 @@
 				playerVars: defaultPlayerVars,
 				host: 'https://www.youtube-nocookie.com',
 				events: {
-					onReady: () => {
+					'onStateChange': onPlayerStateChange
+				}
+			});
+
+			function onPlayerStateChange(event) {
+				if (event.data === YT.PlayerState.PLAYING) {
 						player.setVolume(0)
 
 						const videoData = player.getVideoData()
@@ -91,9 +96,8 @@
 						};
 
 						console.log("METADATA:" + JSON.stringify(metadata));
-					}
 				}
-			});
+			}
 		}
 
 		/**
