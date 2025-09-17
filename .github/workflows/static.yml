@@ -3,8 +3,10 @@ name: Trigger Netlify Build on public/ changes
 # Only trigger if files in the public/ folder change
 on:
   push:
+    branches: ["master"]
     paths:
       - 'public/**'
+      - '.github/workflows/static.yml'
 
 jobs:
   netlify-build:
