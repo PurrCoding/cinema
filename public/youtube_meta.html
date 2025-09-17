@@ -79,16 +79,16 @@
 				playerVars: defaultPlayerVars,
 				host: 'https://www.youtube-nocookie.com',
 				events: {
+					onReady: () => {
+						player.setVolume(0)
+					},
 					onStateChange: (event) => {
 						if (event.data === YT.PlayerState.PLAYING) {
-							player.setVolume(0)
-
 
 							const videoData = player.getVideoData()
 							const metadata = {
 								title: videoData.title,
 								isLive: videoData.isLive,
-								isPlayable: videoData.isPlayable, //Age restricted or unplayable
 								duration: player.getDuration(),
 							};
 
