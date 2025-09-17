@@ -79,25 +79,27 @@
 				playerVars: defaultPlayerVars,
 				host: 'https://www.youtube-nocookie.com',
 				events: {
-					'onStateChange': onPlayerStateChange
+					onStateChange: (event) => {
+						if (event.data === YT.PlayerState.PLAYING) {
+							player.setVolume(0)
+
+
+							const videoData = player.getVideoData()
+							const metadata = {
+								title: videoData.title,
+								isLive: videoData.isLive,
+								isPlayable: videoData.isPlayable, //Age restricted or unplayable
+								duration: player.getDuration(),
+							};
+
+							console.log("METADATA:" + JSON.stringify(metadata));
+						}
+					},
+					onError: (event) => {
+						console.log(event)
+					}
 				}
 			});
-
-			function onPlayerStateChange(event) {
-				if (event.data === YT.PlayerState.PLAYING) {
-						player.setVolume(0)
-
-						const videoData = player.getVideoData()
-						const metadata = {
-							title: videoData.title,
-							isLive: videoData.isLive,
-							isPlayable: videoData.isPlayable, //Age restricted or unplayable
-							duration: player.getDuration(),
-						};
-
-						console.log("METADATA:" + JSON.stringify(metadata));
-				}
-			}
 		}
 
 		/**
