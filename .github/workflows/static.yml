@@ -1,0 +1,31 @@
+name: Trigger Netlify Build on public/ changes
+
+# Nur auslösen, wenn sich Dateien im public/ Ordner ändern
+on:
+  push:
+    paths:
+      - 'public/**'
+
+jobs:
+  netlify-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout Code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Optional: Check whether public/ has really changed
+      - name: Check for changes in public/
+        id: check_changes
+        run: |
+          echo "CHANGED=$(git diff --name-only HEAD~1 | grep -E '^public/' || true)" >> $GITHUB_ENV
+          if [ -z "$CHANGED" ]; then
+            echo "No changes in public/, exiting."
+            exit 0
+          fi
+
+      # Trigger Netlify Build Hook
+      - name: Trigger Netlify Build
+        run: |
+          curl -X POST -d '{}' ${{ secrets.NETLIFY_BUILD_HOOK }}
