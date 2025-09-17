@@ -96,7 +96,15 @@
 						}
 					},
 					onError: (event) => {
-						console.log(event)
+						const YT_ERROR_CODES = {
+							2: "Invalid parameter value (e.g. wrong video ID format).",
+							5: "HTML5 player error – the requested content cannot be played in this player.",
+							100: "Video not found. It may have been removed, set to private, or the ID is invalid.",
+							101: "The owner of the video has prohibited embedding on this site.",
+							150: "Video is age-restricted or unplayable for unknown reasons." // Same as 101
+						};
+
+						console.log("ERROR:" + YT_ERROR_CODES[event.data]);
 					}
 				}
 			});
