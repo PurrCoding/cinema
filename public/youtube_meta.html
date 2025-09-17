@@ -5,7 +5,7 @@
 	<!-- 👋👋👋 Hello dear code reader, have fun understanding how YT works without ads. -->
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width,initial-scale=1" />
-	<title>YT Minimal Player</title>
+	<title>YT Minimal Player (Metadata)</title>
 
 	<link rel="dns-prefetch" href="//www.youtube.com">
 	<link rel="dns-prefetch" href="//www.youtube-nocookie.com">
@@ -80,6 +80,7 @@
 				host: 'https://www.youtube-nocookie.com',
 				events: {
 					onReady: () => {
+						player.setVolume(0)
 
 						const videoData = player.getVideoData()
 						const metadata = {
