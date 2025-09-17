@@ -90,9 +90,11 @@ function translations:Get(key, ...)
 	if not key then return "" end
 	local lang = self:GetLanguage()
 	local value = Languages[lang] and Languages[lang][key] or Languages[DefaultId][key]
-	if not value and DEBUG then
-		print("[I18n] Missing translation key: " .. key)
-		return key
+	if not value then
+		if DEBUG then
+			print("[I18n] Missing translation key: " .. key)
+		end
+		return key  -- Always return key as fallback
 	end
 
 	-- Handle formatting with placeholders
