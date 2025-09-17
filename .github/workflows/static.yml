@@ -1,6 +1,6 @@
 name: Trigger Netlify Build on public/ changes
 
-# Nur auslösen, wenn sich Dateien im public/ Ordner ändern
+# Only trigger if files in the public/ folder change
 on:
   push:
     paths:
