@@ -5,7 +5,7 @@
 	<!-- 👋👋👋 Hello dear code reader, have fun understanding how YT works without ads. -->
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width,initial-scale=1" />
-	<title>YT Minimal Player (Metadata)</title>
+	<title>YT Minimal Player</title>
 
 	<link rel="dns-prefetch" href="//www.youtube.com">
 	<link rel="dns-prefetch" href="//www.youtube-nocookie.com">
@@ -19,7 +19,6 @@
 			width: 25%;
 			height: 25%;
 			overflow: hidden;
-			background: #000000;
 		}
 
 		#player-container {
@@ -86,7 +85,7 @@
 						const metadata = {
 							title: videoData.title,
 							isLive: videoData.isLive,
-							duration: player.getCurrentTime(),
+							duration: player.getDuration(),
 						};
 
 						console.log("METADATA:" + JSON.stringify(metadata));
