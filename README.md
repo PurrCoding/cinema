@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b41f7f92-96cb-4c1d-8547-6b9a8edcb16a/deploy-status)](https://app.netlify.com/projects/gm-cinema/deploys)
+
 Cinema (Fixed Edition)
 ======
 > Remember sitting down on a lazy afternoon with your friends, drinking a cup of hot cocoa and watching a movie? It's a magical bonding experience between people, a timeless ritual that not many are able to do with some of their friends...
