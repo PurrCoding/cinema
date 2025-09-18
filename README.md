@@ -1,4 +1,4 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/b41f7f92-96cb-4c1d-8547-6b9a8edcb16a/deploy-status)](https://app.netlify.com/projects/gm-cinema/deploys)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b41f7f92-96cb-4c1d-8547-6b9a8edcb16a/deploy-status)](https://app.netlify.com/projects/gm-cinema/deploys) [![Deploys by Netlify](https://www.netlify.com/assets/badges/netlify-badge-color-accent.svg)](https://www.netlify.com)
 
 Cinema (Fixed Edition)
 ======
