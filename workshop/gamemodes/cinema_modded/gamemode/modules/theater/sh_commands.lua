@@ -1,5 +1,5 @@
 CreateConVar( "cinema_queue_mode", 1, { FCVAR_ARCHIVE, FCVAR_DONTRECORD, FCVAR_REPLICATED }, "1 = Videos may be voted up or down\n2 = Videos are played in the order they're requested" )
-CreateConVar( "cinema_url", "https://gm-cinema.netlify.app/", { FCVAR_NOT_CONNECTED, FCVAR_REPLICATED }, "Cinema url to load on theater screens.") -- don't edit, use server config!
+CreateConVar( "cinema_url", "https://gm-cinema.pone.party/", { FCVAR_NOT_CONNECTED, FCVAR_REPLICATED }, "Cinema url to load on theater screens.") -- don't edit, use server config!
 
 if CLIENT then
 

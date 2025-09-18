@@ -1,0 +1,149 @@
+name: Deploy static content to Pages
+
+on:  
+  push:  
+    branches: ["master"]  
+    paths:  
+      - 'public/**'  
+      - '.github/workflows/static.yml'  
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          # cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          echo "::group::Installing minification tools"
+          npm install -g html-minifier-terser clean-css-cli terser
+          echo "::endgroup::"
+
+      - name: Verify public directory
+        run: |
+          echo "::group::Verifying public directory contents"
+          echo "Files in public directory:"
+          find public -type f | head -20
+          echo "Total files: $(find public -type f | wc -l)"
+          echo "::endgroup::"
+
+      - name: Minify HTML files
+        run: |
+          echo "::group::Minifying HTML files in public/"
+          find public -name "*.html" -type f | while read file; do
+            echo "Processing: $file"
+            original_size=$(stat -c%s "$file")
+            html-minifier-terser \
+              --collapse-whitespace \
+              --remove-comments \
+              --remove-optional-tags \
+              --remove-redundant-attributes \
+              --remove-script-type-attributes \
+              --remove-tag-whitespace \
+              --use-short-doctype \
+              --minify-css true \
+              --minify-js true \
+              --output "$file" \
+              "$file"
+            new_size=$(stat -c%s "$file")
+            savings=$((original_size - new_size))
+            echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
+          done
+          echo "::endgroup::"
+
+      - name: Minify CSS files
+        run: |
+          echo "::group::Minifying CSS files in public/"
+          find public -name "*.css" -type f | while read file; do
+            echo "Processing: $file"
+            original_size=$(stat -c%s "$file")
+            cleancss --output "$file" "$file"
+            new_size=$(stat -c%s "$file")
+            savings=$((original_size - new_size))
+            echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
+          done
+          echo "::endgroup::"
+
+      - name: Minify JavaScript files
+        run: |
+          echo "::group::Minifying JavaScript files in public/"
+          find public -name "*.js" -type f | while read file; do
+            echo "Processing: $file"
+            original_size=$(stat -c%s "$file")
+            terser "$file" --compress --mangle --output "$file"
+            new_size=$(stat -c%s "$file")
+            savings=$((original_size - new_size))
+            echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
+          done
+          echo "::endgroup::"
+
+      - name: Generate build report
+        run: |
+          echo "::group::Build Summary"
+          echo "## Build Report" >> $GITHUB_STEP_SUMMARY
+          echo "| File Type | Count | Total Size |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|-------|------------|" >> $GITHUB_STEP_SUMMARY
+
+          html_count=$(find public -name "*.html" | wc -l)
+          html_size=$(find public -name "*.html" -exec stat -c%s {} + | awk '{sum+=$1} END {print sum}')
+          echo "| HTML | $html_count | ${html_size:-0} bytes |" >> $GITHUB_STEP_SUMMARY
+
+          css_count=$(find public -name "*.css" | wc -l)
+          css_size=$(find public -name "*.css" -exec stat -c%s {} + | awk '{sum+=$1} END {print sum}')
+          echo "| CSS | $css_count | ${css_size:-0} bytes |" >> $GITHUB_STEP_SUMMARY
+
+          js_count=$(find public -name "*.js" | wc -l)
+          js_size=$(find public -name "*.js" -exec stat -c%s {} + | awk '{sum+=$1} END {print sum}')
+          echo "| JavaScript | $js_count | ${js_size:-0} bytes |" >> $GITHUB_STEP_SUMMARY
+
+          total_files=$(find public -type f | wc -l)
+          total_size=$(find public -type f -exec stat -c%s {} + | awk '{sum+=$1} END {print sum}')
+          echo "| **Total** | **$total_files** | **${total_size:-0} bytes** |" >> $GITHUB_STEP_SUMMARY
+
+          echo "Build completed successfully with $total_files files totaling $total_size bytes"
+          echo "::endgroup::"
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'public/'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Deployment success notification
+        if: success()
+        run: |
+          echo "::notice::Deployment successful! Site available at ${{ steps.deployment.outputs.page_url }}"
+
+      - name: Deployment failure notification
+        if: failure()
+        run: |
+          echo "::error::Deployment failed. Check the logs above for details."

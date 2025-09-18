@@ -1,5 +1,3 @@
-[![Netlify Status](https://api.netlify.com/api/v1/badges/b41f7f92-96cb-4c1d-8547-6b9a8edcb16a/deploy-status)](https://app.netlify.com/projects/gm-cinema/deploys)
-
 Cinema (Fixed Edition)
 ======
 > Remember sitting down on a lazy afternoon with your friends, drinking a cup of hot cocoa and watching a movie? It's a magical bonding experience between people, a timeless ritual that not many are able to do with some of their friends...
@@ -26,5 +24,3 @@ This is the unofficial successor of the defunct [Cinema](https://github.com/pixe
 #### Links ####
 * [Addon on Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587)
 * [GMod CEF Codec Fix](https://github.com/solsticegamestudios/GModCEFCodecFix)
-
-[![Deploys by Netlify](https://www.netlify.com/assets/badges/netlify-badge-color-accent.svg)](https://www.netlify.com)
