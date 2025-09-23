@@ -89,7 +89,7 @@
 							const metadata = {
 								title: videoData.title,
 								isLive: videoData.isLive,
-								duration: player.getDuration(),
+								duration: Math.round(player.getDuration()),
 							};
 
 							console.log("METADATA:" + JSON.stringify(metadata));
