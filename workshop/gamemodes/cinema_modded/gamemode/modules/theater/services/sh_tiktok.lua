@@ -194,7 +194,6 @@ local METADATA_JS = [[
 		function panel:OnDocumentReady(url)
 			if IsValid(panel) then
 				panel:QueueJavascript(js)
-				panel:QueueJavascript([[console.log("fuck")]])
 			end
 		end
 
