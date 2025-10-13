@@ -12,7 +12,7 @@ const services = [
 	{ name: 'Kick', icon: 'kick', url: 'https://kick.com/', action: 'select', requiresCodec: true },
 	{ name: 'Bilibili', icon: 'bilibili', url: 'https://www.bilibili.tv/', action: 'open', requiresCodec: true },
 	{ name: 'Archive', icon: 'archive', url: 'https://archive.org/details/movies', action: 'select', requiresCodec: true },
-	{ name: 'VKontakte', icon: 'vk', url: 'https://vk.com/video', action: 'select', requiresCodec: true },
+	{ name: 'VK Video', icon: 'vk', url: 'https://vkvideo.ru/', action: 'select', requiresCodec: true },
 	{ name: 'Sibnet', icon: 'sibnet', url: 'https://video.sibnet.ru/rub/anime/', action: 'select', requiresCodec: true },
 	{ name: 'OK', icon: 'ok', url: 'https://ok.ru/video', action: 'select', requiresCodec: true },
 	{ name: 'Rutube', icon: 'rutube', url: 'https://rutube.ru/', action: 'open', requiresCodec: true }

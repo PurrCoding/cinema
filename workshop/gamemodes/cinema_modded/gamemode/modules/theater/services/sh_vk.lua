@@ -1,5 +1,5 @@
 local SERVICE = {
-	Name = "VKontakte",
+	Name = "VK Video",
 	IsTimed = true,
 
 	NeedsCodecFix = true,
@@ -7,11 +7,11 @@ local SERVICE = {
 }
 
 function SERVICE:Match( url )
-	return url.host and url.host:match("vk.com")
+	return url.host and url.host:match("vkvideo.ru")
 end
 
 if (CLIENT) then
-	local EMBED_URL = "https://vk.com/video_ext.php?oid=-%s&id=%s&autoplay=1"
+	local EMBED_URL = "https://vkvideo.ru/video_ext.php?oid=-%s&id=%s&autoplay=1"
 
 	local JS_BASE = [[
 		var checkerInterval = setInterval(function() {
@@ -134,7 +134,7 @@ function SERVICE:GetURLInfo( url )
 
 	local info = {}
 
-	-- https://vk.com/video-xxxxxxxxx_xxxxxxxxx
+	-- https://vkvideo.ru/video-xxxxxxxxx_xxxxxxxxx
 	local videoID = url.path:match("[video%-(%d+)_(%d+)]+")
 	if (videoID and videoID ~= "video") then
 		info.Data = videoID
@@ -142,7 +142,7 @@ function SERVICE:GetURLInfo( url )
 
 	if (url.query) then
 
-		-- https://vk.com/video?z=video-xxxxxxxxx_xxxxxxxxx
+		-- https://vkvideo.ru/video?z=video-xxxxxxxxx_xxxxxxxxx
 		if url.query.z then
 			local data = url.query.z:match("[video%-(%d+)_(%d+)]+")
 			if data then info.Data = data end
@@ -189,7 +189,7 @@ end
 
 theater.RegisterService( "vk", SERVICE )
 theater.RegisterService( "vklive", {
-	Name = "VKontakte Live",
+	Name = "VK Video (Live)",
 	IsTimed = false,
 	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
