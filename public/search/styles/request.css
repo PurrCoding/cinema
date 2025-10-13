@@ -124,9 +124,7 @@ body {
 .logo-bilibili { background-image: url(../images/logos/bilibili.svg); }
 .logo-archive { background-image: url(../images/logos/archive.png); }
 .logo-vk { background-image: url(../images/logos/vkvideo.svg); background-size: 40px; }
-.logo-sibnet { background-image: url(../images/logos/sibnet.png); }
 .logo-ok { background-image: url(../images/logos/okru.png); }
-.logo-rutube { background-image: url(../images/logos/rutube.jpg); background-size: 50px; }
 
 /* Disabled service styles */
 .service-card.service-disabled {
