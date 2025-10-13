@@ -5,7 +5,9 @@ local SERVICE = {
 	IsTimed = true,
 
 	NeedsCodecFix = true,
-	ExtentedVideoInfo = true
+	ExtentedVideoInfo = true,
+	NeedsExtraChecks = true
+
 }
 
 -- API endpoints
@@ -22,7 +24,9 @@ local VALID_FORMATS = {
 	["MP4"] = true,
 	["AVI"] = true,
 	["MOV"] = true,
-	["MKV"] = true
+	["MKV"] = true,
+	["Flac"] = true,
+	["VBR MP3"] = true,
 }
 
 -- file selection logic
@@ -120,6 +124,110 @@ if CLIENT then
 		}, 50);
 	]]
 
+	local BROWSERVER_JS = [[
+		(function watchForJWVideo() {
+			const selector = "video.jw-video";
+
+			const updateState = (hasVideo) => {
+				gmod.updateRequestButton(!!hasVideo);
+			};
+
+			const attachWatcher = (video) => {
+				console.log("[JWVideo] Watcher attached:", video);
+
+				const onMetadataLoaded = () => {
+					const hasVideo = !!video.currentSrc;
+					updateState(hasVideo);
+
+					if (hasVideo) {
+						const playPromise = video.play();
+						if (playPromise) {
+							playPromise.catch(err => {
+								console.warn("[JWVideo] Autoplay blocked:", err.message);
+							});
+						}
+					}
+				};
+
+				const onError = () => {
+					console.warn("[JWVideo] Failed to load video:", video.src);
+					updateState(false);
+				};
+
+				const observer = new MutationObserver(mutations => {
+					for (const m of mutations) {
+						if (m.attributeName === "src") {
+							console.log("[JWVideo] Source changed to:", video.src);
+							updateState(false);
+							video.removeEventListener("loadedmetadata", onMetadataLoaded);
+							video.removeEventListener("error", onError);
+							video.addEventListener("loadedmetadata", onMetadataLoaded, { once: true });
+							video.addEventListener("error", onError, { once: true });
+						}
+					}
+				});
+
+				observer.observe(video, { attributes: true });
+
+				// Handle initial state
+				if (video.src) {
+					if (video.readyState >= 1) {
+						onMetadataLoaded();
+					} else {
+						video.addEventListener("loadedmetadata", onMetadataLoaded, { once: true });
+						video.addEventListener("error", onError, { once: true });
+					}
+				} else {
+					updateState(false);
+				}
+			};
+
+			// --- Fast detection helper ---
+			const detectVideo = () => document.querySelector(selector);
+
+			const tryAttach = () => {
+				const video = detectVideo();
+				if (video) {
+					attachWatcher(video);
+					return true;
+				}
+				return false;
+			};
+
+			// If video already exists right now → attach immediately
+			if (tryAttach()) return;
+
+			// --- Early repeated microtask checks ---
+			// This loop checks multiple times within the first 2 seconds — faster than waiting for DOM mutation
+			let quickTries = 0;
+			const fastCheck = setInterval(() => {
+				if (tryAttach()) {
+					clearInterval(fastCheck);
+					clearTimeout(stopFastCheck);
+				}
+				quickTries++;
+				if (quickTries > 20) return; // safeguard
+			}, 100);
+
+			const stopFastCheck = setTimeout(() => {
+				clearInterval(fastCheck);
+
+				// Fallback: full MutationObserver if still not found
+				const domObserver = new MutationObserver(() => {
+					if (tryAttach()) {
+						domObserver.disconnect();
+						console.log("[JWVideo] Video detected via MutationObserver.");
+					}
+				});
+
+				domObserver.observe(document.body, { childList: true, subtree: true });
+				console.log("[JWVideo] Using fallback DOM observer (video not found quickly).");
+			}, 2000);
+
+			console.log("[JWVideo] Watching for video creation...");
+		})();
+	]]
+
 	function SERVICE:LoadProvider(Video, panel)
 		local parts = string.Explode(",", Video:Data())
 		local identifier = parts[1]
@@ -136,6 +244,12 @@ if CLIENT then
 			self:LoadExFunctions(pnl)
 			pnl:QueueJavascript(THEATER_JS)
 		end
+	end
+
+	function SERVICE:SearchFunctions(browser)
+		if not IsValid(browser) then return end
+
+		browser:RunJavascript(BROWSERVER_JS)
 	end
 end
 
