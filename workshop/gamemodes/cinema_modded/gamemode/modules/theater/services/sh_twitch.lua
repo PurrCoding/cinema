@@ -28,9 +28,10 @@ if (CLIENT) then
 
 			if (!adOverlay && !!player && player.paused == false && player.readyState == 4) {
 				clearInterval(checkerInterval);
+				
+				if (player.muted) {player.muted = false}
 
 				window.cinema_controller = player;
-
 				exTheater.controllerReady();
 			}
 		}, 50);
