@@ -42,7 +42,12 @@ local SERVICE = {
     -- Theater access restriction level
     -- THEATER_NONE = Available in all theaters
     -- THEATER_PRIVATE = Only available in private theaters
-    TheaterType = THEATER_NONE
+    TheaterType = THEATER_NONE,
+
+    -- Whether the service has any special requirements for detection (e.g., on-site media src change).
+    -- This is executed by “SERVICE:SearchFunctions”. This will overwrite the Request button and must be executed via 
+    -- JavaScript with “gmod.updateRequestButton(true)” in your own mechanism.
+    NeedsExtraChecks = false,
 }
 
 --[[

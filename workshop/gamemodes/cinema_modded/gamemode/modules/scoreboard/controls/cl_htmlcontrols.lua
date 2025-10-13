@@ -3,7 +3,7 @@
 | |_ / _` |/ __/ _ \ '_ \| | | | '_ \ / __| '_ \
 |  _| (_| | (_|  __/ |_) | |_| | | | | (__| | | |
 |_|  \__,_|\___\___| .__/ \__,_|_| |_|\___|_| |_|
-                   |_| 2010 | Updated: 2015 --]]
+				   |_| 2010 | Updated: 2015 --]]
 
 local PANEL = {}
 
@@ -151,7 +151,6 @@ function PANEL:SetHTML( html )
 
 		self.AddressBar:SetText( url )
 		self:FinishedLoading()
-
 	end
 
 	self.HTML.OnURLChanged = function ( panel, url )
@@ -165,8 +164,14 @@ function PANEL:SetHTML( html )
 		local isSearch = url == self.HTML.searchUrl
 
 		-- Check for valid URL
-		if theater.ExtractURLData( url, Theater ) and not isSearch then
-			self.RequestButton:SetDisabled( false )
+		local urlData = theater.ExtractURLData( url, Theater )
+		if urlData and not isSearch then
+			local service = theater.GetServiceByClass(urlData.Type)
+
+			if service and not service.NeedsExtraChecks then
+				self.RequestButton:SetDisabled( false )
+			end
+
 		else
 			self.RequestButton:SetDisabled( true )
 		end

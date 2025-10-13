@@ -75,16 +75,23 @@ function PANEL:Init()
 	self.Browser.isContainer = true
 
 	local searchURL = theater.GetCinemaURL("search/")
-	function self.Browser:OnDocumentReady( url )
-		if (not self.searchUrl) then self.searchUrl = searchURL end
+	self.Browser.OnDocumentReady = function(panel, url)
+
+		if (not panel.searchUrl) then panel.searchUrl = searchURL end
 		if (url == searchURL) then return end
 
-		if IsValid(self) then
+		if IsValid(panel) then
 			local service = theater.GetServiceByURL(url)
 
-			if (service and istable(service)) then
-				service:SearchFunctions(self)
+			if (service and istable(service) and service.SearchFunctions) then
+				service:SearchFunctions(panel)
 			end
+
+			panel:AddFunction("gmod", "updateRequestButton", function(hasVideo)
+				if self.Controls and IsValid(self.Controls.RequestButton) then
+					self.Controls.RequestButton:SetDisabled(not hasVideo)
+				end
+			end)
 		end
 	end
 
