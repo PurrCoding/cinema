@@ -30,6 +30,8 @@ if (CLIENT) then
 				if (!!player) {
 					clearInterval(checkerInterval);
 
+					if (player.muted) {player.muted = false}
+
 					document.body.appendChild(player)
 					document.querySelector("div[class^=\"group/main\"]").remove()
 					document.body.style.backgroundColor = "black";
