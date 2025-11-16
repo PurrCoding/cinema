@@ -28,7 +28,7 @@ REM Create the gamemodes folder if it doesn't exist
 if not exist "gamemodes" mkdir "gamemodes"
 
 REM Remove existing junction if present
-if exist "gamemodes" (
+if exist "gamemodes\cinema_modded" (
     rmdir "gamemodes\cinema_modded"
 )
 
