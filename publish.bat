@@ -45,7 +45,7 @@ REM ============================================================
 REM UPLOAD / UPDATE ADDON TO STEAM WORKSHOP
 REM ============================================================
 
-@REM call "%gmpublish%" update -addon "%publish_gma%" -id "%publish_id%"
+call "%gmpublish%" update -addon "%publish_gma%" -id "%publish_id%"
 
 REM ============================================================
 REM CLEAN UP
