@@ -14,6 +14,10 @@ This is the unofficial successor of the defunct [Cinema](https://github.com/pixe
 * Automated detection of video durations
 * (Experimental) Optional Sandbox derivation
 
+#### Installation ####
+
+Copy the `cinema_modded` folder of this GitHub repository into your `garrysmod/gamemodes/` directory. For those unfamiliar with Git, press the `Download ZIP` button in the right-hand sidebar.
+
 #### Credits ####
 * The original developers of the [Cinema addon](https://github.com/pixeltailgames/cinema) by [PixelTail Games](https://steamcommunity.com/groups/pixelTail).
 * YouTube Workaround by [Veitikka](https://github.com/veitikka) (https://github.com/samuelmaddock/gm-mediaplayer/pull/34)
