@@ -3,6 +3,12 @@
 	"type"		:	"gamemode",
 	"tags"		:	[ "fun", "roleplay" ],
 	"ignore"	:   [
+		".git/*",
+		".github/*",
+		"public/*",
+		"cinema_modded/*",
+		"*.bat",
+		"*.vmf",
 		"*.md",
 		"*.sw.vtx",
 		"*.fgd"
