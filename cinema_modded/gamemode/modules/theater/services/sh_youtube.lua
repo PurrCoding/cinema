@@ -17,7 +17,7 @@ if (CLIENT) then
 	]]
 
 	local function playerURL(path)
-		return ("https://purrcoding.pages.dev/cinema/%s"):format(path)
+		return ("https://purrcoding.b-cdn.net/cinema/%s"):format(path)
 	end
 
 	function SERVICE:LoadProvider( Video, panel )
