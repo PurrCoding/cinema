@@ -58,6 +58,12 @@ function PLAYER:Spawn()
 		self.Player:SetFOV(85, 0)
 		self.Player:ClearPoseParameters()
 
+		local wepclr = Vector( self.Player:GetInfo( "cl_weaponcolor" ) )
+		if ( wepclr:Length() < 0.001 ) then
+			wepclr = Vector( 0.001, 0.001, 0.001 )
+		end
+		self.Player:SetWeaponColor( wepclr )
+
 		local skin = self.Player:GetInfoNum( "cl_playerskin", 0 )
 		self.Player:SetSkin( skin )
 
