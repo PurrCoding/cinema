@@ -143,6 +143,15 @@ function SETTINGS:Create()
 	MuteAltTab.Label:SetColor( color_white )
 	MuteAltTab.Label:SetTall(50)
 
+	local PlayermodelSelector = self:NewSetting( "DButton", "#smwidget.playermodel_title" )
+	PlayermodelSelector:SetText( translations:Format("#smwidget.playermodel_title") )
+	PlayermodelSelector.DoClick = function(self)
+		RunConsoleCommand( "cinema_playermodel_selector" )
+	end
+	PlayermodelSelector:AlignLeft( 16 )
+	PlayermodelSelector:AlignTop( self.TitleHeight + 124 )
+	PlayermodelSelector:SetWide(PlayermodelSelector:GetWide() / 2)
+
 end
 
 vgui.Register( "ScoreboardSettings", SETTINGS )
