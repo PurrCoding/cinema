@@ -44,6 +44,9 @@
 
 		const tag = document.createElement('script');
 		tag.src = "https://www.youtube.com/iframe_api";
+		tag.onerror = function() {
+			console.log("ERROR:Failed to load YouTube IFrame API");
+		};
 		document.head.appendChild(tag);
 
 		let player = null;
@@ -114,7 +117,11 @@
 		 * Handle edge case if API already loaded
 		 */
 		if (window.YT && window.YT.Player && !player) {
-			setTimeout(() => { onYouTubeIframeAPIReady(); }, 0);
+			if (document.readyState === 'complete') {
+				onYouTubeIframeAPIReady();
+			} else {
+				window.addEventListener('load', onYouTubeIframeAPIReady);
+			}
 		}
 
 	</script>
