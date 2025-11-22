@@ -16,14 +16,14 @@
 		html, body {
 			margin: 0;
 			padding: 0;
-			width: 25%;
-			height: 25%;
+			width: 1px;
+			height: 1px;
 			overflow: hidden;
 		}
 
 		#player-container {
-			width: 25%;
-			height: 25%;
+			width: 1px;
+			height: 1px;
 			position: fixed;
 			top: 0;
 			left: 0;
@@ -59,7 +59,7 @@
 			modestbranding: 1, // Reduce branding
 			enablejsapi: 1,    // Enable JS API for custom controls
 			muted: 1,		   //Set to play muted
-			autoplay: 1		   //Set to make it autostart
+			autoplay: 0		   //Set to make it autostart
 		};
 
 		function onYouTubeIframeAPIReady() {
@@ -83,20 +83,14 @@
 				host: 'https://www.youtube-nocookie.com',
 				events: {
 					onReady: () => {
-						player.setVolume(0)
-					},
-					onStateChange: (event) => {
-						if (event.data === YT.PlayerState.PLAYING) {
+						const videoData = player.getVideoData();
+						const metadata = {
+							title: videoData.title,
+							isLive: videoData.isLive,
+							duration: Math.round(player.getDuration()),
+						};
 
-							const videoData = player.getVideoData()
-							const metadata = {
-								title: videoData.title,
-								isLive: videoData.isLive,
-								duration: Math.round(player.getDuration()),
-							};
-
-							console.log("METADATA:" + JSON.stringify(metadata));
-						}
+						console.log("METADATA:" + JSON.stringify(metadata));
 					},
 					onError: (event) => {
 						const YT_ERROR_CODES = {
