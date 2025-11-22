@@ -21,10 +21,17 @@ if (CLIENT) then
 	end
 
 	function SERVICE:LoadProvider( Video, panel )
-
-		panel:OpenURL(playerURL("youtube.html") ..
+		local url = playerURL("youtube_testing.html") ..
 			("?v=%s"):format(Video:Data())
-		)
+
+		if self.IsTimed then
+			local startTime = math.max(0, math.Round(CurTime() - Video:StartTime()))
+			if startTime > 0 then
+				url = url .. ("&t=%d"):format(startTime)
+			end
+		end
+
+		panel:OpenURL(url)
 
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )

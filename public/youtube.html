@@ -65,11 +65,12 @@
 
 		function onYouTubeIframeAPIReady() {
 			const vid = getUrlParameter('v') || 'dQw4w9WgXcQ';
+			const startTime = parseFloat(getUrlParameter('t')) || 0;
 
-			createPlayer(vid);
+			createPlayer(vid, startTime);
 		}
 
-		function createPlayer(videoId) {
+		function createPlayer(videoId, startTime) {
 			if (player && typeof player.destroy === 'function') {
 				player.destroy();
 				player = null;
@@ -80,11 +81,19 @@
 				height: '100%',
 				width: '100%',
 				videoId: videoId,
-				playerVars: defaultPlayerVars,
+				playerVars: {
+					...defaultPlayerVars,
+					start: Math.floor(startTime)  // YouTube API supports start parameter
+				},
 				host: 'https://www.youtube-nocookie.com',
 				events: {
 					onReady: () => {
-						wrapper._ready = true
+						wrapper._ready = true;
+
+						// Additional seek if needed (for more precise timing)
+						if (startTime > 0) {
+							player.seekTo(startTime, true);
+						}
 
 						window.cinema_controller = wrapper;
 						exTheater.controllerReady();
