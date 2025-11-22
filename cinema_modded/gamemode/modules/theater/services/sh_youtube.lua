@@ -92,7 +92,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 		local info = {}
 		info.title = metadata.title
-		info.thumbnail = ("https://img.youtube.com/vi/(%s)/hqdefault.jpg"):format(data)
+		info.thumbnail = ("https://img.youtube.com/vi/%s/mqdefault.jpg"):format(data:Data())
 
 		if metadata.isLive then
 			info.type = "youtubelive"
