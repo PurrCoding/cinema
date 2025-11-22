@@ -21,7 +21,7 @@ if (CLIENT) then
 	end
 
 	function SERVICE:LoadProvider( Video, panel )
-		local url = playerURL("youtube_testing.html") ..
+		local url = playerURL("youtube.html") ..
 			("?v=%s"):format(Video:Data())
 
 		if self.IsTimed then
