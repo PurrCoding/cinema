@@ -60,14 +60,14 @@ function SERVICE:GetURLInfo( url )
 	elseif url.path and url.path:match("^/v/([%a%d-_]+)") then
 		info.Data = url.path:match("^/v/([%a%d-_]+)")
 
-		-- http://www.youtube.com/shorts/(videoId)
+	-- http://www.youtube.com/shorts/(videoId)
 	elseif url.path and url.path:match("^/shorts/([%a%d-_]+)") then
 		info.Data = url.path:match("^/shorts/([%a%d-_]+)")
 
 	-- http://youtu.be/(videoId)
 	elseif url.host:match("youtu.be") and
 		url.path and url.path:match("^/([%a%d-_]+)$") and
-		( not info.query or #info.query == 0 ) then -- short url
+		( not url.query or #url.query == 0 ) then -- short url
 		info.Data = url.path:match("^/([%a%d-_]+)$")
 	end
 
