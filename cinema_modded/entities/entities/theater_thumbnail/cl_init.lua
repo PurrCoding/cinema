@@ -1,5 +1,15 @@
 include("sh_init.lua")
 
+-- Cache global functions for performance
+local cam_Start3D2D = cam.Start3D2D
+local cam_End3D2D = cam.End3D2D
+local surface_SetDrawColor = surface.SetDrawColor
+local surface_DrawRect = surface.DrawRect
+local surface_SetMaterial = surface.SetMaterial
+local surface_DrawTexturedRect = surface.DrawTexturedRect
+local surface_SetFont = surface.SetFont
+local surface_GetTextSize = surface.GetTextSize
+
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 
 surface.CreateFont( "TheaterInfoLarge", {
@@ -24,30 +34,30 @@ local RenderScale = 0.197
 local AngleOffset = Angle(0,90,90)
 
 function ENT:Initialize()
-
 	local bound = Vector(1,1,1) * 1024
 	self:SetRenderBounds( -bound, bound )
 
 	self.ScreenScale = RenderScale * self:GetModelScale()
 
+	-- Cache tables for text dimensions
+	self.NameCache = {}
+	self.TitleCache = {}
 end
 
 function ENT:Draw()
-
 	self:DrawModel()
-	self:FixOffsets() -- Begone Monitor Grid
+	self:FixOffsets()
 
 	if not self.Attach then return end
 
-	cam.Start3D2D( self.Attach.Pos, self.Attach.Ang, self.ScreenScale )
+	cam_Start3D2D( self.Attach.Pos, self.Attach.Ang, self.ScreenScale )
 		pcall( self.DrawThumbnail, self )
-	cam.End3D2D()
+	cam_End3D2D()
 
 	pcall( self.DrawText, self )
 end
 
 function ENT:FixOffsets()
-
 	local pos, ang = LocalToWorld( Vector(0.6, self.ScreenScale * ThumbWidth * -0.5, self.ScreenScale * ThumbHeight * 0.5), AngleOffset, self:GetPos(), self:GetAngles() )
 	self.Attach = {
 		Pos = pos,
@@ -57,40 +67,49 @@ end
 
 local hangs = { "p", "g", "y", "q", "j" }
 
-local tw, th, ty, scale, bw, bh, by = nil
-function ENT:DrawSubtitle( str, height )
+-- Modified to accept pre-calculated cache
+function ENT:DrawSubtitle( cache )
+	cam_Start3D2D( self.Attach.Pos, self.Attach.Ang, ( 1 / cache.scale ) * self.ScreenScale )
+		surface_SetDrawColor( 0, 0, 0, 200 )
+		surface_DrawRect( 0, cache.by, cache.bw, cache.bh )
+		draw.TheaterText( cache.str, "TheaterInfoMedium", (ThumbWidth * cache.scale) / 2, cache.ty, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	cam_End3D2D()
+end
 
-	surface.SetFont( "TheaterInfoMedium" )
+-- Helper function to calculate subtitle layout
+function ENT:CalculateSubtitleCache( str, height )
+	local cache = {}
+	cache.str = str
+
+	surface_SetFont( "TheaterInfoMedium" )
 
 	-- Get text dimensions
-	tw, th = surface.GetTextSize( str )
+	local tw, th = surface_GetTextSize( str )
 	tw = tw + tw * 0.05 -- add additional padding
 
 	-- Calculate hangs
-	if string.findFromTable( str, hangs ) then th = th + ( th / 6 ) end
+	if string.findFromTable( str, hangs ) then
+		th = th + ( th / 6 )
+	end
 
 	-- Calculate scale for fitting text
-	scale = tw / ThumbWidth
-	scale = math.max( scale, 0.88 )
+	cache.scale = tw / ThumbWidth
+	cache.scale = math.max( cache.scale, 0.88 )
 
 	-- Calculate subtitle bar dimensions
-	bw, bh = (ThumbWidth * scale), (ThumbHeight * scale) * 0.16
-	bh = math.max( bh, th )
+	cache.bw = (ThumbWidth * cache.scale)
+	cache.bh = (ThumbHeight * cache.scale) * 0.16
+	cache.bh = math.max( cache.bh, th )
 
 	-- Calculate height offset for bar
-	by = height * scale
-	by = math.min( by, (ThumbHeight * scale) - bh )
+	cache.by = height * cache.scale
+	cache.by = math.min( cache.by, (ThumbHeight * cache.scale) - cache.bh )
 
 	-- Calculate height offset for text
-	ty = (height * scale) + (bh / 2)
-	ty = math.min( ty, (ThumbHeight * scale) - bh / 2 )
+	cache.ty = (height * cache.scale) + (cache.bh / 2)
+	cache.ty = math.min( cache.ty, (ThumbHeight * cache.scale) - cache.bh / 2 )
 
-	cam.Start3D2D( self.Attach.Pos, self.Attach.Ang, ( 1 / scale ) * self.ScreenScale )
-		surface.SetDrawColor( 0, 0, 0, 200 )
-		surface.DrawRect( 0, by, bw, bh )
-		draw.TheaterText( str, "TheaterInfoMedium", (ThumbWidth * scale) / 2, ty, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-	cam.End3D2D()
-
+	return cache
 end
 
 local name, title
@@ -98,34 +117,40 @@ local CurrentName, CurrentTitle
 local TranslatedName, TranslatedTitle
 
 function ENT:DrawText()
-
 	name = self:GetTheaterName()
 	title = self:GetTitle()
 
-	-- Name has changed
+	-- Name has changed - recalculate cache
 	if name ~= CurrentName then
 		CurrentName = name
 		TranslatedName = name
 		if name == "Invalid" then
 			TranslatedName = translations:Format("Invalid")
 		end
+		-- Rebuild name cache
+		self.NameCache = self:CalculateSubtitleCache( TranslatedName, 0 )
 	end
 
-	-- Title has changed
+	-- Title has changed - recalculate cache
 	if title ~= CurrentTitle then
 		CurrentTitle = title
 		TranslatedTitle = title
 		if title == "NoVideoPlaying" then
 			TranslatedTitle = translations:Format("NoVideoPlaying")
 		end
+		-- Rebuild title cache
+		self.TitleCache = self:CalculateSubtitleCache( TranslatedTitle, 303 )
 	end
 
 	-- Draw name
-	self:DrawSubtitle( TranslatedName, 0 )
+	if self.NameCache.str then
+		self:DrawSubtitle( self.NameCache )
+	end
 
-	-- Draw title
-	self:DrawSubtitle( TranslatedTitle, 303 )
-
+	-- Only draw title if it's not "NoVideoPlaying"
+	if title ~= "NoVideoPlaying" and self.TitleCache.str then
+		self:DrawSubtitle( self.TitleCache )
+	end
 end
 
 function ENT:OnRemoveHTML()
@@ -133,68 +158,49 @@ function ENT:OnRemoveHTML()
 end
 
 function ENT:DrawThumbnail()
-
-	-- Thumbnail isn't set yet
+	-- Early return: No thumbnail set yet
 	if self:GetThumbnail() == "" then
-
-		surface.SetDrawColor( 80, 80, 80 )
-		surface.SetMaterial( DefaultThumbnail )
-		surface.DrawTexturedRect( 0, 0, ThumbWidth - 1, ThumbHeight - 1 )
-
+		surface_SetDrawColor( 80, 80, 80 )
+		surface_SetMaterial( DefaultThumbnail )
+		surface_DrawTexturedRect( 0, 0, ThumbWidth - 1, ThumbHeight - 1 )
 		return
+	end
 
-	else -- Thumbnail is valid
+	-- State 1: URL has changed - reset everything
+	if not self.LastURL or self.LastURL ~= self:GetThumbnail() then
+		if IsValid( self.HTML ) then
+			self:OnRemoveHTML()
+			self.HTML:Remove()
+		end
 
-		-- URL has changed
-		if (not self.LastURL or self.LastURL ~= self:GetThumbnail()) then
+		self.LastURL = self:GetThumbnail()
+		self.ThumbMat = nil
+		self.JSDelay = nil
+		return
+	end
 
-			if IsValid( self.HTML ) then
-				self:OnRemoveHTML()
-				self.HTML:Remove()
-			end
+	-- State 2: URL is set but material not loaded yet
+	if self.LastURL and not self.ThumbMat then
 
-			self.LastURL = self:GetThumbnail()
-			self.ThumbMat = nil
+		-- Create HTML panel if needed
+		if not IsValid( self.HTML ) then
+			self.HTML = vgui.Create( "HTML" )
+			self.HTML:SetSize( ThumbWidth, ThumbHeight )
+			self.HTML:SetPaintedManually(true)
+			self.HTML:SetKeyboardInputEnabled(false)
+			self.HTML:SetMouseInputEnabled(false)
 
-		elseif self.LastURL and not self.ThumbMat then
-
-			if not IsValid( self.HTML ) then
-
-				-- Create HTML panel to load thumbnail
-				self.HTML = vgui.Create( "Awesomium" )
-				self.HTML:SetSize( ThumbWidth, ThumbHeight )
-				self.HTML:SetPaintedManually(true)
-				self.HTML:SetKeyboardInputEnabled(false)
-				self.HTML:SetMouseInputEnabled(false)
-				self.HTML:OpenURL( self:GetThumbnail() )
-
-			elseif not self.HTML:IsLoading() and not self.JSDelay then
-
-				-- Force thumbnail sizes
-				self.HTML:RunJavascript( [[
-					var nodes = document.getElementsByTagName('img');
-					for (var i = 0; i < nodes.length; i++) {
-						nodes[i].style.width = '100%';
-						nodes[i].style.height = '100%';
-					}
-				]] )
-
-				self.JSDelay = true
-
-				-- Add delay to wait for JS to run
-				timer.Simple(0.1, function()
-
-					if not IsValid(self) then return end
-					if not IsValid(self.HTML) then return end
+			-- Setup console message listener
+			self.HTML.ConsoleMessage = function(pnl, msg)
+				if msg == "THUMBNAIL_READY" then
+					if not IsValid(self) or not IsValid(self.HTML) then return end
 
 					-- Grab HTML material
 					self.HTML:UpdateHTMLTexture()
 					self.ThumbMat = self.HTML:GetHTMLMaterial()
 
-					-- Do some math to get the correct size
+					-- Calculate dimensions
 					local pw, ph = self.HTML:GetSize()
-
-					-- Convert to scalar
 					self.w = ThumbWidth / pw
 					self.h = ThumbHeight / ph
 
@@ -205,24 +211,88 @@ function ENT:DrawThumbnail()
 					self.w = self.w * pw
 					self.h = self.h * ph
 
-					-- Free resources after grabbing material
+					-- Cleanup
 					self:OnRemoveHTML()
 					self.HTML:Remove()
 					self.JSDelay = nil
-
-				end)
-
-			else
-				return -- Waiting for download to finish
+				end
 			end
 
+			self.HTML:OpenURL( self:GetThumbnail() )
+			return
 		end
 
+		-- Wait for page to load
+		if self.HTML:IsLoading() then
+			return
+		end
+
+		-- Setup MutationObserver once page is loaded
+		if not self.JSDelay then
+			self.JSDelay = true
+
+			-- Inject MutationObserver script
+			self.HTML:RunJavascript([[
+				(function() {
+					const scaleAllImages = () => {
+						const images = document.getElementsByTagName('img');
+						let allReady = images.length > 0;
+
+						for (let i = 0; i < images.length; i++) {
+							const img = images[i];
+							if (img.complete && img.naturalWidth > 0) {
+								img.style.width = '100%';
+								img.style.height = '100%';
+								img.style.objectFit = 'fill';
+								img.style.position = 'absolute';
+								img.style.top = '0';
+								img.style.left = '0';
+							} else {
+								allReady = false;
+							}
+						}
+
+						return allReady;
+					};
+
+					const signalReady = () => {
+						// Wait for next frame to ensure styles are applied
+						requestAnimationFrame(() => {
+							requestAnimationFrame(() => {
+								console.log('THUMBNAIL_READY');
+							});
+						});
+					};
+
+					const observer = new MutationObserver(() => {
+						if (scaleAllImages()) {
+							signalReady();
+							observer.disconnect();
+						}
+					});
+
+					observer.observe(document.body, {
+						childList: true,
+						subtree: true,
+						attributes: true,
+						attributeFilter: ['src', 'complete']
+					});
+
+					// Check immediately in case images already loaded
+					if (scaleAllImages()) {
+						signalReady();
+					}
+				})();
+			]])
+		end
+
+		return
 	end
 
-	-- Draw the HTML material
-	surface.SetDrawColor( 255, 255, 255 )
-	surface.SetMaterial( self.ThumbMat )
-	surface.DrawTexturedRect( 0, 0, self.w - 1, self.h - 1 )
-
+	-- State 3: Material is ready - draw it
+	if self.ThumbMat then
+		surface_SetDrawColor( 255, 255, 255, 255 )
+		surface_SetMaterial( self.ThumbMat )
+		surface_DrawTexturedRect( 0, 0, self.w, self.h )
+	end
 end
