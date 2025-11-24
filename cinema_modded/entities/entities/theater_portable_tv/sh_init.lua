@@ -11,7 +11,7 @@ ENT.Base = "base_anim"
 ENT.PrintName = "Portable TV"
 ENT.Author = "Cinema"
 ENT.Category = "Cinema"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminOnly = false
 
 function ENT:SetupDataTables()
