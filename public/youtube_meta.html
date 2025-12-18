@@ -59,7 +59,7 @@
 			modestbranding: 1, // Reduce branding
 			enablejsapi: 1,    // Enable JS API for custom controls
 			muted: 1,		   //Set to play muted
-			autoplay: 0		   //Set to make it autostart
+			autoplay: 1		   //Set to make it autostart
 		};
 
 		function onYouTubeIframeAPIReady() {
@@ -82,15 +82,41 @@
 				playerVars: defaultPlayerVars,
 				host: 'https://www.youtube-nocookie.com',
 				events: {
-					onReady: () => {
-						const videoData = player.getVideoData();
-						const metadata = {
-							title: videoData.title,
-							isLive: videoData.isLive,
-							duration: Math.round(player.getDuration()),
-						};
-
-						console.log("METADATA:" + JSON.stringify(metadata));
+					onReady: () => {  
+						player.playVideo();  
+						player.setVolume(0);
+						
+						// Wait 1.5 seconds for video to load and play  
+						setTimeout(() => {  
+							const videoData = player.getVideoData();  
+							const playerState = player.getPlayerState();  
+							const duration = player.getDuration();  
+							
+							// Check if player is in playable state  
+							const isPlayable = playerState === YT.PlayerState.PLAYING ||   
+											playerState === YT.PlayerState.BUFFERING ||  
+											playerState === YT.PlayerState.CUED;  
+							
+							// Determine video type based on actual playback data  
+							const isLive = isPlayable && videoData.isLive;  
+							const isNormalVideo = isPlayable && duration > 0 && !videoData.isLive;  
+							
+							// Pause the video after metadata extraction  
+							player.pauseVideo();  
+							
+							const metadata = {  
+								title: videoData.title,  
+								isLive: isLive,  
+								duration: Math.round(duration),  
+								debug: {  
+									playerState: playerState,  
+									videoType: isLive ? "live" : (isNormalVideo ? "normal" : "unknown"),  
+									videoData: videoData  
+								}  
+							};  
+							
+							console.log("METADATA:" + JSON.stringify(metadata));  
+						}, 1500); // Wait 1.5 seconds  
 					},
 					onError: (event) => {
 						const YT_ERROR_CODES = {
