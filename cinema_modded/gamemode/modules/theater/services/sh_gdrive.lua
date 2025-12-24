@@ -76,7 +76,7 @@ if (CLIENT) then
 
 					var title = document.querySelector("meta[property='og:title']").getAttribute("content");
 					var metadata = { 
-						duration: player.getDuration(),
+						duration: Math.round(player.getDuration()),
 						title: title
 					}
 
