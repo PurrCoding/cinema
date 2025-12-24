@@ -393,8 +393,10 @@ function LoadVideo( Video )
 	if not Video then return end
 
 	local theaterUrl = theater.GetCinemaURL()
-
 	local panel = ActivePanel()
+
+	-- Preserve fullscreen state before destroying panels
+	local wasFullscreen = theater.Fullscreen
 
 	-- Always destroy previous panels to avoid weird bugs
 	if IsValid(panel) then
@@ -422,6 +424,13 @@ function LoadVideo( Video )
 		service:LoadVideo( Video, panel )
 	else
 		panel:OpenURL( theaterUrl )
+	end
+
+	-- Restore fullscreen state if it was active before
+	if wasFullscreen then
+		theater.Fullscreen = true
+		panel:SetSize(ScrW(), ScrH())
+		panel:ParentToHUD()
 	end
 
 	hook.Run( "PostVideoLoad", Video )
