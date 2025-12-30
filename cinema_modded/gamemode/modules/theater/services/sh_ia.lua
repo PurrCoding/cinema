@@ -12,7 +12,7 @@ local SERVICE = {
 
 -- API endpoints
 local METADATA_URL = "https://archive.org/metadata/%s"
-local DOWNLOAD_URL = "https://cors.archive.org/download/%s/%s"
+local EMBED_URL = "https://archive.org/embed/%s?autoplay=1"
 
 -- format support
 local VALID_FORMATS = {
@@ -107,6 +107,7 @@ function SERVICE:Match(url)
 end
 
 if CLIENT then
+
 	local THEATER_JS = [[
 		var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName("VIDEO")[0]
@@ -124,122 +125,177 @@ if CLIENT then
 		}, 50);
 	]]
 
-	local BROWSERVER_JS = [[
-		(function watchForJWVideo() {
-			const selector = "video.jw-video";
+	-- It's overkill, but hey, why not? ¯\_(ツ)_/¯
+	local REQUEST_JS = [[
+		(function watchForJWPlayer() {
+			let lastState = null;
+			let lastVideoSrc = null;
+			let playerDetected = false;
+			let isVideoPlaying = false;
 
-			const updateState = (hasVideo) => {
-				gmod.updateRequestButton(!!hasVideo);
+			const updateState = (hasVideo, metadata = null) => {
+				const currentVideoSrc = metadata ? metadata.source : null;
+				const stateChanged = (lastState !== hasVideo) || (lastVideoSrc !== currentVideoSrc);
+
+				if (stateChanged) {
+					lastState = hasVideo;
+					lastVideoSrc = currentVideoSrc;
+					playerDetected = hasVideo;
+
+					if (typeof gmod !== 'undefined' && gmod.updateRequestButton) {
+						gmod.updateRequestButton(!!hasVideo);
+					}
+
+					if (hasVideo && metadata) {
+						console.log("[IA-DETECT] Video detected:", JSON.stringify(metadata, null, 2));
+					} else if (!hasVideo && lastVideoSrc !== null) {
+						console.log("[IA-DETECT] Video lost");
+					}
+				}
 			};
 
-			const attachWatcher = (video) => {
-				console.log("[JWVideo] Watcher attached:", video);
+			const checkVideoSources = () => {
+				// Method 1: JWPlayer API check - always active
+				if (typeof window.jwplayer === 'function') {
+					try {
+						const player = window.jwplayer();
+						if (player && player.getPlaylist) {
+							const playlist = player.getPlaylist();
+							if (playlist && playlist.length > 0) {
+								const currentIndex = player.getPlaylistItem() || 0;
+								const currentItem = playlist[currentIndex];
+								if (currentItem && currentItem.file) {
+									const metadata = {
+										detected: true,
+										source: currentItem.file,
+										method: 'jwplayer-api',
+										playlistIndex: currentIndex,
+										playlistLength: playlist.length,
+										title: currentItem.title || 'unknown'
+									};
+									return { found: true, metadata };
+								}
+							}
+						}
+					} catch (e) {
+						// Silent fail
+					}
+				}
 
-				const onMetadataLoaded = () => {
-					const hasVideo = !!video.currentSrc;
-					updateState(hasVideo);
+				// Method 2: Universal video element detection
+				const universalSelectors = [
+					'video',
+					'video[src]',
+					'.jwplayer video',
+					'video.jw-video',
+					'.jw-media video',
+					'[data-jwplayer-id] video'
+				];
 
-					if (hasVideo) {
-						const playPromise = video.play();
-						if (playPromise) {
-							playPromise.catch(err => {
-								console.warn("[JWVideo] Autoplay blocked:", err.message);
-							});
+				for (const selector of universalSelectors) {
+					const videos = document.querySelectorAll(selector);
+					for (const video of videos) {
+						if (video.currentSrc || (playerDetected && video.readyState > 0)) {
+							const metadata = {
+								detected: true,
+								source: video.currentSrc || 'jwplayer-active',
+								method: 'dom-selector',
+								selector: selector,
+								readyState: video.readyState
+							};
+							return { found: true, metadata };
 						}
 					}
-				};
+				}
 
-				const onError = () => {
-					console.warn("[JWVideo] Failed to load video:", video.src);
-					updateState(false);
-				};
+				// Only mark as not found if we never detected a player
+				return { found: playerDetected, metadata: null };
+			};
 
-				const observer = new MutationObserver(mutations => {
-					for (const m of mutations) {
-						if (m.attributeName === "src") {
-							console.log("[JWVideo] Source changed to:", video.src);
-							updateState(false);
-							video.removeEventListener("loadedmetadata", onMetadataLoaded);
-							video.removeEventListener("error", onError);
-							video.addEventListener("loadedmetadata", onMetadataLoaded, { once: true });
-							video.addEventListener("error", onError, { once: true });
-						}
-					}
-				});
+			// Initial check
+			const initialResult = checkVideoSources();
+			updateState(initialResult.found, initialResult.metadata);
 
-				observer.observe(video, { attributes: true });
+			// Hook into JWPlayer events
+			if (typeof window.jwplayer === 'function') {
+				try {
+					const player = window.jwplayer();
 
-				// Handle initial state
-				if (video.src) {
-					if (video.readyState >= 1) {
-						onMetadataLoaded();
-					} else {
-						video.addEventListener("loadedmetadata", onMetadataLoaded, { once: true });
-						video.addEventListener("error", onError, { once: true });
-					}
+					player.on('ready', () => {
+						const result = checkVideoSources();
+						updateState(result.found, result.metadata);
+					});
+
+					player.on('playlistItem', () => {
+						setTimeout(() => {
+							const result = checkVideoSources();
+							updateState(result.found, result.metadata);
+						}, 300);
+					});
+
+					// Track playback state
+					player.on('play', () => {
+						console.log("[IA-DETECT] Video playing - enabling continuous trigger");
+						isVideoPlaying = true;
+					});
+
+					player.on('pause', () => {
+						console.log("[IA-DETECT] Video paused");
+						isVideoPlaying = false;
+						const result = checkVideoSources();
+						updateState(result.found, result.metadata);
+					});
+
+					player.on('complete', () => {
+						console.log("[IA-DETECT] Video completed");
+						isVideoPlaying = false;
+						const result = checkVideoSources();
+						updateState(result.found, result.metadata);
+					});
+				} catch (e) {
+					// Silent fail
+				}
+			}
+
+			// CRITICAL: Continuous monitoring with playback trigger
+			const monitorInterval = setInterval(() => {
+				const result = checkVideoSources();
+
+				// KEY CHANGE: If video is playing, always keep button enabled
+				if (isVideoPlaying && typeof gmod !== 'undefined' && gmod.updateRequestButton) {
+					gmod.updateRequestButton(true);
+					console.log("[IA-DETECT] Playback trigger - keeping button enabled");
 				} else {
-					updateState(false);
+					updateState(result.found, result.metadata);
 				}
-			};
+			}, 1000);
 
-			// --- Fast detection helper ---
-			const detectVideo = () => document.querySelector(selector);
+			// DOM observer
+			const observer = new MutationObserver(() => {
+				const result = checkVideoSources();
+				updateState(result.found, result.metadata);
+			});
 
-			const tryAttach = () => {
-				const video = detectVideo();
-				if (video) {
-					attachWatcher(video);
-					return true;
-				}
-				return false;
-			};
+			observer.observe(document.body, {
+				childList: true,
+				subtree: true,
+				attributes: true,
+				attributeFilter: ['src', 'currentSrc']
+			});
 
-			// If video already exists right now → attach immediately
-			if (tryAttach()) return;
-
-			// --- Early repeated microtask checks ---
-			// This loop checks multiple times within the first 2 seconds — faster than waiting for DOM mutation
-			let quickTries = 0;
-			const fastCheck = setInterval(() => {
-				if (tryAttach()) {
-					clearInterval(fastCheck);
-					clearTimeout(stopFastCheck);
-				}
-				quickTries++;
-				if (quickTries > 20) return; // safeguard
-			}, 100);
-
-			const stopFastCheck = setTimeout(() => {
-				clearInterval(fastCheck);
-
-				// Fallback: full MutationObserver if still not found
-				const domObserver = new MutationObserver(() => {
-					if (tryAttach()) {
-						domObserver.disconnect();
-						console.log("[JWVideo] Video detected via MutationObserver.");
-					}
-				});
-
-				domObserver.observe(document.body, { childList: true, subtree: true });
-				console.log("[JWVideo] Using fallback DOM observer (video not found quickly).");
-			}, 2000);
-
-			console.log("[JWVideo] Watching for video creation...");
+			console.log("[IA-DETECT] Continuous detection with playback trigger initialized");
 		})();
 	]]
 
 	function SERVICE:LoadProvider(Video, panel)
 		local parts = string.Explode(",", Video:Data())
 		local identifier = parts[1]
-		local fileName = parts[2]
 
-		if not fileName then
-			return -- Should not happen with metadata handling
+		if parts[2] then
+			identifier = (parts[2] and identifier .. "/" .. parts[2])
 		end
 
-		local videoUrl = DOWNLOAD_URL:format(identifier, fileName)
-
-		panel:OpenURL(videoUrl)
+		panel:OpenURL( EMBED_URL:format(identifier) )
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions(pnl)
 			pnl:QueueJavascript(THEATER_JS)
@@ -249,7 +305,7 @@ if CLIENT then
 	function SERVICE:SearchFunctions(browser)
 		if not IsValid(browser) then return end
 
-		browser:RunJavascript(BROWSERVER_JS)
+		browser:RunJavascript(REQUEST_JS)
 	end
 end
 
@@ -296,8 +352,7 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 		local info = {
 			title = GenerateTitle(response, bestMatch, identifier),
 			duration = math.Round(bestMatch.length or 0),
-			thumbnail = GetThumbnail(response.files, bestMatch.name),
-			data = identifier .. "," .. bestMatch.name
+			thumbnail = GetThumbnail(response.files, bestMatch.name)
 		}
 
 		if onSuccess then
