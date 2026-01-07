@@ -7,8 +7,7 @@ local SERVICE = {
 	ExtentedVideoInfo = true
 }
 
-
-local EMBED_PARAM = "?controls=0&fullscreen_button=0&play_button=0&volume_control=0&timestamp=0&loop=0&description=0&music_info=0&rel=0&autoplay=1"
+local EMBED_PARAM = "?controls=1&fullscreen_button=0&play_button=0&volume_control=0&timestamp=0&loop=0&description=0&music_info=0&rel=0"
 local EMBED_URL = "https://www.tiktok.com/embed/v3/%s" .. EMBED_PARAM
 
 function SERVICE:Match(url)
@@ -48,11 +47,18 @@ if CLIENT then
 								// Setup video controls
 								player.setAttribute('controls', '');
 
-								// Simulate click to unmute (crucial for browser policies)
+								// Click to enable audio context
 								player.click();
 
-								// Ensure unmuted state
-								player.muted = false;
+								// Start playback
+								player.play().catch(error => {
+									console.log("Play failed, trying again:", error);
+									// Retry after a short delay
+									setTimeout(() => {
+										player.click();
+										player.play();
+									}, 100);
+								});
 
 								window.cinema_controller = player
 								exTheater.controllerReady()
@@ -69,7 +75,7 @@ if CLIENT then
 						childList: true,
 						subtree: true,
 						attributes: true,
-						attributeFilter: ['readyState', 'muted', 'volume']
+						attributeFilter: ['readyState']
 					});
 				});
 			};
