@@ -114,7 +114,7 @@ body {
 
 /* Service logos */
 .logo-youtube { background-image: url(../images/logos/youtube.png); }
-.logo-tiktok { background-image: url(../images/logos/tiktok.png); background-size: 75px; }
+.logo-tiktok { background-image: url(../images/logos/tiktok.svg); }
 .logo-soundcloud { background-image: url(../images/logos/soundcloud.svg); }
 .logo-dailymotion { background-image: url(../images/logos/dailymotion.png); background-size: 55px; }
 .logo-twitch { background-image: url(../images/logos/twitch.png); }
