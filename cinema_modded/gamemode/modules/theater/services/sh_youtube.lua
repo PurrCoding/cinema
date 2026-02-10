@@ -44,9 +44,11 @@ if (CLIENT) then
 
 		local panel = self:CreateWebCrawler(callback)
 
-		panel:OpenURL(playerURL("youtube_meta.html") ..
-			("?v=%s"):format(data)
-		)
+		local baseUrl = playerURL("youtube_meta.html")
+		local hash = ("v=%s"):format(data)
+
+		local url = baseUrl .. "#" .. hash
+		panel:OpenURL(url)
 
 	end
 
