@@ -21,16 +21,18 @@ if (CLIENT) then
 	end
 
 	function SERVICE:LoadProvider( Video, panel )
-		local url = playerURL("youtube.html") ..
-			("?v=%s"):format(Video:Data())
+		local baseUrl = playerURL("youtube.html")
+		local videoId = Video:Data()
+		local hash = ("v=%s"):format(videoId)
 
 		if self.IsTimed then
 			local startTime = math.max(0, math.Round(CurTime() - Video:StartTime()))
 			if startTime > 0 then
-				url = url .. ("&t=%d"):format(startTime)
+				hash = hash .. ("&t=%d"):format(startTime)
 			end
 		end
 
+		local url = baseUrl .. "#" .. hash
 		panel:OpenURL(url)
 
 		panel.OnDocumentReady = function(pnl)

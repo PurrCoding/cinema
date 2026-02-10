@@ -35,7 +35,17 @@
 	<div id="player-container"></div>
 
 	<script>
-		function getUrlParameter(name) {
+		// Get parameter from hash first, then fall back to query parameters
+		function getParameter(name) {
+			// Try hash parameters first
+			const hash = window.location.hash.substring(1); // Remove '#'
+			if (hash) {
+				const hashParams = new URLSearchParams(hash);
+				const hashValue = hashParams.get(name);
+				if (hashValue) return hashValue;
+			}
+
+			// Fall back to query parameters for backwards compatibility
 			const urlParams = new URLSearchParams(window.location.search);
 			if (urlParams.get(name)) return urlParams.get(name);
 
@@ -58,12 +68,12 @@
 			disablekb: 1,      // Disable keyboard shortcuts
 			modestbranding: 1, // Reduce branding
 			enablejsapi: 1,    // Enable JS API for custom controls
-			muted: 1,		   //Set to play muted
-			autoplay: 1		   //Set to make it autostart
+			muted: 1,          //Set to play muted
+			autoplay: 1        //Set to make it autostart
 		};
 
 		function onYouTubeIframeAPIReady() {
-			const vid = getUrlParameter('v') || 'dQw4w9WgXcQ';
+			const vid = getParameter('v') || 'dQw4w9WgXcQ';
 
 			createPlayer(vid);
 		}
@@ -82,41 +92,41 @@
 				playerVars: defaultPlayerVars,
 				host: 'https://www.youtube-nocookie.com',
 				events: {
-					onReady: () => {  
-						player.playVideo();  
+					onReady: () => {
+						player.playVideo();
 						player.setVolume(0);
-						
-						// Wait 1.5 seconds for video to load and play  
-						setTimeout(() => {  
-							const videoData = player.getVideoData();  
-							const playerState = player.getPlayerState();  
-							const duration = player.getDuration();  
-							
-							// Check if player is in playable state  
-							const isPlayable = playerState === YT.PlayerState.PLAYING ||   
-											playerState === YT.PlayerState.BUFFERING ||  
-											playerState === YT.PlayerState.CUED;  
-							
-							// Determine video type based on actual playback data  
-							const isLive = isPlayable && videoData.isLive;  
-							const isNormalVideo = isPlayable && duration > 0 && !videoData.isLive;  
-							
-							// Pause the video after metadata extraction  
-							player.pauseVideo();  
-							
-							const metadata = {  
-								title: videoData.title,  
-								isLive: isLive,  
-								duration: Math.round(duration),  
-								debug: {  
-									playerState: playerState,  
-									videoType: isLive ? "live" : (isNormalVideo ? "normal" : "unknown"),  
-									videoData: videoData  
-								}  
-							};  
-							
-							console.log("METADATA:" + JSON.stringify(metadata));  
-						}, 1500); // Wait 1.5 seconds  
+
+						// Wait 1.5 seconds for video to load and play
+						setTimeout(() => {
+							const videoData = player.getVideoData();
+							const playerState = player.getPlayerState();
+							const duration = player.getDuration();
+
+							// Check if player is in playable state
+							const isPlayable = playerState === YT.PlayerState.PLAYING ||
+											playerState === YT.PlayerState.BUFFERING ||
+											playerState === YT.PlayerState.CUED;
+
+							// Determine video type based on actual playback data
+							const isLive = isPlayable && videoData.isLive;
+							const isNormalVideo = isPlayable && duration > 0 && !videoData.isLive;
+
+							// Pause the video after metadata extraction
+							player.pauseVideo();
+
+							const metadata = {
+								title: videoData.title,
+								isLive: isLive,
+								duration: Math.round(duration),
+								debug: {
+									playerState: playerState,
+									videoType: isLive ? "live" : (isNormalVideo ? "normal" : "unknown"),
+									videoData: videoData
+								}
+							};
+
+							console.log("METADATA:" + JSON.stringify(metadata));
+						}, 1500); // Wait 1.5 seconds
 					},
 					onError: (event) => {
 						const YT_ERROR_CODES = {

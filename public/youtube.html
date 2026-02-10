@@ -36,7 +36,17 @@
 	<div id="player-container"></div>
 
 	<script>
-		function getUrlParameter(name) {
+		// Get parameter from hash first, then fall back to query parameters
+		function getParameter(name) {
+			// Try hash parameters first
+			const hash = window.location.hash.substring(1); // Remove '#'
+			if (hash) {
+				const hashParams = new URLSearchParams(hash);
+				const hashValue = hashParams.get(name);
+				if (hashValue) return hashValue;
+			}
+
+			// Fall back to query parameters for backwards compatibility
 			const urlParams = new URLSearchParams(window.location.search);
 			if (urlParams.get(name)) return urlParams.get(name);
 
@@ -59,13 +69,13 @@
 			disablekb: 1,      // Disable keyboard shortcuts
 			modestbranding: 1, // Reduce branding
 			enablejsapi: 1,    // Enable JS API for custom controls
-			muted: 1,		   //Set to play muted
-			autoplay: 1		   //Set to make it autostart
+			muted: 1,          //Set to play muted
+			autoplay: 1        //Set to make it autostart
 		};
 
 		function onYouTubeIframeAPIReady() {
-			const vid = getUrlParameter('v') || 'dQw4w9WgXcQ';
-			const startTime = parseFloat(getUrlParameter('t')) || 0;
+			const vid = getParameter('v') || 'dQw4w9WgXcQ';
+			const startTime = parseFloat(getParameter('t')) || 0;
 
 			createPlayer(vid, startTime);
 		}
