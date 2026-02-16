@@ -55,7 +55,10 @@ if (CLIENT) then
 	function SERVICE:SearchFunctions( browser )
 		if not IsValid( browser ) then return end
 
-		browser:RunJavascript(BROWSER_JS)
+		-- Temporarily disables it, as it supposedly triggers the 
+		-- "Sign in to confirm you're not a bot" prompt.
+
+		-- browser:RunJavascript(BROWSER_JS)
 	end
 end
 
