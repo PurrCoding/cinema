@@ -54,9 +54,11 @@ async function initializeServices() {
 		}
 
 		card.innerHTML = `
-			<div class="service-icon logo-${service.icon}"></div>
-			<div class="service-name">${service.name}</div>
-			${isDisabled ? '<div class="disabled-overlay">Codec Required</div>' : ''}
+			<div class="service-card-inner">
+				<div class="service-icon logo-${service.icon}"></div>
+				<div class="service-name">${service.name}</div>
+				${isDisabled ? '<div class="disabled-overlay">Codec Required</div>' : ''}
+			</div>
 		`;
 
 		grid.appendChild(card);

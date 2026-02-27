@@ -59,19 +59,27 @@ body {
 
 .service-card {
 	position: relative;
-	aspect-ratio: 1;
+	padding-bottom: 100%; /* Simulates aspect-ratio: 1 for Chrome < 88 */
 	background: var(--bg-card);
 	border: 1px solid var(--border-color);
 	border-radius: var(--border-radius);
 	cursor: pointer;
 	transition: var(--transition);
+	overflow: hidden;
+}
+
+.service-card-inner {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 	text-decoration: none;
 	color: var(--text-primary);
-	overflow: hidden;
 }
 
 .service-card::before {
