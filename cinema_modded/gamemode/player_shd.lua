@@ -56,6 +56,9 @@ end
 -----------------------------------------------------------]]
 function GM:PlayerNoClip( pl, on )
 
+	-- Allow admin to noclip
+	if pl:IsAdmin() then return true end
+
 	if GetConVar( "sv_cheats" ):GetInt() > 0 then return true end
 
 	-- Allow noclip if we're in single player

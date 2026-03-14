@@ -53,9 +53,12 @@ loadMap(true) -- Backward compatibility
 --[[---------------------------------------------------------
 	 Name: gamemode:PlayerShouldTakeDamage
 	 Return true if this player should take damage from this attacker
+	 Cinema: If Sandbox is loaded, apply Sandbox rules instead.
 -----------------------------------------------------------]]
-function GM:PlayerShouldTakeDamage( ply, attacker )
-	return false
+if not Cvar_DeriveSbox:GetBool() then
+	function GM:PlayerShouldTakeDamage( ply, attacker )
+		return false
+	end
 end
 
 --[[---------------------------------------------------------
