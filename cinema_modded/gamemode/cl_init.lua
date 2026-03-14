@@ -38,14 +38,17 @@ end )
 	HUD Elements to hide
 --]]
 GM.HUDToHide = {
-	"CHudHealth",
-	"CHudSuitPower",
-	"CHudBattery",
-	"CHudCrosshair",
-	"CHudAmmo",
-	"CHudSecondaryAmmo",
-	"CHudZoom"
+    ["CHudHealth"] = true,
+    ["CHudSuitPower"] = true,
+    ["CHudBattery"] = true,
+    ["CHudCrosshair"] = true,
+    ["CHudAmmo"] = true,
+    ["CHudSecondaryAmmo"] = true,
+    ["CHudZoom"] = true
 }
+
+local LocalPlayer = LocalPlayer
+local IsValid = IsValid
 
 --[[---------------------------------------------------------
    Name: gamemode:HUDShouldDraw( name )
@@ -59,16 +62,22 @@ function GM:HUDShouldDraw( name )
 
 		local wep = ply:GetActiveWeapon()
 
-		if (wep and wep:IsValid() and wep.HUDShouldDraw ~= nil) then
+		if ( IsValid( wep ) and wep.HUDShouldDraw ) then
 
-			return wep.HUDShouldDraw( wep, name )
+			return wep:HUDShouldDraw( name )
+
+		end
+
+		-- If Sandbox is loaded, draw HUD outside of the theater.
+		if ( self.IsSandboxDerived and not ply:InTheater() ) then
+
+			return true
 
 		end
 
 	end
 
-	return not table.HasValue(self.HUDToHide, name)
-
+	return not self.HUDToHide[name]
 end
 
 --[[---------------------------------------------------------
