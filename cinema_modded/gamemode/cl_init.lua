@@ -38,13 +38,13 @@ end )
 	HUD Elements to hide
 --]]
 GM.HUDToHide = {
-    ["CHudHealth"] = true,
-    ["CHudSuitPower"] = true,
-    ["CHudBattery"] = true,
-    ["CHudCrosshair"] = true,
-    ["CHudAmmo"] = true,
-    ["CHudSecondaryAmmo"] = true,
-    ["CHudZoom"] = true
+	["CHudHealth"] = true,
+	["CHudSuitPower"] = true,
+	["CHudBattery"] = true,
+	["CHudCrosshair"] = true,
+	["CHudAmmo"] = true,
+	["CHudSecondaryAmmo"] = true,
+	["CHudZoom"] = true
 }
 
 local LocalPlayer = LocalPlayer
