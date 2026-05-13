@@ -29,9 +29,9 @@ function GM:OnPlayerChat( player, strText, bTeamOnly, bPlayerIsDead )
 		table.insert( tab, "*DEAD* " )
 	end
 
-	if ( bTeamOnly ) then
+	if ( bTeamOnly and IsValid(player) ) then
 		table.insert( tab, Color( 123, 32, 29 ) )
-		table.insert( tab, "(GLOBAL) " )
+		table.insert( tab, "[" .. player:GetLocationName() .. "] " )
 	end
 
 	if ( IsValid( player ) ) then
