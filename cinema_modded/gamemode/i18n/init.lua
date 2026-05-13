@@ -23,7 +23,7 @@ end
 if SERVER then return end
 
 local DefaultId = "en"
-local CurrentId = GetConVar("gmod_language"):GetString()
+local CurrentId = GetConVar("gmod_language"):GetString():lower()
 
 local I18nColors = include("colors.lua")
 local TranslationSchema = include("schema.lua")
@@ -174,6 +174,7 @@ end
 -- Language change callback
 cvars.AddChangeCallback("gmod_language", function(_, value_old, value_new)
 	if not CLIENT then return end
+	value_new = value_new:lower()
 	CurrentId = Languages[value_new] and value_new or DefaultId
 	RunConsoleCommand("cinema_langupdate")
 end)

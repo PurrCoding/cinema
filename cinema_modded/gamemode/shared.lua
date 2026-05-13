@@ -5,10 +5,9 @@ GM.Website 		= "www.pixeltailgames.com"
 GM.TeamBased 	= false
 
 -- Enable sandbox functionalities
-local Cvar_DeriveSbox = CreateConVar("cinema_enable_sandbox", "0", {FCVAR_NOTIFY, FCVAR_REPLICATED,
-FCVAR_REPLICATED, FCVAR_LUA_SERVER, FCVAR_ARCHIVE}, "NEEDS SERVER RESTART!")
+local Cvar_DeriveSbox = GetConVar("cinema_enable_sandbox") -- This command is created by GMod itself (defined in cinema_modded.txt).
 
-if not GM.IsSandboxDerived and Cvar_DeriveSbox:GetBool() then
+if ( !GM.IsSandboxDerived and Cvar_DeriveSbox:GetBool() ) then
 	DeriveGamemode( "sandbox" )
 end
 
