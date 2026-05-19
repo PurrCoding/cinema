@@ -69,6 +69,7 @@ function SERVICE:GetVideoInfo(d, onSuccess, onFailure)
             local pdata = data.pages[tonumber(sT[2])] or data.pages[1]
             if data == nil then return onFailure("Theater_RequestFailed") end
             local info = {}
+            info.thumbnail = data.pic
             info.title = data.title .. " (" .. sT[2] .. "p)"
             info.duration = pdata.duration + 1
             if onSuccess then pcall(onSuccess, info) end
