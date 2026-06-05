@@ -20,7 +20,6 @@ function PANEL:Init()
 	self.Slider:SetLockY( 0.5 )
 	self.Slider.TranslateValues = function( slider, x, y ) return self:TranslateSliderValues( x, y ) end
 	self.Slider:SetTrapInside( true )
-	self.Slider:SetImage( "vgui/slider" )
 
 	self:SetTall( 35 )
 
