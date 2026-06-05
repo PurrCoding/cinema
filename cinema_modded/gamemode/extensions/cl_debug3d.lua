@@ -71,7 +71,7 @@ function DrawText( vecPos, strText, strFont, color, scale )
 	height = height * scale
 
 	cam.Start3D2D( vecPos + Vector( 0, 0, height / 2 ), Angle( 0, ang.y, 90 ), scale )
-		draw.DrawText( strText, strFont, 0, 0, color, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.DrawText( strText, strFont, 0, 0, color, TEXT_ALIGN_CENTER )
 	cam.End3D2D()
 
 end
