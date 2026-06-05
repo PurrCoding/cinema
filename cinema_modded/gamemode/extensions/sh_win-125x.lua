@@ -61,7 +61,7 @@ local table_insert, table_concat = table.insert, table.concat
 local function decompress_mapping(codepage)
 
 	local width, offset, base, CS1, CS2, get_next_char = 1.0, 0.0, 0.0, 7 ^ 18, 5 ^ 22, gmatch(compressed_mappings[codepage], "%S")
-	local mapping, rev_mapping, trees, unicode, ansi, prev_delta_unicode, prev_delta_ansi = {}, {}, {}, 0x7F, 0x7F
+	local mapping, rev_mapping, trees, unicode, ansi, prev_delta_unicode, prev_delta_ansi = {}, {}, {}, 0x7F, 0x7F, 0, 0
 
 	local function decompress_selection(qty, tree)
 		while width <= 94 ^ 7 do
