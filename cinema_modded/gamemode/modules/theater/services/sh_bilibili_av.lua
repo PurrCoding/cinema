@@ -14,7 +14,7 @@ local META_URL = "https://www.bilibili.com/video/%s"
 
 function SERVICE:Match(url)
     local av = url.host:match("www.bilibili.com") and string.match(url.path, "av[%w*]+")
-    return av or b23 or false
+    return av or false
 end
 
 if CLIENT then
