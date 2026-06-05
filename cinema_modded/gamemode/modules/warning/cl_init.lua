@@ -9,6 +9,10 @@ local hook = hook
 local surface = surface
 local table = table
 
+local color_white = color_white
+local TEXT_ALIGN_CENTER = TEXT_ALIGN_CENTER
+local TEXT_ALIGN_BOTTOM = TEXT_ALIGN_BOTTOM
+
 module( "warning" )
 
 local HookName = "DrawWarningMessage"
