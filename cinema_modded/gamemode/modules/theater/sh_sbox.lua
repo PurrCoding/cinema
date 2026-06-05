@@ -5,7 +5,7 @@ if SERVER then
             timer.Simple(0, function()
                 player_manager.SetPlayerClass( ply, "player_sandbox" )
                 player_manager.RunClass( ply, "Loadout")
-                player_manager.OnPlayerSpawn( ply )
+                player_manager.OnPlayerSpawn( ply, false )
             end)
         end
     end)
