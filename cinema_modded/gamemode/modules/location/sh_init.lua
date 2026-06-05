@@ -233,14 +233,14 @@ local function GetTeleportBy(func, nameOrIndex, strMap)
 
 	if not tblLoc then
 		if SERVER then
-			Sql.Log("location", "Tried to get teleport for invalid location \"" .. nameOrIndex .. "\" on map \"" .. strMap .. "\"!")
+			sql.Log("location", "Tried to get teleport for invalid location \"" .. nameOrIndex .. "\" on map \"" .. strMap .. "\"!")
 		end
 		return
 	end
 
 	if not tblLoc.Teleports then
 		if SERVER then
-			Sql.Log("location", "Tried to get a teleport for a location \"" .. nameOrIndex .. "\" on map \"" .. strMap .. "\" without any registered teleports!")
+			sql.Log("location", "Tried to get a teleport for a location \"" .. nameOrIndex .. "\" on map \"" .. strMap .. "\" without any registered teleports!")
 		end
 		return (tblLoc.Max + tblLoc.Min) / 2
 	end
