@@ -1,0 +1,26 @@
+{
+  "$schema": "https://cdn.jsdelivr.net/gh/Pollux12/gmod-glua-ls@main/crates/glua_code_analysis/resources/schema.json",
+  "gmod": {
+    "inferDynamicFields": true,
+    "dynamicFieldsGlobal": true,
+    "outline": {
+      "verbosity": "normal"
+    }
+  },
+  "hint": {
+    "overrideHint": true
+  },
+  "diagnostics": {
+    "disable": [
+      "undefined-field",
+      "assign-type-mismatch",
+      "param-type-mismatch",
+      "cast-type-mismatch",
+      "gmod-net-read-write-order-mismatch",
+      "missing-fields"
+    ]
+  },
+  "workspace": {
+    "checkThirdParty": false
+  }
+}
