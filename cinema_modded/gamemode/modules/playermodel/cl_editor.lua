@@ -148,7 +148,7 @@ local function selector()
 	end
 
 	local function RebuildBodygroupTab()
-		bdcontrolspanel:Clear()
+		bdcontrolspanel:Clear( false )
 
 		bgtab.Tab:SetVisible( false )
 
