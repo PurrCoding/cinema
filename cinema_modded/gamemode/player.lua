@@ -94,7 +94,7 @@ function GM:PlayerSpawn( pl )
 	pl:UnSpectate()
 
 	player_manager.SetPlayerClass( pl, "player_lobby" )
-	player_manager.OnPlayerSpawn( pl )
+	player_manager.OnPlayerSpawn( pl, false )
 	player_manager.RunClass( pl, "Spawn" )
 
 	-- Call item loadout function
