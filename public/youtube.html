@@ -75,8 +75,12 @@
 		};
 
 		function onYouTubeIframeAPIReady() {
-			const vid = getParameter('v') || 'dQw4w9WgXcQ';
-			const startTime = parseFloat(getParameter('t')) || 0;
+			const rawVid = getParameter('v');
+			const vid = (rawVid && /^[a-zA-Z0-9_-]{11}$/.test(rawVid))
+				? rawVid
+				: 'dQw4w9WgXcQ';
+
+			const startTime = Math.max(0, parseFloat(getParameter('t')) || 0);
 
 			createPlayer(vid, startTime);
 		}
