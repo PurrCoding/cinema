@@ -44,6 +44,17 @@ function ADMIN:Init()
 	end
 	self.Options:AddItem(VoteSkipButton)
 
+	-- Play / Pause the current video (timed videos only)
+	if Theater and theater.IsVideoTimed(Theater._Video._VideoType) then
+		local PauseButton = vgui.Create( "TheaterButton" )
+		PauseButton:SetText( translations:Format( Theater:IsPaused() and "Theater_Resume" or "Theater_Pause" ) )
+		PauseButton.DoClick = function(self)
+			RunConsoleCommand( "cinema_pause" )
+		end
+		self.PauseButton = PauseButton
+		self.Options:AddItem(PauseButton)
+	end
+
 	-- Admin-only options
 	if LocalPlayer():IsAdmin() then
 
@@ -88,6 +99,10 @@ function ADMIN:Update()
 
 	local Theater = LocalPlayer():GetTheater() -- get player's theater from their location
 	if not Theater then return end
+
+	if IsValid(self.PauseButton) then
+		self.PauseButton:SetText( translations:Format( Theater:IsPaused() and "Theater_Resume" or "Theater_Pause" ) )
+	end
 
 	-- Change title text
 	if Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer() then
