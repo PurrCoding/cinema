@@ -226,7 +226,7 @@ function THEATER:Think()
 		if LocalPlayer():GetLocation() ~= self:GetLocation() then return end
 
 		-- Synchronize clientside video playback (skip while paused)
-		if not self:IsPaused() and self:IsPlaying() and IsVideoTimed( self:VideoType() ) and  
+		if not self:IsPaused() and self:IsPlaying() and IsVideoTimed( self:VideoType() ) and
 			( not self.NextSync or self.NextSync < RealTime() ) then
 
 			local time = self:VideoCurrentTime()
@@ -592,6 +592,9 @@ if SERVER then
 					net.WriteFloat( self:VideoStartTime() )
 					net.WriteInt( self:VideoDuration(), 32 )
 					net.WriteBool( self:IsPaused() )
+					if self:IsPaused() then
+						net.WriteFloat( self:VideoCurrentTime() )
+					end
 				end
 
 				-- Private theater owner
@@ -600,13 +603,6 @@ if SERVER then
 				end
 
 			net.Send(ply or self.Players) -- sent to specific player if specified
-
-			-- Inform (re)joining players of a paused theater
-			if self:IsPaused() then
-				net.Start("TheaterPause")
-					net.WriteBool( true )
-				net.Send(ply or self.Players)
-			end
 
 		end )
 
