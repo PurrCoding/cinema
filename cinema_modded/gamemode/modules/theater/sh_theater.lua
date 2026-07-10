@@ -116,6 +116,11 @@ function THEATER:SetVideo( Video, PreventDefault )
 
 		self._Video._VideoStart = (CurTime() - Video:StartTime()) + 1
 
+		-- Clear any carried-over pause state so a skipped/paused video
+		-- doesn't leave the next media frozen.
+		self._Paused = false
+		self._PausedOffset = nil
+
 		if IsValid( self._ThumbEnt ) then
 			self._ThumbEnt:SetTitle( Video:Title() )
 			self._ThumbEnt:SetThumbnail( Video:Thumbnail() )
