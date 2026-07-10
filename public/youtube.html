@@ -15,8 +15,7 @@
 	<link rel="preload" href="https://www.youtube.com/iframe_api" as="script">
 
 	<style>
-		html,
-		body {
+		html, body {
 			margin: 0;
 			padding: 0;
 			width: 100%;
@@ -58,7 +57,7 @@
 
 		const tag = document.createElement('script');
 		tag.src = "https://www.youtube.com/iframe_api";
-		tag.onerror = function () {
+		tag.onerror = function() {
 			console.log("ERROR:Failed to load YouTube IFrame API");
 		};
 		document.head.appendChild(tag);
@@ -117,16 +116,13 @@
 						// Unload the captions module
 						player.unloadModule('captions');
 
-						// Start silent — Lua will push the correct volume
-						player.setVolume(0);
-
 						// Additional seek if needed (for more precise timing)
 						if (startTime > 0) {
 							player.seekTo(startTime, true);
 						}
 
 						// Honor a paused start (URL param or an early pause() call)
-						if (startPaused || wrapper._desiredPaused) {
+						if (wrapper.paused()) {
 							player.pauseVideo();
 						}
 
@@ -149,14 +145,11 @@
 
 			const wrapper = {
 				_ready: false,
-				_paused: true,
-				_desiredPaused: false,
+				_paused: startPaused,
 				play() {
-					this._desiredPaused = false;
 					if (this._ready) player.playVideo();
 				},
 				pause() {
-					this._desiredPaused = true;
 					if (this._ready) player.pauseVideo();
 				},
 
