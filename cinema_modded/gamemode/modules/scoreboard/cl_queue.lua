@@ -60,6 +60,15 @@ function QUEUE:Init()
 	end
 	self.Options:AddItem(RefreshButton)
 
+	-- Volume slider at the bottom of the queue menu
+	local VolumeSlider = vgui.Create( "TheaterNumSlider" )
+	VolumeSlider:SetText( translations:Format("Volume") )
+	VolumeSlider:SetConVar( "cinema_volume" )
+	VolumeSlider:SetMinMax( 0, 100 )
+	VolumeSlider:SetDecimals( 0 )
+	VolumeSlider:SetTall( 35 )
+	self.Options:AddItem( VolumeSlider )
+
 end
 
 function QUEUE:AddVideo( vid )
