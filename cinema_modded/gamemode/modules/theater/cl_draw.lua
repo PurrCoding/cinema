@@ -133,7 +133,8 @@ function DrawVideoInfo( w, h, scale )
 
 	-- Timed video info
 	if theater.IsVideoTimed(Video:Type()) then
-		local current = (CurTime() - Video:StartTime())
+		local Theater = LocalPlayer():GetTheater()
+		local current = Theater and Theater:VideoCurrentTime() or (CurTime() - Video:StartTime())
 		local percent = math.Clamp( (current / Video:Duration() ) * 100, 0, 100 )
 
 		-- Bar
