@@ -328,6 +328,13 @@ function ReceiveTheaterPause()
 		Theater._PausedOffset = Theater:VideoCurrentTime()
 		Theater._Paused = true
 
+		-- Keep the current Video in sync so a later reload (LoadProvider)
+		-- reads the correct paused state
+		if Video then
+			Video._Paused = true
+			Video._PausedOffset = Theater._PausedOffset
+		end
+
 		-- Only touch the browser if a panel is present
 		if IsValid(panel) then
 			panel:QueueJavascript( "if(window.theater) theater.pause();" )
@@ -336,6 +343,8 @@ function ReceiveTheaterPause()
 		-- Realign to the server-provided start time (identical to ReceiveSeek)
 		if Video then
 			Video._VideoStart = startTime
+			Video._Paused = false
+			Video._PausedOffset = nil
 		end
 		Theater._VideoStart = startTime
 		Theater._Paused = false
