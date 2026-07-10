@@ -376,10 +376,15 @@ if CLIENT then
 		panel:QueueJavascript(THEATER_INTERFACE)
 
 		panel:AddFunction("exTheater", "controllerReady", function(data)
-			-- Set initial volume when player is ready
-			panel:QueueJavascript(
-				("if (window.theater) theater.setVolume(%s)"):format(theater.GetVolume())
-			)
+
+			timer.Simple(0.1, function()
+				if not IsValid(panel) then return end
+
+				-- Set initial volume when player is ready
+				panel:QueueJavascript(
+					("if (window.theater) theater.setVolume(%s)"):format(theater.GetVolume())
+				)
+			end)
 		end)
 	end
 
