@@ -9,11 +9,14 @@
 
 	<link rel="dns-prefetch" href="//www.youtube.com">
 	<link rel="dns-prefetch" href="//www.youtube-nocookie.com">
+	<link rel="dns-prefetch" href="//i.ytimg.com">
 	<link rel="preconnect" href="https://www.youtube.com" crossorigin>
 	<link rel="preconnect" href="https://www.youtube-nocookie.com" crossorigin>
+	<link rel="preload" href="https://www.youtube.com/iframe_api" as="script">
 
 	<style>
-		html, body {
+		html,
+		body {
 			margin: 0;
 			padding: 0;
 			width: 100%;
@@ -55,7 +58,7 @@
 
 		const tag = document.createElement('script');
 		tag.src = "https://www.youtube.com/iframe_api";
-		tag.onerror = function() {
+		tag.onerror = function () {
 			console.log("ERROR:Failed to load YouTube IFrame API");
 		};
 		document.head.appendChild(tag);
@@ -114,6 +117,9 @@
 						// Unload the captions module
 						player.unloadModule('captions');
 
+						// Start silent — Lua will push the correct volume
+						player.setVolume(0);
+
 						// Additional seek if needed (for more precise timing)
 						if (startTime > 0) {
 							player.seekTo(startTime, true);
@@ -127,6 +133,12 @@
 						window.cinema_controller = wrapper;
 						exTheater.controllerReady();
 					},
+					onStateChange: (e) => {
+						wrapper._paused = e.data !== YT.PlayerState.PLAYING;
+						if (e.data === YT.PlayerState.PLAYING) {
+							player.unloadModule('captions');
+						}
+					}
 				}
 			});
 
