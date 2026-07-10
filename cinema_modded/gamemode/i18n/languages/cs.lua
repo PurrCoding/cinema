@@ -56,6 +56,10 @@ return {
 	Theater_ChangeName = "Změnit jméno",
 	Theater_QueueLock = "Přepnout zámek fronty",
 	Theater_SeekQuery = "HH:MM:SS nebo počet sekund (např. 1:30:00 nebo 5400)",
+	Theater_Pause = "Pozastavit",
+	Theater_Resume = "Pokračovat",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} pozastavil(a) video.",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} obnovil(a) přehrávání videa.",
 
 	-- Theater list
 	TheaterList_NowShowing = "NYNÍ SE PROMÍTÁ",

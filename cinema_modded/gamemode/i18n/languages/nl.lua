@@ -56,6 +56,10 @@ return {
 	Theater_ChangeName = "Wijzig Naam",
 	Theater_QueueLock = "Sluit Rij",
 	Theater_SeekQuery = "HH:MM:SS of het aantal seconden (bv. 1:30:00 of 5400)",
+	Theater_Pause = "Pauzeren",
+	Theater_Resume = "Hervatten",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} heeft de video gepauzeerd.",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} heeft de video hervat.",
 
 	-- Theater list
 	TheaterList_NowShowing = "NU OP",

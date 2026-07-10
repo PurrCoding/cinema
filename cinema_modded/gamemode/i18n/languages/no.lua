@@ -56,6 +56,10 @@ return {
 	Theater_ChangeName = "Bytt navn",
 	Theater_QueueLock = "Lås/åpne køen",
 	Theater_SeekQuery = "HH:MM:SS eller antall sekunder (f.eks. 1:30:00 eller 5400)",
+	Theater_Pause = "Pause",
+	Theater_Resume = "Fortsett",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} satte videoen på pause.",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} fortsatte videoen.",
 
 	-- Theater list
 	TheaterList_NowShowing = "VISER NÅ",

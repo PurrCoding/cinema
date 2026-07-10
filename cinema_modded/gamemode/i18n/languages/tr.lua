@@ -56,6 +56,10 @@ return {
 	Theater_ChangeName = "Isim degistir",
 	Theater_QueueLock = "Kurugu kitle/ac",
 	Theater_SeekQuery = "HH:MM:SS veya su kadar sure (e.g. 1:30:00 or 5400)",
+	Theater_Pause = "Duraklat",
+	Theater_Resume = "Devam Et",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} videoyu duraklattı.",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} videoyu devam ettirdi.",
 
 	-- Theater list
 	TheaterList_NowShowing = "SU ANDA GOSTERILIYOR",

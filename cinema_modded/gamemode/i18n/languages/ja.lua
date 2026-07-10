@@ -56,6 +56,10 @@ return {
 	Theater_ChangeName = "名前を変更",
 	Theater_QueueLock = "キューをロック",
 	Theater_SeekQuery = "HH:MM:SSまたは秒数【例 1:30:00または5400】",
+	Theater_Pause = "一時停止",
+	Theater_Resume = "再開",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} が動画を一時停止しました。",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} が動画を再開しました。",
 
 	-- Theater list
 	TheaterList_NowShowing = "上映中",

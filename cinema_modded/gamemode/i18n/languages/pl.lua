@@ -56,6 +56,10 @@ return {
 	Theater_ChangeName = "Zmień nazwę",
 	Theater_QueueLock = "Przełącz blokadę kolejki",
 	Theater_SeekQuery = "HH:MM:SS lub liczba w sekundach (np. 1:30:00 lub 5400)",
+	Theater_Pause = "Wstrzymaj",
+	Theater_Resume = "Wznów",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} wstrzymał(a) wideo.",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} wznowił(a) wideo.",
 
 	-- Theater list
 	TheaterList_NowShowing = "OBECNIE GRAMY",

@@ -55,6 +55,10 @@ return {
 	Theater_ChangeName = "Cambiar el nombre",
 	Theater_QueueLock = "Alternar la lista de videos",
 	Theater_SeekQuery = "HH:MM:SS o en segundos totales (ej. 1:30:00 ó 5400)",
+	Theater_Pause = "Pausar",
+	Theater_Resume = "Reanudar",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} ha pausado el vídeo.",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} ha reanudado el vídeo.",
 
 	-- Theater list
 	TheaterList_NowShowing = "MOSTRANDO AHORA",
