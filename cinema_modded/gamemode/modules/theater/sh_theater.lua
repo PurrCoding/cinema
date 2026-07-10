@@ -155,7 +155,6 @@ function THEATER:IsPaused()
 end
 
 function THEATER:VideoCurrentTime( clean )
-	-- Freeze the derived time while paused
 	if self:IsPaused() and self._PausedOffset then
 		if clean then
 			return math.Clamp(math.Round(self._PausedOffset), 0, self:VideoDuration())
@@ -163,7 +162,6 @@ function THEATER:VideoCurrentTime( clean )
 			return self._PausedOffset
 		end
 	end
-
 	if clean then
 		return math.Clamp(math.Round(CurTime() - self:VideoStartTime()), 0, self:VideoDuration())
 	else

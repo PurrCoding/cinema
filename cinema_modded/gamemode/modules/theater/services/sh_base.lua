@@ -259,7 +259,22 @@ if CLIENT then
 					}
 				}
 
+				play() {
+					this._syncPaused = false;
+					if (!!this.player && this.player.play) {
+						this.player.play();
+					}
+				}
+
+				pause() {
+					this._syncPaused = true;
+					if (!!this.player && this.player.pause) {
+						this.player.pause();
+					}
+				}
+
 				sync(time) {
+					if (this._syncPaused) return; // don't scrub a paused player
 					if (!!this.player && !!this.player.currentTime && !!time) {
 
 						var current = this.player.currentTime;
@@ -267,18 +282,6 @@ if CLIENT then
 							(Math.abs(time - current) > 3)) {
 							this.player.currentTime = time;
 						}
-					}
-				}
-
-				play() {
-					if (!!this.player && !!this.player.play) {
-						this.player.play();
-					}
-				}
-
-				pause() {
-					if (!!this.player && !!this.player.pause) {
-						this.player.pause();
 					}
 				}
 
