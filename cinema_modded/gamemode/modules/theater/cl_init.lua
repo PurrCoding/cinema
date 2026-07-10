@@ -396,6 +396,15 @@ function ReceiveTheaters()
 
 		Theater = THEATER:Init(v.Location, v)
 
+		-- Restore pause state so it survives TheaterInfo refreshes
+		if v.Paused then
+			Theater._Paused = true
+			Theater._PausedOffset = v.PausedOffset
+		else
+			Theater._Paused = false
+			Theater._PausedOffset = nil
+		end
+
 		if Theater:IsPrivate() and v.Owner then
 			Theater._Owner = v.Owner
 		end
