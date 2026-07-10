@@ -317,29 +317,36 @@ function ReceiveTheaterPause()
 		startTime = net.ReadFloat()
 	end
 
-	local panel = ActivePanel()
-	local Video = CurrentVideo()
 	local Theater = LocalPlayer():GetTheater()
+	if not Theater then return end
 
-	if not IsValid(panel) or not Video or not Theater then return end
+	local Video = CurrentVideo()
+	local panel = ActivePanel()
 
 	if paused then
-		-- Freeze local derived time and pause the browser
+		-- Always freeze the shared timing, even without an active browser panel
 		Theater._PausedOffset = Theater:VideoCurrentTime()
 		Theater._Paused = true
 
-		panel:QueueJavascript( "if(window.theater) theater.pause();" )
+		-- Only touch the browser if a panel is present
+		if IsValid(panel) then
+			panel:QueueJavascript( "if(window.theater) theater.pause();" )
+		end
 	else
 		-- Realign to the server-provided start time (identical to ReceiveSeek)
-		Video._VideoStart = startTime
+		if Video then
+			Video._VideoStart = startTime
+		end
 		Theater._VideoStart = startTime
 		Theater._Paused = false
 		Theater._PausedOffset = nil
 
-		local js = string.format(
-			"if(window.theater) { theater.play(); theater.seek(%s); }",
-			CurTime() - startTime )
-		panel:QueueJavascript( js )
+		if IsValid(panel) then
+			local js = string.format(
+				"if(window.theater) { theater.play(); theater.seek(%s); }",
+				CurTime() - startTime )
+			panel:QueueJavascript( js )
+		end
 	end
 
 	PollServer()
