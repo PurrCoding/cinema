@@ -117,9 +117,6 @@
 						// Unload the captions module
 						player.unloadModule('captions');
 
-						// Start silent — Lua will push the correct volume
-						player.setVolume(0);
-
 						// Additional seek if needed (for more precise timing)
 						if (startTime > 0) {
 							player.seekTo(startTime, true);
