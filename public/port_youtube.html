@@ -77,6 +77,8 @@
 			autoplay: 1		   // Set to make it autostart
 		};
 
+		const startPaused = getParameter('paused') === '1';
+
 		function onYouTubeIframeAPIReady() {
 			const rawVid = getParameter('v');
 			const vid = (rawVid && /^[a-zA-Z0-9_-]{11}$/.test(rawVid))
@@ -84,6 +86,10 @@
 				: 'dQw4w9WgXcQ';
 
 			const startTime = Math.max(0, parseFloat(getParameter('t')) || 0);
+
+			if (startPaused) {
+				defaultPlayerVars.autoplay = 0; // don't autostart when paused
+			}
 
 			createPlayer(vid, startTime);
 		}
@@ -119,6 +125,11 @@
 							player.seekTo(startTime, true);
 						}
 
+						// Honor a paused start (URL param or an early pause() call)
+						if (startPaused || wrapper._desiredPaused) {
+							player.pauseVideo();
+						}
+
 						window.cinema_controller = wrapper;
 						exTheater.controllerReady();
 					},
@@ -134,10 +145,13 @@
 			const wrapper = {
 				_ready: false,
 				_paused: true,
+				_desiredPaused: false,
 				play() {
+					this._desiredPaused = false;
 					if (this._ready) player.playVideo();
 				},
 				pause() {
+					this._desiredPaused = true;
 					if (this._ready) player.pauseVideo();
 				},
 
