@@ -1,18 +1,18 @@
 include("sh_init.lua")
 
-ENT.RenderGroup              = RENDERGROUP_TRANSLUCENT
+ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
-ENT.Mode                     = 0
-ENT.TimeToNext               = 0
-ENT.Alpha                    = 1
+ENT.Mode = 0
+ENT.TimeToNext = 0
+ENT.Alpha = 1
 
-local THEATER_LOAD_IDLE      = 0
-local THEATER_LOAD_FADEDELAY = 1
-local THEATER_LOAD_FADINGOUT = 2
-local THEATER_LOAD_PAUSE     = 3
-local THEATER_LOAD_FADINGIN  = 4
+local THEATER_LOAD_IDLE			= 0
+local THEATER_LOAD_FADEDELAY	= 1
+local THEATER_LOAD_FADINGOUT 	= 2
+local THEATER_LOAD_PAUSE 		= 3
+local THEATER_LOAD_FADINGIN 	= 4
 
-local THEATER_LOAD_SWITCH    = {
+local THEATER_LOAD_SWITCH = {
 	[THEATER_LOAD_FADEDELAY] = function(ent)
 		if CurTime() > ent.TimeToNext then
 			ent.Mode = THEATER_LOAD_FADINGOUT
@@ -22,7 +22,7 @@ local THEATER_LOAD_SWITCH    = {
 		return ent
 	end,
 	[THEATER_LOAD_FADINGOUT] = function(ent)
-		ent.Alpha = ent.Alpha - (FrameTime() * 1) / ent.FadeTime
+		ent.Alpha = ent.Alpha - ( FrameTime() * 1 ) / ent.FadeTime
 
 		if ent.Alpha <= 0 then
 			ent.Alpha = 0
@@ -41,7 +41,7 @@ local THEATER_LOAD_SWITCH    = {
 		return ent
 	end,
 	[THEATER_LOAD_FADINGIN] = function(ent)
-		ent.Alpha = ent.Alpha + (FrameTime() * 1) / ent.FadeTime
+		ent.Alpha = ent.Alpha + ( FrameTime() * 1 ) / ent.FadeTime
 
 		if ent.Alpha >= 1 then
 			ent.Alpha = 1
@@ -54,16 +54,16 @@ local THEATER_LOAD_SWITCH    = {
 	end
 }
 
-local clr                    = {
-	["$pp_colour_addr"]       = 0,
-	["$pp_colour_addg"]       = 0,
-	["$pp_colour_addb"]       = 0,
-	["$pp_colour_brightness"] = 0,
-	["$pp_colour_contrast"]   = 1,
-	["$pp_colour_colour"]     = 1,
-	["$pp_colour_mulr"]       = 0,
-	["$pp_colour_mulg"]       = 0,
-	["$pp_colour_mulb"]       = 0
+local clr = {
+	[ "$pp_colour_addr" ] 		= 0,
+	[ "$pp_colour_addg" ] 		= 0,
+	[ "$pp_colour_addb" ] 		= 0,
+	[ "$pp_colour_brightness" ] = 0,
+	[ "$pp_colour_contrast" ] 	= 1,
+	[ "$pp_colour_colour" ] 	= 1,
+	[ "$pp_colour_mulr" ] 		= 0,
+	[ "$pp_colour_mulg" ] 		= 0,
+	[ "$pp_colour_mulb" ] 		= 0
 }
 
 function ENT:Draw()
@@ -71,14 +71,14 @@ function ENT:Draw()
 end
 
 local function loading_renderer()
-	if not IsValid(LocalPlayer().LoadingEntity) or LocalPlayer().LoadingEntity.Mode == THEATER_LOAD_IDLE then return end
+	if not IsValid( LocalPlayer().LoadingEntity ) or LocalPlayer().LoadingEntity.Mode == THEATER_LOAD_IDLE then return end
 
 	local mode = LocalPlayer().LoadingEntity.Mode
 	local ent = THEATER_LOAD_SWITCH[mode](LocalPlayer().LoadingEntity)
 
 	clr["$pp_colour_brightness"] = ent.Alpha - 1
 	clr["$$pp_colour_colour"] = ent.Alpha
-	DrawColorModify(clr)
+	DrawColorModify( clr )
 end
 
 net.Receive("TheaterDoorLoad", function()
@@ -101,9 +101,27 @@ do
 	local RECEIVER_MODEL = "models/editor/playerstart.mdl"
 	util.PrecacheModel(RECEIVER_MODEL) -- editor-only model; may fall back to ERROR if unmounted
 
-	local SENDER_COLOR   = Color(80, 160, 255)
-	local RECEIVER_COLOR = Color(80, 255, 120)
-	local BEAM_COLOR     = Color(120, 220, 255)
+	-- Per-receiver color cache. Keyed by rounded destination position so two
+	-- senders pointing at the same receiver resolve to the same color.
+	local GroupColors = {}
+
+	local function GroupColor(destPos)
+		local key = string.format("%d,%d,%d",
+			math.Round(destPos.x), math.Round(destPos.y), math.Round(destPos.z))
+
+		local cached = GroupColors[key]
+		if cached then return cached end
+
+		-- Deterministic hash of the key -> hue in 0-359.
+		local hash = 0
+		for i = 1, #key do
+			hash = (hash * 31 + key:byte(i)) % 360
+		end
+
+		local col = HSVToColor(hash, 0.65, 1)
+		GroupColors[key] = col
+		return col
+	end
 
 	-- Lazy clientside-model cache, keyed by door entity.
 	local Ghosts         = {}
@@ -162,12 +180,14 @@ do
 			local destPos = door:GetNWVector("CinemaTPDest")
 			local destAng = door:GetNWAngle("CinemaTPDestAng")
 
+			local groupColor = GroupColor(destPos)
+
 			-- Sender outline (the door itself)
 			local mn, mx = door:GetModelBounds()
-			Debug3D.DrawBox(door:LocalToWorld(mn), door:LocalToWorld(mx), SENDER_COLOR)
+			Debug3D.DrawBox(door:LocalToWorld(mn), door:LocalToWorld(mx), groupColor)
 
 			local senderLabelPos = LabelPos(door:LocalToWorld((mn + mx) / 2), mx.z - mn.z)
-			Debug3D.DrawText(senderLabelPos, "Sender", "VideoInfoSmall", SENDER_COLOR, 0.25)
+			Debug3D.DrawText(senderLabelPos, "Sender", "VideoInfoSmall", groupColor, 0.25)
 
 			-- Receiver ghost model
 			local ghost = GetGhost(door)
@@ -176,14 +196,14 @@ do
 				ghost:SetAngles(destAng)
 				ghost:SetupBones()
 
-				render.SetColorModulation(0.3, 1, 0.5)
+				render.SetColorModulation(groupColor.r / 255, groupColor.g / 255, groupColor.b / 255)
 				render.SetBlend(0.5)
 				ghost:DrawModel()
 				render.SetBlend(1)
 				render.SetColorModulation(1, 1, 1)
 
 				local gmn, gmx = ghost:GetModelBounds()
-				Debug3D.DrawBox(ghost:LocalToWorld(gmn), ghost:LocalToWorld(gmx), RECEIVER_COLOR)
+				Debug3D.DrawBox(ghost:LocalToWorld(gmn), ghost:LocalToWorld(gmx), groupColor)
 			end
 
 			local recvHeight, recvCenter = 72, destPos
@@ -193,11 +213,11 @@ do
 				recvCenter = ghost:LocalToWorld((gmn + gmx) / 2)
 			end
 			local recvLabelPos = LabelPos(recvCenter, recvHeight)
-			Debug3D.DrawText(recvLabelPos, "Receiver", "VideoInfoSmall", RECEIVER_COLOR, 0.25)
+			Debug3D.DrawText(recvLabelPos, "Receiver", "VideoInfoSmall", groupColor, 0.25)
 
 			-- Connecting beam sender -> receiver
 			render.SetMaterial(Debug3D.DebugMat)
-			render.DrawBeam(door:GetPos(), destPos, 8, 0, 1, BEAM_COLOR)
+			render.DrawBeam(door:GetPos(), destPos, 8, 0, 1, groupColor)
 		end
 	end)
 end
