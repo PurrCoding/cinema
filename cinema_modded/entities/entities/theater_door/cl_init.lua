@@ -1,18 +1,18 @@
 include("sh_init.lua")
 
-ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
+ENT.RenderGroup              = RENDERGROUP_TRANSLUCENT
 
-ENT.Mode = 0
-ENT.TimeToNext = 0
-ENT.Alpha = 1
+ENT.Mode                     = 0
+ENT.TimeToNext               = 0
+ENT.Alpha                    = 1
 
-local THEATER_LOAD_IDLE			= 0
-local THEATER_LOAD_FADEDELAY	= 1
-local THEATER_LOAD_FADINGOUT 	= 2
-local THEATER_LOAD_PAUSE 		= 3
-local THEATER_LOAD_FADINGIN 	= 4
+local THEATER_LOAD_IDLE      = 0
+local THEATER_LOAD_FADEDELAY = 1
+local THEATER_LOAD_FADINGOUT = 2
+local THEATER_LOAD_PAUSE     = 3
+local THEATER_LOAD_FADINGIN  = 4
 
-local THEATER_LOAD_SWITCH = {
+local THEATER_LOAD_SWITCH    = {
 	[THEATER_LOAD_FADEDELAY] = function(ent)
 		if CurTime() > ent.TimeToNext then
 			ent.Mode = THEATER_LOAD_FADINGOUT
@@ -22,7 +22,7 @@ local THEATER_LOAD_SWITCH = {
 		return ent
 	end,
 	[THEATER_LOAD_FADINGOUT] = function(ent)
-		ent.Alpha = ent.Alpha - ( FrameTime() * 1 ) / ent.FadeTime
+		ent.Alpha = ent.Alpha - (FrameTime() * 1) / ent.FadeTime
 
 		if ent.Alpha <= 0 then
 			ent.Alpha = 0
@@ -41,7 +41,7 @@ local THEATER_LOAD_SWITCH = {
 		return ent
 	end,
 	[THEATER_LOAD_FADINGIN] = function(ent)
-		ent.Alpha = ent.Alpha + ( FrameTime() * 1 ) / ent.FadeTime
+		ent.Alpha = ent.Alpha + (FrameTime() * 1) / ent.FadeTime
 
 		if ent.Alpha >= 1 then
 			ent.Alpha = 1
@@ -54,16 +54,16 @@ local THEATER_LOAD_SWITCH = {
 	end
 }
 
-local clr = {
-	[ "$pp_colour_addr" ] 		= 0,
-	[ "$pp_colour_addg" ] 		= 0,
-	[ "$pp_colour_addb" ] 		= 0,
-	[ "$pp_colour_brightness" ] = 0,
-	[ "$pp_colour_contrast" ] 	= 1,
-	[ "$pp_colour_colour" ] 	= 1,
-	[ "$pp_colour_mulr" ] 		= 0,
-	[ "$pp_colour_mulg" ] 		= 0,
-	[ "$pp_colour_mulb" ] 		= 0
+local clr                    = {
+	["$pp_colour_addr"]       = 0,
+	["$pp_colour_addg"]       = 0,
+	["$pp_colour_addb"]       = 0,
+	["$pp_colour_brightness"] = 0,
+	["$pp_colour_contrast"]   = 1,
+	["$pp_colour_colour"]     = 1,
+	["$pp_colour_mulr"]       = 0,
+	["$pp_colour_mulg"]       = 0,
+	["$pp_colour_mulb"]       = 0
 }
 
 function ENT:Draw()
@@ -71,18 +71,17 @@ function ENT:Draw()
 end
 
 local function loading_renderer()
-	if not IsValid( LocalPlayer().LoadingEntity ) or LocalPlayer().LoadingEntity.Mode == THEATER_LOAD_IDLE then return end
+	if not IsValid(LocalPlayer().LoadingEntity) or LocalPlayer().LoadingEntity.Mode == THEATER_LOAD_IDLE then return end
 
 	local mode = LocalPlayer().LoadingEntity.Mode
 	local ent = THEATER_LOAD_SWITCH[mode](LocalPlayer().LoadingEntity)
 
 	clr["$pp_colour_brightness"] = ent.Alpha - 1
 	clr["$$pp_colour_colour"] = ent.Alpha
-	DrawColorModify( clr )
+	DrawColorModify(clr)
 end
 
 net.Receive("TheaterDoorLoad", function()
-
 	local ent = net.ReadEntity()
 	if not IsValid(ent) then return end
 
@@ -92,3 +91,90 @@ net.Receive("TheaterDoorLoad", function()
 
 	hook.Add("RenderScreenspaceEffects", "theater_render_loading", loading_renderer)
 end)
+
+----------------------------------------------------------------------
+-- Teleporter sender/receiver debug overlay (client-only, convar-gated)
+----------------------------------------------------------------------
+do
+	local ENABLE = CreateClientConVar("cinema_debug_teleports", "0", true, false)
+
+	local RECEIVER_MODEL = "models/editor/playerstart.mdl"
+	util.PrecacheModel(RECEIVER_MODEL) -- editor-only model; may fall back to ERROR if unmounted
+
+	local SENDER_COLOR   = Color(80, 160, 255)
+	local RECEIVER_COLOR = Color(80, 255, 120)
+	local BEAM_COLOR     = Color(120, 220, 255)
+
+	-- Lazy clientside-model cache, keyed by door entity.
+	local Ghosts         = {}
+
+	local function GetGhost(door)
+		local cached = Ghosts[door]
+		if IsValid(cached) and cached:GetModel() == RECEIVER_MODEL then
+			return cached
+		end
+
+		if IsValid(cached) then cached:Remove() end
+
+		local csm = ClientsideModel(RECEIVER_MODEL, RENDERGROUP_TRANSLUCENT)
+		if not IsValid(csm) then return nil end
+		csm:SetNoDraw(true)
+		Ghosts[door] = csm
+		return csm
+	end
+
+	local function ClearGhosts()
+		for door, csm in pairs(Ghosts) do
+			if IsValid(csm) then csm:Remove() end
+			Ghosts[door] = nil
+		end
+	end
+
+	-- Free clientside models when the overlay is disabled.
+	cvars.AddChangeCallback("cinema_debug_teleports", function(_, _, new)
+		if tobool(new) == false then ClearGhosts() end
+	end, "cinema_debug_teleports_cleanup")
+
+	hook.Add("ShutDown", "CinemaTeleportDebugCleanup", ClearGhosts)
+
+	hook.Add("PostDrawTranslucentRenderables", "CinemaTeleportDebug", function(bDepth, bSkybox)
+		if bSkybox then return end
+		if not ENABLE:GetBool() then return end
+
+		for _, door in ipairs(ents.FindByClass("theater_door")) do
+			if not IsValid(door) then continue end
+			if not door:GetNWBool("CinemaTPValid", false) then continue end
+
+			local destPos = door:GetNWVector("CinemaTPDest")
+			local destAng = door:GetNWAngle("CinemaTPDestAng")
+
+			-- Sender outline (the door itself)
+			local mn, mx = door:GetModelBounds()
+			Debug3D.DrawBox(door:LocalToWorld(mn), door:LocalToWorld(mx), SENDER_COLOR)
+			Debug3D.DrawText(door:GetPos(), "Sender", "VideoInfoSmall", SENDER_COLOR, 0.25)
+
+			-- Receiver ghost model
+			local ghost = GetGhost(door)
+			if IsValid(ghost) then
+				ghost:SetPos(destPos)
+				ghost:SetAngles(destAng)
+				ghost:SetupBones()
+
+				render.SetColorModulation(0.3, 1, 0.5)
+				render.SetBlend(0.5)
+				ghost:DrawModel()
+				render.SetBlend(1)
+				render.SetColorModulation(1, 1, 1)
+
+				local gmn, gmx = ghost:GetModelBounds()
+				Debug3D.DrawBox(ghost:LocalToWorld(gmn), ghost:LocalToWorld(gmx), RECEIVER_COLOR)
+			end
+
+			Debug3D.DrawText(destPos, "Receiver", "VideoInfoSmall", RECEIVER_COLOR, 0.25)
+
+			-- Connecting beam sender -> receiver
+			render.SetMaterial(Debug3D.DebugMat)
+			render.DrawBeam(door:GetPos(), destPos, 8, 0, 1, BEAM_COLOR)
+		end
+	end)
+end
