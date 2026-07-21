@@ -108,6 +108,20 @@ do
 	-- Lazy clientside-model cache, keyed by door entity.
 	local Ghosts         = {}
 
+	-- Anchor a label above a model's top and pull it toward the viewer so it
+	-- always sits on the front-facing side, clear of floors/geometry.
+	local function LabelPos(center, height)
+		local eye = EyePos()
+		local toEye = eye - center
+		toEye.z = 0
+		if toEye:LengthSqr() < 1 then
+			toEye = Vector(0, 0, 0)
+		else
+			toEye:Normalize()
+		end
+		return center + Vector(0, 0, height * 0.5 + 12) + toEye * 24
+	end
+
 	local function GetGhost(door)
 		local cached = Ghosts[door]
 		if IsValid(cached) and cached:GetModel() == RECEIVER_MODEL then
@@ -151,7 +165,9 @@ do
 			-- Sender outline (the door itself)
 			local mn, mx = door:GetModelBounds()
 			Debug3D.DrawBox(door:LocalToWorld(mn), door:LocalToWorld(mx), SENDER_COLOR)
-			Debug3D.DrawText(door:GetPos(), "Sender", "VideoInfoSmall", SENDER_COLOR, 0.25)
+
+			local senderLabelPos = LabelPos(door:LocalToWorld((mn + mx) / 2), mx.z - mn.z)
+			Debug3D.DrawText(senderLabelPos, "Sender", "VideoInfoSmall", SENDER_COLOR, 0.25)
 
 			-- Receiver ghost model
 			local ghost = GetGhost(door)
@@ -170,7 +186,14 @@ do
 				Debug3D.DrawBox(ghost:LocalToWorld(gmn), ghost:LocalToWorld(gmx), RECEIVER_COLOR)
 			end
 
-			Debug3D.DrawText(destPos, "Receiver", "VideoInfoSmall", RECEIVER_COLOR, 0.25)
+			local recvHeight, recvCenter = 72, destPos
+			if IsValid(ghost) then
+				local gmn, gmx = ghost:GetModelBounds()
+				recvHeight = gmx.z - gmn.z
+				recvCenter = ghost:LocalToWorld((gmn + gmx) / 2)
+			end
+			local recvLabelPos = LabelPos(recvCenter, recvHeight)
+			Debug3D.DrawText(recvLabelPos, "Receiver", "VideoInfoSmall", RECEIVER_COLOR, 0.25)
 
 			-- Connecting beam sender -> receiver
 			render.SetMaterial(Debug3D.DebugMat)
