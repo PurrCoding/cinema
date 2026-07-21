@@ -1,15 +1,15 @@
-AddCSLuaFile( "cl_init.lua" )
-AddCSLuaFile( "sh_init.lua" )
-include( "sh_init.lua" )
+AddCSLuaFile("cl_init.lua")
+AddCSLuaFile("sh_init.lua")
+include("sh_init.lua")
 
-ENT.DoorOpen = Sound("doors/door1_move.wav") --just defaults
+ENT.DoorOpen = Sound("doors/door1_move.wav")        --just defaults
 ENT.DoorClose = Sound("doors/door_wood_close1.wav") --just defaults
 
 function ENT:Initialize()
 	self:SetMoveType(MOVETYPE_NONE)
 	self:SetSolid(SOLID_VPHYSICS)
 	self:SetUseType(SIMPLE_USE)
-	self:DrawShadow( false )
+	self:DrawShadow(false)
 
 	local phys = self:GetPhysicsObject()
 	if IsValid(phys) then
@@ -22,36 +22,51 @@ end
 function ENT:PostInitialize()
 	self.LinkedDoor = self:GetLinkedDoor()
 	self.TeleportEntity = self:GetTeleportEntity()
+
+	-- Network the resolved destination to clients for the debug overlay.
+	-- Deferred one tick because the target_destination may spawn after the door.
+	timer.Simple(0, function()
+		if not IsValid(self) then return end
+
+		local dest = self:GetTeleportEntity()
+		if IsValid(dest) then
+			self:SetNWBool("CinemaTPValid", true)
+			self:SetNWVector("CinemaTPDest", dest:GetPos())
+			self:SetNWAngle("CinemaTPDestAng", dest:GetAngles())
+		else
+			self:SetNWBool("CinemaTPValid", false)
+		end
+	end)
 end
 
 function ENT:Use(activator, caller)
 	self:TriggerOutput("OnUse", activator)
 
 	if IsValid(activator) and not activator.Teleporting then
-		self:StartLoading( activator )
+		self:StartLoading(activator)
 
 		local sequence = self:LookupSequence("open")
 
-		if (self:GetSequence() ~= sequence ) then
+		if (self:GetSequence() ~= sequence) then
 			self:ResetSequence(sequence)
 			self:SetPlaybackRate(1.0)
 
 			local door = self.LinkedDoor
-			if IsValid( door ) then
-				door:ResetSequence( sequence )
-				door:SetPlaybackRate( 1.0 )
+			if IsValid(door) then
+				door:ResetSequence(sequence)
+				door:SetPlaybackRate(1.0)
 			end
 
-			self:EmitSound( self.DoorOpen )
+			self:EmitSound(self.DoorOpen)
 		end
 	end
 end
 
 function ENT:GetLinkedDoor()
-	if IsValid( self.TeleportEnt ) then
-		local near = ents.FindInSphere( self.TeleportEnt:GetPos(), 50 )
-		for _, v in pairs( near ) do
-			if IsValid( v ) and v:GetClass() == self:GetClass() then
+	if IsValid(self.TeleportEnt) then
+		local near = ents.FindInSphere(self.TeleportEnt:GetPos(), 50)
+		for _, v in pairs(near) do
+			if IsValid(v) and v:GetClass() == self:GetClass() then
 				return v
 			end
 		end
@@ -61,7 +76,6 @@ function ENT:GetLinkedDoor()
 end
 
 function ENT:GetTeleportEntity()
-
 	-- Attempt to find entity
 	if not IsValid(self.TeleportEnt) then
 		if self.TeleportName then
@@ -76,34 +90,31 @@ function ENT:GetTeleportEntity()
 	end
 
 	return self.TeleportEnt
-
 end
 
-function ENT:StartLoading( ply )
+function ENT:StartLoading(ply)
 	net.Start("TheaterDoorLoad", true)
-		net.WriteEntity( self )
+	net.WriteEntity(self)
 	net.Send(ply)
 
 	ply.Teleporting = true
-	ply:Freeze( true )
+	ply:Freeze(true)
 
-	timer.Simple( self.FadeTime + self.DelayTime, function()
-
-		if IsValid( ply ) then
+	timer.Simple(self.FadeTime + self.DelayTime, function()
+		if IsValid(ply) then
 			--Teleport the player
 			ply.Teleporting = false
-			ply:Freeze( false )
+			ply:Freeze(false)
 
 			ply:EmitSound(self.DoorClose)
 
 			local ent = self.TeleportEntity
 			if IsValid(ent) then
-				ply:SetPos( ent:GetPos() )
-				ply:SetEyeAngles( ent:GetAngles() )
+				ply:SetPos(ent:GetPos())
+				ply:SetEyeAngles(ent:GetAngles())
 			end
 		end
-
-	end )
+	end)
 	self.TeleportAt = CurTime() + self.FadeTime + self.DelayTime
 	self.ShouldTeleport = true
 end
@@ -115,11 +126,11 @@ function ENT:Think()
 		self:SetSequence(sequence)
 
 		local door = self.LinkedDoor
-		if IsValid( door ) then
-			door:SetSequence( sequence )
+		if IsValid(door) then
+			door:SetSequence(sequence)
 		end
 
-		self:EmitSound( self.DoorClose )
+		self:EmitSound(self.DoorClose)
 
 		self.ShouldTeleport = false
 		self.TeleportPly = nil
@@ -137,13 +148,12 @@ function ENT:KeyValue(key, value)
 	end
 
 	if not isEmpty then
-
 		if key == "teleportentity" then
 			self.TeleportName = value
 		elseif key == "opendoorsound" then
-			self.DoorOpen = Sound( value )
+			self.DoorOpen = Sound(value)
 		elseif key == "closedoorsound" then
-			self.DoorClose = Sound( value )
+			self.DoorClose = Sound(value)
 		elseif key == "model" then
 			self:SetModel(Model(value))
 		end
