@@ -96,6 +96,15 @@ end)
 -- Teleporter sender/receiver debug overlay (client-only, convar-gated)
 ----------------------------------------------------------------------
 do
+	local ents_FindByClass = ents.FindByClass
+	local render_DrawBeam = render.DrawBeam
+	local render_SetMaterial = render.SetMaterial
+	local render_SetColorModulation = render.SetColorModulation
+	local render_SetBlend = render.SetBlend
+	local math_Round = math.Round
+	local string_format = string.format
+	local IsValid, pairs, ipairs = IsValid, pairs, ipairs
+
 	local ENABLE = CreateClientConVar("cinema_debug_teleports", "0", true, false)
 
 	local RECEIVER_MODEL = "models/editor/playerstart.mdl"
@@ -106,8 +115,8 @@ do
 	local GroupColors = {}
 
 	local function GroupColor(destPos)
-		local key = string.format("%d,%d,%d",
-			math.Round(destPos.x), math.Round(destPos.y), math.Round(destPos.z))
+		local key = string_format("%d,%d,%d",
+			math_Round(destPos.x), math_Round(destPos.y), math_Round(destPos.z))
 
 		local cached = GroupColors[key]
 		if cached then return cached end
@@ -173,7 +182,7 @@ do
 		if bSkybox then return end
 		if not ENABLE:GetBool() then return end
 
-		for _, door in ipairs(ents.FindByClass("theater_door")) do
+		for _, door in ipairs(ents_FindByClass("theater_door")) do
 			if not IsValid(door) then continue end
 			if not door:GetNWBool("CinemaTPValid", false) then continue end
 
@@ -196,11 +205,11 @@ do
 				ghost:SetAngles(destAng)
 				ghost:SetupBones()
 
-				render.SetColorModulation(groupColor.r / 255, groupColor.g / 255, groupColor.b / 255)
-				render.SetBlend(0.5)
+				render_SetColorModulation(groupColor.r / 255, groupColor.g / 255, groupColor.b / 255)
+				render_SetBlend(0.5)
 				ghost:DrawModel()
-				render.SetBlend(1)
-				render.SetColorModulation(1, 1, 1)
+				render_SetBlend(1)
+				render_SetColorModulation(1, 1, 1)
 
 				local gmn, gmx = ghost:GetModelBounds()
 				Debug3D.DrawBox(ghost:LocalToWorld(gmn), ghost:LocalToWorld(gmx), groupColor)
@@ -216,8 +225,8 @@ do
 			Debug3D.DrawText(recvLabelPos, "Receiver", "VideoInfoSmall", groupColor, 0.25)
 
 			-- Connecting beam sender -> receiver
-			render.SetMaterial(Debug3D.DebugMat)
-			render.DrawBeam(door:GetPos(), destPos, 8, 0, 1, groupColor)
+			render_SetMaterial(Debug3D.DebugMat)
+			render_DrawBeam(door:GetPos(), destPos, 8, 0, 1, groupColor)
 		end
 	end)
 end
