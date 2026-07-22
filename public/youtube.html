@@ -131,14 +131,11 @@
 						exTheater.controllerReady();
 					},
 					onStateChange: (e) => {
-						wrapper._paused = e.data !== YT.PlayerState.PLAYING;
-
-						// YouTube re-loads the captions module when playback
-						// actually begins, so unload it again on PLAYING/BUFFERING
-						// to keep subtitles off.
-						if (e.data === YT.PlayerState.PLAYING ||
-							e.data === YT.PlayerState.BUFFERING) {
-							player.unloadModule('captions');
+						if (e.data === YT.PlayerState.PLAYING) {
+							wrapper._paused = false;
+						} else if (e.data === YT.PlayerState.PAUSED ||
+							e.data === YT.PlayerState.ENDED) {
+							wrapper._paused = true;
 						}
 					},
 				}
@@ -150,10 +147,12 @@
 				_desiredPaused: false,
 				play() {
 					this._desiredPaused = false;
+					this._paused = false;
 					if (this._ready) player.playVideo();
 				},
 				pause() {
 					this._desiredPaused = true;
+					this._paused = true;
 					if (this._ready) player.pauseVideo();
 				},
 

@@ -256,14 +256,16 @@ function ReceiveVideo()
 	end
 
 	local Video = VIDEO:Init(info)
-	Video._Paused = info.Paused
-	Video._PausedOffset = info.PausedOffset
+	Video._Paused = info.Paused == true
+	Video._PausedOffset = info.Paused and info.PausedOffset or nil
 
-	-- Freeze the theater BEFORE loading so LoadProvider sees the paused state
+	-- Freeze the theater BEFORE loading so LoadProvider sees the paused state.
+	-- Always mirror the incoming state so a previously-paused theater doesn't
+	-- leave stale pause data when an unpaused video arrives.
 	local Theater = LocalPlayer():GetTheater()
-	if Theater and info.Paused then
-		Theater._Paused = true
-		Theater._PausedOffset = info.PausedOffset
+	if Theater then
+		Theater._Paused = info.Paused == true
+		Theater._PausedOffset = info.Paused and info.PausedOffset or nil
 	end
 
 	LoadVideo( Video )
