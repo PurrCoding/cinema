@@ -105,7 +105,7 @@ do
 	local string_format = string.format
 	local IsValid, pairs, ipairs = IsValid, pairs, ipairs
 
-	local ENABLE = CreateClientConVar("cinema_debug_teleports", "0", true, false)
+	local ENABLE = CreateClientConVar("cinema_debug_teleports", "0", false, false)
 
 	local RECEIVER_MODEL = "models/editor/playerstart.mdl"
 	util.PrecacheModel(RECEIVER_MODEL) -- editor-only model; may fall back to ERROR if unmounted
