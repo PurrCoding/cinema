@@ -254,6 +254,11 @@ else
 
 		if not theater.IsVideoTimed( Theater:VideoType() ) then return end
 
+		-- Debounce: ignore rapid toggles that would spam TheaterPause net messages
+		local now = CurTime()
+		if Theater._NextPauseToggle and now < Theater._NextPauseToggle then return end
+		Theater._NextPauseToggle = now + 0.5
+
 		Theater:SetPaused( not Theater:IsPaused() )
 
 		Theater:AnnounceToPlayers( {
