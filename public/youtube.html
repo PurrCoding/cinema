@@ -114,9 +114,6 @@
 					onReady: () => {
 						wrapper._ready = true;
 
-						// Unload the captions module
-						player.unloadModule('captions');
-
 						// Additional seek if needed (for more precise timing)
 						if (startTime > 0) {
 							player.seekTo(startTime, true);
