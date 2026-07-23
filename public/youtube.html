@@ -145,6 +145,15 @@
 							player.unloadModule('captions');
 						}
 					},
+					onApiChange: () => {
+						// Captions module has (re)loaded — force it off. Cover both
+						// module name variants and clear any active track, since
+						// unloadModule alone is unreliable across player builds.
+						try { player.unloadModule('captions'); } catch (e) {}
+						try { player.unloadModule('cc'); } catch (e) {}
+						try { player.setOption('captions', 'track', {}); } catch (e) {}
+						try { player.setOption('cc', 'track', {}); } catch (e) {}
+					},
 				}
 			});
 
