@@ -376,22 +376,29 @@ if CLIENT then
 		panel:QueueJavascript(THEATER_INTERFACE)
 
 		panel:AddFunction("exTheater", "controllerReady", function(data)
-			-- Set initial volume when player is ready
-			panel:QueueJavascript(
-				("if (window.theater) theater.setVolume(%s)"):format(theater.GetVolume())
-			)
 
-			-- If the theater is already paused (e.g. a player joined mid-pause),
-			-- freeze this player at the frozen offset instead of autoplaying.
-			-- YouTube handles this via its &paused=1 URL param; this covers every
-			-- other service that uses the standard cinema_controller interface.
-			local Theater = LocalPlayer():GetTheater()
-			if Theater and Theater._Paused then
-				local offset = Theater._PausedOffset or 0
+			-- Short delay before touching volume; setting it too early can be
+			-- ignored by some players before the controller is fully ready.
+			timer.Simple(0.05, function()
+				if not IsValid(panel) then return end
+
+				-- Set initial volume when player is ready
 				panel:QueueJavascript(
-					("if (window.theater) { theater.pause(); theater.seek(%s); }"):format(offset)
+					("if (window.theater) theater.setVolume(%s)"):format(theater.GetVolume())
 				)
-			end
+
+				-- If the theater is already paused (e.g. a player joined mid-pause),
+				-- freeze this player at the frozen offset instead of autoplaying.
+				-- YouTube handles this via its &paused=1 URL param; this covers every
+				-- other service that uses the standard cinema_controller interface.
+				local Theater = LocalPlayer():GetTheater()
+				if Theater and Theater._Paused then
+					local offset = Theater._PausedOffset or 0
+					panel:QueueJavascript(
+						("if (window.theater) { theater.pause(); theater.seek(%s); }"):format(offset)
+					)
+				end
+			end)
 		end)
 	end
 
