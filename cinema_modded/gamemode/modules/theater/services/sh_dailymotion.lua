@@ -12,24 +12,19 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
-	local DAILYMOTION_URL = "https://www.dailymotion.com/embed/video/%s?rel=0&autoplay=1"
+	local DAILYMOTION_URL = "https://geo.dailymotion.com/player.html?video=%s&rel=0&autoplay=1"
 	local THEATER_JS = [[
-		var checkerInterval = setInterval(function() {
-			if (document.querySelector(".np_DialogConsent-accept")) {
-				document.querySelector(".np_DialogConsent-accept").click();
-			}
-			if (document.querySelector(".consent_screen-button.consent_screen-accept")) {
-				document.querySelector(".consent_screen-button.consent_screen-accept").click();
-			}
+		(function() {
+			var checkerInterval = setInterval(function() {
+				var player = document.querySelector(".video_view video");
+				if (!!player && player.paused == false && player.readyState == 4) {
+					clearInterval(checkerInterval);
 
-			var player = document.querySelector("video#video");
-			if (!!player && player.paused == false && player.readyState == 4) {
-				clearInterval(checkerInterval);
-
-				window.cinema_controller = player;
-				exTheater.controllerReady();
-			}
-		}, 50);
+					window.cinema_controller = player;
+					exTheater.controllerReady();
+				}
+			}, 50);
+		})();
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )

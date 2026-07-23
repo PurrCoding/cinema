@@ -56,6 +56,10 @@ return {
 	Theater_ChangeName = "Rename Vessel",
 	Theater_QueueLock = "Close the Harbour",
 	Theater_SeekQuery = "HH:MM:SS or number of seconds (e.g. 1:30:00 or 5400)",
+	Theater_Pause = "Drop Anchor",
+	Theater_Resume = "Weigh Anchor",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} dropped anchor on the video, arr.",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} set the video a-sailin' again.",
 
 	-- Theater list
 	TheaterList_NowShowing = "NOW SAILING",

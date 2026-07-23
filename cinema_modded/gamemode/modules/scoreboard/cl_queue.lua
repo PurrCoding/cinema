@@ -28,6 +28,16 @@ function QUEUE:Init()
 	self.Options:SetSpacing( 4 )
 
 	-- Theater Options
+
+	-- Volume slider (top of the options list)
+	local VolumeSlider = vgui.Create( "TheaterNumSlider" )
+	VolumeSlider:SetText( translations:Format("Volume") )
+	VolumeSlider:SetConVar( "cinema_volume" )
+	VolumeSlider:SetMinMax( 0, 100 )
+	VolumeSlider:SetDecimals( 0 )
+	VolumeSlider:SetTall( 35 )
+	self.Options:AddItem( VolumeSlider )
+
 	local RequestButton = vgui.Create( "TheaterButton" )
 	RequestButton:SetText( translations:Format("Request_Video") )
 	RequestButton.DoClick = function(self)

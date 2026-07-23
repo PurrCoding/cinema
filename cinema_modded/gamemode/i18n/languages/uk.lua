@@ -56,6 +56,10 @@ return {
 	Theater_ChangeName = "змінити ім'я",
 	Theater_QueueLock = "Закрити Вставку Відео",
 	Theater_SeekQuery = "ЧЧ:ММ:СС або число в секундах (приклад. 1:30:00 або 5400)",
+	Theater_Pause = "Пауза",
+	Theater_Resume = "Продовжити",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} поставив(ла) відео на паузу.",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} відновив(ла) відтворення відео.",
 
 	-- Theater list
 	TheaterList_NowShowing = "Зараз Показують",

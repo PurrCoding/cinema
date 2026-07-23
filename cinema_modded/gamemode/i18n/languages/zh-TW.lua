@@ -35,6 +35,10 @@ return {
 	Theater_PublicVideoLength = "公眾影院的影片請求只能播放 %s 秒內的長度",
 	Theater_PlayerVoteSkipped = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 已投票跳過目前的影片 {{rgb:158,37,33}}(%s/%s){{rgb:200,200,200}}.",
 	Theater_VideoAddedToQueue = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 已加入到佇列.",
+	Theater_Pause = "暫停",
+	Theater_Resume = "繼續",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 暫停了影片。",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 繼續播放了影片。",
 
 	-- Warning messages
 	Warning_Unsupported_Line1 = "目前地圖不支援Cinema模式",

@@ -56,6 +56,10 @@ return {
 	Theater_ChangeName = "Vaihda nimi",
 	Theater_QueueLock = "Videojonon lukko on/off",
 	Theater_SeekQuery = "HH:MM:SS tai sekunnit numeroina (esim. 1:30:00 tai 5400)",
+	Theater_Pause = "Keskeytä",
+	Theater_Resume = "Jatka",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} keskeytti videon.",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} jatkoi videota.",
 
 	-- Theater list
 	TheaterList_NowShowing = "NYT TOISTOSSA",

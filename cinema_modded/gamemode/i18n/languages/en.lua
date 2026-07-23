@@ -58,6 +58,10 @@ return {
 	Theater_ChangeName = "Change name",
 	Theater_QueueLock = "Toggle queue lock",
 	Theater_SeekQuery = "HH:MM:SS or number of seconds (e.g. 1:30:00 or 5400)",
+	Theater_Pause = "Pause",
+	Theater_Resume = "Resume",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} has paused the video.",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} has resumed the video.",
 
 	-- Theater list
 	TheaterList_NowShowing = "NOW PLAYING",

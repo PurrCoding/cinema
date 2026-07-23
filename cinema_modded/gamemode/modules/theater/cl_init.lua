@@ -249,13 +249,27 @@ function ReceiveVideo()
 	if IsVideoTimed(info.Type) then
 		info.StartTime = net.ReadFloat()
 		info.Duration = net.ReadInt(32)
+		info.Paused = net.ReadBool()
+		if info.Paused then
+			info.PausedOffset = net.ReadFloat()
+		end
 	end
 
 	local Video = VIDEO:Init(info)
+	Video._Paused = info.Paused == true
+	Video._PausedOffset = info.Paused and info.PausedOffset or nil
+
+	-- Freeze the theater BEFORE loading so LoadProvider sees the paused state.
+	-- Always mirror the incoming state so a previously-paused theater doesn't
+	-- leave stale pause data when an unpaused video arrives.
+	local Theater = LocalPlayer():GetTheater()
+	if Theater then
+		Theater._Paused = info.Paused == true
+		Theater._PausedOffset = info.Paused and info.PausedOffset or nil
+	end
+
 	LoadVideo( Video )
 
-	-- Private theater owner
-	local Theater = LocalPlayer():GetTheater()
 	if Theater then
 
 		Theater:SetVideo( Video )
@@ -295,6 +309,61 @@ function ReceiveSeek()
 
 end
 net.Receive( "TheaterSeek", ReceiveSeek )
+
+function ReceiveTheaterPause()
+
+	local paused = net.ReadBool()
+
+	local startTime
+	if not paused then
+		startTime = net.ReadFloat()
+	end
+
+	local Theater = LocalPlayer():GetTheater()
+	if not Theater then return end
+
+	local Video = CurrentVideo()
+	local panel = ActivePanel()
+
+	if paused then
+		-- Always freeze the shared timing, even without an active browser panel
+		Theater._PausedOffset = Theater:VideoCurrentTime()
+		Theater._Paused = true
+
+		-- Keep the current Video in sync so a later reload (LoadProvider)
+		-- reads the correct paused state
+		if Video then
+			Video._Paused = true
+			Video._PausedOffset = Theater._PausedOffset
+		end
+
+		-- Only touch the browser if a panel is present
+		if IsValid(panel) then
+			panel:QueueJavascript( "if(window.theater) theater.pause();" )
+		end
+	else
+		-- Realign to the server-provided start time (identical to ReceiveSeek)
+		if Video then
+			Video._VideoStart = startTime
+			Video._Paused = false
+			Video._PausedOffset = nil
+		end
+		Theater._VideoStart = startTime
+		Theater._Paused = false
+		Theater._PausedOffset = nil
+
+		if IsValid(panel) then
+			local js = string.format(
+				"if(window.theater) { theater.play(); theater.seek(%s); }",
+				CurTime() - startTime )
+			panel:QueueJavascript( js )
+		end
+	end
+
+	PollServer()
+
+end
+net.Receive( "TheaterPause", ReceiveTheaterPause )
 
 function ReceiveMetadataJob()
 
@@ -337,6 +406,15 @@ function ReceiveTheaters()
 		end
 
 		Theater = THEATER:Init(v.Location, v)
+
+		-- Restore pause state so it survives TheaterInfo refreshes
+		if v.Paused then
+			Theater._Paused = true
+			Theater._PausedOffset = v.PausedOffset
+		else
+			Theater._Paused = false
+			Theater._PausedOffset = nil
+		end
 
 		if Theater:IsPrivate() and v.Owner then
 			Theater._Owner = v.Owner

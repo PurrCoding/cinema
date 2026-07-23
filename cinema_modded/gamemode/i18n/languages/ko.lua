@@ -56,6 +56,10 @@ return {
 	Theater_ChangeName = "이름 바꾸기",
 	Theater_QueueLock = "항상 대기 열 잠구기",
 	Theater_SeekQuery = "HH:MM:SS 의 양식으로 숫자를 입력하십시오. (예. 1:30:00 또는 5400)",
+	Theater_Pause = "일시정지",
+	Theater_Resume = "재생",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 님이 영상을 일시정지했습니다.",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 님이 영상을 다시 재생했습니다.",
 
 	-- Theater list
 	TheaterList_NowShowing = "지금 재생 중",

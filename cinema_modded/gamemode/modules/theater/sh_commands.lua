@@ -250,6 +250,24 @@ else
 
 	end )
 
+	TheaterPrivilegedCommand( "cinema_pause", function( Theater, ply, cmd, args )
+
+		if not theater.IsVideoTimed( Theater:VideoType() ) then return end
+
+		-- Debounce: ignore rapid toggles that would spam TheaterPause net messages
+		local now = CurTime()
+		if Theater._NextPauseToggle and now < Theater._NextPauseToggle then return end
+		Theater._NextPauseToggle = now + 0.5
+
+		Theater:SetPaused( not Theater:IsPaused() )
+
+		Theater:AnnounceToPlayers( {
+			Theater:IsPaused() and "Theater_PlayerPaused" or "Theater_PlayerResumed",
+			ply:Nick()
+		} )
+
+	end )
+
 	TheaterPrivilegedCommand( "cinema_forceskip", function( Theater, ply, cmd, args )
 
 		Theater:AnnounceToPlayers( {

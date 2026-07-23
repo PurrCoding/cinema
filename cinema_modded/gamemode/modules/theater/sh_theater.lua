@@ -125,6 +125,10 @@ function THEATER:SetVideo( Video, PreventDefault )
 			self._Finished = false
 		end
 
+		-- A new video always starts unpaused; never carry pause state across videos
+		self._Paused = false
+		self._PausedOffset = nil
+
 		self:SendVideo()
 
 	end
@@ -150,7 +154,18 @@ function THEATER:VideoData()
 	return self._Video and self._Video:Data() or ""
 end
 
+function THEATER:IsPaused()
+	return self._Paused == true
+end
+
 function THEATER:VideoCurrentTime( clean )
+	if self:IsPaused() and self._PausedOffset then
+		if clean then
+			return math.Clamp(math.Round(self._PausedOffset), 0, self:VideoDuration())
+		else
+			return self._PausedOffset
+		end
+	end
 	if clean then
 		return math.Clamp(math.Round(CurTime() - self:VideoStartTime()), 0, self:VideoDuration())
 	else
@@ -203,7 +218,8 @@ function THEATER:Think()
 
 	if SERVER then
 
-		if not self:IsPlaying() and not self._Finished then
+		-- Don't auto-advance while paused
+		if not self:IsPaused() and not self:IsPlaying() and not self._Finished then
 			self:OnFinishedPlaying()
 		end
 
@@ -211,8 +227,8 @@ function THEATER:Think()
 
 		if LocalPlayer():GetLocation() ~= self:GetLocation() then return end
 
-		-- Synchronize clientside video playback
-		if self:IsPlaying() and IsVideoTimed( self:VideoType() ) and
+		-- Synchronize clientside video playback (skip while paused)
+		if not self:IsPaused() and self:IsPlaying() and IsVideoTimed( self:VideoType() ) and
 			( not self.NextSync or self.NextSync < RealTime() ) then
 
 			local time = self:VideoCurrentTime()
@@ -523,6 +539,35 @@ if SERVER then
 
 	end
 
+	function THEATER:SetPaused( paused )
+
+		-- Only timed videos can be paused (live/untimed excluded)
+		if not IsVideoTimed(self:VideoType()) then return end
+		if not self._Video then return end
+
+		if paused then
+			if self:IsPaused() then return end
+			-- Capture the frozen position
+			self._PausedOffset = self:VideoCurrentTime()
+			self._Paused = true
+		else
+			if not self:IsPaused() then return end
+			-- Same math as Seek: realign the start clock to the frozen offset
+			self._Video._VideoStart = CurTime() - (self._PausedOffset or 0)
+			self._Paused = false
+			self._PausedOffset = nil
+		end
+
+		net.Start("TheaterPause")
+			net.WriteBool( self:IsPaused() )
+			if not self:IsPaused() then
+				-- Send the exact realigned start time so clients match precisely
+				net.WriteFloat( self:VideoStartTime() )
+			end
+		net.Send(self.Players)
+
+	end
+
 	function THEATER:SendVideo( ply )
 
 		-- Remove player if they aren't valid
@@ -548,6 +593,10 @@ if SERVER then
 				if IsVideoTimed(self:VideoType()) then
 					net.WriteFloat( self:VideoStartTime() )
 					net.WriteInt( self:VideoDuration(), 32 )
+					net.WriteBool( self:IsPaused() )
+					if self:IsPaused() then
+						net.WriteFloat( self:VideoCurrentTime() )
+					end
 				end
 
 				-- Private theater owner

@@ -34,6 +34,8 @@ return {
 	Theater_PublicVideoLength = true,
 	Theater_PlayerVoteSkipped = true,
 	Theater_VideoAddedToQueue = true,
+	Theater_PlayerPaused = true,
+	Theater_PlayerResumed = true,
 
 	-- Warning messages
 	Warning_Unsupported_Line1 = true,
@@ -57,6 +59,8 @@ return {
 	Theater_ChangeName = true,
 	Theater_QueueLock = true,
 	Theater_SeekQuery = true,
+	Theater_Pause = true,
+	Theater_Resume = true,
 
 	-- Theater list
 	TheaterList_NowShowing = true,

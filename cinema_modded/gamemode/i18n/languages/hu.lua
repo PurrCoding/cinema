@@ -56,6 +56,10 @@ return {
 	Theater_ChangeName = "Név megváltoztatása",
 	Theater_QueueLock = "Várakozási sor zárása be/ki",
 	Theater_SeekQuery = "ÓÓ:PP:MM vagy a másodpercek száma (1:30:00 vagy 5400)",
+	Theater_Pause = "Szünet",
+	Theater_Resume = "Folytatás",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} szüneteltette a videót.",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} folytatta a videót.",
 
 	-- Theater list
 	TheaterList_NowShowing = "JELENLEG FUT",

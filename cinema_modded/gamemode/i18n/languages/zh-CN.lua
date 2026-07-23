@@ -35,6 +35,10 @@ return {
 	Theater_PublicVideoLength = "公共影院只能点播 %s 秒内的视频",
 	Theater_PlayerVoteSkipped = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 投票跳过： {{rgb:158,37,33}}(%s/%s){{rgb:200,200,200}}.",
 	Theater_VideoAddedToQueue = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 已点播",
+	Theater_Pause = "暂停",
+	Theater_Resume = "继续",
+	Theater_PlayerPaused = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 暂停了视频。",
+	Theater_PlayerResumed = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 继续播放了视频。",
 
 	-- Warning messages
 	Warning_Unsupported_Line1 = "当前地图不支持Cinema模式",

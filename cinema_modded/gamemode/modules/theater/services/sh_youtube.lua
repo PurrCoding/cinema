@@ -22,10 +22,22 @@ if (CLIENT) then
 		local hash = ("v=%s"):format(videoId)
 
 		if self.IsTimed then
-			local startTime = math.max(0, math.Round(CurTime() - Video:StartTime()))
+			local startTime
+			if Video._Paused and Video._PausedOffset then
+				-- Frozen pause position, not the advancing clock
+				startTime = math.max(0, math.Round(Video._PausedOffset))
+			else
+				startTime = math.max(0, math.Round(CurTime() - Video:StartTime()))
+			end
+
 			if startTime > 0 then
 				hash = hash .. ("&t=%d"):format(startTime)
 			end
+		end
+
+		-- Start the player paused (disables autoplay in youtube.html)
+		if Video._Paused then
+			hash = hash .. "&paused=1"
 		end
 
 		local url = baseUrl .. "#" .. hash
@@ -51,7 +63,7 @@ if (CLIENT) then
 	function SERVICE:SearchFunctions( browser )
 		if not IsValid( browser ) then return end
 
-		-- Temporarily disables it, as it supposedly triggers the 
+		-- Temporarily disables it, as it supposedly triggers the
 		-- "Sign in to confirm you're not a bot" prompt.
 
 		-- browser:RunJavascript(BROWSER_JS)
