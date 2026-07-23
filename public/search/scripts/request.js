@@ -9,7 +9,7 @@ const services = [
 	{ name: 'Twitch', icon: 'twitch', url: 'https://www.twitch.tv/', action: 'select', requiresCodec: true },
 	{ name: 'Rumble', icon: 'rumble', url: 'https://rumble.com/', action: 'select', requiresCodec: true },
 	{ name: 'Kick', icon: 'kick', url: 'https://kick.com/', action: 'select', requiresCodec: true },
-	{ name: 'Bilibili', icon: 'bilibili', url: 'https://www.bilibili.tv/', action: 'open', requiresCodec: true },
+	{ name: 'Bilibili', icon: 'bilibili', url: 'https://www.bilibili.com/', action: 'open', requiresCodec: true },
 	{ name: 'Archive', icon: 'archive', url: 'https://archive.org/details/movies', action: 'select', requiresCodec: true },
 	{ name: 'VK Видео', icon: 'vk', url: 'https://vkvideo.ru/', action: 'select', requiresCodec: true },
 	{ name: 'Одноклассники', icon: 'ok', url: 'https://ok.ru/video', action: 'select', requiresCodec: true },
