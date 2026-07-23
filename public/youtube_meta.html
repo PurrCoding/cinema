@@ -53,15 +53,10 @@
 		let currentVideoId  = "";
 		let requestStart    = performance.now();
 
-		/**
-		 * Emit a debug line forwarded to the GMod console by the DEBUG: handler
-		 * in browser.lua (only printed when cinema_html_filter is 1).
-		 * The [YT-META] prefix is intentional — Lua strips "DEBUG:" and prints
-		 * the rest verbatim.
-		 */
+		// Emit a debug line forwarded to the GMod console
 		function dbg(msg) {
 			const elapsed = (performance.now() - requestStart).toFixed(1);
-			console.log("DEBUG:[YT-META] [" + currentVideoId + " +" + elapsed + "ms] " + msg);
+			console.log("[YT-META] [" + currentVideoId + " +" + elapsed + "ms] " + msg);
 		}
 
 		function stateName(code) {
