@@ -470,7 +470,7 @@ function LoadVideo( Video )
 
 	if not Video then return end
 
-	local theaterUrl = theater.GetCinemaURL()
+	local theaterUrl = theater.GetCinemaURL("idle/index.html")
 	local panel = ActivePanel()
 
 	-- Preserve fullscreen state before destroying panels
