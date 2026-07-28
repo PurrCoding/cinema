@@ -62,7 +62,7 @@ body {
 }
 
 .top-curtain {
-	background-image: url(../images/curtaintop.png);
+	background-image: url(../images/curtaintop-min.avif);
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
 	background-position: top;
@@ -72,7 +72,7 @@ body {
 }
 
 .left-curtain {
-	background-image: url(../images/curtainleft.png);
+	background-image: url(../images/curtainleft-min.avif);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: right;
@@ -83,7 +83,7 @@ body {
 }
 
 .right-curtain {
-	background-image: url(../images/curtainright.png);
+	background-image: url(../images/curtainright-min.avif);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: left;
