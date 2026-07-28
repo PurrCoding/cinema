@@ -11,10 +11,6 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
-	local BROWSER_JS = [[
-		// YouTube Adblock (https://github.com/Vendicated/Vencord/blob/main/src/plugins/youtubeAdblock.desktop/adguard.js - #d199603)
-		const hiddenCSS=["#__ffYoutube1","#__ffYoutube2","#__ffYoutube3","#__ffYoutube4","#feed-pyv-container","#feedmodule-PRO","#homepage-chrome-side-promo","#merch-shelf","#offer-module",'#pla-shelf > ytd-pla-shelf-renderer[class="style-scope ytd-watch"]',"#pla-shelf","#premium-yva","#promo-info","#promo-list","#promotion-shelf","#related > ytd-watch-next-secondary-results-renderer > #items > ytd-compact-promoted-video-renderer.ytd-watch-next-secondary-results-renderer","#search-pva","#shelf-pyv-container","#video-masthead","#watch-branded-actions","#watch-buy-urls","#watch-channel-brand-div","#watch7-branded-banner","#YtKevlarVisibilityIdentifier","#YtSparklesVisibilityIdentifier",".carousel-offer-url-container",".companion-ad-container",".GoogleActiveViewElement",'.list-view[style="margin: 7px 0pt;"]',".promoted-sparkles-text-search-root-container",".promoted-videos",".searchView.list-view",".sparkles-light-cta",".watch-extra-info-column",".watch-extra-info-right",".ytd-carousel-ad-renderer",".ytd-compact-promoted-video-renderer",".ytd-companion-slot-renderer",".ytd-merch-shelf-renderer",".ytd-player-legacy-desktop-watch-ads-renderer",".ytd-promoted-sparkles-text-search-renderer",".ytd-promoted-video-renderer",".ytd-search-pyv-renderer",".ytd-video-masthead-ad-v3-renderer",".ytp-ad-action-interstitial-background-container",".ytp-ad-action-interstitial-slot",".ytp-ad-image-overlay",".ytp-ad-overlay-container",".ytp-ad-progress",".ytp-ad-progress-list",'[class*="ytd-display-ad-"]','[layout*="display-ad-"]','a[href^="http://www.youtube.com/cthru?"]','a[href^="https://www.youtube.com/cthru?"]',"ytd-action-companion-ad-renderer","ytd-banner-promo-renderer","ytd-compact-promoted-video-renderer","ytd-companion-slot-renderer","ytd-display-ad-renderer","ytd-promoted-sparkles-text-search-renderer","ytd-promoted-sparkles-web-renderer","ytd-search-pyv-renderer","ytd-single-option-survey-renderer","ytd-video-masthead-ad-advertiser-info-renderer","ytd-video-masthead-ad-v3-renderer","YTM-PROMOTED-VIDEO-RENDERER"],hideElements=()=>{if(!hiddenCSS)return;const e=hiddenCSS.join(", ")+" { display: none!important; }",r=document.createElement("style");r.textContent=e,document.head.appendChild(r)},observeDomChanges=e=>{new MutationObserver((r=>{e(r)})).observe(document.documentElement,{childList:!0,subtree:!0})},hideDynamicAds=()=>{const e=document.querySelectorAll("#contents > ytd-rich-item-renderer ytd-display-ad-renderer");0!==e.length&&e.forEach((e=>{if(e.parentNode&&e.parentNode.parentNode){const r=e.parentNode.parentNode;"ytd-rich-item-renderer"===r.localName&&(r.style.display="none")}}))},autoSkipAds=()=>{if(document.querySelector(".ad-showing")){const e=document.querySelector("video");e&&e.duration&&(e.currentTime=e.duration,setTimeout((()=>{const e=document.querySelector("button.ytp-ad-skip-button");e&&e.click()}),100))}},overrideObject=(e,r,t)=>{if(!e)return!1;let o=!1;for(const d in e)e.hasOwnProperty(d)&&d===r?(e[d]=t,o=!0):e.hasOwnProperty(d)&&"object"==typeof e[d]&&overrideObject(e[d],r,t)&&(o=!0);return o},jsonOverride=(e,r)=>{const t=JSON.parse;JSON.parse=(...o)=>{const d=t.apply(this,o);return overrideObject(d,e,r),d},Response.prototype.json=new Proxy(Response.prototype.json,{async apply(...t){const o=await Reflect.apply(...t);return overrideObject(o,e,r),o}})};jsonOverride("adPlacements",[]),jsonOverride("playerAds",[]),hideElements(),hideDynamicAds(),autoSkipAds(),observeDomChanges((()=>{hideDynamicAds(),autoSkipAds()}));
-	]]
 
 	function SERVICE:LoadProvider( Video, panel )
 		local baseUrl = theater.GetCinemaURL("youtube.html")
@@ -48,26 +44,6 @@ if (CLIENT) then
 		end
 	end
 
-	function SERVICE:GetMetadata( data, callback )
-
-		local panel = self:CreateWebCrawler(callback)
-
-		local baseUrl = theater.GetCinemaURL("youtube_meta.html")
-		local hash = ("v=%s"):format(data)
-
-		local url = baseUrl .. "#" .. hash
-		panel:OpenURL(url)
-
-	end
-
-	function SERVICE:SearchFunctions( browser )
-		if not IsValid( browser ) then return end
-
-		-- Temporarily disables it, as it supposedly triggers the
-		-- "Sign in to confirm you're not a bot" prompt.
-
-		-- browser:RunJavascript(BROWSER_JS)
-	end
 end
 
 function SERVICE:GetURLInfo( url )
@@ -106,27 +82,40 @@ end
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
-	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
+	-- Metadata is fetched server-side via the HTTP API.
+	if not SERVER then return end
 
-		if metadata.err then
-			return onFailure(metadata.err)
+	local videoId = data:Data()
+
+	-- Custom endpoint created by PurrCoding. Please do not overly abuse it,
+	-- and do not use it in third-party addons. No warranty for reliability is
+	-- guaranteed, even though this is backed by edge scripts.
+	local apiUrl = ("https://gm-api.physcannon.top/index.ts?id=%s"):format(videoId)
+
+	self:Fetch(apiUrl, function(body, length, headers, code)
+
+		local response = util.JSONToTable(body)
+
+		if not response or not response.success then
+			return onFailure and onFailure("Theater_RequestFailed")
 		end
 
 		local info = {}
-		info.title = metadata.title
-		info.thumbnail = ("https://img.youtube.com/vi/%s/mqdefault.jpg"):format(data:Data())
+		info.title = response.title
+		info.thumbnail = ("https://img.youtube.com/vi/%s/mqdefault.jpg"):format(videoId)
 
-		if metadata.isLive then
+		if response.live then
 			info.type = "youtubelive"
 			info.duration = 0
 		else
-			info.duration = metadata.duration
+			info.duration = tonumber(response.duration) or 0
 		end
 
 		if onSuccess then
 			pcall(onSuccess, info)
 		end
-	end)
+
+	end, onFailure)
 
 end
 
@@ -141,11 +130,3 @@ theater.RegisterService( "youtubelive", {
 	Hidden = true,
 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )
-
--- theater.RegisterService( "youtubensfw", {
--- 	Name = "YouTube NSFW",
--- 	IsTimed = true,
--- 	NeedsCodecFix = false,
--- 	Hidden = true,
--- 	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
--- } )
