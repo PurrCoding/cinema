@@ -97,7 +97,22 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		local response = util.JSONToTable(body)
 
 		if not response or not response.success then
-			return onFailure and onFailure("Theater_RequestFailed")
+			-- The API now returns richer error details on failure:
+			--   response.error  = human-readable message (e.g. "Video is unplayable")
+			--   response.reason = short code (e.g. "unplayable")
+			--   response.success = false
+			-- Surface the API-provided message to the client when present. The
+			-- client's i18n lookup returns any unknown string verbatim, so a raw
+			-- error message is shown as-is. Fall back to the localized generic
+			-- key when the response is missing/malformed or has no error field.
+			local message = response and response.error
+
+			-- Optionally append the short reason code for extra context.
+			if message and response.reason then
+				message = ("%s (%s)"):format(message, response.reason)
+			end
+
+			return onFailure and onFailure(message or "Theater_RequestFailed")
 		end
 
 		local info = {}
