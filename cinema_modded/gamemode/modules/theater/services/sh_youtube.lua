@@ -44,6 +44,22 @@ if (CLIENT) then
 		end
 	end
 
+	-- Fallback metadata extractor. Runs client-side, driven by the server via
+	-- theater.FetchVideoMedata when the HTTP API is unavailable. Loads the
+	-- invisible youtube_meta.html crawler, which uses the YouTube IFrame API to
+	-- emit "METADATA:{title,isLive,duration}" or "ERROR:<code|msg>" to console.
+	function SERVICE:GetMetadata( data, callback )
+		local videoId = data
+		if istable(data) then
+			videoId = data.id or data.Data
+		end
+
+		local panel = self:CreateWebCrawler(callback)
+
+		local baseUrl = theater.GetCinemaURL("youtube_meta.html")
+		panel:OpenURL(baseUrl .. ("#v=%s"):format(videoId))
+	end
+
 end
 
 function SERVICE:GetURLInfo( url )
@@ -87,6 +103,43 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 	local videoId = data:Data()
 
+	-- Builds the info table from crawler metadata and calls onSuccess.
+	-- Shared by both the primary API path and the crawler fallback.
+	local function buildInfo( title, isLive, duration )
+		local info = {}
+		info.title = title
+		info.thumbnail = ("https://img.youtube.com/vi/%s/mqdefault.jpg"):format(videoId)
+
+		if isLive then
+			info.type = "youtubelive"
+			info.duration = 0
+		else
+			info.duration = tonumber(duration) or 0
+		end
+
+		if onSuccess then
+			pcall(onSuccess, info)
+		end
+	end
+
+	-- FALLBACK: client-side HTML crawler (youtube_meta.html) via the IFrame API.
+	-- Triggered whenever the primary HTTP API is down or returns an error.
+	local function runCrawlerFallback( primaryError )
+		theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
+
+			if not metadata or metadata.err then
+				-- Prefer the crawler error, else the original API error,
+				-- else the generic localized key.
+				local message = (metadata and metadata.err)
+					or primaryError
+					or "Theater_RequestFailed"
+				return onFailure and onFailure(message)
+			end
+
+			buildInfo( metadata.title, metadata.isLive, metadata.duration )
+		end)
+	end
+
 	-- Custom endpoint created by PurrCoding. Please do not overly abuse it,
 	-- and do not use it in third-party addons. No warranty for reliability is
 	-- guaranteed, even though this is backed by edge scripts.
@@ -97,40 +150,24 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		local response = util.JSONToTable(body)
 
 		if not response or not response.success then
-			-- The API now returns richer error details on failure:
+			-- The API returns richer error details on failure:
 			--   response.error  = human-readable message (e.g. "Video is unplayable")
 			--   response.reason = short code (e.g. "unplayable")
-			--   response.success = false
-			-- Surface the API-provided message to the client when present. The
-			-- client's i18n lookup returns any unknown string verbatim, so a raw
-			-- error message is shown as-is. Fall back to the localized generic
-			-- key when the response is missing/malformed or has no error field.
+			-- Keep that message around, but attempt the crawler fallback first.
 			local message = response and response.error
-
-			-- Optionally append the short reason code for extra context.
 			if message and response.reason then
 				message = ("%s (%s)"):format(message, response.reason)
 			end
 
-			return onFailure and onFailure(message or "Theater_RequestFailed")
+			return runCrawlerFallback( message )
 		end
 
-		local info = {}
-		info.title = response.title
-		info.thumbnail = ("https://img.youtube.com/vi/%s/mqdefault.jpg"):format(videoId)
+		buildInfo( response.title, response.live, response.duration )
 
-		if response.live then
-			info.type = "youtubelive"
-			info.duration = 0
-		else
-			info.duration = tonumber(response.duration) or 0
-		end
-
-		if onSuccess then
-			pcall(onSuccess, info)
-		end
-
-	end, onFailure)
+	end, function( err )
+		-- HTTP request itself failed (timeout, non-200, connection error).
+		runCrawlerFallback( err )
+	end)
 
 end
 
