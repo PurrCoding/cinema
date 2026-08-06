@@ -276,7 +276,6 @@ function PLAYER:PerformLayout()
 	self.CheckBox:CenterVertical()
 end
 
-local GMDevIcon = Material( "theater/gmdevicon.png" )
 local AdminIcon = Material("theater/adminicon.png")
 
 function PLAYER:Paint(w, h)
@@ -286,10 +285,7 @@ function PLAYER:Paint(w, h)
 
 	if not self.Player then return end
 
-	if self.Player.IsGamemodeDev and self.Player:IsGamemodeDev() then
-		surface.SetMaterial(GMDevIcon)
-		surface.DrawTexturedRect(self.Name.x + self.Name:GetWide() + 5, self.Name.y + 3, 40, 16)
-	elseif self.Player:IsAdmin() then
+	if self.Player:IsAdmin() then
 		surface.SetMaterial(AdminIcon)
 		surface.DrawTexturedRect(self.Name.x + self.Name:GetWide() + 5, self.Name.y + 3, 40, 16)
 	end
