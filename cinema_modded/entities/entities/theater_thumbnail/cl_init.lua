@@ -12,30 +12,30 @@ local surface_GetTextSize = surface.GetTextSize
 
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 
-surface.CreateFont( "TheaterInfoLarge", {
+surface.CreateFont("TheaterInfoLarge", {
 	font      = "Open Sans Condensed",
 	size      = 130,
 	weight    = 700,
 	antialias = true
 })
 
-surface.CreateFont( "TheaterInfoMedium", {
+surface.CreateFont("TheaterInfoMedium", {
 	font      = "Open Sans Condensed",
 	size      = 72,
 	weight    = 700,
 	antialias = true
 })
 
-local DefaultThumbnail = Material( "theater/static.vmt" )
+local DefaultThumbnail = Material("theater/static.vmt")
 local ThumbWidth = 480
 local ThumbHeight = 360
 local RenderScale = 0.197
 
-local AngleOffset = Angle(0,90,90)
+local AngleOffset = Angle(0, 90, 90)
 
 function ENT:Initialize()
-	local bound = Vector(1,1,1) * 1024
-	self:SetRenderBounds( -bound, bound )
+	local bound = Vector(1, 1, 1) * 1024
+	self:SetRenderBounds(-bound, bound)
 
 	self.ScreenScale = RenderScale * self:GetModelScale()
 
@@ -50,15 +50,18 @@ function ENT:Draw()
 
 	if not self.Attach then return end
 
-	cam_Start3D2D( self.Attach.Pos, self.Attach.Ang, self.ScreenScale )
-		pcall( self.DrawThumbnail, self )
+	cam_Start3D2D(self.Attach.Pos, self.Attach.Ang, self.ScreenScale)
+	pcall(self.DrawThumbnail, self)
 	cam_End3D2D()
 
-	pcall( self.DrawText, self )
+	pcall(self.DrawText, self)
+	pcall(self.DrawRentInfo, self)
 end
 
 function ENT:FixOffsets()
-	local pos, ang = LocalToWorld( Vector(0.6, self.ScreenScale * ThumbWidth * -0.5, self.ScreenScale * ThumbHeight * 0.5), AngleOffset, self:GetPos(), self:GetAngles() )
+	local pos, ang = LocalToWorld(
+	Vector(0.6, self.ScreenScale * ThumbWidth * -0.5, self.ScreenScale * ThumbHeight * 0.5), AngleOffset, self:GetPos(),
+		self:GetAngles())
 	self.Attach = {
 		Pos = pos,
 		Ang = ang,
@@ -68,46 +71,47 @@ end
 local hangs = { "p", "g", "y", "q", "j" }
 
 -- Modified to accept pre-calculated cache
-function ENT:DrawSubtitle( cache )
-	cam_Start3D2D( self.Attach.Pos, self.Attach.Ang, ( 1 / cache.scale ) * self.ScreenScale )
-		surface_SetDrawColor( 0, 0, 0, 200 )
-		surface_DrawRect( 0, cache.by, cache.bw, cache.bh )
-		draw.TheaterText( cache.str, "TheaterInfoMedium", (ThumbWidth * cache.scale) / 2, cache.ty, Color(255,255,255,255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+function ENT:DrawSubtitle(cache)
+	cam_Start3D2D(self.Attach.Pos, self.Attach.Ang, (1 / cache.scale) * self.ScreenScale)
+	surface_SetDrawColor(0, 0, 0, 200)
+	surface_DrawRect(0, cache.by, cache.bw, cache.bh)
+	draw.TheaterText(cache.str, "TheaterInfoMedium", (ThumbWidth * cache.scale) / 2, cache.ty, Color(255, 255, 255, 255),
+		TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	cam_End3D2D()
 end
 
 -- Helper function to calculate subtitle layout
-function ENT:CalculateSubtitleCache( str, height )
+function ENT:CalculateSubtitleCache(str, height)
 	local cache = {}
 	cache.str = str
 
-	surface_SetFont( "TheaterInfoMedium" )
+	surface_SetFont("TheaterInfoMedium")
 
 	-- Get text dimensions
-	local tw, th = surface_GetTextSize( str )
+	local tw, th = surface_GetTextSize(str)
 	tw = tw + tw * 0.05 -- add additional padding
 
 	-- Calculate hangs
-	if string.findFromTable( str, hangs ) then
-		th = th + ( th / 6 )
+	if string.findFromTable(str, hangs) then
+		th = th + (th / 6)
 	end
 
 	-- Calculate scale for fitting text
 	cache.scale = tw / ThumbWidth
-	cache.scale = math.max( cache.scale, 0.88 )
+	cache.scale = math.max(cache.scale, 0.88)
 
 	-- Calculate subtitle bar dimensions
 	cache.bw = (ThumbWidth * cache.scale)
 	cache.bh = (ThumbHeight * cache.scale) * 0.16
-	cache.bh = math.max( cache.bh, th )
+	cache.bh = math.max(cache.bh, th)
 
 	-- Calculate height offset for bar
 	cache.by = height * cache.scale
-	cache.by = math.min( cache.by, (ThumbHeight * cache.scale) - cache.bh )
+	cache.by = math.min(cache.by, (ThumbHeight * cache.scale) - cache.bh)
 
 	-- Calculate height offset for text
 	cache.ty = (height * cache.scale) + (cache.bh / 2)
-	cache.ty = math.min( cache.ty, (ThumbHeight * cache.scale) - cache.bh / 2 )
+	cache.ty = math.min(cache.ty, (ThumbHeight * cache.scale) - cache.bh / 2)
 
 	return cache
 end
@@ -128,7 +132,7 @@ function ENT:DrawText()
 			TranslatedName = translations:Format("Invalid")
 		end
 		-- Rebuild name cache
-		self.NameCache = self:CalculateSubtitleCache( TranslatedName, 0 )
+		self.NameCache = self:CalculateSubtitleCache(TranslatedName, 0)
 	end
 
 	-- Title has changed - recalculate cache
@@ -139,17 +143,67 @@ function ENT:DrawText()
 			TranslatedTitle = translations:Format("NoVideoPlaying")
 		end
 		-- Rebuild title cache
-		self.TitleCache = self:CalculateSubtitleCache( TranslatedTitle, 303 )
+		self.TitleCache = self:CalculateSubtitleCache(TranslatedTitle, 303)
 	end
 
 	-- Draw name
 	if self.NameCache.str then
-		self:DrawSubtitle( self.NameCache )
+		self:DrawSubtitle(self.NameCache)
 	end
 
 	-- Only draw title if it's not "NoVideoPlaying"
 	if title ~= "NoVideoPlaying" and self.TitleCache.str then
-		self:DrawSubtitle( self.TitleCache )
+		self:DrawSubtitle(self.TitleCache)
+	end
+end
+
+-- Draws a single rent info bar outside the thumbnail area.
+-- placement: "top" draws above the thumbnail, "bottom" draws below it.
+function ENT:DrawRentBar(str, col, placement)
+	surface_SetFont("TheaterInfoMedium")
+
+	local tw, th = surface_GetTextSize(str)
+	tw = tw + tw * 0.05
+
+	local scale = math.max(tw / ThumbWidth, 0.88)
+
+	local bw = ThumbWidth * scale
+	local bh = math.max((ThumbHeight * scale) * 0.16, th)
+
+	local by = (placement == "top") and -bh or (ThumbHeight * scale)
+	local ty = by + (th / 2)
+
+	cam_Start3D2D(self.Attach.Pos, self.Attach.Ang, (1 / scale) * self.ScreenScale)
+	surface_SetDrawColor(0, 0, 0, 200)
+	surface_DrawRect(0, by, bw, bh)
+	draw.TheaterText(str, "TheaterInfoMedium", (ThumbWidth * scale) / 2, ty, col, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	cam_End3D2D()
+end
+
+-- Draws rental state (open/rented) and remaining time for rentable theaters.
+function ENT:DrawRentInfo()
+	if not rent then return end
+	if not self:GetNWBool("Rentable") then return end
+
+	local location = self:GetNWInt("Location")
+
+	-- State bar (above the thumbnail)
+	local str, col
+	if rent.IsRented(location) then
+		local owner = rent.GetOwner(location)
+		str = IsValid(owner) and owner:Nick() or translations:Format("Rent_OwnerDisconnected")
+		col = Color(255, 0, 0)
+	else
+		str = translations:Format("Rent_Open")
+		col = Color(0, 200, 0)
+	end
+
+	self:DrawRentBar(str, col, "top")
+
+	-- Remaining time bar (below the thumbnail)
+	if rent.IsRented(location) then
+		local timeStr = translations:Format("Rent_ThumbRemaining", rent.SecondsToTimer(rent.GetTimeRemaining(location)))
+		self:DrawRentBar(timeStr, Color(255, 255, 255), "bottom")
 	end
 end
 
@@ -160,15 +214,15 @@ end
 function ENT:DrawThumbnail()
 	-- Early return: No thumbnail set yet
 	if self:GetThumbnail() == "" then
-		surface_SetDrawColor( 80, 80, 80 )
-		surface_SetMaterial( DefaultThumbnail )
-		surface_DrawTexturedRect( 0, 0, ThumbWidth - 1, ThumbHeight - 1 )
+		surface_SetDrawColor(80, 80, 80)
+		surface_SetMaterial(DefaultThumbnail)
+		surface_DrawTexturedRect(0, 0, ThumbWidth - 1, ThumbHeight - 1)
 		return
 	end
 
 	-- State 1: URL has changed - reset everything
 	if not self.LastURL or self.LastURL ~= self:GetThumbnail() then
-		if IsValid( self.HTML ) then
+		if IsValid(self.HTML) then
 			self:OnRemoveHTML()
 			self.HTML:Remove()
 		end
@@ -181,11 +235,10 @@ function ENT:DrawThumbnail()
 
 	-- State 2: URL is set but material not loaded yet
 	if self.LastURL and not self.ThumbMat then
-
 		-- Create HTML panel if needed
-		if not IsValid( self.HTML ) then
-			self.HTML = vgui.Create( "HTML" )
-			self.HTML:SetSize( ThumbWidth, ThumbHeight )
+		if not IsValid(self.HTML) then
+			self.HTML = vgui.Create("HTML")
+			self.HTML:SetSize(ThumbWidth, ThumbHeight)
 			self.HTML:SetPaintedManually(true)
 			self.HTML:SetKeyboardInputEnabled(false)
 			self.HTML:SetMouseInputEnabled(false)
@@ -218,7 +271,7 @@ function ENT:DrawThumbnail()
 				end
 			end
 
-			self.HTML:OpenURL( self:GetThumbnail() )
+			self.HTML:OpenURL(self:GetThumbnail())
 			return
 		end
 
@@ -291,8 +344,8 @@ function ENT:DrawThumbnail()
 
 	-- State 3: Material is ready - draw it
 	if self.ThumbMat then
-		surface_SetDrawColor( 255, 255, 255, 255 )
-		surface_SetMaterial( self.ThumbMat )
-		surface_DrawTexturedRect( 0, 0, self.w, self.h )
+		surface_SetDrawColor(255, 255, 255, 255)
+		surface_SetMaterial(self.ThumbMat)
+		surface_DrawTexturedRect(0, 0, self.w, self.h)
 	end
 end
