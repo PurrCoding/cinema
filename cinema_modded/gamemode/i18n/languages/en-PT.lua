@@ -39,6 +39,8 @@ return {
 	-- Warning messages
 	Warning_Unsupported_Line1 = "The current map be unsupported by the Cinema gamemode",
 	Warning_Unsupported_Line2 = "Press F1 to open the official map on workshop",
+	Dependency_Missing_Line1 = "Blimey! Ye be missin' somethin'...",
+	Dependency_Missing_Line2 = "Press F4 to open the instructions video.",
 
 	-- Queue interface
 	Queue_Title = "Harbour (Queue)",
@@ -71,6 +73,13 @@ return {
 	Request_PlayCount = "%d voyage(s)",
 	Request_Url = "Request Ship",
 	Request_Url_Tooltip = "Press to request a valid video URL.\nThe button'll be red when the URL be valid",
+	Request_Filter_AllServices = "All fleets",
+	Request_Filter_SortBy_LastRequest = "Last voyage",
+	Request_Filter_SortBy_Alphabet = "Alphabetically",
+	Request_Filter_SortBy_Duration = "Voyage length",
+	Request_Filter_SortBy_RequestCount = "Voyage count",
+	Request_Paginator_ResultCount = "%s ships",
+	Request_Paginator_PageOf = "Page %d o' %d",
 
 	-- Scoreboard settings panel
 	Settings_Title = "SETTINGS",
@@ -81,6 +90,8 @@ return {
 	Settings_HidePlayersTooltip = "Reduce player visibility inside of theaters.",
 	Settings_MuteFocusLabel = "Silence noises while in quarters",
 	Settings_MuteFocusTooltip = "Mute theater volume while Garry's Mod be out-of-focus (e.g. you alt-tabbed).",
+	Settings_SmoothVideoLabel = "Smooth sailin' playback",
+	Settings_SmoothVideoTooltip = "Make some ships sail smoother at the cost of FPS.",
 
 	-- Video Services
 	Service_EmbedDisabled = "The requested ship be unfit for the open sea.",
@@ -88,6 +99,7 @@ return {
 	Service_StreamOffline = "The requested ship be a ghost.",
 
 	-- Act command (special case)
+	ActCommand = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} %ss",
 
 	-- Credits
 	TranslationsCredit = "Translations by %s",
@@ -177,5 +189,4 @@ return {
 	Rent_Open = "Open Harbour",
 	Rent_OwnerDisconnected = "Captain Overboard",
 	Rent_ThumbRemaining = "Charter Remaining: %s",
-
 }

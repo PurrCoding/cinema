@@ -99,8 +99,94 @@ return {
 	Service_StreamOffline = "直播已停止",
 
 	-- Act command (special case)
+	ActCommand = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} %ss",
 
 	-- Credits
 	TranslationsCredit = "%s 翻译",
 
+	-- Theater Rentals: time & currency units (for Duration / currency markers)
+	Unit_Hour    = "%s 小时",
+	Unit_Hours   = "%s 小时",
+	Unit_Minute  = "%s 分钟",
+	Unit_Minutes = "%s 分钟",
+	Unit_Second  = "%s 秒",
+	Unit_Seconds = "%s 秒",
+	Currency_Points = "%s 积分",
+	Currency_DonatorPoints = "%s 捐赠积分",
+
+	-- Theater Rentals: rent lifecycle
+	Rent_NotPrivate = "该影院不是私人影院，无法租用！",
+	Rent_AlreadyRentedBy = "该影院已被 {{rgb:158,37,33}}%s{{rgb:200,200,200}} 租用。",
+	Rent_AlreadyRentingOther = "你已经在租用 {{rgb:158,37,33}}%s{{rgb:200,200,200}}。",
+	Rent_MinTime = "你至少需要租用 %s 分钟。",
+	Rent_MaxTime = "你租用的时间不能超过 %s 分钟。",
+	Rent_CantAfford = "你无法支付该租金 (%s)！",
+	Rent_HasRented = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 已租用该影院 %s。",
+	Rent_ExtendNotRenting = "你必须正在租用该影院才能延长租期！",
+	Rent_ExtendMinTime = "你延长后的租期总计至少需要 %s 分钟。",
+	Rent_ExtendMaxTime = "你的租期不能超过 %s 分钟。",
+	Rent_HasExtended = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 已将该影院的租期延长了 %s。",
+	Rent_RefundNotRenting = "你必须正在租用该影院才能退还租金。",
+	Rent_RefundNotEnoughTime = "租期剩余时间不足，无法退还。",
+	Rent_HasRefunded = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 已退还该影院的租金。",
+	Rent_Refunded = "你已获得 %s 的退款，对应 %s 分钟的租期。",
+	Rent_NotRented = "该影院当前未被租用。",
+	Rent_CancelledPublic = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} 对该影院的租用已被管理员取消。",
+	Rent_CancelledOwner = "你的租用已被取消，你已获得 %s 的退款，对应 %s 分钟的租期。",
+	Rent_CancelledAdmin = "你已取消 {{rgb:158,37,33}}%s{{rgb:200,200,200}} 的租用。",
+	Rent_CancelledAdminUnknown = "你已取消该租用，但其拥有者在退款前已断开连接。",
+	Rent_ExpiredOwner = "你在 {{rgb:158,37,33}}%s{{rgb:200,200,200}} 的租期已到期。",
+	Rent_ExpiredPublic = "该影院的租期已到期！",
+	Rent_VoteSkipLocked = "该影院的拥有者已锁定投票跳过。",
+	Rent_VoteSkipUnlocked = "该影院的拥有者已解锁投票跳过。",
+
+	-- Theater Rentals: player filter
+	Rent_FilterNotPrivate = "你无法在非私人影院上设置玩家过滤器！",
+	Rent_FilterNotRented = "必须先租用该影院，才能设置玩家过滤器！",
+	Rent_FilterNotOwner = "你必须是该影院的拥有者才能设置玩家过滤器！",
+	Rent_FilterUpdated = "玩家过滤器已更新。",
+	Rent_FilterAdminWarn = "管理员警告：你现在已被该影院过滤。",
+	Rent_FilterSuperWarn = "管理员警告：{{rgb:158,37,33}}%s{{rgb:200,200,200}} 在其所在的影院中被过滤。",
+	Rent_FilteredOut = "你已被该影院过滤。",
+
+	-- Theater Rentals: hooks
+	Rent_CurrentlyRentingSelf = "你当前正在租用该影院，剩余时间为 %s。",
+	Rent_CurrentlyRentedBy = "该影院当前由 {{rgb:158,37,33}}%s{{rgb:200,200,200}} 租用，剩余时间为 %s。",
+	Rent_MustBeRented = "该影院必须被租用后才能使用。",
+	Rent_AdminFilteredWarn = "管理员警告：你已被该影院过滤。",
+	Rent_AdminEnteredFiltered = "管理员警告：{{rgb:158,37,33}}%s{{rgb:200,200,200}} 进入了一个已将其过滤的影院。",
+	Rent_NotAllowed = "你不被允许进入该影院。",
+	Rent_VoteSkipDisabled = "抱歉，该影院的拥有者已禁用投票跳过。",
+
+	-- Theater Rentals: net validation
+	Rent_MustBeInTheaterCancel = "你必须在影院内才能取消其租用。",
+	Rent_MustBeInTheaterFilter = "你必须在你的影院内才能设置其玩家过滤器。",
+	Rent_MustBeInTheaterSeeFilter = "你必须在影院内才能查看其玩家过滤器。",
+	Rent_NotOwnerSeeFilter = "你必须是该影院的拥有者才能查看其玩家过滤器。",
+	Rent_MustBeInTheaterVoteLock = "你必须在影院内才能锁定投票跳过。",
+	Rent_NotOwnerVoteLock = "你必须是该影院的拥有者才能修改投票跳过。",
+	Rent_MustBeInTheaterRent = "你必须在影院内才能租用它！",
+	Rent_MustBeInTheaterRefund = "你必须在影院内才能退还其租金！",
+
+	-- Theater Rentals: UI
+	Rent_RentTheater = "租用影院",
+	Rent_Minutes = "分钟",
+	Rent_Purchase = "购买",
+	Rent_PurchaseFor = "以 %s 购买",
+	Rent_ToggleVoteSkipLock = "切换投票跳过锁定",
+	Rent_PlayerFilter = "玩家过滤器",
+	Rent_AddRentTime = "增加租用时间",
+	Rent_RefundButton = "退还租金",
+	Rent_CancelButton = "取消租用",
+	Rent_Remaining = "剩余租期",
+	Rent_WhitelistMode = "白名单模式",
+	Rent_BlacklistMode = "黑名单模式",
+	Rent_Apply = "应用",
+	Rent_Retrieving = "获取中...",
+	Rent_Unknown = "未知",
+
+	-- Theater Rentals: thumbnail overlay (theater_thumbnail entity)
+	Rent_Open = "开放",
+	Rent_OwnerDisconnected = "拥有者已断开连接",
+	Rent_ThumbRemaining = "剩余租期: %s",
 }

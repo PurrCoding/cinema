@@ -99,8 +99,94 @@ return {
 	Service_StreamOffline = "O conteúdo solicitado está fora do ar.",
 
 	-- Act command (special case)
+	ActCommand = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} %ss",
 
 	-- Credits
 	TranslationsCredit = "Tradução feita por %s",
 
+	-- Theater Rentals: time & currency units (for Duration / currency markers)
+	Unit_Hour    = "%s hora",
+	Unit_Hours   = "%s horas",
+	Unit_Minute  = "%s minuto",
+	Unit_Minutes = "%s minutos",
+	Unit_Second  = "%s segundo",
+	Unit_Seconds = "%s segundos",
+	Currency_Points = "%s Pontos",
+	Currency_DonatorPoints = "%s Pontos de Doador",
+
+	-- Theater Rentals: rent lifecycle
+	Rent_NotPrivate = "Este teatro não é privado e não pode ser alugado!",
+	Rent_AlreadyRentedBy = "Este teatro já está sendo alugado por {{rgb:158,37,33}}%s{{rgb:200,200,200}}.",
+	Rent_AlreadyRentingOther = "Você já está alugando {{rgb:158,37,33}}%s{{rgb:200,200,200}}.",
+	Rent_MinTime = "Você deve alugar por pelo menos %s minuto(s).",
+	Rent_MaxTime = "Você não pode alugar por mais de %s minuto(s).",
+	Rent_CantAfford = "Você não tem saldo suficiente para esse aluguel (%s)!",
+	Rent_HasRented = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} alugou este teatro por %s.",
+	Rent_ExtendNotRenting = "Você já precisa estar alugando este teatro para estender o aluguel!",
+	Rent_ExtendMinTime = "Você deve estender o aluguel para um total de pelo menos %s minuto(s).",
+	Rent_ExtendMaxTime = "Você não pode alugar além de %s minuto(s).",
+	Rent_HasExtended = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} estendeu o aluguel deste teatro por mais %s.",
+	Rent_RefundNotRenting = "Você deve estar alugando este teatro para reembolsar o aluguel.",
+	Rent_RefundNotEnoughTime = "Não há tempo suficiente restante no aluguel para reembolsá-lo.",
+	Rent_HasRefunded = "{{rgb:158,37,33}}%s{{rgb:200,200,200}} reembolsou o aluguel deste teatro.",
+	Rent_Refunded = "Você foi reembolsado em %s por %s minuto(s) de aluguel.",
+	Rent_NotRented = "Este teatro não está sendo alugado no momento.",
+	Rent_CancelledPublic = "O aluguel de {{rgb:158,37,33}}%s{{rgb:200,200,200}} deste teatro foi cancelado por um administrador.",
+	Rent_CancelledOwner = "Seu aluguel foi cancelado e você foi reembolsado em %s por %s minuto(s) de aluguel.",
+	Rent_CancelledAdmin = "Você cancelou o aluguel de {{rgb:158,37,33}}%s{{rgb:200,200,200}}.",
+	Rent_CancelledAdminUnknown = "Você cancelou o aluguel, mas o dono se desconectou antes de poder ser reembolsado.",
+	Rent_ExpiredOwner = "Seu aluguel em {{rgb:158,37,33}}%s{{rgb:200,200,200}} acabou.",
+	Rent_ExpiredPublic = "O aluguel deste teatro acabou!",
+	Rent_VoteSkipLocked = "O dono deste teatro travou as votações para pular.",
+	Rent_VoteSkipUnlocked = "O dono deste teatro destravou as votações para pular.",
+
+	-- Theater Rentals: player filter
+	Rent_FilterNotPrivate = "Você não pode definir um filtro de jogadores em um teatro que não é privado!",
+	Rent_FilterNotRented = "Este teatro precisa ser alugado antes de você poder definir um filtro de jogadores nele!",
+	Rent_FilterNotOwner = "Você deve ser o dono deste teatro para definir um filtro de jogadores nele!",
+	Rent_FilterUpdated = "O filtro de jogadores foi atualizado.",
+	Rent_FilterAdminWarn = "Aviso do Administrador: Você agora está filtrado deste teatro.",
+	Rent_FilterSuperWarn = "Aviso do Administrador: {{rgb:158,37,33}}%s{{rgb:200,200,200}} foi filtrado de um teatro em que está.",
+	Rent_FilteredOut = "Você foi filtrado do teatro.",
+
+	-- Theater Rentals: hooks
+	Rent_CurrentlyRentingSelf = "Você está atualmente alugando este teatro pelos próximos %s.",
+	Rent_CurrentlyRentedBy = "Este teatro está atualmente sendo alugado por {{rgb:158,37,33}}%s{{rgb:200,200,200}} pelos próximos %s.",
+	Rent_MustBeRented = "Este teatro precisa ser alugado para poder ser usado.",
+	Rent_AdminFilteredWarn = "Aviso do Administrador: Você está filtrado deste teatro.",
+	Rent_AdminEnteredFiltered = "Aviso do Administrador: {{rgb:158,37,33}}%s{{rgb:200,200,200}} entrou em um teatro do qual está filtrado.",
+	Rent_NotAllowed = "Você não tem permissão para estar neste teatro.",
+	Rent_VoteSkipDisabled = "Desculpe, o dono deste teatro desativou as votações para pular.",
+
+	-- Theater Rentals: net validation
+	Rent_MustBeInTheaterCancel = "Você deve estar em um teatro para cancelar o aluguel dele.",
+	Rent_MustBeInTheaterFilter = "Você deve estar no seu teatro para definir o filtro de jogadores dele.",
+	Rent_MustBeInTheaterSeeFilter = "Você deve estar em um teatro para ver o filtro de jogadores dele.",
+	Rent_NotOwnerSeeFilter = "Você deve ser dono deste teatro para ver o filtro de jogadores dele.",
+	Rent_MustBeInTheaterVoteLock = "Você deve estar em um teatro para travar a votação para pular.",
+	Rent_NotOwnerVoteLock = "Você deve ser dono deste teatro para modificar a votação para pular.",
+	Rent_MustBeInTheaterRent = "Você deve estar em um teatro para alugá-lo!",
+	Rent_MustBeInTheaterRefund = "Você deve estar em um teatro para reembolsar o aluguel dele!",
+
+	-- Theater Rentals: UI
+	Rent_RentTheater = "Alugar Teatro",
+	Rent_Minutes = "Minutos",
+	Rent_Purchase = "Comprar",
+	Rent_PurchaseFor = "Comprar por %s",
+	Rent_ToggleVoteSkipLock = "Alternar Travamento da Votação para Pular",
+	Rent_PlayerFilter = "Filtro de Jogadores",
+	Rent_AddRentTime = "Adicionar Tempo de Aluguel",
+	Rent_RefundButton = "Reembolsar Aluguel",
+	Rent_CancelButton = "Cancelar Aluguel",
+	Rent_Remaining = "Aluguel Restante",
+	Rent_WhitelistMode = "Modo Lista Branca",
+	Rent_BlacklistMode = "Modo Lista Negra",
+	Rent_Apply = "Aplicar",
+	Rent_Retrieving = "Obtendo...",
+	Rent_Unknown = "Desconhecido",
+
+	-- Theater Rentals: thumbnail overlay (theater_thumbnail entity)
+	Rent_Open = "Aberto",
+	Rent_OwnerDisconnected = "Dono Desconectado",
+	Rent_ThumbRemaining = "Aluguel Restante: %s",
 }
