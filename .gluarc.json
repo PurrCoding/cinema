@@ -18,6 +18,10 @@
       "cast-type-mismatch",
       "gmod-net-read-write-order-mismatch",
       "missing-fields"
+    ],
+    "globals": [
+      "Pointshop2",
+      "PS"
     ]
   },
   "workspace": {
