@@ -1,5 +1,4 @@
--- 한국어 language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- 한국어
 -- Author: ChiNo
 
 return {

@@ -1,5 +1,4 @@
--- Chinese 台灣正體 language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Chinese 台灣正體
 -- Author: Poheart
 
 return {

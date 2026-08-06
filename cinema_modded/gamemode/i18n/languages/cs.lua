@@ -1,5 +1,4 @@
--- Česky language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Česky
 -- Author: MatesakCZ
 
 return {

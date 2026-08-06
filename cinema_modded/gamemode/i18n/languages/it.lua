@@ -1,5 +1,4 @@
--- Italiano language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Italiano
 -- Author: Wolfaloo
 
 return {

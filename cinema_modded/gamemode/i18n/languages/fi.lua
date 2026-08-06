@@ -1,5 +1,4 @@
--- Suomi language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Suomi
 -- Author: Jani
 
 return {

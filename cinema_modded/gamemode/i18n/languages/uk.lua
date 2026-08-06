@@ -1,5 +1,4 @@
--- Ukrainian language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Ukrainian
 -- Author: Joker[Rus]
 
 return {

@@ -1,5 +1,4 @@
--- 简体中文 language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- 简体中文
 -- Author: 初雪OriginalSnow
 
 return {

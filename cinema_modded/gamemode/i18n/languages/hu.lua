@@ -1,5 +1,4 @@
--- Hungarian language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Hungarian
 -- Author: David Tamas
 
 return {

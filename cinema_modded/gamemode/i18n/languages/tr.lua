@@ -1,5 +1,4 @@
--- Turkish language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Turkish
 -- Author: Arda Turkmen
 
 return {

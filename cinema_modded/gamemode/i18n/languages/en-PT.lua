@@ -1,5 +1,4 @@
--- Pirate Speak language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Pirate Speak
 -- Author: HawkBlock
 
 return {

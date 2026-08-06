@@ -1,5 +1,4 @@
--- English language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- English
 -- Author: PixelTail Games
 
 return {

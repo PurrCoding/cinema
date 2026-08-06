@@ -1,5 +1,4 @@
--- 日本語 language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- 日本語
 -- Author: f122apg
 
 return {

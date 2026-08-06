@@ -1,5 +1,4 @@
--- Español language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Español
 -- Author: Robert Lind (ptown2)
 
 return {

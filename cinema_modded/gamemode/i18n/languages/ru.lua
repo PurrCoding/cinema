@@ -1,5 +1,4 @@
--- Russian language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Russian
 -- Author: Joker[Rus], berry, Alivebyte!
 
 return {

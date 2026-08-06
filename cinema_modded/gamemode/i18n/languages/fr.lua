@@ -1,5 +1,4 @@
--- Français language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Français
 -- Author: Raphy, Kcejalppe
 
 return {

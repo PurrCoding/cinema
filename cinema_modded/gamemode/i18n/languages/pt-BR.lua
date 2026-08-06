@@ -1,5 +1,4 @@
--- Português (Brasil) language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Português (Brasil)
 -- Author: Tiagoquix
 
 return {

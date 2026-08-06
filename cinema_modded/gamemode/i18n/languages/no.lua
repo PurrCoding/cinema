@@ -1,5 +1,4 @@
--- Norwegian language file for Cinema gamemode
--- Converted from monolithic i18n.lua
+-- Norwegian
 -- Author: DoleDuck
 
 return {
