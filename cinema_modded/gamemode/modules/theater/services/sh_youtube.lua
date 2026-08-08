@@ -44,10 +44,10 @@ if (CLIENT) then
 		end
 	end
 
-	-- Fallback metadata extractor. Runs client-side, driven by the server via
-	-- theater.FetchVideoMedata when the HTTP API is unavailable. Loads the
-	-- invisible youtube_meta.html crawler, which uses the YouTube IFrame API to
-	-- emit "METADATA:{title,isLive,duration}" or "ERROR:<code|msg>" to console.
+	-- PRIMARY metadata extractor. Runs client-side, driven by the server via
+	-- theater.FetchVideoMedata. Loads the invisible youtube_meta.html crawler,
+	-- which uses the YouTube IFrame API to emit
+	-- "METADATA:{title,isLive,duration}" or "ERROR:<code|msg>" to console.
 	function SERVICE:GetMetadata( data, callback )
 		local videoId = data
 		if istable(data) then
@@ -96,15 +96,102 @@ function SERVICE:GetURLInfo( url )
 	return info.Data and info or false
 end
 
+---
+-- Helper function for converting ISO 8601 time strings.
+-- e.g. "PT1H23M45S" -> 5025
+--
+local function convertISO8601Time( duration )
+	if not isstring(duration) then return 0 end
+
+	local hours   = tonumber( string.match(duration, "(%d+)H") ) or 0
+	local minutes = tonumber( string.match(duration, "(%d+)M") ) or 0
+	local seconds = tonumber( string.match(duration, "(%d+)S") ) or 0
+
+	duration = hours * 3600 + minutes * 60 + seconds
+	return duration
+end
+
+---
+-- Get the value for an attribute from a html element
+--
+local function ParseElementAttribute( element, attribute )
+	if not element then return end
+	local output = string.match( element, attribute .. "%s-=%s-%b\"\"" )
+	if not output then return end
+	output = string.gsub( output, attribute .. "%s-=%s-", "" )
+	return string.sub( output, 2, -2 )
+end
+
+---
+-- Get the contents of a html element by removing tags.
+-- Used as fallback for when title cannot be found via meta tag.
+--
+local function ParseElementContent( element )
+	if not element then return end
+	local output = string.gsub( element, "^%s-<%w->%s-", "" )
+	return string.gsub( output, "%s-</%w->%s-$", "" )
+end
+
+-- Lua search patterns to find metadata from the html
+local patterns = {
+	["title"]          = "<meta%sproperty=\"og:title\"%s-content=%b\"\">",
+	["title_fallback"] = "<title>.-</title>",
+	["duration"]       = "<meta%sitemprop%s-=%s-\"duration\"%s-content%s-=%s-%b\"\">",
+	["live"]           = "<meta%sitemprop%s-=%s-\"isLiveBroadcast\"%s-content%s-=%s-%b\"\">",
+	["live_enddate"]   = "<meta%sitemprop%s-=%s-\"endDate\"%s-content%s-=%s-%b\"\">"
+}
+
+---
+-- Parse video metadata from a raw YouTube watch page HTML body.
+--
+function SERVICE:ParseYTMetaDataFromHTML( html )
+	local metadata = {}
+
+	-- Title: prefer og:title meta tag, fall back to <title> element
+	metadata.title = ParseElementAttribute( string.match(html, patterns["title"]), "content" )
+		or ParseElementContent( string.match(html, patterns["title_fallback"]) )
+
+	-- Decode HTML entities (e.g. &amp; -> &)
+	metadata.title = url.htmlentities_decode( metadata.title )
+
+	-- Live broadcast detection
+	local isLiveBroadcast = tobool( ParseElementAttribute( string.match(html, patterns["live"]), "content" ) )
+	local broadcastEndDate = string.match( html, patterns["live_enddate"] )
+
+	if isLiveBroadcast and not broadcastEndDate then
+		-- Ongoing live stream: mark duration as 0
+		metadata.isLive = true
+		metadata.duration = 0
+	else
+		metadata.isLive = false
+
+		-- Try the legacy <meta itemprop="duration"> tag (ISO 8601) first.
+		-- YouTube removed this tag around 2021, so it will usually be absent.
+		local durationISO8601 = ParseElementAttribute( string.match(html, patterns["duration"]), "content" )
+		if isstring(durationISO8601) then
+			metadata.duration = math.max( 1, convertISO8601Time(durationISO8601) )
+		else
+			-- Modern fallback: parse lengthSeconds from the ytInitialPlayerResponse
+			-- JSON blob that YouTube embeds directly in the page HTML.
+			local lengthSeconds = tonumber( string.match(html, '"lengthSeconds"%s*:%s*"(%d+)"') )
+			if lengthSeconds then
+				metadata.duration = math.max( 1, lengthSeconds )
+			end
+		end
+	end
+
+	return metadata
+end
+
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
-	-- Metadata is fetched server-side via the HTTP API.
+	-- Metadata is fetched server-side.
 	if not SERVER then return end
 
 	local videoId = data:Data()
 
-	-- Builds the info table from crawler metadata and calls onSuccess.
-	-- Shared by both the primary API path and the crawler fallback.
+	-- Builds the info table from metadata and calls onSuccess.
+	-- Shared by both the primary crawler path and the HTML scraper fallback.
 	local function buildInfo( title, isLive, duration )
 		local info = {}
 		info.title = title
@@ -122,51 +209,40 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		end
 	end
 
-	-- FALLBACK: client-side HTML crawler (youtube_meta.html) via the IFrame API.
-	-- Triggered whenever the primary HTTP API is down or returns an error.
-	local function runCrawlerFallback( primaryError )
-		theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
+	-- FALLBACK: server-side scraper of the raw YouTube watch page HTML.
+	-- Triggered whenever the primary client-side crawler is unavailable or errors.
+	local function runHTMLScraperFallback( primaryError )
+		local watchUrl = ("https://www.youtube.com/watch?v=%s"):format(videoId)
 
-			if not metadata or metadata.err then
-				-- Prefer the crawler error, else the original API error,
-				-- else the generic localized key.
-				local message = (metadata and metadata.err)
-					or primaryError
-					or "Theater_RequestFailed"
-				return onFailure and onFailure(message)
+		self:Fetch(watchUrl, function(body, length, headers, code)
+
+			local ok, metadata = pcall(self.ParseYTMetaDataFromHTML, self, body)
+
+			if not ok or not metadata or not metadata.title then
+				-- Prefer the crawler error, else the generic localized key.
+				return onFailure and onFailure( primaryError or "Theater_RequestFailed" )
 			end
 
 			buildInfo( metadata.title, metadata.isLive, metadata.duration )
+
+		end, function( err )
+			-- HTTP request itself failed (timeout, non-200, connection error).
+			if onFailure then
+				onFailure( primaryError or err or "Theater_RequestFailed" )
+			end
 		end)
 	end
 
-	-- Custom endpoint created by PurrCoding. Please do not overly abuse it,
-	-- and do not use it in third-party addons. No warranty for reliability is
-	-- guaranteed, even though this is backed by edge scripts.
-	local apiUrl = ("https://gm-api.physcannon.top/index.ts?id=%s"):format(videoId)
+	-- PRIMARY: client-side HTML crawler (youtube_meta.html) via the IFrame API.
+	-- Networks the request to the video's owner client and awaits metadata back.
+	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
 
-	self:Fetch(apiUrl, function(body, length, headers, code)
-
-		local response = util.JSONToTable(body)
-
-		if not response or not response.success then
-			-- The API returns richer error details on failure:
-			--   response.error  = human-readable message (e.g. "Video is unplayable")
-			--   response.reason = short code (e.g. "unplayable")
-			-- Keep that message around, but attempt the crawler fallback first.
-			local message = response and response.error
-			if message and response.reason then
-				message = ("%s (%s)"):format(message, response.reason)
-			end
-
-			return runCrawlerFallback( message )
+		if not metadata or metadata.err then
+			-- Crawler unavailable or errored: attempt the server-side scraper.
+			return runHTMLScraperFallback( metadata and metadata.err )
 		end
 
-		buildInfo( response.title, response.live, response.duration )
-
-	end, function( err )
-		-- HTTP request itself failed (timeout, non-200, connection error).
-		runCrawlerFallback( err )
+		buildInfo( metadata.title, metadata.isLive, metadata.duration )
 	end)
 
 end
