@@ -190,8 +190,8 @@ function ENT:DrawRentInfo()
 	-- State bar (above the thumbnail)
 	local str, col
 	if rent.IsRented(location) then
-		local owner = rent.GetOwner(location)
-		str = IsValid(owner) and owner:Nick() or translations:Format("Rent_OwnerDisconnected")
+		local name = rent.GetOwnerName(location)
+		str = name or translations:Format("Rent_OwnerDisconnected")
 		col = Color(255, 0, 0)
 	else
 		str = translations:Format("Rent_Open")
