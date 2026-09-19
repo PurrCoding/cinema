@@ -475,7 +475,7 @@ if SERVER then
 			end
 
 			-- Developers can decide whether or not the video should be queued
-			if not hook.Run( "PreVideoQueued", vid, self ) then return end
+			if hook.Run( "PreVideoQueued", vid, self ) == false then return end
 
 			-- Successful request, queue video
 			self:QueueVideo( vid )

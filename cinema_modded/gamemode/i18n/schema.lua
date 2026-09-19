@@ -102,4 +102,42 @@ return {
 
 	-- Credits
 	TranslationsCredit = true,
+
+	-- Theater Rentals: units
+	Unit_Hour = true, Unit_Hours = true,
+	Unit_Minute = true, Unit_Minutes = true,
+	Unit_Second = true, Unit_Seconds = true,
+	Currency_Points = true, Currency_DonatorPoints = true,
+
+	-- Theater Rentals: lifecycle
+	Rent_NotPrivate = true, Rent_AlreadyRentedBy = true, Rent_AlreadyRentingOther = true,
+	Rent_MinTime = true, Rent_MaxTime = true, Rent_CantAfford = true, Rent_HasRented = true,
+	Rent_ExtendNotRenting = true, Rent_ExtendMinTime = true, Rent_ExtendMaxTime = true, Rent_HasExtended = true,
+	Rent_RefundNotRenting = true, Rent_RefundNotEnoughTime = true, Rent_HasRefunded = true, Rent_Refunded = true,
+	Rent_NotRented = true, Rent_CancelledPublic = true, Rent_CancelledOwner = true,
+	Rent_CancelledAdmin = true, Rent_CancelledAdminUnknown = true,
+	Rent_ExpiredOwner = true, Rent_ExpiredPublic = true,
+	Rent_VoteSkipLocked = true, Rent_VoteSkipUnlocked = true,
+
+	-- Theater Rentals: filter
+	Rent_FilterNotPrivate = true, Rent_FilterNotRented = true, Rent_FilterNotOwner = true,
+	Rent_FilterUpdated = true, Rent_FilterAdminWarn = true, Rent_FilterSuperWarn = true, Rent_FilteredOut = true,
+
+	-- Theater Rentals: hooks
+	Rent_CurrentlyRentingSelf = true, Rent_CurrentlyRentedBy = true, Rent_MustBeRented = true,
+	Rent_AdminFilteredWarn = true, Rent_AdminEnteredFiltered = true, Rent_NotAllowed = true, Rent_VoteSkipDisabled = true,
+
+	-- Theater Rentals: net & shared
+	Rent_MustBeInTheaterCancel = true, Rent_MustBeInTheaterFilter = true, Rent_MustBeInTheaterSeeFilter = true,
+	Rent_NotOwnerSeeFilter = true, Rent_MustBeInTheaterVoteLock = true, Rent_NotOwnerVoteLock = true,
+	Rent_MustBeInTheaterRent = true, Rent_MustBeInTheaterRefund = true,
+
+	-- Theater Rentals: UI
+	Rent_RentTheater = true, Rent_Minutes = true, Rent_Purchase = true, Rent_PurchaseFor = true,
+	Rent_ToggleVoteSkipLock = true, Rent_PlayerFilter = true, Rent_AddRentTime = true,
+	Rent_RefundButton = true, Rent_CancelButton = true, Rent_Remaining = true,
+	Rent_WhitelistMode = true, Rent_BlacklistMode = true, Rent_Apply = true, Rent_Retrieving = true, Rent_Unknown = true,
+
+	-- Theater Rentals: thumbnail overlay
+	Rent_Open = true, Rent_OwnerDisconnected = true, Rent_ThumbRemaining = true,
 }
