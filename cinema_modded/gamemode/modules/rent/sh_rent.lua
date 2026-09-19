@@ -1,9 +1,33 @@
 module("rent", package.seeall)
 
+-- Pending refunds for owners who disconnected before receiving money.
+-- [steamID] = amount
+PendingRefunds = PendingRefunds or {}
+
+function QueuePendingRefund(steamID, amount)
+	if not steamID or amount <= 0 then return end
+	PendingRefunds[steamID] = (PendingRefunds[steamID] or 0) + amount
+end
+
+function ApplyPendingRefund(ply)
+	if not IsValid(ply) then return end
+
+	local sid = ply:SteamID()
+	local amount = PendingRefunds[sid]
+	if not amount or amount <= 0 then return end
+
+	PendingRefunds[sid] = nil
+	rent.GiveMoney(ply, amount)
+	theater.SendAnnouncement(ply, { "Rent_RefundedPending", theater.Currency(amount) })
+end
+
 function CanAfford(ply, cost)
 	local provider = rent.GetProvider(ply)
 	if not provider then
 		ErrorNoHalt("[Rent] Warning: No currency provider available!\n")
+		if SERVER and IsValid(ply) then
+			theater.SendAnnouncement(ply, { "Rent_NoCurrency" })
+		end
 		return false
 	end
 
@@ -14,10 +38,14 @@ function TakeMoney(ply, cost)
 	local provider = rent.GetProvider(ply)
 	if not provider then
 		ErrorNoHalt("[Rent] Warning: No currency provider available!\n")
+		if SERVER and IsValid(ply) then
+			theater.SendAnnouncement(ply, { "Rent_NoCurrency" })
+		end
 		return false
 	end
 
 	provider.Take(ply, cost)
+	return true
 end
 
 function GiveMoney(ply, value)
@@ -28,6 +56,7 @@ function GiveMoney(ply, value)
 	end
 
 	provider.Give(ply, value)
+	return true
 end
 
 function RentTheater(ply, length)

@@ -5,7 +5,7 @@ local function postEnterTheater(ply, thtr)
 				rent.PromptRental(ply)
 			end
 		else
-			if thtr:GetOwner() == ply then
+			if thtr:IsOwner(ply) then
 				thtr:AnnounceToPlayer(ply, {
 					"Rent_CurrentlyRentingSelf",
 					theater.Duration(thtr:GetRemainingRentTime())
@@ -13,7 +13,7 @@ local function postEnterTheater(ply, thtr)
 			else
 				thtr:AnnounceToPlayer(ply, {
 					"Rent_CurrentlyRentedBy",
-					thtr:GetOwner():Nick(),
+					thtr:GetOwnerNick() or "?",
 					theater.Duration(thtr:GetRemainingRentTime())
 				})
 			end
@@ -85,15 +85,45 @@ local function initThumbnails()
 end
 hook.Add("InitPostEntity", "Rent_InitThumbnails", initThumbnails)
 
--- Sync active rentals to freshly-joined players
+-- Keep owner entity ref cleared on disconnect; rent identity (SteamID) stays.
+local function playerDisconnected(ply)
+	if not IsValid(ply) then return end
+
+	local location = ply._rentedTheater
+	if not location then return end
+
+	local thtr = theater.GetByLocation(location)
+	if not thtr or not thtr:IsRented() then return end
+	if thtr._OwnerSteamID ~= ply:SteamID() then return end
+
+	-- Drop the live entity reference; SteamID + timer keep the rent alive.
+	thtr._Owner = nil
+	rent.SendRentInfo(thtr)
+end
+hook.Add("PlayerDisconnected", "Rent_PlayerDisconnected", playerDisconnected)
+
+-- Rebind owner on reconnect, sync rent state, apply pending refunds
 local function playerInitialSpawn(ply)
 	timer.Simple(5, function()
 		if not IsValid(ply) then return end
-		for _, thtr in pairs(theater.GetTheaters()) do
-			if thtr:IsRented() then
-				rent.SendRentInfo(thtr, ply)
+
+		-- Re-attach as owner of any active rent matching this SteamID
+		if theater then
+			for _, thtr in pairs(theater.GetTheaters()) do
+				if thtr:IsRented() and thtr._OwnerSteamID == ply:SteamID() then
+					thtr._Owner = ply
+					thtr._OwnerNick = ply:Nick()
+					ply._rentedTheater = thtr:GetLocation()
+					rent.SendRentInfo(thtr)
+					theater.RequestTheaterInfo(ply)
+				elseif thtr:IsRented() then
+					rent.SendRentInfo(thtr, ply)
+				end
 			end
 		end
+
+		-- Apply any refund that was queued while the player was offline
+		rent.ApplyPendingRefund(ply)
 	end)
 end
 hook.Add("PlayerInitialSpawn", "Rent_PlayerInitialSpawn", playerInitialSpawn)
