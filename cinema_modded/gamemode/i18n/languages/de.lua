@@ -184,6 +184,11 @@ return {
 	Rent_Retrieving = "Lade...",
 	Rent_Unknown = "Unbekannt",
 
+	-- Theater Rentals: currency / pending refunds
+	Rent_NoCurrency = "Auf diesem Server ist kein Währungssystem verfügbar.",
+	Rent_RefundedPending = "Du hast eine ausstehende Mieterstattung von %s erhalten.",
+	Rent_CancelledAdminPending = "Du hast die Miete von {{rgb:158,37,33}}%s{{rgb:200,200,200}} storniert. Eine Erstattung von %s wird bei der nächsten Verbindung gutgeschrieben.",
+
 	-- Theater Rentals: thumbnail overlay (theater_thumbnail entity)
 	Rent_Open = "Offen",
 	Rent_OwnerDisconnected = "Besitzer getrennt",
