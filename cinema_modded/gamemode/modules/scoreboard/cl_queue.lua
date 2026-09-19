@@ -1,6 +1,10 @@
+surface.CreateFont("ScoreboardVidTitle", { font = "Open Sans Condensed", size = 20, weight = 200 })
+surface.CreateFont("ScoreboardVidDuration", { font = "Open Sans", size = 14, weight = 200 })
+surface.CreateFont("ScoreboardVidVotes", { font = "Open Sans Condensed", size = 18, weight = 200 })
+
 local QUEUE = {}
 QUEUE.TitleHeight = 64
-QUEUE.QueueHeight = 48
+QUEUE.VidHeight = 32 -- 48
 
 function QUEUE:Init()
 	self:SetZPos(1)
@@ -11,30 +15,42 @@ function QUEUE:Init()
 	self.Title:SetFont("ScoreboardTitle")
 	self.Title:SetColor(Color(255, 255, 255))
 
+	self.Videos = {}
 	self.NextUpdate = 0.0
 
-	self.Videos = {}
-
 	self.VideoList = vgui.Create("TheaterList", self)
-	self.VideoList:DockMargin(0, self.TitleHeight + 2, 0, self.QueueHeight + 2)
+	self.VideoList:DockMargin(0, self.TitleHeight + 2, 0, 0)
 
 	self.Options = vgui.Create("DPanelList", self)
-	self.Options:SetDrawBackground(false)
+	self.Options:SetPaintBackground(false)
 	self.Options:SetPadding(4)
 	self.Options:SetSpacing(4)
 
-	-- Request a video
+	-- Theater Options
+
+	-- Volume slider (top of the options list)
+	local VolumeSlider = vgui.Create("TheaterNumSlider")
+	VolumeSlider:SetText(translations:Format("Volume"))
+	VolumeSlider:SetConVar("cinema_volume")
+	VolumeSlider:SetMinMax(0, 100)
+	VolumeSlider:SetDecimals(0)
+	VolumeSlider:SetTall(35)
+	self.Options:AddItem(VolumeSlider)
+
 	local RequestButton = vgui.Create("TheaterButton")
 	RequestButton:SetText(translations:Format("Request_Video"))
-	RequestButton.DoClick = function()
-		RunConsoleCommand("cinema_video_request")
+	RequestButton.DoClick = function(self)
+		local RequestFrame = vgui.Create("VideoRequestFrame")
+		if IsValid(RequestFrame) then
+			RequestFrame:Center()
+			RequestFrame:MakePopup()
+		end
 	end
 	self.Options:AddItem(RequestButton)
 
-	-- Vote skip the current video
 	local VoteSkipButton = vgui.Create("TheaterButton")
 	VoteSkipButton:SetText(translations:Format("Vote_Skip"))
-	VoteSkipButton.DoClick = function()
+	VoteSkipButton.DoClick = function(self)
 		RunConsoleCommand("cinema_voteskip")
 	end
 	self.Options:AddItem(VoteSkipButton)
@@ -144,12 +160,15 @@ end
 local Background = Material("theater/banner.png")
 
 function QUEUE:Paint(w, h)
+	-- Background
 	surface.SetDrawColor(26, 30, 38, 255)
 	surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
 
+	-- Title
 	surface.SetDrawColor(141, 38, 33, 255)
 	surface.DrawRect(0, 0, self:GetWide(), self.Title:GetTall())
 
+	-- Title Background
 	surface.SetDrawColor(255, 255, 255, 255)
 	surface.SetMaterial(Background)
 	surface.DrawTexturedRect(0, -1, 512, self.Title:GetTall() + 1)
@@ -167,18 +186,16 @@ function QUEUE:PerformLayout()
 	self.VideoList:Dock(FILL)
 
 	self.Options:Dock(BOTTOM)
-	self.Options:SetTall(self.QueueHeight)
 	self.Options:SizeToContents()
 end
 
 vgui.Register("ScoreboardQueue", QUEUE)
 
--- Video panel
 local VIDEO = {}
-VIDEO.Height = 64
+VIDEO.Padding = 8
 
 function VIDEO:Init()
-	self:SetTall(self.Height)
+	self:SetTall(64)
 
 	self.Title = Label("Unknown", self)
 	self.Title:SetFont("ScoreboardVidTitle")
@@ -213,12 +230,12 @@ function VIDEO:PerformLayout()
 	self.Title:SizeToContents()
 	local w = math.Clamp(self.Title:GetWide(), 0, x - 12)
 	self.Title:SetSize(w, 20)
-	self.Title:AlignTop(4)
-	self.Title:AlignLeft(8)
+	self.Title:AlignTop(self.Padding - 2)
+	self.Title:AlignLeft(self.Padding)
 
 	self.Duration:SizeToContents()
-	self.Duration:AlignTop(24)
-	self.Duration:AlignLeft(8)
+	self.Duration:AlignTop(self.Title:GetTall() + self.Padding)
+	self.Duration:AlignLeft(self.Padding)
 end
 
 function VIDEO:Paint(w, h)
@@ -240,48 +257,23 @@ function VIDEOVOTE:Init()
 	self.VoteUp:SetSize(16, 16)
 	self.VoteUp:SetImage("theater/up.png")
 	self.VoteUp.DoClick = function()
-		RunConsoleCommand("cinema_upvote", self.Video:GetId())
-
-		if IsValid(self) then
-			self:Update()
-
-			local queue = self:GetParent():GetParent()
-			queue.NextUpdate = (queue.NextUpdate or RealTime()) + 2 -- avoid race conditions with networking
-		end
-	end
-	self.VoteUp.Think = function()
-		if IsValid(self.Video) and LocalPlayer():GetVideoVote(self.Video:GetId()) > 0 then
-			self.VoteUp:SetColor(Color(0, 255, 0))
-		else
-			self.VoteUp:SetColor(Color(255, 255, 255))
-		end
+		self:Vote(true)
 	end
 
 	self.VoteDown = vgui.Create("DImageButton", self)
 	self.VoteDown:SetSize(16, 16)
 	self.VoteDown:SetImage("theater/down.png")
 	self.VoteDown.DoClick = function()
-		RunConsoleCommand("cinema_downvote", self.Video:GetId())
-
-		if IsValid(self) then
-			self:Update()
-
-			local queue = self:GetParent():GetParent()
-			queue.NextUpdate = (queue.NextUpdate or RealTime()) + 2
-		end
+		self:Vote(false)
 	end
-	self.VoteDown.Think = function()
-		if IsValid(self.Video) and LocalPlayer():GetVideoVote(self.Video:GetId()) < 0 then
-			self.VoteDown:SetColor(Color(255, 0, 0))
-		else
-			self.VoteDown:SetColor(Color(255, 255, 255))
-		end
-	end
+end
+
+function VIDEOVOTE:AddRemoveButton()
+	if IsValid(self.RemoveBtn) then return end
 
 	self.RemoveBtn = vgui.Create("DImageButton", self)
 	self.RemoveBtn:SetSize(16, 16)
 	self.RemoveBtn:SetImage("theater/trashbin.png")
-	self.RemoveBtn:SetVisible(false)
 	self.RemoveBtn.DoClick = function()
 		RunConsoleCommand("cinema_video_remove", self.Video:GetId())
 
@@ -290,15 +282,37 @@ function VIDEOVOTE:Init()
 			queue:RemoveVideo(self.Video)
 		end
 	end
-	self.RemoveBtn.Think = function()
-		local Theater = LocalPlayer():GetTheater()
-		if self.Video.Owner or LocalPlayer():IsAdmin() or
-			(Theater and Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer()) then
-			self.RemoveBtn:SetVisible(true)
-		else
-			self.RemoveBtn:SetVisible(false)
-		end
+end
+
+function VIDEOVOTE:Vote(up)
+	if not self.Video then return end
+
+	RunConsoleCommand(up and "cinema_upvote" or "cinema_downvote", self.Video:GetId())
+
+	if IsValid(self) then
+		self:Update()
+
+		local queue = self:GetParent():GetParent()
+		queue.NextUpdate = (queue.NextUpdate or RealTime()) + 2 -- avoid race conditions with networking
 	end
+end
+
+function VIDEOVOTE:Update()
+	if not self.Video then return end
+
+	local votes = self.Video:GetVotes()
+	self.Votes:SetText(votes)
+
+	local Theater = LocalPlayer():GetTheater()
+	if self.Video.Owner or LocalPlayer():IsAdmin() or
+		(Theater and Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer()) then
+		self:AddRemoveButton()
+		self.RemoveBtn:SetVisible(true)
+	elseif IsValid(self.RemoveBtn) then
+		self.RemoveBtn:SetVisible(false)
+	end
+
+	self:InvalidateLayout()
 end
 
 function VIDEOVOTE:SetVideo(vid)
@@ -306,21 +320,16 @@ function VIDEOVOTE:SetVideo(vid)
 	self:Update()
 end
 
-function VIDEOVOTE:Update()
-	if not self.Video then return end
-	self.Votes:SetText(self.Video:GetVotes())
-	self:InvalidateLayout()
-end
-
 function VIDEOVOTE:PerformLayout()
 	self.VoteUp:AlignTop(self.Padding)
 	self.Votes:SizeToContents()
 
-	if self.RemoveBtn:IsVisible() then
+	if IsValid(self.RemoveBtn) and self.RemoveBtn:IsVisible() then
 		self.VoteUp:CenterHorizontal(0.25)
 		self.Votes:CenterHorizontal()
 		self.VoteDown:CenterHorizontal(0.75)
 		self.RemoveBtn:AlignRight()
+		self.RemoveBtn:AlignBottom(self.Padding)
 	else
 		self.VoteUp:CenterHorizontal(1 / 3)
 		self.Votes:CenterHorizontal()
@@ -328,18 +337,42 @@ function VIDEOVOTE:PerformLayout()
 	end
 
 	self.VoteDown:AlignBottom(self.Padding)
-	self.RemoveBtn:AlignBottom(self.Padding)
-
 	self:SetSize(64, 32 + self.Padding * 2)
 end
 
 vgui.Register("ScoreboardVideoVote", VIDEOVOTE)
 
--- Alias used by older layouts
-local VIDEOCONTROLS = table.Copy(VIDEOVOTE)
+local VIDEOCONTROLS = {}
+VIDEOCONTROLS.Padding = 4
 
 function VIDEOCONTROLS:Init()
-	VIDEOVOTE.Init(self)
+	-- empty; votes are handled by ScoreboardVideoVote
+end
+
+function VIDEOCONTROLS:AddRemoveButton()
+	if IsValid(self.RemoveBtn) then return end
+
+	self.RemoveBtn = vgui.Create("DImageButton", self)
+	self.RemoveBtn:SetSize(16, 16)
+	self.RemoveBtn:SetImage("theater/trashbin.png")
+	self.RemoveBtn.DoClick = function()
+		RunConsoleCommand("cinema_video_remove", self.Video:GetId())
+	end
+end
+
+function VIDEOCONTROLS:Update()
+	if not self.Video then return end
+
+	local Theater = LocalPlayer():GetTheater()
+	if self.Video.Owner or LocalPlayer():IsAdmin() or
+		(Theater and Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer()) then
+		self:AddRemoveButton()
+		self.RemoveBtn:SetVisible(true)
+	elseif IsValid(self.RemoveBtn) then
+		self.RemoveBtn:SetVisible(false)
+	end
+
+	self:InvalidateLayout()
 end
 
 function VIDEOCONTROLS:SetVideo(vid)
@@ -347,19 +380,11 @@ function VIDEOCONTROLS:SetVideo(vid)
 	self:Update()
 end
 
-function VIDEOCONTROLS:Update()
-	if not self.Video then return end
-	self.Votes:SetText(self.Video:GetVotes())
-
-	local Theater = LocalPlayer():GetTheater()
-	if self.Video.Owner or LocalPlayer():IsAdmin() or
-		(Theater and Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer()) then
-		self.RemoveBtn:SetVisible(true)
-	else
-		self.RemoveBtn:SetVisible(false)
+function VIDEOCONTROLS:PerformLayout()
+	if IsValid(self.RemoveBtn) then
+		self.RemoveBtn:Center()
 	end
-
-	self:InvalidateLayout()
+	self:SetSize(24, 24)
 end
 
 vgui.Register("ScoreboardVideoControls", VIDEOCONTROLS)
