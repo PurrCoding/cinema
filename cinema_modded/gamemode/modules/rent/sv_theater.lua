@@ -1,10 +1,20 @@
 local function initialize()
-	if not theater then return end -- Don't break the server if cinema isn't loaded
+	if not theater or not theater.THEATER then return false end
+	-- Already applied
+	if theater.THEATER.RequestRent then return true end
 
 	-- Shared refund routine used by both owner refunds and admin cancels.
+	-- Refund value uses ceil of remaining minutes so partial minutes are not lost.
 	local function performRefund(thtr, refundPly)
-		local minutes = math.floor(thtr:GetRemainingRentTime() / 60)
+		local remaining = math.max(0, thtr:GetRemainingRentTime())
+		local minutes = math.ceil(remaining / 60)
+		if minutes < 1 and remaining > 0 then
+			minutes = 1
+		end
 		local value = minutes * rent.CostPerMinute()
+
+		local ownerSteamID = thtr._OwnerSteamID
+		local ownerNick = thtr._OwnerNick
 
 		thtr._rentExpiration = nil
 		thtr._rentLength = nil
@@ -15,22 +25,62 @@ local function initialize()
 			refundPly._rentedTheater = nil
 			rent.GiveMoney(refundPly, value)
 			theater.RequestTheaterInfo(refundPly)
+		elseif ownerSteamID then
+			-- Owner is offline: queue refund for reconnect
+			rent.QueuePendingRefund(ownerSteamID, value)
 		end
 
 		timer.Remove("RentExpiration_" .. thtr:GetLocation())
 
 		rent.SendRentInfo(thtr)
 
-		return minutes, value
+		return minutes, value, ownerSteamID, ownerNick
 	end
 
 	function theater.THEATER:IsRented()
-		return IsValid(self._Owner)
+		return self._OwnerSteamID ~= nil and self._rentExpiration ~= nil
+	end
+
+	-- Resolve the live player entity when possible; falls back to stored entity ref.
+	function theater.THEATER:GetOwner()
+		if IsValid(self._Owner) then
+			return self._Owner
+		end
+
+		if self._OwnerSteamID then
+			local ply = player.GetBySteamID(self._OwnerSteamID)
+			if IsValid(ply) then
+				self._Owner = ply
+				return ply
+			end
+		end
+
+		return self._Owner
+	end
+
+	function theater.THEATER:GetOwnerSteamID()
+		return self._OwnerSteamID
+	end
+
+	function theater.THEATER:GetOwnerNick()
+		local owner = self:GetOwner()
+		if IsValid(owner) then
+			return owner:Nick()
+		end
+		return self._OwnerNick
+	end
+
+	function theater.THEATER:IsOwner(ply)
+		if not IsValid(ply) then return false end
+		if self._OwnerSteamID then
+			return ply:SteamID() == self._OwnerSteamID
+		end
+		return self._Owner == ply
 	end
 
 	function theater.THEATER:GetRemainingRentTime()
 		if self:IsRented() then
-			return self._rentExpiration - CurTime()
+			return math.max(0, self._rentExpiration - CurTime())
 		else
 			return 0
 		end
@@ -44,10 +94,10 @@ local function initialize()
 		if not self:IsPrivate() then
 			self:AnnounceToPlayer(ply, { "Rent_NotPrivate" })
 		elseif self:IsRented() then
-			if self:GetOwner() == ply then
+			if self:IsOwner(ply) then
 				self:ExtendRent(ply, length)
 			else
-				self:AnnounceToPlayer(ply, { "Rent_AlreadyRentedBy", self:GetOwner():Nick() })
+				self:AnnounceToPlayer(ply, { "Rent_AlreadyRentedBy", self:GetOwnerNick() or "?" })
 			end
 		elseif ply:IsRentingTheater() then
 			self:AnnounceToPlayer(ply, { "Rent_AlreadyRentingOther", ply:GetRentedTheater():Name() })
@@ -58,12 +108,17 @@ local function initialize()
 		else
 			local cost = length * rent.CostPerMinute()
 			if not rent.CanAfford(ply, cost) then
-				self:AnnounceToPlayer(ply, { "Rent_CantAfford", theater.Currency(cost) })
+				-- CanAfford already announces when no provider is available
+				if rent.GetProvider(ply) then
+					self:AnnounceToPlayer(ply, { "Rent_CantAfford", theater.Currency(cost) })
+				end
 			else
 				self._rentExpiration = CurTime() + (length * 60)
 				self._rentLength = length * 60
 				self._rentalTime = CurTime()
 				self._Owner = ply
+				self._OwnerSteamID = ply:SteamID()
+				self._OwnerNick = ply:Nick()
 
 				ply._rentedTheater = self:GetLocation()
 
@@ -81,7 +136,7 @@ local function initialize()
 	end
 
 	function theater.THEATER:ExtendRent(ply, length)
-		if self:GetOwner() ~= ply then
+		if not self:IsOwner(ply) then
 			self:AnnounceToPlayer(ply, { "Rent_ExtendNotRenting" })
 		else
 			local extendedTime = math.floor(self:GetRemainingRentTime() / 60) + length
@@ -94,10 +149,16 @@ local function initialize()
 				local cost = length * rent.CostPerMinute()
 
 				if not rent.CanAfford(ply, cost) then
-					self:AnnounceToPlayer(ply, { "Rent_CantAfford", theater.Currency(cost) })
+					if rent.GetProvider(ply) then
+						self:AnnounceToPlayer(ply, { "Rent_CantAfford", theater.Currency(cost) })
+					end
 				else
 					self._rentExpiration = self._rentExpiration + (length * 60)
 					self._rentLength = self._rentLength + (length * 60)
+					-- Keep owner identity fresh
+					self._Owner = ply
+					self._OwnerSteamID = ply:SteamID()
+					self._OwnerNick = ply:Nick()
 
 					timer.Remove("RentExpiration_" .. self:GetLocation())
 					timer.Create("RentExpiration_" .. self:GetLocation(), self._rentExpiration - CurTime(), 1,
@@ -116,7 +177,7 @@ local function initialize()
 
 	-- Owner-initiated refund (always available to the renter).
 	function theater.THEATER:RefundRent(ply)
-		if self:GetOwner() ~= ply then
+		if not self:IsOwner(ply) then
 			self:AnnounceToPlayer(ply, { "Rent_RefundNotRenting" })
 		elseif self:GetRemainingRentTime() < 1 then
 			self:AnnounceToPlayer(ply, { "Rent_RefundNotEnoughTime" })
@@ -136,12 +197,16 @@ local function initialize()
 			self:AnnounceToPlayer(admin, { "Rent_RefundNotEnoughTime" })
 		else
 			local owner = self:GetOwner()
-			local minutes, value = performRefund(self, owner)
+			local ownerNick = self:GetOwnerNick() or "?"
+			local minutes, value, ownerSteamID = performRefund(self, owner)
 
 			if IsValid(owner) then
-				self:AnnounceToPlayers({ "Rent_CancelledPublic", owner:Nick() })
+				self:AnnounceToPlayers({ "Rent_CancelledPublic", ownerNick })
 				self:AnnounceToPlayer(owner, { "Rent_CancelledOwner", theater.Currency(value), minutes })
-				self:AnnounceToPlayer(admin, { "Rent_CancelledAdmin", owner:Nick() })
+				self:AnnounceToPlayer(admin, { "Rent_CancelledAdmin", ownerNick })
+			elseif ownerSteamID then
+				self:AnnounceToPlayers({ "Rent_CancelledPublic", ownerNick })
+				self:AnnounceToPlayer(admin, { "Rent_CancelledAdminPending", ownerNick, theater.Currency(value) })
 			else
 				self:AnnounceToPlayer(admin, { "Rent_CancelledAdminUnknown" })
 			end
@@ -149,7 +214,8 @@ local function initialize()
 	end
 
 	function theater.THEATER:OnRentExpired()
-		local previousOwner = self._Owner
+		local previousOwner = self:GetOwner()
+		local previousSteamID = self._OwnerSteamID
 
 		self._rentExpiration = nil
 		self._rentLength = nil
@@ -164,6 +230,8 @@ local function initialize()
 			else
 				self:AnnounceToPlayer(previousOwner, { "Rent_ExpiredOwner", self:Name() })
 			end
+		elseif previousSteamID then
+			-- Owner offline: nothing to announce to them until they rejoin
 		end
 
 		if self:NumPlayers() < 1 then
@@ -179,7 +247,7 @@ local function initialize()
 			self:AnnounceToPlayer(ply, { "Rent_FilterNotPrivate" })
 		elseif not self:IsRented() then
 			self:AnnounceToPlayer(ply, { "Rent_FilterNotRented" })
-		elseif self:GetOwner() ~= ply then
+		elseif not self:IsOwner(ply) then
 			self:AnnounceToPlayer(ply, { "Rent_FilterNotOwner" })
 		else
 			self._WhitelistMode = filterData.whitelistMode
@@ -222,7 +290,7 @@ local function initialize()
 	end
 
 	function theater.THEATER:IsPlayerFiltered(ply)
-		if ply == self:GetOwner() then
+		if self:IsOwner(ply) then
 			return false
 		elseif self._WhitelistMode == nil or not self._PlayerFilter then
 			return false
@@ -266,7 +334,9 @@ local function initialize()
 	end
 
 	function theater.THEATER:ResetOwner()
-		self._Owner = false
+		self._Owner = nil
+		self._OwnerSteamID = nil
+		self._OwnerNick = nil
 		self._QueueLocked = false
 		self._WhitelistMode = nil
 		self._PlayerFilter = nil
@@ -284,6 +354,9 @@ local function initialize()
 		net.Start("PlayerLeaveTheater")
 		net.Send(ply)
 
+		-- Do not clear rent ownership when the owner merely leaves the theater;
+		-- ownership is tied to the paid rent period, not physical presence.
+
 		if self:NumPlayers() > 0 then
 			self:CheckVoteSkip()
 		else
@@ -292,5 +365,21 @@ local function initialize()
 			end
 		end
 	end
+
+	return true
 end
-hook.Add("Initialize", "Rent_TheaterMethods", initialize)
+
+-- theater module loads after rent alphabetically; retry until methods are attached.
+local function tryInitialize()
+	if initialize() then
+		hook.Remove("Initialize", "Rent_TheaterMethods")
+		hook.Remove("InitPostEntity", "Rent_TheaterMethods")
+		timer.Remove("Rent_TheaterMethods_Retry")
+		return true
+	end
+	return false
+end
+
+hook.Add("Initialize", "Rent_TheaterMethods", tryInitialize)
+hook.Add("InitPostEntity", "Rent_TheaterMethods", tryInitialize)
+timer.Create("Rent_TheaterMethods_Retry", 0.5, 20, tryInitialize)
