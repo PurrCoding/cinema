@@ -184,6 +184,11 @@ return {
 	Rent_Retrieving = "Retrieving...",
 	Rent_Unknown = "Unknown",
 
+	-- Theater Rentals: currency / pending refunds
+	Rent_NoCurrency = "No currency system is available on this server.",
+	Rent_RefundedPending = "You received a pending rent refund of %s.",
+	Rent_CancelledAdminPending = "You cancelled the rent of {{rgb:158,37,33}}%s{{rgb:200,200,200}}. A refund of %s will be applied when they reconnect.",
+
 	-- Theater Rentals: thumbnail overlay (theater_thumbnail entity)
 	Rent_Open = "Open",
 	Rent_OwnerDisconnected = "Owner Disconnected",
