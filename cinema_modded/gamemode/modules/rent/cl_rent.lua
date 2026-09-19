@@ -125,6 +125,13 @@ net.Receive("RentInfo", function()
 
 	if timeRemaining <= 0 or ownerSteamID == "" then
 		rent.Rentals[id] = nil
+
+		-- Clear stale private-theater ownership so queue/admin UI updates
+		-- immediately (TheaterInfo may arrive a frame later).
+		local thtr = theater.GetByLocation and theater.GetByLocation(id)
+		if thtr and thtr:IsPrivate() then
+			thtr._Owner = nil
+		end
 	else
 		rent.Rentals[id] = {
 			expirationTime = CurTime() + timeRemaining,
@@ -132,6 +139,15 @@ net.Receive("RentInfo", function()
 			ownerNick = ownerNick,
 			owner = findPlayerBySteamID(ownerSteamID)
 		}
+
+		-- Keep theater owner in sync with rent state when the player is online
+		local thtr = theater.GetByLocation and theater.GetByLocation(id)
+		if thtr and thtr:IsPrivate() then
+			local owner = findPlayerBySteamID(ownerSteamID)
+			if IsValid(owner) then
+				thtr._Owner = owner
+			end
+		end
 	end
 end)
 
