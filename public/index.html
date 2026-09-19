@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="description"
+        content="Cinema — an open-source Garry's Mod gamemode for multiplayer video streaming."
+    >
+
+    <title>Cinema — Open Source</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+
+            background:
+                radial-gradient(
+                    circle at 50% -20%,
+                    #252525 0%,
+                    #111 45%,
+                    #0a0a0a 100%
+                );
+
+            color: #f5f5f5;
+
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            text-align: center;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-bottom: 28px;
+            padding: 7px 13px;
+
+            border: 1px solid #333;
+            border-radius: 999px;
+
+            color: #aaa;
+            background: rgba(255, 255, 255, 0.03);
+
+            font-size: 13px;
+            letter-spacing: 0.04em;
+        }
+
+        h1 {
+            margin-bottom: 18px;
+
+            font-size: clamp(48px, 9vw, 76px);
+            line-height: 1;
+            font-weight: 700;
+            letter-spacing: -0.05em;
+        }
+
+        .subtitle {
+            max-width: 580px;
+            margin: 0 auto 34px;
+
+            color: #a8a8a8;
+            font-size: 18px;
+            line-height: 1.65;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 13px 20px;
+
+            border: 1px solid #444;
+            border-radius: 8px;
+
+            background: #f5f5f5;
+            color: #111;
+
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+        .button:hover {
+            background: #fff;
+            border-color: #666;
+            transform: translateY(-1px);
+        }
+
+        .github-icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
+        .footer {
+            margin-top: 70px;
+
+            color: #666;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .footer a {
+            color: #888;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            color: #aaa;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <main class="container">
+
+        <div class="badge">
+            Open Source Project
+        </div>
+
+        <h1>Cinema</h1>
+
+        <p class="subtitle">
+            This page is part of Cinema, an open-source Garry's Mod
+            gamemode built around multiplayer video streaming.
+            It is an unofficial continuation of the original Cinema addon,
+            keeping the experience alive while adding new features and improvements.
+        </p>
+
+        <a
+            class="button"
+            href="https://github.com/PurrCoding/cinema"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            <svg
+                class="github-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+            >
+                <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.17c-3.2.69-3.87-1.54-3.87-1.54-.53-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.75 1.18 1.75 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.47.11-3.06 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.77.11 3.06.73.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.25 5.69.41.36.78 1.08.78 2.18v3.23c0 .31.21.68.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/>
+            </svg>
+
+            View on GitHub
+        </a>
+
+        <div class="footer">
+            <p>
+                Open source software ·
+                <a
+                    href="https://github.com/PurrCoding/cinema"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    PurrCoding / cinema
+                </a>
+                · GPL-3.0
+            </p>
+        </div>
+
+    </main>
+
+</body>
+</html>
