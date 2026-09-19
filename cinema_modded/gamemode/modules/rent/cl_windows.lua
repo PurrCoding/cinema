@@ -94,7 +94,7 @@ function CreateRentWindow()
 	rentButton.DoClick = function()
 		local value = slider:GetValue()
 		if value >= rent.MinimumRentTime() then
-			rent.RentTheater(nil, value)
+			rent.RentTheater(LocalPlayer(), value)
 		else
 			chat.AddText(unpack(translations:FormatChat("Rent_MinTime", rent.MinimumRentTime())))
 		end
