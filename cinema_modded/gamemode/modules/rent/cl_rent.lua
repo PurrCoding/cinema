@@ -2,8 +2,47 @@ module("rent", package.seeall)
 
 Rentals = Rentals or {}
 
+local function findPlayerBySteamID(steamID)
+	if not steamID or steamID == "" then return nil end
+	for _, ply in ipairs(player.GetAll()) do
+		if ply:SteamID() == steamID then
+			return ply
+		end
+	end
+	return nil
+end
+
 function GetOwner(id)
-	return Rentals[id] and Rentals[id].owner or nil
+	local entry = Rentals[id]
+	if not entry then return nil end
+
+	if IsValid(entry.owner) then
+		return entry.owner
+	end
+
+	if entry.ownerSteamID then
+		local ply = findPlayerBySteamID(entry.ownerSteamID)
+		if IsValid(ply) then
+			entry.owner = ply
+			return ply
+		end
+	end
+
+	return nil
+end
+
+function GetOwnerName(id)
+	local owner = GetOwner(id)
+	if IsValid(owner) then
+		return owner:Nick()
+	end
+
+	local entry = Rentals[id]
+	if entry and entry.ownerNick and entry.ownerNick ~= "" then
+		return entry.ownerNick
+	end
+
+	return nil
 end
 
 function GetTimeRemaining(id)
@@ -79,14 +118,19 @@ net.Receive("PromptRental", function()
 end)
 
 net.Receive("RentInfo", function()
-	local rentInfo = net.ReadTable()
+	local id = net.ReadUInt(16)
+	local timeRemaining = net.ReadFloat()
+	local ownerSteamID = net.ReadString()
+	local ownerNick = net.ReadString()
 
-	if rentInfo.timeRemaining == 0 then
-		rent.Rentals[rentInfo.id] = nil
+	if timeRemaining <= 0 or ownerSteamID == "" then
+		rent.Rentals[id] = nil
 	else
-		rent.Rentals[rentInfo.id] = {
-			expirationTime = CurTime() + rentInfo.timeRemaining,
-			owner = rentInfo.owner
+		rent.Rentals[id] = {
+			expirationTime = CurTime() + timeRemaining,
+			ownerSteamID = ownerSteamID,
+			ownerNick = ownerNick,
+			owner = findPlayerBySteamID(ownerSteamID)
 		}
 	end
 end)
