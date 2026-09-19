@@ -167,6 +167,11 @@ function ADMIN:Update()
 	-- Toggle rent owner controls based on ownership
 	if Theater:IsPrivate() and IsValid(self.voteSkipLock) then
 		local isOwner = Theater:GetOwner() == LocalPlayer()
+		-- Also treat SteamID-backed rent ownership from the rent module
+		if not isOwner and rent and rent.IsRented(Theater:GetLocation()) then
+			local owner = rent.GetOwner(Theater:GetLocation())
+			isOwner = IsValid(owner) and owner == LocalPlayer()
+		end
 		self.voteSkipLock:SetVisible(isOwner)
 		self.playerFilter:SetVisible(isOwner)
 		self.extendRent:SetVisible(isOwner)
@@ -180,10 +185,13 @@ function ADMIN:Update()
 
 	-- Admins (who are not the owner) can cancel an active rent
 	if IsValid(self.cancelRent) then
+		local isOwner = Theater:GetOwner() == LocalPlayer()
+		-- Prefer rent module state so cancel stays available when the owner is offline
+		local isRented = (rent and rent.IsRented(Theater:GetLocation())) or IsValid(Theater:GetOwner())
 		local canCancel = LocalPlayer():IsAdmin()
 			and Theater:IsPrivate()
-			and IsValid(Theater:GetOwner())
-			and Theater:GetOwner() ~= LocalPlayer()
+			and isRented
+			and not isOwner
 		self.cancelRent:SetVisible(canCancel)
 	end
 end
