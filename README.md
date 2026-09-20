@@ -2,7 +2,7 @@
 
 Community-maintained successor to the original [Cinema](https://github.com/pixeltailgames/cinema) gamemode by PixelTail Games. The goal is to keep cinema servers playable on modern Garry's Mod while adding practical features for players and operators.
 
-[Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587) · [Issues](https://github.com/PurrCoding/cinema/issues) · [Documentation](docs/README.md)
+[Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587) · [Issues](https://github.com/PurrCoding/cinema/issues) · [Documentation](https://github.com/PurrCoding/cinema/wiki)
 
 ---
 
@@ -27,7 +27,7 @@ Private theaters can be **rented with points** (PointShop 1 or 2):
 - Vote-skip lock for the renter
 - Admin cancel with refund (including pending refund if offline)
 
-See [Theater renting](docs/theater-renting.md) for ConVars and usage.
+See [Theater renting](https://github.com/PurrCoding/cinema/wiki/theater-renting) for ConVars and usage.
 
 ### Other
 - Multi-language UI (20 locale files)
@@ -45,7 +45,7 @@ See [Theater renting](docs/theater-renting.md) for ConVars and usage.
 
 Workshop subscribers get the gamemode automatically; this repository is the source of truth for development and server-side customization.
 
-Full steps: [Installation](docs/installation.md).
+Full steps: [Installation](https://github.com/PurrCoding/cinema/wiki/installation).
 
 ---
 
@@ -63,10 +63,10 @@ Common server ConVars:
 | `cinema_allow_3dvoice` | `1` | 3D voice |
 | `cinema_url` | (built-in) | Base URL for theater HTML pages |
 
-Renting-related ConVars are listed in [Theater renting](docs/theater-renting.md).  
+Renting-related ConVars are listed in [Theater renting](https://github.com/PurrCoding/cinema/wiki/theater-renting).  
 Client settings (volume, resolution, mute on focus loss, etc.) are available in the in-game scoreboard settings panel.
 
-More detail: [Configuration](docs/configuration.md).
+More detail: [Configuration](https://github.com/PurrCoding/cinema/wiki/configuration).
 
 ---
 
@@ -86,10 +86,9 @@ cinema_modded/                 Gamemode root (install this folder)
     maps/                      Per-map theater setup
   entities/                    Theater entities (screen, door, portable, …)
   content/                     Materials, fonts, sounds
-docs/                          Project documentation (wiki-style)
 ```
 
-Development notes for contributors and tools: [AGENTS.md](AGENTS.md), [Development](docs/development.md).
+Development notes for contributors and tools: [AGENTS.md](AGENTS.md), [Development](https://github.com/PurrCoding/cinema/wiki/development).
 
 ---
 
@@ -97,12 +96,12 @@ Development notes for contributors and tools: [AGENTS.md](AGENTS.md), [Developme
 
 | Page | Contents |
 |------|----------|
-| [Documentation index](docs/README.md) | Overview of all docs |
-| [Installation](docs/installation.md) | Server & client setup |
-| [Configuration](docs/configuration.md) | ConVars and options |
-| [Theater renting](docs/theater-renting.md) | Rent system guide |
-| [Video services](docs/video-services.md) | Supported providers |
-| [Development](docs/development.md) | Architecture & contribution |
+| [Documentation index](https://github.com/PurrCoding/cinema/wiki/) | Overview of all docs |
+| [Installation](https://github.com/PurrCoding/cinema/wiki/installation) | Server & client setup |
+| [Configuration](https://github.com/PurrCoding/cinema/wiki/configuration) | ConVars and options |
+| [Theater renting](https://github.com/PurrCoding/cinema/wiki/theater-renting) | Rent system guide |
+| [Video services](https://github.com/PurrCoding/cinema/wiki/video-services) | Supported providers |
+| [Development](https://github.com/PurrCoding/cinema/wiki/development) | Architecture & contribution |
 
 ---
 
