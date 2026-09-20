@@ -1,51 +1,90 @@
 # Cinema (Fixed Edition)
 
+[![Garry's Mod](https://img.shields.io/badge/Garry's%20Mod-Gamemode-blue?style=flat-square)](https://gmod.facepunch.com/)
+[![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-green?style=flat-square)](LICENSE.md)
+[![Workshop](https://img.shields.io/badge/Steam-Workshop-171a21?style=flat-square&logo=steam)](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587)
+[![Wiki](https://img.shields.io/badge/Docs-Wiki-informational?style=flat-square)](https://github.com/PurrCoding/cinema/wiki)
+
+**Synchronized multiplayer video streaming** for Garry's Mod — watch movies, streams, and music together on in-game theater screens.
+
 Community-maintained successor to the original [Cinema](https://github.com/pixeltailgames/cinema) gamemode by PixelTail Games. The goal is to keep cinema servers playable on modern Garry's Mod while adding practical features for players and operators.
 
-[Workshop](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587) · [Issues](https://github.com/PurrCoding/cinema/issues) · [Documentation](https://github.com/PurrCoding/cinema/wiki)
+> *Remember sitting down on a lazy afternoon with your friends, drinking a cup of hot cocoa and watching a movie? It's a magical bonding experience between people, a timeless ritual that not many are able to do with some of their friends…*  
+> — PixelTail Games
+
+---
+
+## Links
+
+| | |
+|---|---|
+| **Workshop** | [Cinema (Fixed Edition)](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587) |
+| **Documentation** | [GitHub Wiki](https://github.com/PurrCoding/cinema/wiki) |
+| **Issues** | [Bug reports & feature requests](https://github.com/PurrCoding/cinema/issues) |
+| **CEF Codec Fix** | [Required for many video formats](https://github.com/solsticegamestudios/GModCEFCodecFix) |
 
 ---
 
 ## Features
 
 ### Playback & theaters
-- Private and public theaters with queue, vote-skip, seek, and pause
-- Video history with search, filters, and pagination
-- Per-player volume, mute-on-alt-tab, hide players in theaters
-- Optional smoother HTML playback (client)
-- Map-aware theater locations and seat integration
 
-### Video services
-Built-in providers include **YouTube**, **Twitch**, **TikTok**, **SoundCloud**, **Dailymotion**, **Rumble**, **Kick**, **Bilibili** (VOD / AV / live / episodes), **VK**, **OK**, **Internet Archive**, **Google Drive**, **MEGA**, **Jellyfin**, and generic **URL** / protocol playback.
+- Public and private theaters with queue, vote-skip, seek, and pause
+- Video history with search, filters, and pagination
+- Per-player volume, mute-on-alt-tab, and hide-players options
+- Optional smoother HTML playback
+- Map-aware location system and seat integration
+
+### Supported media
+
+YouTube · Twitch · TikTok · SoundCloud · Dailymotion · Rumble · Kick · Bilibili (VOD / AV / live / episodes) · VK · OK · Internet Archive · Google Drive · MEGA · Jellyfin · direct URL / protocol playback
 
 ### Theater renting
-Private theaters can be **rented with points** (PointShop 1 or 2):
+
+Private theaters can be rented with **PointShop 1 or 2** points:
 
 - Rent, extend, and refund remaining time
 - Ownership persists across disconnects (SteamID-based)
 - Player whitelist / blacklist
 - Vote-skip lock for the renter
-- Admin cancel with refund (including pending refund if offline)
-
-See [Theater renting](https://github.com/PurrCoding/cinema/wiki/theater-renting) for ConVars and usage.
+- Admin cancel with automatic refund (including offline owners)
 
 ### Other
-- Multi-language UI (20 locale files)
+
+- Multi-language UI (20+ locales)
 - Optional experimental Sandbox derivation
-- Popcorn weapon spawn option, 3D / theater voice settings
+- Popcorn weapon, 3D voice, and theater voice settings
 
 ---
 
-## Quick install
+## Requirements
 
-1. Copy the `cinema_modded` folder into `garrysmod/gamemodes/`.
-2. Set the server gamemode to `cinema_modded` (or select it in the menu).
-3. Use a supported map (`theater*`, `cinema*`, or maps with theater entities).
-4. For HTML video codecs, install [GMod CEF Codec Fix](https://github.com/solsticegamestudios/GModCEFCodecFix).
+- **Garry's Mod** (x86-64 branch recommended)
+- A supported map (`theater*`, `cinema*`, or any map with theater entities + location data)
+- **[GMod CEF Codec Fix](https://github.com/solsticegamestudios/GModCEFCodecFix)** — strongly recommended for H.264 and other codecs
 
-Workshop subscribers get the gamemode automatically; this repository is the source of truth for development and server-side customization.
+> **Important:** This gamemode conflicts with the original PixelTail Cinema addon and any forks of it. Disable or unsubscribe from those before using Fixed Edition.
 
-Full steps: [Installation](https://github.com/PurrCoding/cinema/wiki/installation).
+---
+
+## Installation
+
+### Workshop (players & most servers)
+
+1. Subscribe to the [Workshop addon](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587).
+2. On dedicated servers, add Workshop ID `2419005587` to your collection.
+3. Set the gamemode to **Cinema (Fixed Edition)** (`cinema_modded`) and start a supported map.
+
+### From source (development & full control)
+
+```bash
+git clone https://github.com/PurrCoding/cinema.git
+# Copy cinema_modded/ into garrysmod/gamemodes/
+```
+
+Then set `gamemode cinema_modded` (or select it in the menu) and load a supported map.
+
+Full walkthrough, verification checklist, and troubleshooting: **[Installation guide](https://github.com/PurrCoding/cinema/wiki/installation)**.
 
 ---
 
@@ -55,64 +94,69 @@ Common server ConVars:
 
 | ConVar | Default | Description |
 |--------|---------|-------------|
-| `cinema_queue_mode` | `1` | `1` = vote queue, `2` = chronological |
-| `cinema_skip_ratio` | `0.66` | Fraction of players needed to voteskip |
+| `cinema_queue_mode` | `1` | `1` = vote queue · `2` = chronological |
+| `cinema_skip_ratio` | `0.66` | Fraction of players required to voteskip |
 | `cinema_video_duration_max` | `10800` | Max duration (seconds) in public theaters |
 | `cinema_allow_reset` | `0` | Reset theater when empty |
 | `cinema_allow_voice` | `0` | Voice chat inside theaters |
-| `cinema_allow_3dvoice` | `1` | 3D voice |
+| `cinema_allow_3dvoice` | `1` | 3D positional voice |
 | `cinema_url` | (built-in) | Base URL for theater HTML pages |
 
-Renting-related ConVars are listed in [Theater renting](https://github.com/PurrCoding/cinema/wiki/theater-renting).  
-Client settings (volume, resolution, mute on focus loss, etc.) are available in the in-game scoreboard settings panel.
+Renting ConVars, client settings, and more: **[Configuration](https://github.com/PurrCoding/cinema/wiki/configuration)** · **[Theater renting](https://github.com/PurrCoding/cinema/wiki/theater-renting)**.
 
-More detail: [Configuration](https://github.com/PurrCoding/cinema/wiki/configuration).
+---
+
+## Documentation
+
+| Guide | Description |
+|-------|-------------|
+| [Installation](https://github.com/PurrCoding/cinema/wiki/installation) | Setup, requirements, troubleshooting |
+| [Configuration](https://github.com/PurrCoding/cinema/wiki/configuration) | All ConVars |
+| [Commands](https://github.com/PurrCoding/cinema/wiki/commands) | Player, owner, and admin commands |
+| [Debug commands](https://github.com/PurrCoding/cinema/wiki/debug-commands) | Location visualizers and diagnostics |
+| [Location system](https://github.com/PurrCoding/cinema/wiki/location-system) | Spatial areas and theater bounds |
+| [Creating custom maps](https://github.com/PurrCoding/cinema/wiki/creating-custom-maps) | Hammer + Lua mapping tutorial |
+| [Custom video service](https://github.com/PurrCoding/cinema/wiki/custom-video-service) | Implement a new media provider |
+| [Theater architecture](https://github.com/PurrCoding/cinema/wiki/theater-architecture) | THEATER / VIDEO / SERVICE internals |
+| [Seats](https://github.com/PurrCoding/cinema/wiki/seats) | Chair models and offsets |
+| [Translations](https://github.com/PurrCoding/cinema/wiki/translations) | Adding languages |
+| [Development](https://github.com/PurrCoding/cinema/wiki/development) | Module layout and contribution notes |
 
 ---
 
 ## Repository layout
 
 ```
-cinema_modded/                 Gamemode root (install this folder)
+cinema_modded/                 ← install this folder as the gamemode
   gamemode/
     modules/
-      theater/                 Core theater logic & video services
-      rent/                    Theater renting system
-      scoreboard/              Queue, admin, request UI
+      theater/                 Core logic & video services
+      rent/                    Private theater renting
+      scoreboard/              Queue, request, owner UI
       location/                Map location system
-      seats/                   Seat helpers / editor
-      control/ playermodel/ …
+      seats/                   Seat helpers
+      …
     i18n/                      Translations
-    maps/                      Per-map theater setup
-  entities/                    Theater entities (screen, door, portable, …)
+    maps/                      Per-map location / theater setup
+  entities/                    Screen, door, portable TV, …
   content/                     Materials, fonts, sounds
+  cinema.fgd                   Hammer entity definitions
 ```
 
-Development notes for contributors and tools: [AGENTS.md](AGENTS.md), [Development](https://github.com/PurrCoding/cinema/wiki/development).
-
----
-
-## Documentation
-
-| Page | Contents |
-|------|----------|
-| [Documentation index](https://github.com/PurrCoding/cinema/wiki/) | Overview of all docs |
-| [Installation](https://github.com/PurrCoding/cinema/wiki/installation) | Server & client setup |
-| [Configuration](https://github.com/PurrCoding/cinema/wiki/configuration) | ConVars and options |
-| [Theater renting](https://github.com/PurrCoding/cinema/wiki/theater-renting) | Rent system guide |
-| [Video services](https://github.com/PurrCoding/cinema/wiki/video-services) | Supported providers |
-| [Development](https://github.com/PurrCoding/cinema/wiki/development) | Architecture & contribution |
+Contributor standards: **[AGENTS.md](AGENTS.md)**.
 
 ---
 
 ## Credits
 
 - Original [Cinema](https://github.com/pixeltailgames/cinema) by [PixelTail Games](https://steamcommunity.com/groups/pixelTail)
-- YouTube-related work by [Veitikka](https://github.com/veitikka) and others in the mediaplayer ecosystem
+- YouTube-related work by [Veitikka](https://github.com/veitikka) and the mediaplayer ecosystem
 - Sandbox-in-Cinema contributions by Ket'Ta-Lani & ArtarOs
 - [GMod CEF Codec Fix](https://github.com/solsticegamestudios/GModCEFCodecFix) by Solstice Game Studios / Akiko Kumagara
 - Community translators and maintainers of this fixed edition
 
+---
+
 ## License
 
-See [LICENSE.md](LICENSE.md).
+This project is licensed under the **GNU General Public License v3.0**. See [LICENSE.md](LICENSE.md) for the full text.
