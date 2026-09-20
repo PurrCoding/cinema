@@ -340,6 +340,8 @@ local function initialize()
 		self._QueueLocked = false
 		self._WhitelistMode = nil
 		self._PlayerFilter = nil
+		-- Clear vote-skip lock when ownership ends (refund, cancel, or expiry)
+		self.voteSkipLocked = false
 	end
 
 	function theater.THEATER:RemovePlayer(ply)
