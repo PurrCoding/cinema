@@ -8,7 +8,7 @@ Synchronized multiplayer video streaming on in-game theater screens for Garry's 
 
 ---
 
-## Guides
+## Player & Server guides
 
 | Page | Description |
 |------|-------------|
@@ -16,11 +16,25 @@ Synchronized multiplayer video streaming on in-game theater screens for Garry's 
 | [Configuration](configuration) | All server & client ConVars |
 | [Commands](commands) | Player, owner, admin and utility console commands |
 | [Debug Commands](debug-commands) | Location debugging, visualizers and diagnostics |
+| [Theater Renting](theater-renting) | PointShop-based private theater rent system |
+| [Video Services](video-services) | Supported providers |
+
+## Mapping & locations
+
+| Page | Description |
+|------|-------------|
 | [Location System](location-system) | How locations, theaters and spatial queries work |
 | [Creating Custom Maps](creating-custom-maps) | Full mapping tutorial (Hammer + Lua locations) |
-| [Theater Renting](theater-renting) | PointShop-based private theater rent system |
-| [Video Services](video-services) | Supported providers and how services work |
-| [Development](development) | Module layout, contribution and architecture notes |
+| [Seats](seats) | Chair models and sit offsets |
+
+## Development
+
+| Page | Description |
+|------|-------------|
+| [Development](development) | Module layout, contribution and coding notes |
+| [Theater Architecture](theater-architecture) | THEATER / VIDEO / SERVICE objects and lifecycle |
+| [Custom Video Service](custom-video-service) | **Step-by-step guide to implement a new media service** |
+| [Translations](translations) | Adding or updating languages (i18n) |
 
 ---
 
