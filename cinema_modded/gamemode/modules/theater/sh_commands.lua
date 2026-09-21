@@ -1,4 +1,4 @@
-CreateConVar( "cinema_queue_mode", 1, { FCVAR_ARCHIVE, FCVAR_DONTRECORD, FCVAR_REPLICATED }, "1 = Upvote only\n2 = Chronological (request order)\n3 = Up and down voting" )
+CreateConVar( "cinema_queue_mode", 1, { FCVAR_ARCHIVE, FCVAR_DONTRECORD, FCVAR_REPLICATED }, "1 = Upvote only (supported)\n2 = Chronological / request order (supported)\n3 = Up and down voting (LEGACY, unsupported)" )
 CreateConVar( "cinema_url", "https://cine.purrcoding.com/", { FCVAR_NOT_CONNECTED, FCVAR_REPLICATED }, "Cinema url to load on theater screens.") -- don't edit, use server config!
 
 if CLIENT then
@@ -200,6 +200,7 @@ else
 
 	end)
 
+	-- Legacy: only effective when cinema_queue_mode == 3 (unsupported).
 	TheaterCommand( "cinema_votedown", function( Theater, ply, cmd, args )
 
 		local QueueId = tonumber(args[1])
