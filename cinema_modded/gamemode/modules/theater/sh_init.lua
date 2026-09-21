@@ -3,8 +3,9 @@ THEATER_PRIVATE = 1 	-- Private theater which can be rented
 THEATER_REPLICATED = 2 	-- Theater that should be networked
 THEATER_PRIVILEGED = 4 	-- Theater restricted to privileged players
 
-QUEUE_VOTEUPDOWN = 1
-QUEUE_CHRONOLOGICAL = 2
+QUEUE_VOTEUP = 1		-- Only upvote (original 2014 client behaviour)
+QUEUE_CHRONOLOGICAL = 2	-- Play in request order
+QUEUE_VOTEUPDOWN = 3	-- Up and down voting
 
 DEPENDENCY_NONE = 0		-- Client needs nothing
 DEPENDENCY_PARTIAL = 1 	-- Client only needs x86-64 Beta
@@ -226,6 +227,17 @@ end
 
 function GetQueueMode()
 	return GetConVar("cinema_queue_mode"):GetInt()
+end
+
+-- Modes 1 and 3 rank the queue by votes; mode 2 is request order.
+function IsVoteQueueMode()
+	local mode = GetQueueMode()
+	return mode == QUEUE_VOTEUP or mode == QUEUE_VOTEUPDOWN
+end
+
+-- Downvotes are only allowed in mode 3.
+function AllowsDownvote()
+	return GetQueueMode() == QUEUE_VOTEUPDOWN
 end
 
 function GetCinemaURL(path)
