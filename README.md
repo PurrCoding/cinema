@@ -21,7 +21,7 @@ Community-maintained successor to the original [Cinema](https://github.com/pixel
 | **Workshop** | [Cinema (Fixed Edition)](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587) |
 | **Documentation** | [GitHub Wiki](https://github.com/PurrCoding/cinema/wiki) |
 | **Issues** | [Bug reports & feature requests](https://github.com/PurrCoding/cinema/issues) |
-| **CEF Codec Fix** | [Required for many video formats](https://github.com/solsticegamestudios/GModCEFCodecFix) |
+| **GModPatchTool** | [Required for many video formats](https://github.com/solsticegamestudios/GModPatchTool) |
 
 ---
 
@@ -61,7 +61,7 @@ Private theaters can be rented with **PointShop 1 or 2** points:
 
 - **Garry's Mod** (x86-64 branch recommended)
 - A supported map (`theater*`, `cinema*`, or any map with theater entities + location data)
-- **[GMod CEF Codec Fix](https://github.com/solsticegamestudios/GModCEFCodecFix)** — strongly recommended for H.264 and other codecs
+- **[GModPatchTool](https://github.com/solsticegamestudios/GModPatchTool)** — strongly recommended for H.264 and other codecs
 
 > **Important:** This gamemode conflicts with the original PixelTail Cinema addon and any forks of it. Disable or unsubscribe from those before using Fixed Edition.
 
@@ -152,7 +152,7 @@ Contributor standards: **[AGENTS.md](AGENTS.md)**.
 - Original [Cinema](https://github.com/pixeltailgames/cinema) by [PixelTail Games](https://steamcommunity.com/groups/pixelTail)
 - YouTube-related work by [Veitikka](https://github.com/veitikka) and the mediaplayer ecosystem
 - Sandbox-in-Cinema contributions by Ket'Ta-Lani & ArtarOs
-- [GMod CEF Codec Fix](https://github.com/solsticegamestudios/GModCEFCodecFix) by Solstice Game Studios / Akiko Kumagara
+- [GModPatchTool](https://github.com/solsticegamestudios/GModPatchTool) by Solstice Game Studios / Akiko Kumagara
 - Community translators and maintainers of this fixed edition
 
 ---

@@ -3,13 +3,13 @@ THEATER_PRIVATE = 1 	-- Private theater which can be rented
 THEATER_REPLICATED = 2 	-- Theater that should be networked
 THEATER_PRIVILEGED = 4 	-- Theater restricted to privileged players
 
-QUEUE_VOTEUP = 1		-- Only upvote (supported / original 2014 client behaviour)
-QUEUE_CHRONOLOGICAL = 2	-- Play in request order (supported)
+QUEUE_VOTEUP = 1		-- Only upvote
+QUEUE_CHRONOLOGICAL = 2	-- Play in request order
 QUEUE_VOTEUPDOWN = 3	-- Up and down voting (not supported)
 
 DEPENDENCY_NONE = 0		-- Client needs nothing
 DEPENDENCY_PARTIAL = 1 	-- Client only needs x86-64 Beta
-DEPENDENCY_COMPLETE = 2 	-- Client also needs CEF Codec Fix
+DEPENDENCY_COMPLETE = 2 	-- Client also needs GModPatchTool
 
 hook.Add( "Think", "TheaterThink", function()
 	for _, Theater in pairs(theater.GetTheaters()) do

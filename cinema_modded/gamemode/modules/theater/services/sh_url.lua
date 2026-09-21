@@ -1,11 +1,11 @@
 --[[
 	Combined URL Media Service
-	Separates basic formats (no CEF codec fix needed) from proprietary formats
+	Separates basic formats (no GModPatchTool needed) from proprietary formats
 
 	Basic Service: Images, WebM, Audio formats
 	Proprietary Service: MP4, MOV, MKV formats
 
-	Protocol Service: HLS, DASH (In separate script, also requires CEF codec fix)
+	Protocol Service: HLS, DASH (In separate script, also requires GModPatchTool)
 --]]
 
 local url2 = url
@@ -20,14 +20,14 @@ local IMAGE_FORMATS = {
 }
 
 local BASIC_VIDEO_AUDIO_FORMATS = {
-	-- Open video format (no CEF codec fix needed)
+	-- Open video format (no GModPatchTool needed)
 	webm = true, -- (VP8, VP9, AV1)
 	-- Browser-supported audio formats
 	mp3 = true, wav = true, ogg = true, m4a = true, aac = true, flac = true,
 }
 
 local PROPRIETARY_FORMATS = {
-	-- Proprietary video formats (require CEF codec fix)
+	-- Proprietary video formats (require GModPatchTool)
 	mp4 = true, mov = true, mkv = true
 }
 
