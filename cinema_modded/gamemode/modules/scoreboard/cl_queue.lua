@@ -196,8 +196,7 @@ local VIDEO = {}
 VIDEO.Padding = 8
 
 function VIDEO:Init()
-
-	self:SetTall(64)
+	self:SetTall(QUEUE.VidHeight)
 
 	self.Title = Label("Unknown", self)
 	self.Title:SetFont("ScoreboardVidTitle")
@@ -207,41 +206,55 @@ function VIDEO:Init()
 	self.Duration:SetFont("ScoreboardVidDuration")
 	self.Duration:SetColor(Color(255, 255, 255))
 
-	self.Controls = vgui.Create("ScoreboardVideoVote", self)
+	local QueueMode = theater.GetQueueMode()
 
+	if QueueMode == QUEUE_VOTEUPDOWN then
+		self.Controls = vgui.Create("ScoreboardVideoVote", self)
+	elseif QueueMode == QUEUE_CHRONOLOGICAL then
+		self.Controls = vgui.Create("ScoreboardVideoControls", self)
+	end
 end
 
 function VIDEO:Update()
 	self.Title:SetText(self.Video.Title)
 	self:SetTooltip(self.Video.Title)
 	self.Duration:SetText(string.FormatSeconds(self.Video.Duration))
-	self.Controls:Update()
+	if IsValid(self.Controls) then
+		self.Controls:Update()
+	end
 end
 
 function VIDEO:SetVideo(vid)
 	self.Video = vid
-	self.Controls:SetVideo(vid)
+	if IsValid(self.Controls) then
+		self.Controls:SetVideo(vid)
+	end
 	self:Update()
 end
 
 function VIDEO:PerformLayout()
+	if not IsValid(self.Controls) then return end
 
 	self.Controls:SizeToContents()
 	self.Controls:CenterVertical()
-	self.Controls:AlignRight(4)
+	self.Controls:AlignRight(self.Padding)
 
 	local x, y = self.Controls:GetPos()
 
 	self.Title:SizeToContents()
-	local w = math.Clamp(self.Title:GetWide(), 0, x - 12)
-	self.Title:SetSize(w, 20)
-	self.Title:AlignTop(self.Padding - 2)
+	local w = self.Title:GetWide()
+
+	-- Clip video title for voting controls
+	w = math.Clamp(w, 0, x - self.Padding * 2)
+
+	self.Title:SetSize(w, self.Title:GetTall())
+
+	self.Title:AlignTop(-2)
 	self.Title:AlignLeft(self.Padding)
 
 	self.Duration:SizeToContents()
-	self.Duration:AlignTop(self.Title:GetTall() + self.Padding)
+	self.Duration:AlignTop(self.Title:GetTall() - 4)
 	self.Duration:AlignLeft(self.Padding)
-
 end
 
 function VIDEO:Paint(w, h)
@@ -255,18 +268,41 @@ vgui.Register("ScoreboardVideo", VIDEO)
 local VIDEOVOTE = {}
 VIDEOVOTE.Padding = 8
 
-function VIDEOVOTE:Init()
+function IsMouseOver(self)
+	local x, y = self:CursorPos()
+	return x >= 0 and y >= 0 and x <= self:GetWide() and y <= self:GetTall()
+end
 
-	self.Votes = Label("0", self)
+function VIDEOVOTE:Init()
+	self.Votes = Label("99", self)
 	self.Votes:SetFont("ScoreboardVidVotes")
+	self.Votes:SetWide(14)
+	self.Votes:SetContentAlignment(5) -- middle
 	self.Votes:SetColor(Color(255, 255, 255))
 
 	self.VoteUp = vgui.Create("DImageButton", self)
 	self.VoteUp:SetSize(16, 16)
 	self.VoteUp:SetImage("theater/up.png")
 	self.VoteUp.DoClick = function()
-		local evt = self.VoteUp.Voted and "cinema_downvote" or "cinema_upvote"
-		RunConsoleCommand(evt, self.Video.Id)
+		RunConsoleCommand("cinema_voteup", self.Video.Id)
+
+		if self.Video.Value then -- player has already voted
+			if self.Video.Value > 0 then
+				self.Video.Value = nil
+				self.Video.Votes = self.Video.Votes - 1
+			else
+				self.Video.Value = 1
+				self.Video.Votes = self.Video.Votes + 2
+			end
+		else -- player has yet to vote
+			self.Video.Value = 1
+			self.Video.Votes = self.Video.Votes + 1
+		end
+
+		self:Update()
+
+		local queue = self:GetParent():GetParent()
+		queue.NextUpdate = (queue.NextUpdate or RealTime()) + 2 -- avoid race conditions with networking
 	end
 	self.VoteUp.Think = function()
 		if IsMouseOver(self.VoteUp) or self.VoteUp.Voted then
@@ -275,7 +311,6 @@ function VIDEOVOTE:Init()
 			self.VoteUp:SetAlpha(25)
 		end
 	end
-
 end
 
 function VIDEOVOTE:AddRemoveButton()
@@ -302,7 +337,7 @@ function VIDEOVOTE:AddRemoveButton()
 end
 
 function VIDEOVOTE:Vote(up)
-	if up == true then
+	if up then
 		self.VoteUp:SetColor(Color(0, 255, 0))
 		self.VoteUp.Voted = true
 	elseif up == false then
@@ -360,8 +395,6 @@ function VIDEOVOTE:PerformLayout()
 end
 
 vgui.Register("ScoreboardVideoVote", VIDEOVOTE)
-
-
 
 
 local VIDEOCONTROLS = {}
