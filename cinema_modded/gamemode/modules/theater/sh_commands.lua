@@ -200,6 +200,15 @@ else
 
 	end)
 
+	TheaterCommand( "cinema_votedown", function( Theater, ply, cmd, args )
+
+		local QueueId = tonumber(args[1])
+		if not QueueId then return end
+
+		Theater:VoteQueuedVideo(ply, QueueId, false)
+
+	end)
+
 	/*
 		Admin/Developer Commands
 	*/
