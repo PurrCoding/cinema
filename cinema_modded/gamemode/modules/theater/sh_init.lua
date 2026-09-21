@@ -5,8 +5,7 @@ THEATER_PRIVILEGED = 4 	-- Theater restricted to privileged players
 
 QUEUE_VOTEUP = 1		-- Only upvote (supported / original 2014 client behaviour)
 QUEUE_CHRONOLOGICAL = 2	-- Play in request order (supported)
--- Mode 3 is legacy: kept for compatibility with older configs, but unsupported.
-QUEUE_VOTEUPDOWN = 3	-- LEGACY / UNSUPPORTED: up and down voting
+QUEUE_VOTEUPDOWN = 3	-- Up and down voting (not supported)
 
 DEPENDENCY_NONE = 0		-- Client needs nothing
 DEPENDENCY_PARTIAL = 1 	-- Client only needs x86-64 Beta
@@ -231,13 +230,13 @@ function GetQueueMode()
 end
 
 -- Modes 1 and 3 rank the queue by votes; mode 2 is request order.
--- Note: mode 3 (QUEUE_VOTEUPDOWN) is legacy and unsupported.
+-- Mode 3 (QUEUE_VOTEUPDOWN) is not supported.
 function IsVoteQueueMode()
 	local mode = GetQueueMode()
 	return mode == QUEUE_VOTEUP or mode == QUEUE_VOTEUPDOWN
 end
 
--- Downvotes only exist in mode 3 (legacy / unsupported).
+-- Downvotes only exist in mode 3 (not supported).
 function AllowsDownvote()
 	return GetQueueMode() == QUEUE_VOTEUPDOWN
 end
