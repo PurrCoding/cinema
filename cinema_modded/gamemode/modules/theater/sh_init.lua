@@ -9,7 +9,7 @@ QUEUE_VOTEUPDOWN = 3	-- Up and down voting (not supported)
 
 DEPENDENCY_NONE = 0		-- Client needs nothing
 DEPENDENCY_PARTIAL = 1 	-- Client only needs x86-64 Beta
-DEPENDENCY_COMPLETE = 2 	-- Client also needs GModPatchTool
+DEPENDENCY_COMPLETE = 2 -- Client also needs GModPatchTool
 
 hook.Add( "Think", "TheaterThink", function()
 	for _, Theater in pairs(theater.GetTheaters()) do
