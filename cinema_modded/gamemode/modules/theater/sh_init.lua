@@ -3,12 +3,13 @@ THEATER_PRIVATE = 1 	-- Private theater which can be rented
 THEATER_REPLICATED = 2 	-- Theater that should be networked
 THEATER_PRIVILEGED = 4 	-- Theater restricted to privileged players
 
-QUEUE_VOTEUPDOWN = 1
-QUEUE_CHRONOLOGICAL = 2
+QUEUE_VOTEUP = 1		-- Only upvote
+QUEUE_CHRONOLOGICAL = 2	-- Play in request order
+QUEUE_VOTEUPDOWN = 3	-- Up and down voting (not supported)
 
 DEPENDENCY_NONE = 0		-- Client needs nothing
 DEPENDENCY_PARTIAL = 1 	-- Client only needs x86-64 Beta
-DEPENDENCY_COMPLETE = 2 	-- Client also needs CEF Codec Fix
+DEPENDENCY_COMPLETE = 2 -- Client also needs GModPatchTool
 
 hook.Add( "Think", "TheaterThink", function()
 	for _, Theater in pairs(theater.GetTheaters()) do
@@ -226,6 +227,18 @@ end
 
 function GetQueueMode()
 	return GetConVar("cinema_queue_mode"):GetInt()
+end
+
+-- Modes 1 and 3 rank the queue by votes; mode 2 is request order.
+-- Mode 3 (QUEUE_VOTEUPDOWN) is not supported.
+function IsVoteQueueMode()
+	local mode = GetQueueMode()
+	return mode == QUEUE_VOTEUP or mode == QUEUE_VOTEUPDOWN
+end
+
+-- Downvotes only exist in mode 3 (not supported).
+function AllowsDownvote()
+	return GetQueueMode() == QUEUE_VOTEUPDOWN
 end
 
 function GetCinemaURL(path)
