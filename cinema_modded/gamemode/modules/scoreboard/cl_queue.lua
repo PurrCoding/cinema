@@ -266,7 +266,7 @@ vgui.Register("ScoreboardVideo", VIDEO)
 
 
 local VIDEOVOTE = {}
-VIDEOVOTE.Padding = 8
+VIDEOVOTE.Padding = 4
 
 function IsMouseOver(self)
 	local x, y = self:CursorPos()
@@ -274,9 +274,9 @@ function IsMouseOver(self)
 end
 
 function VIDEOVOTE:Init()
-	self.Votes = Label("99", self)
+	self.Votes = Label("0", self)
 	self.Votes:SetFont("ScoreboardVidVotes")
-	self.Votes:SetWide(14)
+	self.Votes:SetWide(18)
 	self.Votes:SetContentAlignment(5) -- middle
 	self.Votes:SetColor(Color(255, 255, 255))
 
@@ -284,25 +284,7 @@ function VIDEOVOTE:Init()
 	self.VoteUp:SetSize(16, 16)
 	self.VoteUp:SetImage("theater/up.png")
 	self.VoteUp.DoClick = function()
-		RunConsoleCommand("cinema_voteup", self.Video.Id)
-
-		if self.Video.Value then -- player has already voted
-			if self.Video.Value > 0 then
-				self.Video.Value = nil
-				self.Video.Votes = self.Video.Votes - 1
-			else
-				self.Video.Value = 1
-				self.Video.Votes = self.Video.Votes + 2
-			end
-		else -- player has yet to vote
-			self.Video.Value = 1
-			self.Video.Votes = self.Video.Votes + 1
-		end
-
-		self:Update()
-
-		local queue = self:GetParent():GetParent()
-		queue.NextUpdate = (queue.NextUpdate or RealTime()) + 2 -- avoid race conditions with networking
+		self:CastVote(true)
 	end
 	self.VoteUp.Think = function()
 		if IsMouseOver(self.VoteUp) or self.VoteUp.Voted then
@@ -310,6 +292,50 @@ function VIDEOVOTE:Init()
 		else
 			self.VoteUp:SetAlpha(25)
 		end
+	end
+
+	self.VoteDown = vgui.Create("DImageButton", self)
+	self.VoteDown:SetSize(16, 16)
+	self.VoteDown:SetImage("theater/down.png")
+	self.VoteDown.DoClick = function()
+		self:CastVote(false)
+	end
+	self.VoteDown.Think = function()
+		if IsMouseOver(self.VoteDown) or self.VoteDown.Voted then
+			self.VoteDown:SetAlpha(255)
+		else
+			self.VoteDown:SetAlpha(25)
+		end
+	end
+end
+
+-- Optimistic local update + server command (matches original 2014 vote toggle semantics)
+function VIDEOVOTE:CastVote(positive)
+	if not self.Video then return end
+
+	local cmd = positive and "cinema_voteup" or "cinema_votedown"
+	RunConsoleCommand(cmd, self.Video.Id)
+
+	if self.Video.Value then
+		if (self.Video.Value > 0 and positive) or (self.Video.Value < 0 and not positive) then
+			-- Toggle off same direction
+			self.Video.Votes = self.Video.Votes - self.Video.Value
+			self.Video.Value = nil
+		else
+			-- Switch direction: remove old contribution, add new
+			self.Video.Votes = self.Video.Votes - self.Video.Value + (positive and 1 or -1)
+			self.Video.Value = positive and 1 or -1
+		end
+	else
+		self.Video.Value = positive and 1 or -1
+		self.Video.Votes = self.Video.Votes + self.Video.Value
+	end
+
+	self:Update()
+
+	local queue = self:GetParent():GetParent()
+	if IsValid(queue) then
+		queue.NextUpdate = (queue.NextUpdate or RealTime()) + 2 -- avoid race conditions with networking
 	end
 end
 
@@ -337,15 +363,21 @@ function VIDEOVOTE:AddRemoveButton()
 end
 
 function VIDEOVOTE:Vote(up)
-	if up then
+	if up == true then
 		self.VoteUp:SetColor(Color(0, 255, 0))
 		self.VoteUp.Voted = true
+		self.VoteDown:SetColor(Color(255, 255, 255))
+		self.VoteDown.Voted = nil
 	elseif up == false then
 		self.VoteUp:SetColor(Color(255, 255, 255))
 		self.VoteUp.Voted = nil
+		self.VoteDown:SetColor(Color(255, 0, 0))
+		self.VoteDown.Voted = true
 	else
 		self.VoteUp:SetColor(Color(255, 255, 255))
 		self.VoteUp.Voted = nil
+		self.VoteDown:SetColor(Color(255, 255, 255))
+		self.VoteDown.Voted = nil
 	end
 
 	hook.Run("OnVideoVote")
@@ -357,9 +389,9 @@ function VIDEOVOTE:Update()
 	self.Votes:SetText(self.Video.Votes)
 
 	if self.Video.Value then
-		if self.Video.Value > 0 then -- thumbs up
+		if self.Video.Value > 0 then
 			self:Vote(true)
-		elseif self.Video.Value < 0 then -- thumbs down
+		elseif self.Video.Value < 0 then
 			self:Vote(false)
 		end
 	else
@@ -370,9 +402,9 @@ function VIDEOVOTE:Update()
 	if self.Video.Owner or LocalPlayer():IsAdmin() or
 		(Theater and Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer()) then
 		self:AddRemoveButton()
-		self:SetWide(54)
+		self:SetWide(72)
 	else
-		self:SetWide(34)
+		self:SetWide(52)
 	end
 end
 
@@ -382,15 +414,20 @@ function VIDEOVOTE:SetVideo(vid)
 end
 
 function VIDEOVOTE:PerformLayout()
-	self.VoteUp:Center()
-	self.VoteUp:AlignLeft()
+	-- Horizontal layout fits original VidHeight = 32:
+	-- [up] [votes] [down] [trash?]
+	self.VoteUp:CenterVertical()
+	self.VoteUp:AlignLeft(0)
 
-	self.Votes:Center()
-	self.Votes:MoveRightOf(self.VoteUp, 5)
+	self.Votes:CenterVertical()
+	self.Votes:MoveRightOf(self.VoteUp, 2)
 
-	if self.RemoveBtn then
-		self.RemoveBtn:Center()
-		self.RemoveBtn:AlignRight()
+	self.VoteDown:CenterVertical()
+	self.VoteDown:MoveRightOf(self.Votes, 2)
+
+	if IsValid(self.RemoveBtn) then
+		self.RemoveBtn:CenterVertical()
+		self.RemoveBtn:AlignRight(0)
 	end
 end
 
