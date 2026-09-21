@@ -208,7 +208,8 @@ function VIDEO:Init()
 
 	local QueueMode = theater.GetQueueMode()
 
-	if QueueMode == QUEUE_VOTEUPDOWN then
+	if theater.IsVoteQueueMode() then
+		-- Mode 1 (upvote only) and mode 3 (up/down)
 		self.Controls = vgui.Create("ScoreboardVideoVote", self)
 	elseif QueueMode == QUEUE_CHRONOLOGICAL then
 		self.Controls = vgui.Create("ScoreboardVideoControls", self)
@@ -312,6 +313,7 @@ end
 -- Optimistic local update + server command (matches original 2014 vote toggle semantics)
 function VIDEOVOTE:CastVote(positive)
 	if not self.Video then return end
+	if not positive and not theater.AllowsDownvote() then return end
 
 	local cmd = positive and "cinema_voteup" or "cinema_votedown"
 	RunConsoleCommand(cmd, self.Video.Id)
@@ -398,13 +400,24 @@ function VIDEOVOTE:Update()
 		self:Vote(nil)
 	end
 
+	-- Show down-arrow only in mode 3
+	local allowDown = theater.AllowsDownvote()
+	if IsValid(self.VoteDown) then
+		self.VoteDown:SetVisible(allowDown)
+	end
+
 	local Theater = LocalPlayer():GetTheater()
-	if self.Video.Owner or LocalPlayer():IsAdmin() or
-		(Theater and Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer()) then
+	local canRemove = self.Video.Owner or LocalPlayer():IsAdmin() or
+		(Theater and Theater:IsPrivate() and Theater:GetOwner() == LocalPlayer())
+
+	if canRemove then
 		self:AddRemoveButton()
-		self:SetWide(72)
+		self:SetWide(allowDown and 72 or 54)
 	else
-		self:SetWide(52)
+		if IsValid(self.RemoveBtn) then
+			self.RemoveBtn:SetVisible(false)
+		end
+		self:SetWide(allowDown and 52 or 34)
 	end
 end
 
@@ -415,17 +428,19 @@ end
 
 function VIDEOVOTE:PerformLayout()
 	-- Horizontal layout fits original VidHeight = 32:
-	-- [up] [votes] [down] [trash?]
+	-- [up] [votes] [down?] [trash?]
 	self.VoteUp:CenterVertical()
 	self.VoteUp:AlignLeft(0)
 
 	self.Votes:CenterVertical()
 	self.Votes:MoveRightOf(self.VoteUp, 2)
 
-	self.VoteDown:CenterVertical()
-	self.VoteDown:MoveRightOf(self.Votes, 2)
+	if IsValid(self.VoteDown) and self.VoteDown:IsVisible() then
+		self.VoteDown:CenterVertical()
+		self.VoteDown:MoveRightOf(self.Votes, 2)
+	end
 
-	if IsValid(self.RemoveBtn) then
+	if IsValid(self.RemoveBtn) and self.RemoveBtn:IsVisible() then
 		self.RemoveBtn:CenterVertical()
 		self.RemoveBtn:AlignRight(0)
 	end
