@@ -29,6 +29,37 @@ local VALID_FORMATS = {
 	["VBR MP3"] = true,
 }
 
+-- length parsing
+local function ParseLength(value)
+	if value == nil then return nil end
+
+	-- Plain seconds string/number, e.g. "213.44"
+	local seconds = tonumber(value)
+	if isnumber(seconds) then
+		return seconds
+	end
+
+	-- Colon-separated time string: MM:SS or HH:MM:SS
+	if isstring(value) then
+		local parts = string.Explode(":", value)
+		local total = 0
+
+		for _, part in ipairs(parts) do
+			local n = tonumber(part)
+			if not isnumber(n) then
+				return nil -- unparseable segment
+			end
+			total = total * 60 + n
+		end
+
+		if #parts > 0 then
+			return total
+		end
+	end
+
+	return nil
+end
+
 -- file selection logic
 local function FindBestVideoFile(files, requestedFile)
 	local candidates = {}
@@ -422,9 +453,14 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 			return onFailure("No compatible video files found")
 		end
 
+		local duration = ParseLength(bestMatch.length)
+		if not isnumber(duration) then
+			return onFailure("Invalid video length in metadata")
+		end
+
 		local info = {
 			title = GenerateTitle(response, bestMatch, identifier),
-			duration = math.Round(bestMatch.length or 0),
+			duration = math.Round(duration),
 			thumbnail = GetThumbnail(response.files, bestMatch.name)
 		}
 
