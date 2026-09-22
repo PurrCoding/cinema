@@ -94,7 +94,7 @@ Common server ConVars:
 
 | ConVar | Default | Description |
 |--------|---------|-------------|
-| `cinema_queue_mode` | `1` | `1` = vote queue · `2` = chronological |
+| `cinema_queue_mode` | `1` | `1` = upvote only · `2` = chronological · `3` = up/down voting |
 | `cinema_skip_ratio` | `0.66` | Fraction of players required to voteskip |
 | `cinema_video_duration_max` | `10800` | Max duration (seconds) in public theaters |
 | `cinema_allow_reset` | `0` | Reset theater when empty |
