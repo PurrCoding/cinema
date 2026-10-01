@@ -43,6 +43,33 @@
             line-height: 1.65;
         }
 
+        .button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 20px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background: #f5f5f5;
+            color: #111;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .button:hover {
+            background: #fff;
+            border-color: #666;
+            transform: translateY(-1px);
+        }
+
+        .github-icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+
         .footer {
             margin-top: 70px;
             color: #666;
@@ -65,6 +92,13 @@
             It is an unofficial continuation of the original Cinema addon,
             keeping the experience alive while adding new features and improvements.
         </p>
+
+        <a class="button" href="https://github.com/PurrCoding/cinema" target="_blank" rel="noopener noreferrer">
+            <svg class="github-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56v-2.17c0-.31.21-.68.8-.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/>
+            </svg>
+            View on GitHub
+        </a>
 
         <div class="footer">
             <p>
