@@ -10,11 +10,11 @@
 <body>
 	<!-- Codec requirements popup -->
 	<div id="codec-popup" class="codec-popup hidden">
-		<div class="popup-overlay" onclick="closeCodecPopup()"></div>
+		<div class="popup-overlay" data-action="close-codec"></div>
 		<div class="popup-content">
 			<div class="popup-header">
 				<h3>GModPatchTool Required</h3>
-				<button class="close-btn" onclick="closeCodecPopup()">×</button>
+				<button class="close-btn" data-action="close-codec">×</button>
 			</div>
 			<div class="popup-body">
 				<div class="popup-icon">🎥</div>
@@ -29,8 +29,8 @@
 				</div>
 			</div>
 			<div class="popup-actions">
-				<button onclick="closeCodecPopup()" class="btn-secondary">Cancel</button>
-				<button onclick="openCodecInstructions()" class="btn-primary">Get GModPatchTool</button>
+				<button data-action="close-codec" class="btn-secondary">Cancel</button>
+				<button data-action="codec-instructions" class="btn-primary">Get GModPatchTool</button>
 			</div>
 		</div>
 	</div>
@@ -57,7 +57,7 @@
 						autocomplete="off"
 						spellcheck="false"
 					>
-					<button onclick="requestUrl()" class="submit-btn" id="submit-btn">
+					<button data-action="request-url" class="submit-btn" id="submit-btn">
 						<span class="btn-text">Request</span>
 						<span class="btn-icon">→</span>
 					</button>
