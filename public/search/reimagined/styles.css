@@ -76,11 +76,6 @@ button { color: inherit; }
 .section-heading { flex: 0 0 auto; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
 .section-kicker { color: #697485; }
 .section-heading h2 { margin: 3px 0 0; font-size: 22px; letter-spacing: -.025em; }
-.service-search {
-  display: flex; align-items: center; gap: 9px; width: 220px; padding: 9px 12px;
-  border: 1px solid var(--line); border-radius: 11px; background: rgba(255,255,255,.025); color: var(--muted);
-}
-.service-search input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--text); font-size: 12px; }
 .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: clamp(6px, 1vw, 10px); }
 .service-card {
   position: relative; min-height: clamp(82px, 10vh, 116px); padding: clamp(10px, 1.4vw, 16px); display: flex; flex-direction: column; justify-content: space-between;
@@ -174,7 +169,6 @@ footer i { margin-right: 4px; }
   .request-box { flex-direction: column; align-items: stretch; }
   .request-btn { justify-content: center; }
   .section-heading { align-items: stretch; flex-direction: column; }
-  .service-search { width: 100%; }
   .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   footer { align-items: flex-start; flex-direction: column; }
 }
