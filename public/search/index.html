@@ -53,7 +53,7 @@
   <div id="codec-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="codec-title">
     <button class="modal-backdrop" data-action="close-codec" aria-label="Close dialog"></button>
     <div class="modal-card">
-      <button class="modal-close" data-action="close-codec" data-i18n-aria-label="dialog.close">
+      <button class="modal-close" data-action="close-codec" aria-label="Close dialog">
         <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
       <div class="modal-icon"><i class="fa-solid fa-video" aria-hidden="true"></i></div>
@@ -75,9 +75,9 @@
   </div>
 
   <div id="support-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="support-title">
-    <button class="modal-backdrop" data-action="close-support" data-i18n-aria-label="dialog.closeSupport"></button>
+    <button class="modal-backdrop" data-action="close-support" aria-label="Close supported formats"></button>
     <div class="modal-card support-card">
-      <button class="modal-close" data-action="close-support" data-i18n-aria-label="dialog.close">
+      <button class="modal-close" data-action="close-support" aria-label="Close dialog">
         <i class="fa-solid fa-xmark" aria-hidden="true"></i>
       </button>
       <span class="section-kicker">REFERENCE</span>
@@ -92,8 +92,6 @@
     <span id="toast-text"></span>
   </div>
 
-  <script src="./scripts/i18n.js"></script>
-  <script src="./scripts/translations.js"></script>
   <script src="./scripts/app.js"></script>
 </body>
 </html>
