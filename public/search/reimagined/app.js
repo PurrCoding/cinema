@@ -240,7 +240,7 @@ function renderServices(filter = '') {
       <span class="service-meta">
         <span>
           <span class="service-name">${service.name}</span>
-          <span class="service-sub">${service.group} · ${disabled ? 'Codec needed' : 'Open provider'}</span>
+          <span class="service-sub">${service.group} · ${disabled ? 'Codec needed' : ''}</span>
         </span>
         ${disabled ? '<span class="badge">CODEC</span>' : '<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>'}
       </span>
