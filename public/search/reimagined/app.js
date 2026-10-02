@@ -1,0 +1,171 @@
+'use strict';
+
+const services = [
+  { name: 'YouTube', icon: 'fa-brands fa-youtube', url: 'https://youtube.com/', requiresCodec: false, group: 'Video' },
+  { name: 'TikTok', icon: 'fa-brands fa-tiktok', url: 'https://tiktok.com/', requiresCodec: true, group: 'Video' },
+  { name: 'SoundCloud', icon: 'fa-brands fa-soundcloud', url: 'https://soundcloud.com/discover', requiresCodec: false, group: 'Audio' },
+  { name: 'Dailymotion', icon: 'fa-brands fa-dailymotion', url: 'https://www.dailymotion.com/', requiresCodec: true, group: 'Video' },
+  { name: 'Twitch', icon: 'fa-brands fa-twitch', url: 'https://www.twitch.tv/', requiresCodec: true, group: 'Live' },
+  { name: 'Rumble', icon: 'fa-solid fa-play', url: 'https://rumble.com/', requiresCodec: true, group: 'Video' },
+  { name: 'Kick', icon: 'fa-solid fa-bolt', url: 'https://kick.com/', requiresCodec: true, group: 'Live' },
+  { name: 'Bilibili', icon: 'fa-solid fa-tv', url: 'https://www.bilibili.com/', requiresCodec: true, group: 'Video' },
+  { name: 'Archive', icon: 'fa-solid fa-box-archive', url: 'https://archive.org/details/movies', requiresCodec: true, group: 'Archive' },
+  { name: 'VK Видео', icon: 'fa-brands fa-vk', url: 'https://vkvideo.ru/', requiresCodec: true, group: 'Video' },
+  { name: 'Одноклассники', icon: 'fa-solid fa-people-group', url: 'https://ok.ru/video', requiresCodec: true, group: 'Video' }
+];
+
+let hasCodecSupport = false;
+
+const $ = (selector) => document.querySelector(selector);
+
+function gmodAvailable(name) {
+  return typeof gmod !== 'undefined' && typeof gmod[name] === 'function';
+}
+
+function checkCodecSupport() {
+  const video = document.createElement('video');
+  hasCodecSupport = video.canPlayType('video/mp4; codecs="avc1.42E01E"') === 'probably';
+  return hasCodecSupport;
+}
+
+function playUISound(click) {
+  if (gmodAvailable('clickSound')) gmod.clickSound(click);
+}
+
+function showToast(message, type = 'success') {
+  const toast = $('#toast');
+  $('#toast-text').textContent = message;
+  $('#toast-icon').className = type === 'error'
+    ? 'fa-solid fa-circle-exclamation'
+    : 'fa-solid fa-circle-check';
+  toast.classList.remove('hidden');
+  clearTimeout(showToast.timer);
+  showToast.timer = setTimeout(() => toast.classList.add('hidden'), 2200);
+}
+
+function openExternal(url) {
+  if (gmodAvailable('openUrl')) {
+    gmod.openUrl(url);
+    return;
+  }
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
+function requestUrl() {
+  const input = $('#urlinput');
+  const url = input.value.trim();
+
+  if (!url) {
+    showToast('Paste a media URL first.', 'error');
+    input.focus();
+    return;
+  }
+
+  try {
+    const parsed = new URL(url);
+    if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error();
+  } catch {
+    showToast('Please enter a valid HTTP(S) URL.', 'error');
+    input.focus();
+    return;
+  }
+
+  if (!gmodAvailable('requestUrl')) {
+    showToast('Cinema request bridge is unavailable.', 'error');
+    return;
+  }
+
+  $('#submit-btn').disabled = true;
+  playUISound(true);
+  gmod.requestUrl(url);
+  showToast('Media request sent.');
+  setTimeout(() => { $('#submit-btn').disabled = false; }, 900);
+}
+
+function showCodecPopup(service) {
+  $('#service-name-popup').textContent = service.name;
+  $('#codec-modal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCodecPopup() {
+  $('#codec-modal').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function selectService(service) {
+  playUISound(true);
+  openExternal(service.url);
+}
+
+function renderServices(filter = '') {
+  const grid = $('#services-grid');
+  const query = filter.trim().toLowerCase();
+  const matches = services.filter(service =>
+    service.name.toLowerCase().includes(query) ||
+    service.group.toLowerCase().includes(query)
+  );
+
+  grid.innerHTML = '';
+  $('#empty-state').classList.toggle('hidden', matches.length > 0);
+
+  matches.forEach(service => {
+    const disabled = service.requiresCodec && !hasCodecSupport;
+    const card = document.createElement('button');
+    card.type = 'button';
+    card.className = 'service-card' + (disabled ? ' disabled' : '');
+    card.innerHTML = `
+      <span class="service-icon"><i class="${service.icon}" aria-hidden="true"></i></span>
+      <span class="service-meta">
+        <span>
+          <span class="service-name">${service.name}</span>
+          <span class="service-sub">${service.group} · ${disabled ? 'Codec needed' : 'Open provider'}</span>
+        </span>
+        ${disabled ? '<span class="badge">CODEC</span>' : '<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>'}
+      </span>
+    `;
+    card.addEventListener('mouseenter', () => playUISound(false));
+    card.addEventListener('click', () => disabled ? showCodecPopup(service) : selectService(service));
+    grid.appendChild(card);
+  });
+}
+
+function initialize() {
+  checkCodecSupport();
+  renderServices();
+
+  $('#submit-btn').addEventListener('click', requestUrl);
+  $('#urlinput').addEventListener('keydown', event => {
+    if (event.key === 'Enter') requestUrl();
+  });
+  $('#urlinput').addEventListener('input', event => {
+    $('#clear-btn').classList.toggle('hidden', !event.target.value);
+  });
+  $('#clear-btn').addEventListener('click', () => {
+    $('#urlinput').value = '';
+    $('#clear-btn').classList.add('hidden');
+    $('#urlinput').focus();
+  });
+  $('#service-filter').addEventListener('input', event => renderServices(event.target.value));
+
+  document.querySelectorAll('[data-action="close-codec"]').forEach(el => {
+    el.addEventListener('click', closeCodecPopup);
+  });
+  $('[data-action="codec-instructions"]').addEventListener('click', () => {
+    openExternal('https://www.solsticegamestudios.com/fixmedia/');
+    closeCodecPopup();
+  });
+
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') closeCodecPopup();
+    if (
+      document.activeElement !== $('#urlinput') &&
+      document.activeElement !== $('#service-filter') &&
+      !event.ctrlKey && !event.metaKey && !event.altKey &&
+      event.key.length === 1
+    ) $('#urlinput').focus();
+  });
+}
+
+document.addEventListener('DOMContentLoaded', initialize);
+window.requestUrl = requestUrl;
