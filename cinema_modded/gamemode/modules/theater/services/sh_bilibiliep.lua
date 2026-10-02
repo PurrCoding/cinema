@@ -13,7 +13,9 @@ local SERVICE = {
 local META_URL = "https://www.bilibili.com/bangumi/play/ep%s"
 
 function SERVICE:Match(url)
-	return url.host:match("www.bilibili.com") and string.find(url.path, "/bangumi/play/ep[%w*].") or false
+	local host = url.host or ""
+	local path = url.path or ""
+	return host:match("www.bilibili.com") and string.find(path, "/bangumi/play/ep[%w*].") or false
 end
 
 if CLIENT then
@@ -49,10 +51,14 @@ end
 
 function SERVICE:GetURLInfo(url)
 	local info = {}
-	if url.host:match("www.bilibili.com") then
-		local s = string.match(url.path, "ep[%w*]+")
-		s1 = string.Split(s, "ep")
-		info.Data = s1[2]
+	local host = url.host or ""
+	local path = url.path or ""
+	if host:match("www.bilibili.com") then
+		local s = string.match(path, "ep[%w*]+")
+		if s then
+			local s1 = string.Split(s, "ep")
+			info.Data = s1[2]
+		end
 	end
 	return info.Data and info or false
 end
