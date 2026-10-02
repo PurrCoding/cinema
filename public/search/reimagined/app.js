@@ -221,10 +221,7 @@ function selectService(service) {
 
 function renderServices(filter = '') {
   const grid = $('#services-grid');
-  const query = filter.trim().toLowerCase();
-  const matches = services.filter(service =>
-    service.name.toLowerCase().includes(query)
-  );
+  const matches = services;
 
   grid.innerHTML = '';
   $('#empty-state').classList.toggle('hidden', matches.length > 0);
@@ -266,7 +263,6 @@ function initialize() {
     $('#clear-btn').classList.add('hidden');
     $('#urlinput').focus();
   });
-  $('#service-filter').addEventListener('input', event => renderServices(event.target.value));
   $('#support-info-btn').addEventListener('click', showSupportPopup);
 
   document.querySelectorAll('[data-action="close-support"]').forEach(el => {
