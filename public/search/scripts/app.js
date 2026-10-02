@@ -231,7 +231,7 @@ function selectService(service) {
 
 function renderServices(filter = '') {
   const grid = $('#services-grid');
-  const matches = services;
+  const matches = services.filter(service => !(window.MP_LEGACY_GMOD === true && service.requiresCodec));
 
   grid.innerHTML = '';
   $('#empty-state').classList.toggle('hidden', matches.length > 0);
@@ -240,7 +240,7 @@ function renderServices(filter = '') {
     const disabled = service.requiresCodec && !hasCodecSupport;
     const card = document.createElement('button');
     card.type = 'button';
-    card.className = 'service-card' + (disabled ? ' disabled' : '');
+    card.className = 'service-card' + (disabled ? ' disabled' : '') + (service.requiresCodec ? ' codec-required' : '');
     card.innerHTML = `
       <span class="service-icon"><i class="${service.icon}" aria-hidden="true"></i></span>
       <span class="service-meta">
