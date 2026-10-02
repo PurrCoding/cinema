@@ -70,14 +70,6 @@ html, body {
 	backdrop-filter: blur(14px);
 }
 
-.eyebrow {
-	font-size: 11px;
-	font-weight: 700;
-	letter-spacing: 0.34em;
-	opacity: 0.48;
-	margin-bottom: 18px;
-}
-
 .welcome {
 	width: 660px;
 	max-width: 100%;
@@ -100,15 +92,36 @@ html, body {
 	font-size: 10px;
 	font-weight: 700;
 	letter-spacing: 0.18em;
-	opacity: 0.62;
+	opacity: 0.72;
 }
 
 .status-dot {
-	width: 6px;
-	height: 6px;
+	width: 7px;
+	height: 7px;
 	border-radius: 50%;
-	background: #b9c0ca;
-	box-shadow: 0 0 12px rgba(210,220,235,0.55);
+	background: #d8dde5;
+	box-shadow:
+		0 0 4px rgba(255,255,255,0.95),
+		0 0 9px rgba(190,205,230,0.85),
+		0 0 18px rgba(170,190,220,0.55);
+	animation: led-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes led-pulse {
+	0%, 100% {
+		opacity: 0.72;
+		box-shadow:
+			0 0 3px rgba(255,255,255,0.8),
+			0 0 7px rgba(190,205,230,0.65),
+			0 0 13px rgba(170,190,220,0.4);
+	}
+	50% {
+		opacity: 1;
+		box-shadow:
+			0 0 5px rgba(255,255,255,1),
+			0 0 11px rgba(205,220,245,0.95),
+			0 0 23px rgba(175,200,235,0.7);
+	}
 }
 
 .info {
@@ -119,7 +132,7 @@ html, body {
 }
 
 .hint {
-	max-width: 560px;
+	max-width: 680px;
 	margin: 0 auto;
 	font-size: 14px;
 	line-height: 1.7;
