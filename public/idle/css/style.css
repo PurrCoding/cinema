@@ -15,55 +15,28 @@ html, body {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
-	background:
-		radial-gradient(circle at 50% 35%, rgba(70, 75, 90, 0.24), transparent 42%),
-		linear-gradient(145deg, #111318 0%, #090a0d 58%, #06070a 100%);
+	background: -webkit-radial-gradient(center, ellipse cover, #333 0%, #161616 100%);
 }
-
-.grid {
-	position: absolute;
-	inset: 0;
-	opacity: 0.18;
-	background-image:
-		linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
-		linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
-	background-size: 72px 72px;
-	mask-image: linear-gradient(to bottom, transparent, #000 25%, #000 75%, transparent);
-}
-
-.ambient {
-	position: absolute;
-	width: 420px;
-	height: 420px;
-	border-radius: 50%;
-	filter: blur(80px);
-	opacity: 0.12;
-	pointer-events: none;
-}
-
-.ambient-left { left: -180px; bottom: -220px; background: #596273; }
-.ambient-right { right: -180px; top: -220px; background: #39404d; }
 
 .welcome-panel {
 	position: absolute;
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -54%);
-	width: min(760px, calc(100% - 80px));
-	padding: 54px 64px 58px;
+	width: min(900px, calc(100% - 64px));
+	padding: 58px 76px 64px;
 	text-align: center;
-	border: 1px solid rgba(255,255,255,0.09);
+	border: 1px solid rgba(255,255,255,0.06);
 	border-radius: 24px;
-	background: rgba(16, 18, 23, 0.76);
-	box-shadow: 0 28px 90px rgba(0,0,0,0.48), inset 0 1px rgba(255,255,255,0.045);
-	backdrop-filter: blur(14px);
+	background: rgba(8, 8, 8, 0.34);
+	box-shadow: 0 12px 32px rgba(0,0,0,0.22), inset 0 1px rgba(255,255,255,0.025);
 }
 
 .welcome {
 	width: 660px;
 	max-width: 100%;
-	height: 171px;
-	margin: 0 auto 22px;
+	height: 205px;
+	margin: 0 auto 32px;
 	background: url(../images/theaterwelcome.png) center / contain no-repeat;
 }
 
@@ -72,9 +45,9 @@ html, body {
 	align-items: center;
 	gap: 9px;
 	padding: 8px 13px;
-	border: 1px solid rgba(255,255,255,0.09);
+	border: 1px solid rgba(255,255,255,0.08);
 	border-radius: 999px;
-	background: rgba(255,255,255,0.035);
+	background: rgba(255,255,255,0.025);
 	font-size: 10px;
 	font-weight: 700;
 	letter-spacing: 0.18em;
@@ -86,35 +59,22 @@ html, body {
 	height: 7px;
 	border-radius: 50%;
 	background: #d8dde5;
-	box-shadow: 0 0 4px rgba(255,255,255,0.95), 0 0 9px rgba(190,205,230,0.85), 0 0 18px rgba(170,190,220,0.55);
-	animation: led-pulse 2.2s ease-in-out infinite;
-}
-
-@keyframes led-pulse {
-	0%, 100% {
-		opacity: 0.72;
-		box-shadow: 0 0 3px rgba(255,255,255,0.8), 0 0 7px rgba(190,205,230,0.65), 0 0 13px rgba(170,190,220,0.4);
-	}
-	50% {
-		opacity: 1;
-		box-shadow: 0 0 5px rgba(255,255,255,1), 0 0 11px rgba(205,220,245,0.95), 0 0 23px rgba(175,200,235,0.7);
-	}
+	box-shadow: 0 0 5px rgba(205,215,230,0.65);
 }
 
 .info {
 	margin: 28px 0 10px;
-	font-size: 24px;
+	font-size: 30px;
 	font-weight: 600;
 	letter-spacing: -0.02em;
 }
 
 .hint {
-	max-width: 680px;
+	max-width: 760px;
 	margin: 0 auto;
-	font-size: 15px;
-	line-height: 1.75;
+	font-size: 18px;
+	line-height: 1.7;
 	color: rgba(255,255,255,0.68);
-	text-shadow: 0 1px 2px rgba(0,0,0,0.35);
 }
 
 .hint strong { color: rgba(255,255,255,0.92); font-weight: 600; }
@@ -127,7 +87,7 @@ html, body {
 	display: flex;
 	align-items: center;
 	gap: 14px;
-	font-size: 9px;
+	font-size: 10px;
 	font-weight: 700;
 	letter-spacing: 0.24em;
 	opacity: 0.28;
@@ -140,4 +100,23 @@ html, body {
 	.welcome { height: 130px; }
 	.info { font-size: 20px; }
 	.footer { left: 18px; right: 18px; }
+}
+
+@keyframes theater-curtain-open {
+	from { opacity: 1; }
+	to { opacity: 0; visibility: hidden; }
+}
+
+.idle-page::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 999;
+	pointer-events: none;
+	background: #050609;
+	animation: theater-curtain-open 1.4s ease-out 0.1s both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.idle-page::after { animation: none; opacity: 0; visibility: hidden; }
 }
