@@ -125,7 +125,7 @@ function requestUrl() {
 	if (url.length === 0) return;
 
 	statusIndicator.classList.remove('hidden');
-	statusText.textContent = 'Request sent!';
+	statusText.textContent = CINEMA_I18N.t('toast.sent');
 	submitBtn.disabled = true;
 
 	setTimeout(() => {
@@ -190,6 +190,8 @@ function isValidURL(string) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+	CINEMA_I18N.initFromHash();
+	CINEMA_I18N.applyTranslations();
 	initializeServices();
 	initializeUrlInput();
 	initializeAutoInput();
