@@ -1,45 +1,27 @@
 <!DOCTYPE html>
 <html>
-
 <head>
 	<title>Cinema Default Page</title>
 </head>
-
 <body>
+	<main class="idle-page">
+		<div class="ambient ambient-left"></div>
+		<div class="ambient ambient-right"></div>
+		<div class="grid"></div>
 
-	<!--
-		Landing page for Garry's Mod Cinema gamemode
+		<section class="welcome-panel">
+			<div class="welcome" aria-label="Cinema"></div>
+			<div class="status"><span class="status-dot"></span> THE THEATER IS IDLE</div>
+			<p class="info">Nothing is playing right now.</p>
+			<p class="hint">To request a video, open the queue by holding down your spawn menu key and press the <strong>'Request Video'</strong> button</p>
+		</section>
 
-		This webpage appears during the idle theater state
-		while there are no videos queued to play. 
-	-->
-
-	<div id="content" class="welcome-page">
-
-		<!-- Curtains -->
-		<div class="right-curtain"></div>
-		<div class="left-curtain"></div>
-		<div class="top-curtain"></div>
-
-		<!-- Welcome header -->
-		<div class="header-container">
-			<div class="welcome"></div>
-		</div>
-
-		<!-- Information -->
-		<div class="info-container">
-
-			<div class="info">To request a video, open the queue by holding down your spawn menu key and press the 'Request Video' button
-			</div>
-
-		</div>
-
-		<!-- Footer -->
-		<div class="footer-container"></div>
-
-	</div>
-
+		<footer class="footer">
+			<span>READY WHEN YOU ARE</span>
+			<span class="footer-line"></span>
+			<span>CINEMA</span>
+		</footer>
+	</main>
 	<link rel="stylesheet" href="css/style.css" type="text/css">
 </body>
-
 </html>
