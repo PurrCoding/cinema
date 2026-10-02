@@ -191,6 +191,6 @@ button { color: inherit; }
   .service-icon { width: 36px; height: 36px; border-radius: 8px; font-size: 18px; }
 }
 
-/* Legacy GMod Chromium fallback */
+/* Legacy GMod Chromium fallback */\n.legacy-gmod .support-link { display: none !important; }\n.legacy-gmod .service-card.codec-required { display: none !important; }\n.legacy-gmod .legacy-limit-notice { display: flex; }\n.legacy-limit-notice {\n  display: none; align-items: center; gap: 12px; margin: 0 0 18px; padding: 13px 15px;\n  border: 1px solid rgba(231,76,60,.32); border-radius: 12px;\n  background: rgba(231,76,60,.08); color: rgba(255,255,255,.88);\n}\n.legacy-limit-icon {\n  width: 36px; height: 36px; flex: 0 0 36px; display: grid; place-items: center;\n  border-radius: 9px; background: rgba(231,76,60,.14); color: #e74c3c;\n}\n.legacy-limit-notice strong { display: block; font-size: 12px; }\n.legacy-limit-notice p { margin: 2px 0 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
 .legacy-gmod .modal-backdrop { backdrop-filter: none; }
 .legacy-gmod .service-card:focus-visible { outline: 2px solid rgba(0,139,253,0.88); }
