@@ -74,7 +74,7 @@ function PANEL:Init()
 	self.Browser = vgui.Create( "TheaterHTML", self.BrowserContainer )
 	self.Browser.isContainer = true
 
-	local searchURL = theater.GetCinemaURL("search/index.html")
+	local searchURL = theater.GetCinemaURL("search/index.html") .. "#lang=" .. (translations and translations:GetLanguage() or "en")
 	self.Browser.OnDocumentReady = function(panel, url)
 
 		if (not panel.searchUrl) then panel.searchUrl = searchURL end
