@@ -24,7 +24,7 @@ body {
 button, input { font: inherit; }
 button { color: inherit; }
 
-.shell { width: min(1080px, calc(100% - 32px)); min-height: 100vh; margin: 0 auto; padding: clamp(14px, 3vh, 28px) 0 clamp(14px, 3vh, 24px); display: flex; flex-direction: column; }
+.shell { width: min(1080px, calc(100% - 32px)); min-height: 100vh; margin: 0 auto; padding: clamp(14px, 3vh, 28px) 0 clamp(14px, 3vh, 24px); display: flex; flex-direction: column; justify-content: center; }
 .section-heading, .request-box, .modal-actions { display: flex; align-items: center; }
 .section-kicker, .eyebrow {
   font-size: 10px; font-weight: 800; letter-spacing: .14em;
@@ -68,7 +68,7 @@ button { color: inherit; }
 .support-link > i:last-child { font-size: 9px; transition: transform .18s ease; }
 .support-link:hover > i:last-child { transform: translateX(3px); }
 
-.providers { min-width: 0; display: flex; flex-direction: column; flex: 1 1 auto; min-height: 0; }
+.providers { min-width: 0; display: flex; flex-direction: column; flex: 0 1 auto; min-height: 0; }
 .section-heading { flex: 0 0 auto; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
 .section-kicker { color: rgba(255,255,255,0.44); }
 .section-heading h2 { margin: 3px 0 0; font-size: 22px; letter-spacing: -.025em; }
