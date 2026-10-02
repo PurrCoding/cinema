@@ -16,6 +16,74 @@ const services = [
 
 let hasCodecSupport = false;
 
+const supportGroups = [
+  {
+    title: 'Images',
+    icon: 'fa-regular fa-image',
+    note: 'Direct image URL. The extension is used to identify the media type.',
+    items: [
+      ['.jpg / .jpeg', 'https://example.com/poster.jpg'],
+      ['.png', 'https://example.com/image.png'],
+      ['.gif', 'https://example.com/animation.gif'],
+      ['.bmp', 'https://example.com/image.bmp']
+    ]
+  },
+  {
+    title: 'Video',
+    icon: 'fa-solid fa-video',
+    note: 'MP4, MOV and MKV use the proprietary-video service and require GModPatchTool. WebM does not.',
+    items: [
+      ['.webm', 'https://example.com/video.webm'],
+      ['.mp4', 'https://example.com/video.mp4'],
+      ['.mov', 'https://example.com/video.mov'],
+      ['.mkv', 'https://example.com/video.mkv']
+    ]
+  },
+  {
+    title: 'Audio',
+    icon: 'fa-solid fa-music',
+    note: 'Direct audio files are handled by the basic URL service.',
+    items: [
+      ['.mp3', 'https://example.com/audio.mp3'],
+      ['.wav', 'https://example.com/audio.wav'],
+      ['.ogg', 'https://example.com/audio.ogg'],
+      ['.m4a', 'https://example.com/audio.m4a'],
+      ['.aac', 'https://example.com/audio.aac'],
+      ['.flac', 'https://example.com/audio.flac']
+    ]
+  },
+  {
+    title: 'Streaming',
+    icon: 'fa-solid fa-tower-broadcast',
+    note: 'The file extension must be visible to Cinema so it can select HLS or DASH.',
+    items: [
+      ['.m3u8', 'https://example.com/stream.m3u8'],
+      ['.mpd', 'https://example.com/manifest.mpd']
+    ]
+  },
+  {
+    title: 'Supported service URLs',
+    icon: 'fa-solid fa-globe',
+    note: 'Share/provider URLs are matched by their service implementation.',
+    items: [
+      ['YouTube', 'https://www.youtube.com/watch?v=VIDEO_ID'],
+      ['TikTok', 'https://www.tiktok.com/@user/video/VIDEO_ID'],
+      ['Twitch', 'https://www.twitch.tv/CHANNEL'],
+      ['SoundCloud', 'https://soundcloud.com/artist/track'],
+      ['Dailymotion', 'https://www.dailymotion.com/video/VIDEO_ID'],
+      ['Rumble', 'https://rumble.com/VIDEO_PATH.html'],
+      ['Kick', 'https://kick.com/CHANNEL'],
+      ['Bilibili', 'https://www.bilibili.com/video/VIDEO_ID'],
+      ['Archive.org', 'https://archive.org/details/ITEM_ID'],
+      ['VK Video', 'https://vkvideo.ru/video-VIDEO_ID'],
+      ['Одноклассники', 'https://ok.ru/video/VIDEO_ID'],
+      ['Google Drive', 'https://drive.google.com/file/d/FILE_ID/view'],
+      ['MEGA', 'https://mega.nz/file/FILE_ID#KEY'],
+      ['Jellyfin', 'https://media.example.com/web/index.html#/details?id=ITEM_ID&serverId=SERVER_ID']
+    ]
+  }
+];
+
 const $ = (selector) => document.querySelector(selector);
 
 function gmodAvailable(name) {
@@ -30,6 +98,53 @@ function checkCodecSupport() {
 
 function playUISound(click) {
   if (gmodAvailable('clickSound')) gmod.clickSound(click);
+}
+
+function renderSupportContent() {
+  const root = $('#support-content');
+  root.innerHTML = supportGroups.map(group => `
+    <section class="support-group">
+      <div class="support-group-title">
+        <span class="support-group-icon"><i class="${group.icon}" aria-hidden="true"></i></span>
+        <div><h3>${group.title}</h3><p>${group.note}</p></div>
+      </div>
+      <div class="support-items">
+        ${group.items.map(([label, example]) => `
+          <button type="button" class="support-item" data-copy="${example}" title="Copy example">
+            <span class="support-label">${label}</span>
+            <code>${example}</code>
+            <i class="fa-regular fa-copy" aria-hidden="true"></i>
+          </button>
+        `).join('')}
+      </div>
+    </section>
+  `).join('');
+
+  root.querySelectorAll('[data-copy]').forEach(button => {
+    button.addEventListener('click', async () => {
+      const value = button.dataset.copy;
+      try {
+        await navigator.clipboard.writeText(value);
+        showToast('Example URL copied.');
+      } catch {
+        $('#urlinput').value = value;
+        $('#clear-btn').classList.remove('hidden');
+        closeSupportPopup();
+        $('#urlinput').focus();
+      }
+    });
+  });
+}
+
+function showSupportPopup() {
+  renderSupportContent();
+  $('#support-modal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSupportPopup() {
+  $('#support-modal').classList.add('hidden');
+  document.body.style.overflow = '';
 }
 
 function showToast(message, type = 'success') {
@@ -147,6 +262,11 @@ function initialize() {
     $('#urlinput').focus();
   });
   $('#service-filter').addEventListener('input', event => renderServices(event.target.value));
+  $('#support-info-btn').addEventListener('click', showSupportPopup);
+
+  document.querySelectorAll('[data-action="close-support"]').forEach(el => {
+    el.addEventListener('click', closeSupportPopup);
+  });
 
   document.querySelectorAll('[data-action="close-codec"]').forEach(el => {
     el.addEventListener('click', closeCodecPopup);
@@ -157,7 +277,10 @@ function initialize() {
   });
 
   document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') closeCodecPopup();
+    if (event.key === 'Escape') {
+      closeCodecPopup();
+      closeSupportPopup();
+    }
     if (
       document.activeElement !== $('#urlinput') &&
       document.activeElement !== $('#service-filter') &&
