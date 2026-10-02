@@ -41,7 +41,11 @@
           <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
         </button>
       </div>
-      <div class="hint"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Direct files, share links and supported storage/streaming URLs are accepted.</div>
+      <button id="support-info-btn" class="support-link" type="button">
+        <i class="fa-solid fa-circle-info" aria-hidden="true"></i>
+        Supported formats & examples
+        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+      </button>
     </section>
 
     <section class="providers" aria-labelledby="providers-title">
@@ -87,6 +91,19 @@
           Get GModPatchTool <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
         </button>
       </div>
+    </div>
+  </div>
+
+  <div id="support-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="support-title">
+    <button class="modal-backdrop" data-action="close-support" aria-label="Close supported formats"></button>
+    <div class="modal-card support-card">
+      <button class="modal-close" data-action="close-support" aria-label="Close dialog">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <span class="section-kicker">REFERENCE</span>
+      <h2 id="support-title">Supported formats & URLs</h2>
+      <p class="support-intro">These examples reflect the URL services currently implemented in Cinema.</p>
+      <div id="support-content" class="support-content"></div>
     </div>
   </div>
 
