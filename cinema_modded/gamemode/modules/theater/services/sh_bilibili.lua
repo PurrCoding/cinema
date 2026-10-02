@@ -301,8 +301,6 @@ if CLIENT then
     end
 end
 
-local INFO_HANDLERS
-
 local INFO_HANDLERS = {
     live = function(state, value, page, onSuccess, onFailure)
         http.Fetch(state.api:format(value), function(body, status)
