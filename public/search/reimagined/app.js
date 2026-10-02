@@ -223,8 +223,7 @@ function renderServices(filter = '') {
   const grid = $('#services-grid');
   const query = filter.trim().toLowerCase();
   const matches = services.filter(service =>
-    service.name.toLowerCase().includes(query) ||
-    service.group.toLowerCase().includes(query)
+    service.name.toLowerCase().includes(query)
   );
 
   grid.innerHTML = '';
@@ -240,7 +239,7 @@ function renderServices(filter = '') {
       <span class="service-meta">
         <span>
           <span class="service-name">${service.name}</span>
-          <span class="service-sub">${service.group} · ${disabled ? 'Codec needed' : ''}</span>
+          ${disabled ? '<span class="service-sub">Codec needed</span>' : ''}
         </span>
         ${disabled ? '<span class="badge">CODEC</span>' : '<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>'}
       </span>
