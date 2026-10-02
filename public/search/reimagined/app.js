@@ -7,7 +7,7 @@ const services = [
   { name: 'Twitch', icon: 'fa-brands fa-twitch', url: 'https://www.twitch.tv/', requiresCodec: true, group: 'Live' },
   { name: 'Rumble', icon: 'fa-solid fa-play', url: 'https://rumble.com/', requiresCodec: true, group: 'Video' },
   { name: 'Kick', icon: 'fa-solid fa-bolt', url: 'https://kick.com/', requiresCodec: true, group: 'Live' },
-  { name: 'Bilibili', icon: 'fa-solid fa-tv', url: 'https://www.bilibili.com/', requiresCodec: true, group: 'Video' },
+  { name: 'Bilibili', icon: 'fa-solid fa-tv', url: 'https://www.bilibili.com/', requiresCodec: true, group: 'Video', action: 'open' },
   { name: 'Archive', icon: 'fa-solid fa-box-archive', url: 'https://archive.org/details/movies', requiresCodec: true, group: 'Archive' },
   { name: 'VK Видео', icon: 'fa-brands fa-vk', url: 'https://vkvideo.ru/', requiresCodec: true, group: 'Video' },
   { name: 'Одноклассники', icon: 'fa-solid fa-people-group', url: 'https://ok.ru/video', requiresCodec: true, group: 'Video' }
@@ -160,6 +160,14 @@ function navigateInGmod(url) {
   window.location.href = url;
 }
 
+function openService(url) {
+  if (gmodAvailable('openUrl')) {
+    gmod.openUrl(url);
+    return;
+  }
+  window.open(url, '_blank', 'noopener,noreferrer');
+}
+
 function requestUrl() {
   const input = $('#urlinput');
   const url = input.value.trim();
@@ -204,6 +212,10 @@ function closeCodecPopup() {
 
 function selectService(service) {
   playUISound(true);
+  if (service.action === 'open') {
+    openService(service.url);
+    return;
+  }
   navigateInGmod(service.url);
 }
 
