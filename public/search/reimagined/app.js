@@ -67,7 +67,9 @@ const supportGroups = [
     items: [
       ['Own domain', 'https://media.example.com/video.mp4'],
       ['Discord CDN', 'https://cdn.discordapp.com/attachments/CHANNEL_ID/MESSAGE_ID/video.mp4'],
-      ['Bunny CDN', 'https://your-zone.b-cdn.net/video.mp4']
+      ['Bunny CDN', 'https://your-zone.b-cdn.net/video.mp4'],
+      ['Google Drive', 'https://drive.google.com/file/d/FILE_ID/view'],
+      ['MEGA', 'https://mega.nz/file/FILE_ID#KEY']
     ]
   },
   {
