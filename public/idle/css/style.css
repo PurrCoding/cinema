@@ -23,8 +23,8 @@ html, body {
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -54%);
-	width: min(760px, calc(100% - 80px));
-	padding: 48px 64px 54px;
+	width: min(900px, calc(100% - 64px));
+	padding: 58px 76px 64px;
 	text-align: center;
 	border: 1px solid rgba(255,255,255,0.06);
 	border-radius: 24px;
@@ -70,7 +70,7 @@ html, body {
 }
 
 .hint {
-	max-width: 680px;
+	max-width: 760px;
 	margin: 0 auto;
 	font-size: 15px;
 	line-height: 1.75;
