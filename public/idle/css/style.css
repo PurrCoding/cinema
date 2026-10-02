@@ -64,7 +64,7 @@ html, body {
 	max-width: 100%;
 	height: 171px;
 	margin: 0 auto 22px;
-	background: url(images/theaterwelcome.png) center / contain no-repeat;
+	background: url(../images/theaterwelcome.png) center / contain no-repeat;
 }
 
 .status {
