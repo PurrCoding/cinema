@@ -190,3 +190,7 @@ button { color: inherit; }
   .service-card { min-height: 68px; padding: 8px; }
   .service-icon { width: 36px; height: 36px; border-radius: 8px; font-size: 18px; }
 }
+
+/* Legacy GMod Chromium fallback */
+.legacy-gmod .modal-backdrop { backdrop-filter: none; }
+.legacy-gmod .service-card:focus-visible { outline: 2px solid rgba(0,139,253,0.88); }
