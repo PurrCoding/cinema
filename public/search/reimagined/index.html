@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Cinema — Find media</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark"><i class="fa-solid fa-film" aria-hidden="true"></i></span>
+        <div>
+          <strong>Cinema</strong>
+          <span>Media request</span>
+        </div>
+      </div>
+      <span class="version-pill">SEARCH · V2 CONCEPT</span>
+    </header>
+
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="eyebrow"><i class="fa-solid fa-wand-magic-sparkles" aria-hidden="true"></i> Pick something to watch</div>
+      <h1 id="hero-title">What do you want to play?</h1>
+      <p>Paste a media URL, or choose a service below.</p>
+
+      <div class="request-box">
+        <div class="input-wrap">
+          <i class="fa-solid fa-link" aria-hidden="true"></i>
+          <input id="urlinput" type="url" autocomplete="off" spellcheck="false"
+                 placeholder="https://youtube.com/watch?v=..." aria-label="Media URL">
+          <button id="clear-btn" class="icon-btn hidden" type="button" aria-label="Clear URL">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+          </button>
+        </div>
+        <button id="submit-btn" class="request-btn" type="button">
+          <span>Request media</span>
+          <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="hint"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Direct files, share links and supported storage/streaming URLs are accepted.</div>
+    </section>
+
+    <section class="providers" aria-labelledby="providers-title">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">SERVICES</span>
+          <h2 id="providers-title">Choose a provider</h2>
+        </div>
+        <label class="service-search">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input id="service-filter" type="search" placeholder="Filter services..." aria-label="Filter services">
+        </label>
+      </div>
+
+      <div id="services-grid" class="services-grid" aria-live="polite"></div>
+      <p id="empty-state" class="empty-state hidden">No service matches your search.</p>
+    </section>
+
+    <footer>
+      <span><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> External providers open outside Cinema when available.</span>
+      <span>GModPatchTool may be required for some services.</span>
+    </footer>
+  </main>
+
+  <div id="codec-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="codec-title">
+    <button class="modal-backdrop" data-action="close-codec" aria-label="Close dialog"></button>
+    <div class="modal-card">
+      <button class="modal-close" data-action="close-codec" aria-label="Close dialog">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+      <div class="modal-icon"><i class="fa-solid fa-video" aria-hidden="true"></i></div>
+      <span class="section-kicker">CODEC REQUIRED</span>
+      <h2 id="codec-title">GModPatchTool is required</h2>
+      <p><strong id="service-name-popup"></strong> needs the H.264 codec support provided by GModPatchTool.</p>
+      <ol>
+        <li>Install/apply GModPatchTool.</li>
+        <li>Restart Garry's Mod completely.</li>
+        <li>Return here and try the service again.</li>
+      </ol>
+      <div class="modal-actions">
+        <button class="btn-secondary" data-action="close-codec" type="button">Not now</button>
+        <button class="btn-primary" data-action="codec-instructions" type="button">
+          Get GModPatchTool <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite">
+    <i id="toast-icon" class="fa-solid fa-circle-check" aria-hidden="true"></i>
+    <span id="toast-text"></span>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
