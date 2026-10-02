@@ -35,7 +35,7 @@ html, body {
 .welcome {
 	width: 660px;
 	max-width: 100%;
-	height: 171px;
+	height: 205px;
 	margin: 0 auto 32px;
 	background: url(../images/theaterwelcome.png) center / contain no-repeat;
 }
@@ -64,7 +64,7 @@ html, body {
 
 .info {
 	margin: 28px 0 10px;
-	font-size: 24px;
+	font-size: 30px;
 	font-weight: 600;
 	letter-spacing: -0.02em;
 }
@@ -72,8 +72,8 @@ html, body {
 .hint {
 	max-width: 760px;
 	margin: 0 auto;
-	font-size: 15px;
-	line-height: 1.75;
+	font-size: 18px;
+	line-height: 1.7;
 	color: rgba(255,255,255,0.68);
 }
 
@@ -87,7 +87,7 @@ html, body {
 	display: flex;
 	align-items: center;
 	gap: 14px;
-	font-size: 9px;
+	font-size: 10px;
 	font-weight: 700;
 	letter-spacing: 0.24em;
 	opacity: 0.28;
