@@ -2,7 +2,6 @@
 
 const services = [
   { name: 'YouTube', icon: 'fa-brands fa-youtube', url: 'https://youtube.com/', requiresCodec: false, group: 'Video' },
-  { name: 'TikTok', icon: 'fa-brands fa-tiktok', url: 'https://tiktok.com/', requiresCodec: true, group: 'Video' },
   { name: 'SoundCloud', icon: 'fa-brands fa-soundcloud', url: 'https://soundcloud.com/discover', requiresCodec: false, group: 'Audio' },
   { name: 'Dailymotion', icon: 'fa-brands fa-dailymotion', url: 'https://www.dailymotion.com/', requiresCodec: true, group: 'Video' },
   { name: 'Twitch', icon: 'fa-brands fa-twitch', url: 'https://www.twitch.tv/', requiresCodec: true, group: 'Live' },
@@ -67,7 +66,6 @@ const supportGroups = [
     note: 'Share/provider URLs are matched by their service implementation.',
     items: [
       ['YouTube', 'https://www.youtube.com/watch?v=VIDEO_ID'],
-      ['TikTok', 'https://www.tiktok.com/@user/video/VIDEO_ID'],
       ['Twitch', 'https://www.twitch.tv/CHANNEL'],
       ['SoundCloud', 'https://soundcloud.com/artist/track'],
       ['Dailymotion', 'https://www.dailymotion.com/video/VIDEO_ID'],
