@@ -74,6 +74,7 @@ end
 
 STATES.bv = {
     class = "bilibili",
+    route = "bv",
     timed = true,
     api = "https://api.bilibili.com/x/web-interface/view?bvid=%s",
     player = "https://player.bilibili.com/player.html?bvid=%s&p=%s&autoplay=1"
@@ -81,6 +82,7 @@ STATES.bv = {
 
 STATES.av = {
     class = "bilibili_legacy",
+    route = "av",
     timed = true,
     api = "https://api.bilibili.com/x/web-interface/view?aid=%s",
     player = "https://player.bilibili.com/player.html?aid=%s&p=%s&autoplay=1"
@@ -88,6 +90,7 @@ STATES.av = {
 
 STATES.live = {
     class = "bilibili_live",
+    route = "live",
     timed = false,
     api = "https://api.live.bilibili.com/room/v1/Room/get_info?room_id=%s",
     player = "https://www.bilibili.com/blackboard/live/live-mobile-playerV3.html?roomId=%s&danmaku=1&autoplay=1"
@@ -95,6 +98,7 @@ STATES.live = {
 
 STATES.episode = {
     class = "bilibiliep",
+    route = "episode",
     timed = true,
     api = "https://api.bilibili.com/pgc/view/web/season?ep_id=%s",
     player = "https://www.bilibili.com/bangumi/play/ep%s"
@@ -384,6 +388,28 @@ local function RegisterState(name, state)
         NeedsCodecFix = true,
         ClassName = name
     }, { __index = BASE })
+
+    function service:Match(url)
+        local detected = ROUTER.Match(url)
+        return detected == state.route
+    end
+
+    function service:GetURLInfo(url)
+        local detected, value, page = ROUTER.Match(url)
+        if detected ~= state.route then return false end
+
+        if detected == "bv" then
+            return { Data = VideoData("bv", value, page) }
+        elseif detected == "av" then
+            return { Data = VideoData("av", value, page) }
+        elseif detected == "live" then
+            return { Data = "live|" .. value }
+        elseif detected == "episode" then
+            return { Data = "episode|" .. value }
+        end
+
+        return false
+    end
 
     function service:GetVideoInfo(data, onSuccess, onFailure)
         return GetVideoInfo(data, onSuccess, onFailure)
