@@ -24,12 +24,12 @@ html, body {
 	top: 50%;
 	transform: translate(-50%, -54%);
 	width: min(760px, calc(100% - 80px));
-	padding: 54px 64px 58px;
+	padding: 48px 64px 54px;
 	text-align: center;
-	border: 1px solid rgba(255,255,255,0.08);
+	border: 1px solid rgba(255,255,255,0.06);
 	border-radius: 24px;
-	background: rgba(16, 18, 23, 0.94);
-	box-shadow: 0 18px 48px rgba(0,0,0,0.38), inset 0 1px rgba(255,255,255,0.035);
+	background: rgba(8, 8, 8, 0.34);
+	box-shadow: 0 12px 32px rgba(0,0,0,0.22), inset 0 1px rgba(255,255,255,0.025);
 }
 
 .welcome {
