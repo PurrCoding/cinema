@@ -72,9 +72,10 @@ function SERVICE:GetVideoInfo(d, onSuccess, onFailure)
         http.Fetch(f, function(r, s)
             if s == 0 then return onFailure("Theater_RequestFailed") end
             local rT = util.JSONToTable(r)
-            local data = rT.data
+            local data = rT and rT.data
+            if data == nil or not data.pages then return onFailure("Theater_RequestFailed") end
             local pdata = data.pages[tonumber(sT[2])] or data.pages[1]
-            if data == nil then return onFailure("Theater_RequestFailed") end
+            if pdata == nil then return onFailure("Theater_RequestFailed") end
             local info = {}
             info.title = data.title .. " (" .. sT[2] .. "p)"
             info.duration = pdata.duration + 1
