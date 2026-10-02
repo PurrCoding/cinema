@@ -295,7 +295,6 @@ function initialize() {
     }
     if (
       document.activeElement !== $('#urlinput') &&
-      document.activeElement !== $('#service-filter') &&
       !event.ctrlKey && !event.metaKey && !event.altKey &&
       event.key.length === 1
     ) $('#urlinput').focus();
