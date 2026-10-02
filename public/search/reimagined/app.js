@@ -61,6 +61,16 @@ const supportGroups = [
     ]
   },
   {
+    title: 'Direct URL sources',
+    icon: 'fa-solid fa-link',
+    note: 'Direct HTTPS media URLs can be hosted on a public domain, Discord CDN or Bunny CDN. Local files, localhost/private hosts and IP-address URLs are not supported.',
+    items: [
+      ['Own domain', 'https://media.example.com/video.mp4'],
+      ['Discord CDN', 'https://cdn.discordapp.com/attachments/CHANNEL_ID/MESSAGE_ID/video.mp4'],
+      ['Bunny CDN', 'https://your-zone.b-cdn.net/video.mp4']
+    ]
+  },
+  {
     title: 'Supported service URLs',
     icon: 'fa-solid fa-globe',
     note: 'Share/provider URLs are matched by their service implementation.',
