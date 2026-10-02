@@ -53,12 +53,8 @@
 
   var fa = document.createElement('link');
   fa.rel = 'stylesheet';
-  fa.href = 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css';
+  fa.href = legacyGmod
+    ? 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css'
+    : 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css';
   document.head.appendChild(fa);
-
-  if (legacyGmod) {
-    var faPolyfill = document.createElement('style');
-    faPolyfill.textContent = "/* Font Awesome 7 polyfill for older Chromium */\n.legacy-gmod .fa::before,\n.legacy-gmod .fa-brands::before,\n.legacy-gmod .fa-classic::before,\n.legacy-gmod .fa-regular::before,\n.legacy-gmod .fa-solid::before,\n.legacy-gmod .fab::before,\n.legacy-gmod .far::before,\n.legacy-gmod .fas::before {\n  content: var(--fa) !important;\n}";
-    document.head.appendChild(faPolyfill);
-  }
 })();
