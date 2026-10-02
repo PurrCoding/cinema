@@ -7,7 +7,7 @@ const services = [
   { name: 'Twitch', icon: 'fa-brands fa-twitch', url: 'https://www.twitch.tv/', requiresCodec: true, group: 'Live' },
   { name: 'Rumble', icon: 'fa-solid fa-play', url: 'https://rumble.com/', requiresCodec: true, group: 'Video' },
   { name: 'Kick', icon: 'fa-brands fa-kickstarter', url: 'https://kick.com/', requiresCodec: true, group: 'Live' },
-  { name: 'Bilibili', icon: 'fa-brands fa-bilibili', url: 'https://www.bilibili.com/', requiresCodec: true, group: 'Video', action: 'open' },
+  { name: 'Bilibili', icon: 'fa-brands fa-bilibili', url: 'https://www.bilibili.com/', requiresCodec: true, group: 'Video', action: 'steam-overlay' },
   { name: 'Archive', icon: 'fa-brands fa-internet-archive', url: 'https://archive.org/details/movies', requiresCodec: true, group: 'Archive' },
   { name: 'VK Видео', icon: 'fa-brands fa-vk', url: 'https://vkvideo.ru/', requiresCodec: true, group: 'Video' },
   { name: 'Одноклассники', icon: 'fa-brands fa-odnoklassniki', url: 'https://ok.ru/video', requiresCodec: true, group: 'Video' }
@@ -171,11 +171,11 @@ function navigateInGmod(url) {
 }
 
 function openService(url) {
-  if (gmodAvailable('openUrl')) {
-    gmod.openUrl(url);
+  if (!gmodAvailable('openUrl')) {
+    showToast('Steam Overlay is unavailable.', 'error');
     return;
   }
-  window.open(url, '_blank', 'noopener,noreferrer');
+  gmod.openUrl(url);
 }
 
 function requestUrl() {
@@ -222,7 +222,7 @@ function closeCodecPopup() {
 
 function selectService(service) {
   playUISound(true);
-  if (service.action === 'open') {
+  if (service.action === 'steam-overlay') {
     openService(service.url);
     return;
   }
