@@ -193,7 +193,7 @@ footer i { margin-right: 4px; }
   .support-link { margin-top: 7px; }
   .section-heading { margin-bottom: 10px; }
   .service-card { min-height: 78px; }
-  .service-icon { width: 30px; height: 30px; font-size: 14px; }
+  .service-icon { width: 34px; height: 34px; font-size: 15px; }
   footer { margin-top: 16px; padding-top: 10px; }
 }
 
@@ -203,6 +203,6 @@ footer i { margin-right: 4px; }
   .hero h1 { margin: 6px 0; font-size: clamp(24px, 5vh, 34px); }
   .hero p { display: none; }
   .service-card { min-height: 68px; padding: 8px; }
-  .service-icon { width: 27px; height: 27px; border-radius: 8px; }
+  .service-icon { width: 31px; height: 31px; border-radius: 8px; }
   footer { display: none; }
 }
