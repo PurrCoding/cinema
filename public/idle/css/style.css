@@ -16,7 +16,6 @@ html, body {
 	height: 100%;
 	overflow: hidden;
 	background:
-		radial-gradient(circle at 50% 35%, rgba(70, 75, 90, 0.18), transparent 42%),
 		linear-gradient(145deg, #111318 0%, #090a0d 58%, #06070a 100%);
 }
 
