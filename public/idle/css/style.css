@@ -143,6 +143,26 @@ html, body {
 }
 
 
+@keyframes theater-curtain-open {
+	0% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+		visibility: hidden;
+	}
+}
+
+.idle-page::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 999;
+	pointer-events: none;
+	background: #050609;
+	animation: theater-curtain-open 1.8s ease-out 0.1s both;
+}
+
 @keyframes theater-fade-in {
 	from {
 		opacity: 0;
