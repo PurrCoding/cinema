@@ -2,7 +2,7 @@
 	Base Media Service for Cinema Gamemode
 
 	This file serves as the foundation for all media services in the Cinema theater system.
-	All video platform services (YouTube, Dailymotion, TikTok, etc.) inherit from this base.
+	All video platform services inherit from this base.
 
 	Key Concepts:
 	- SERVICE table: Defines service properties and methods
@@ -81,7 +81,6 @@ function SERVICE:Match(url)
 		Examples from real services:
 		- YouTube: return url.host and (url.host:match("youtu.be") or url.host:match("youtube.com"))
 		- Dailymotion: return url.host and url.host:match("dailymotion.com")
-		- TikTok: return url.host and url.host:match("tiktok.com")
 	--]]
 	return false
 end
