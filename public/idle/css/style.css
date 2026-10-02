@@ -141,3 +141,39 @@ html, body {
 	.info { font-size: 20px; }
 	.footer { left: 18px; right: 18px; }
 }
+
+
+@keyframes theater-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes theater-panel-in {
+	from {
+		opacity: 0;
+	transform: translate(-50%, -50%) scale(0.985);
+	}
+	to {
+		opacity: 1;
+	transform: translate(-50%, -54%) scale(1);
+	}
+}
+
+.idle-page {
+	animation: theater-fade-in 1.35s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+.welcome-panel {
+	animation: theater-panel-in 1.1s 0.18s cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.idle-page,
+	.welcome-panel {
+		animation: none;
+	}
+}
