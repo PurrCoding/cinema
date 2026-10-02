@@ -13,24 +13,24 @@
 		<div class="popup-overlay" data-action="close-codec"></div>
 		<div class="popup-content">
 			<div class="popup-header">
-				<h3>GModPatchTool Required</h3>
+				<h3 data-i18n="codec.title"></h3>
 				<button class="close-btn" data-action="close-codec">×</button>
 			</div>
 			<div class="popup-body">
 				<div class="popup-icon">🎥</div>
-				<p><strong id="service-name-popup"></strong> requires GModPatchTool to function properly.</p>
+				<p><strong id="service-name-popup"></strong> <span data-i18n="codec.body"></span></p>
 				<div class="instructions">
-					<h4>To enable this service:</h4>
+					<h4 data-i18n="codec.steps_title"></h4>
 					<ol>
-						<li>Download and apply GModPatchTool</li>
-						<li>Restart Garry's Mod completely</li>
-						<li>Return to Cinema and try again</li>
+						<li data-i18n="codec.step1"></li>
+						<li data-i18n="codec.step2"></li>
+						<li data-i18n="codec.step3"></li>
 					</ol>
 				</div>
 			</div>
 			<div class="popup-actions">
-				<button data-action="close-codec" class="btn-secondary">Cancel</button>
-				<button data-action="codec-instructions" class="btn-primary">Get GModPatchTool</button>
+				<button data-action="close-codec" class="btn-secondary" data-i18n="codec.cancel"></button>
+				<button data-action="codec-instructions" class="btn-primary" data-i18n="codec.get"></button>
 			</div>
 		</div>
 	</div>
@@ -47,23 +47,23 @@
 		<!-- URL input section -->
 		<section class="url-section">
 			<div class="url-container">
-				<h2 class="url-title">Or paste a direct URL</h2>
+				<h2 class="url-title" data-i18n="url.title"></h2>
 				<div class="input-group">
 					<input
 						id="urlinput"
 						type="url"
 						class="url-input"
-						placeholder="Paste your video URL here..."
+						data-i18n-placeholder="url.placeholder" placeholder="Paste your video URL here..."
 						autocomplete="off"
 						spellcheck="false"
 					>
 					<button data-action="request-url" class="submit-btn" id="submit-btn">
-						<span class="btn-text">Request</span>
+						<span class="btn-text" data-i18n="url.request"></span>
 						<span class="btn-icon">→</span>
 					</button>
 				</div>
 				<div class="supported-formats">
-					<span>Supports common share links from supported services, images (JPG, PNG, GIF, BMP), video files (MP4, MOV, MKV, WebM), audio files (MP3, WAV, OGG, M4A, AAC, FLAC), and streaming formats (DASH, M3U8), also Google Drive, Mega and Jellyfin (details url) links</span>
+					<span data-i18n="url.formats"></span>
 				</div>
 			</div>
 		</section>
@@ -72,11 +72,13 @@
 		<div id="status-indicator" class="status-indicator hidden">
 			<div class="status-content">
 				<div class="spinner"></div>
-				<span id="status-text">Checking URL...</span>
+				<span id="status-text" data-i18n="toast.checking"></span>
 			</div>
 		</div>
 	</div>
 
+	<script src="./i18n.js"></script>
+	<script src="./translations.js"></script>
 	<script src="./scripts/request.js"></script>
 </body>
 </html>
