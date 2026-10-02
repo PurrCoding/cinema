@@ -118,7 +118,7 @@ function renderSupportContent() {
       </div>
       <div class="support-items">
         ${group.items.map(([label, example]) => `
-          <button type="button" class="support-item" data-copy="${example}" title="Copy example">
+          <button type="button" class="support-item" data-copy="${example}" title="${CINEMA_I18N.t('support.copy')}">
             <span class="support-label">${label}</span>
             <code>${example}</code>
             <i class="fa-regular fa-copy" aria-hidden="true"></i>
@@ -133,7 +133,7 @@ function renderSupportContent() {
       const value = button.dataset.copy;
       try {
         await navigator.clipboard.writeText(value);
-        showToast('Example URL copied.');
+        showToast(CINEMA_I18N.t('toast.copied'));
       } catch {
         $('#urlinput').value = value;
         $('#clear-btn').classList.remove('hidden');
@@ -183,7 +183,7 @@ function requestUrl() {
   const url = input.value.trim();
 
   if (!url) {
-    showToast('Paste a media URL first.', 'error');
+    showToast(CINEMA_I18N.t('toast.paste'), 'error');
     input.focus();
     return;
   }
@@ -192,20 +192,20 @@ function requestUrl() {
     const parsed = new URL(url);
     if (!['http:', 'https:'].includes(parsed.protocol)) throw new Error();
   } catch {
-    showToast('Please enter a valid HTTP(S) URL.', 'error');
+    showToast(CINEMA_I18N.t('toast.invalid'), 'error');
     input.focus();
     return;
   }
 
   if (!gmodAvailable('requestUrl')) {
-    showToast('Cinema request bridge is unavailable.', 'error');
+    showToast(CINEMA_I18N.t('toast.bridge'), 'error');
     return;
   }
 
   $('#submit-btn').disabled = true;
   playUISound(true);
   gmod.requestUrl(url);
-  showToast('Media request sent.');
+  showToast(CINEMA_I18N.t('toast.sent'));
   setTimeout(() => { $('#submit-btn').disabled = false; }, 900);
 }
 
@@ -258,6 +258,7 @@ function renderServices(filter = '') {
 }
 
 function initialize() {
+  CINEMA_I18N.initFromHash();
   checkCodecSupport();
   renderServices();
 
