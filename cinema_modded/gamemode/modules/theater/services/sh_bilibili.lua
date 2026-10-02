@@ -14,8 +14,10 @@ local SERVICE = {
 local META_URL = "https://www.bilibili.com/video/%s"
 
 function SERVICE:Match(url) -- 匹配B站网址
-    local bv = url.host:match("www.bilibili.com") and string.match(url.path, "BV[%w*]+")
-    local b23 = url.host:match("b23.tv") and string.match(url.path, "BV[%w*]+")
+    local host = url.host or ""
+    local path = url.path or ""
+    local bv = host:match("www.bilibili.com") and string.match(path, "BV[%w*]+")
+    local b23 = host:match("b23.tv") and string.match(path, "BV[%w*]+")
     return bv or b23 or false
 end
 
@@ -54,7 +56,12 @@ function SERVICE:GetURLInfo(url)
         bp = 1
     end
 
-    if url.host:match("www.bilibili.com") or url.host:match("b23.tv") then info.Data = string.match(url.path, "BV[%w*]+") .. " " .. bp end
+    local host = url.host or ""
+    local path = url.path or ""
+    if host:match("www.bilibili.com") or host:match("b23.tv") then
+        local bv = string.match(path, "BV[%w*]+")
+        if bv then info.Data = bv .. " " .. bp end
+    end
     return info.Data and info or false
 end
 
