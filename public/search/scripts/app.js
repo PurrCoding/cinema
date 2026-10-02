@@ -132,7 +132,7 @@ function renderSupportContent() {
     button.addEventListener('click', async () => {
       const value = button.dataset.copy;
       try {
-        await navigator.clipboard.writeText(value);
+        await (window.MP_COPY_TEXT ? window.MP_COPY_TEXT(value) : navigator.clipboard.writeText(value));
         showToast('Example URL copied.');
       } catch {
         $('#urlinput').value = value;
