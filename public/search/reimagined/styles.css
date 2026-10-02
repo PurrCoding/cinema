@@ -29,7 +29,7 @@ button, input { font: inherit; }
 button { color: inherit; }
 
 .shell { width: min(1080px, calc(100% - 32px)); min-height: 100vh; margin: 0 auto; padding: clamp(14px, 3vh, 28px) 0 clamp(14px, 3vh, 24px); display: flex; flex-direction: column; }
-.section-heading, .request-box, .modal-actions, footer { display: flex; align-items: center; }
+.section-heading, .request-box, .modal-actions { display: flex; align-items: center; }
 .section-kicker, .eyebrow {
   font-size: 10px; font-weight: 800; letter-spacing: .14em;
 }
@@ -98,8 +98,6 @@ button { color: inherit; }
 }
 .empty-state { padding: 35px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 15px; }
 
-footer { justify-content: space-between; gap: 16px; margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--line); color: #5e6877; font-size: 10px; }
-footer i { margin-right: 4px; }
 
 .hidden { display: none !important; }
 
@@ -164,13 +162,11 @@ footer i { margin-right: 4px; }
   .hero { margin-bottom: 30px; }
   .hero p { margin-bottom: 18px; }
   .services-grid { flex: 1 1 auto; }
-  footer { flex: 0 0 auto; }
   .hero { margin-bottom: 52px; }
   .request-box { flex-direction: column; align-items: stretch; }
   .request-btn { justify-content: center; }
   .section-heading { align-items: stretch; flex-direction: column; }
   .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  footer { align-items: flex-start; flex-direction: column; }
 }
 @media (max-width: 390px) {
   .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
@@ -188,7 +184,6 @@ footer i { margin-right: 4px; }
   .section-heading { margin-bottom: 10px; }
   .service-card { min-height: 78px; }
   .service-icon { width: 40px; height: 40px; font-size: 20px; }
-  footer { margin-top: 16px; padding-top: 10px; }
 }
 
 @media (max-height: 600px) {
@@ -198,5 +193,4 @@ footer i { margin-right: 4px; }
   .hero p { display: none; }
   .service-card { min-height: 68px; padding: 8px; }
   .service-icon { width: 36px; height: 36px; border-radius: 8px; font-size: 18px; }
-  footer { display: none; }
 }
