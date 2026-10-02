@@ -58,12 +58,15 @@ jobs:
             original_size=$(stat -c%s "$file")
             html-minifier-terser \
               --collapse-whitespace \
+              --collapse-boolean-attributes \
               --remove-comments \
               --remove-optional-tags \
               --remove-redundant-attributes \
               --remove-script-type-attributes \
               --remove-tag-whitespace \
               --use-short-doctype \
+              --sort-attributes \
+              --sort-class-name \
               --minify-css true \
               --minify-js true \
               --output "$file" \
@@ -80,7 +83,7 @@ jobs:
           find public -name "*.css" -type f | while read file; do
             echo "Processing: $file"
             original_size=$(stat -c%s "$file")
-            cleancss --output "$file" "$file"
+            cleancss -O3 --output "$file" "$file"
             new_size=$(stat -c%s "$file")
             savings=$((original_size - new_size))
             echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
@@ -93,7 +96,7 @@ jobs:
           find public -name "*.js" -type f | while read file; do
             echo "Processing: $file"
             original_size=$(stat -c%s "$file")
-            terser "$file" --compress --mangle --output "$file"
+            terser "$file" --compress passes=3 --mangle --output "$file"
             new_size=$(stat -c%s "$file")
             savings=$((original_size - new_size))
             echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
