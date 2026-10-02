@@ -22,7 +22,7 @@ function SERVICE:Match(url) -- 匹配B站网址
 end
 
 if CLIENT then
-    local PLAYURL = "www.bilibili.com/blackboard/html5mobileplayer.html?bvid=%s&autoplay=1&p=%s"
+    local PLAYURL = "https://player.bilibili.com/player.html?bvid=%s&autoplay=1&p=%s"
     local JS = [[
         var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName('video')[0];
@@ -72,9 +72,10 @@ function SERVICE:GetVideoInfo(d, onSuccess, onFailure)
         http.Fetch(f, function(r, s)
             if s == 0 then return onFailure("Theater_RequestFailed") end
             local rT = util.JSONToTable(r)
-            local data = rT.data
+            local data = rT and rT.data
+            if data == nil or not data.pages then return onFailure("Theater_RequestFailed") end
             local pdata = data.pages[tonumber(sT[2])] or data.pages[1]
-            if data == nil then return onFailure("Theater_RequestFailed") end
+            if pdata == nil then return onFailure("Theater_RequestFailed") end
             local info = {}
             info.thumbnail = data.pic
             info.title = data.title .. " (" .. sT[2] .. "p)"
