@@ -248,7 +248,7 @@ function renderServices(filter = '') {
           <span class="service-name">${service.name}</span>
           ${disabled ? '<span class="service-sub">Codec needed</span>' : ''}
         </span>
-        ${disabled ? '<span class="badge">CODEC</span>' : '<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>'}
+        ${disabled ? '<span class="badge">CODEC</span>' : '<span class="service-arrow"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>'}
       </span>
     `;
     card.addEventListener('mouseenter', () => playUISound(false));
