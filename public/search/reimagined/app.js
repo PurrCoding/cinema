@@ -5,10 +5,10 @@ const services = [
   { name: 'SoundCloud', icon: 'fa-brands fa-soundcloud', url: 'https://soundcloud.com/discover', requiresCodec: false, group: 'Audio' },
   { name: 'Dailymotion', icon: 'fa-brands fa-dailymotion', url: 'https://www.dailymotion.com/', requiresCodec: true, group: 'Video' },
   { name: 'Twitch', icon: 'fa-brands fa-twitch', url: 'https://www.twitch.tv/', requiresCodec: true, group: 'Live' },
-  { name: 'Rumble', icon: 'fa-brands fa-rumble', url: 'https://rumble.com/', requiresCodec: true, group: 'Video' },
+  { name: 'Rumble', icon: 'fa-solid fa-play', url: 'https://rumble.com/', requiresCodec: true, group: 'Video' },
   { name: 'Kick', icon: 'fa-brands fa-kickstarter', url: 'https://kick.com/', requiresCodec: true, group: 'Live' },
   { name: 'Bilibili', icon: 'fa-brands fa-bilibili', url: 'https://www.bilibili.com/', requiresCodec: true, group: 'Video', action: 'open' },
-  { name: 'Archive', icon: 'fa-solid fa-box-archive', url: 'https://archive.org/details/movies', requiresCodec: true, group: 'Archive' },
+  { name: 'Archive', icon: 'fa-brands fa-internet-archive', url: 'https://archive.org/details/movies', requiresCodec: true, group: 'Archive' },
   { name: 'VK Видео', icon: 'fa-brands fa-vk', url: 'https://vkvideo.ru/', requiresCodec: true, group: 'Video' },
   { name: 'Одноклассники', icon: 'fa-brands fa-odnoklassniki', url: 'https://ok.ru/video', requiresCodec: true, group: 'Video' }
 ];
