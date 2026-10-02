@@ -6,7 +6,7 @@ const services = [
   { name: 'Dailymotion', icon: 'fa-brands fa-dailymotion', url: 'https://www.dailymotion.com/', requiresCodec: true, group: 'Video' },
   { name: 'Twitch', icon: 'fa-brands fa-twitch', url: 'https://www.twitch.tv/', requiresCodec: true, group: 'Live' },
   { name: 'Rumble', icon: 'fa-brands fa-rumble', url: 'https://rumble.com/', requiresCodec: true, group: 'Video' },
-  { name: 'Kick', icon: 'fa-solid fa-bolt', url: 'https://kick.com/', requiresCodec: true, group: 'Live' },
+  { name: 'Kick', icon: 'fa-brands fa-kickstarter', url: 'https://kick.com/', requiresCodec: true, group: 'Live' },
   { name: 'Bilibili', icon: 'fa-brands fa-bilibili', url: 'https://www.bilibili.com/', requiresCodec: true, group: 'Video', action: 'open' },
   { name: 'Archive', icon: 'fa-solid fa-box-archive', url: 'https://archive.org/details/movies', requiresCodec: true, group: 'Archive' },
   { name: 'VK Видео', icon: 'fa-brands fa-vk', url: 'https://vkvideo.ru/', requiresCodec: true, group: 'Video' },
