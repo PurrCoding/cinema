@@ -37,7 +37,7 @@ Community-maintained successor to the original [Cinema](https://github.com/pixel
 
 ### Supported media
 
-YouTube · Twitch · TikTok · SoundCloud · Dailymotion · Rumble · Kick · Bilibili (VOD / AV / live / episodes) · VK · OK · Internet Archive · Google Drive · MEGA · Jellyfin · direct URL / protocol playback
+YouTube · Twitch · SoundCloud · Dailymotion · Rumble · Kick · Bilibili (VOD / AV / live / episodes) · VK · OK · Internet Archive · Google Drive · MEGA · Jellyfin · direct URL / protocol playback
 
 ### Theater renting
 
