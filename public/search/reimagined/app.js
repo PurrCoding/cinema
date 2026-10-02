@@ -156,12 +156,8 @@ function showToast(message, type = 'success') {
   showToast.timer = setTimeout(() => toast.classList.add('hidden'), 2200);
 }
 
-function openExternal(url) {
-  if (gmodAvailable('openUrl')) {
-    gmod.openUrl(url);
-    return;
-  }
-  window.open(url, '_blank', 'noopener,noreferrer');
+function navigateInGmod(url) {
+  window.location.href = url;
 }
 
 function requestUrl() {
@@ -208,7 +204,7 @@ function closeCodecPopup() {
 
 function selectService(service) {
   playUISound(true);
-  openExternal(service.url);
+  navigateInGmod(service.url);
 }
 
 function renderServices(filter = '') {
@@ -270,7 +266,7 @@ function initialize() {
     el.addEventListener('click', closeCodecPopup);
   });
   $('[data-action="codec-instructions"]').addEventListener('click', () => {
-    openExternal('https://www.solsticegamestudios.com/fixmedia/');
+    navigateInGmod('https://www.solsticegamestudios.com/fixmedia/');
     closeCodecPopup();
   });
 
