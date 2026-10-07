@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: "24"
 
-      - name: Install dependencies
+      - name: Install minification tools
         run: |
           echo "::group::Installing minification tools"
           npm install -g html-minifier-terser clean-css-cli terser
@@ -47,6 +47,7 @@ jobs:
       - name: Minify HTML files
         run: |
           echo "::group::Minifying HTML files in public/"
+
           find public -name "*.html" -type f | while read file; do
             echo "Processing: $file"
 
@@ -73,28 +74,34 @@ jobs:
 
             echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
           done
+
           echo "::endgroup::"
 
       - name: Minify CSS files
         run: |
           echo "::group::Minifying CSS files in public/"
+
           find public -name "*.css" -type f | while read file; do
             echo "Processing: $file"
 
             original_size=$(stat -c%s "$file")
 
-            cleancss -O3 --output "$file" "$file"
+            cleancss -O3 \
+              --output "$file" \
+              "$file"
 
             new_size=$(stat -c%s "$file")
             savings=$((original_size - new_size))
 
             echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
           done
+
           echo "::endgroup::"
 
       - name: Minify JavaScript files
         run: |
           echo "::group::Minifying JavaScript files in public/"
+
           find public -name "*.js" -type f | while read file; do
             echo "Processing: $file"
 
@@ -112,15 +119,12 @@ jobs:
 
             echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
           done
+
           echo "::endgroup::"
 
       - name: Deploy to Surge
-        run: |
-          echo "::group::Deploying to Surge"
-          npx surge ./public https://gm-cinema.purrcoding.com
-          echo "::endgroup::"
+        run: npx surge ./public gm-cinema.purrcoding.com
         env:
-          SURGE_LOGIN: token
           SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
 
       - name: Deployment success notification
