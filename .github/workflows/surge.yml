@@ -5,7 +5,7 @@ on:
     branches: ["master"]
     paths:
       - "public/**"
-      - ".github/workflows/static.yml"
+      - ".github/workflows/surge.yml"
   workflow_dispatch:
 
 permissions:
@@ -15,9 +15,6 @@ concurrency:
   group: "surge"
   cancel-in-progress: true
 
-env:
-  SURGE_DOMAIN: "gm-cinema.purrcoding.com"
-
 jobs:
   deploy:
     runs-on: ubuntu-24.04
@@ -25,8 +22,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
-        with:
-          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v5
@@ -35,27 +30,11 @@ jobs:
 
       - name: Install minification tools
         run: |
-          echo "::group::Installing minification tools"
           npm install -g html-minifier-terser clean-css-cli terser
-          echo "::endgroup::"
 
-      - name: Verify public directory
+      - name: Minify HTML
         run: |
-          echo "::group::Verifying public directory contents"
-          test -d public
-          echo "Files in public directory:"
-          find public -type f | head -20
-          echo "Total files: $(find public -type f | wc -l)"
-          echo "::endgroup::"
-
-      - name: Minify HTML files
-        run: |
-          echo "::group::Minifying HTML files in public/"
-
           find public -name "*.html" -type f | while read -r file; do
-            echo "Processing: $file"
-            original_size=$(stat -c%s "$file")
-
             html-minifier-terser \
               --collapse-whitespace \
               --collapse-boolean-attributes \
@@ -71,111 +50,55 @@ jobs:
               --minify-js true \
               --output "$file" \
               "$file"
-
-            new_size=$(stat -c%s "$file")
-            savings=$((original_size - new_size))
-            echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
           done
 
-          echo "::endgroup::"
-
-      - name: Minify CSS files
+      - name: Minify CSS
         run: |
-          echo "::group::Minifying CSS files in public/"
-
           find public -name "*.css" -type f | while read -r file; do
-            echo "Processing: $file"
-            original_size=$(stat -c%s "$file")
-
-            cleancss -O3 \
-              --output "$file" \
-              "$file"
-
-            new_size=$(stat -c%s "$file")
-            savings=$((original_size - new_size))
-            echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
+            cleancss -O3 --output "$file" "$file"
           done
 
-          echo "::endgroup::"
-
-      - name: Minify JavaScript files
+      - name: Minify JavaScript
         run: |
-          echo "::group::Minifying JavaScript files in public/"
-
           find public -name "*.js" -type f | while read -r file; do
-            echo "Processing: $file"
-            original_size=$(stat -c%s "$file")
-
             terser "$file" \
               --ecma 2020 \
               --compress passes=3,ecma=2020 \
               --mangle \
               --comments false \
               --output "$file"
-
-            new_size=$(stat -c%s "$file")
-            savings=$((original_size - new_size))
-            echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
           done
 
-          echo "::endgroup::"
-
       - name: Deploy to Surge
-        run: |
-          npx surge ./public "$SURGE_DOMAIN"
+        run: npx surge ./public "https://gm-cinema.purrcoding.com"
         env:
           SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
 
-      - name: Verify HTTPS deployment
+      - name: Verify HTTPS
         run: |
-          echo "::group::Verifying HTTPS deployment"
-
-          status=$(curl \
-            --silent \
-            --show-error \
+          curl --fail --silent --show-error \
             --location \
-            --write-out "%{http_code}" \
-            --output /dev/null \
-            "https://$SURGE_DOMAIN/")
+            --max-time 30 \
+            https://gm-cinema.purrcoding.com/
 
-          echo "HTTPS status: $status"
+          echo "✓ HTTPS deployment is reachable"
 
-          if [ "$status" -lt 200 ] || [ "$status" -ge 400 ]; then
-            echo "::error::HTTPS deployment check failed with HTTP status $status"
-            exit 1
-          fi
-
-          echo "✓ HTTPS endpoint is reachable"
-          echo "::endgroup::"
-
-      - name: Verify HTTP redirects to HTTPS
+      - name: Verify HTTP redirect
         run: |
-          echo "::group::Verifying HTTP → HTTPS redirect"
-
-          headers=$(curl \
+          location=$(curl \
             --silent \
             --show-error \
             --head \
             --max-redirs 0 \
-            "http://$SURGE_DOMAIN/" || true)
+            --write-out '%{redirect_url}' \
+            --output /dev/null \
+            http://gm-cinema.purrcoding.com/)
 
-          echo "$headers"
+          echo "Redirect: $location"
 
-          echo "$headers" | grep -qiE "^location:[[:space:]]*https://$SURGE_DOMAIN(/|$)" || {
-            echo "::error::HTTP does not redirect to HTTPS"
+          test "$location" = "https://gm-cinema.purrcoding.com/" || {
+            echo "✗ HTTP does not redirect to HTTPS"
             exit 1
           }
 
-          echo "✓ HTTP redirects to HTTPS"
-          echo "::endgroup::"
-
-      - name: Deployment success notification
-        if: success()
-        run: |
-          echo "::notice::Deployment successful!"
-          echo "::notice::Site: https://$SURGE_DOMAIN"
-
-      - name: Deployment failure notification
-        if: failure()
-        run: |
-          echo "::error::Deployment failed. Check the logs above for details."
+          echo "✓ HTTP → HTTPS works"
