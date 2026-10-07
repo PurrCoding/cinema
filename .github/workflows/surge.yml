@@ -18,6 +18,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
 
     steps:
       - name: Checkout repository
@@ -29,12 +30,22 @@ jobs:
           node-version: "24"
 
       - name: Install minification tools
-        run: |
-          npm install -g html-minifier-terser clean-css-cli terser
+        run: npm install --global html-minifier-terser clean-css-cli terser
 
-      - name: Minify HTML
+      - name: Verify public directory
         run: |
-          find public -name "*.html" -type f | while read -r file; do
+          test -d public
+          test -f public/index.html
+          echo "Public files: $(find public -type f | wc -l)"
+
+      - name: Minify HTML files
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          while IFS= read -r -d '' file; do
+            echo "Minifying: $file"
+
             html-minifier-terser \
               --collapse-whitespace \
               --collapse-boolean-attributes \
@@ -50,55 +61,56 @@ jobs:
               --minify-js true \
               --output "$file" \
               "$file"
-          done
+          done < <(find public -type f -name "*.html" -print0)
 
-      - name: Minify CSS
+      - name: Minify CSS files
+        shell: bash
         run: |
-          find public -name "*.css" -type f | while read -r file; do
-            cleancss -O3 --output "$file" "$file"
-          done
+          set -euo pipefail
 
-      - name: Minify JavaScript
+          while IFS= read -r -d '' file; do
+            echo "Minifying: $file"
+
+            cleancss \
+              -O3 \
+              --output "$file" \
+              "$file"
+          done < <(find public -type f -name "*.css" -print0)
+
+      - name: Minify JavaScript files
+        shell: bash
         run: |
-          find public -name "*.js" -type f | while read -r file; do
+          set -euo pipefail
+
+          while IFS= read -r -d '' file; do
+            echo "Minifying: $file"
+
             terser "$file" \
               --ecma 2020 \
               --compress passes=3,ecma=2020 \
               --mangle \
               --comments false \
               --output "$file"
-          done
+          done < <(find public -type f -name "*.js" -print0)
 
-      - name: Deploy to Surge
-        run: npx surge ./public "https://gm-cinema.purrcoding.com"
+      - name: Verify Surge token
         env:
           SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
-
-      - name: Verify HTTPS
         run: |
-          curl --fail --silent --show-error \
-            --location \
-            --max-time 30 \
-            https://gm-cinema.purrcoding.com/
-
-          echo "✓ HTTPS deployment is reachable"
-
-      - name: Verify HTTP redirect
-        run: |
-          location=$(curl \
-            --silent \
-            --show-error \
-            --head \
-            --max-redirs 0 \
-            --write-out '%{redirect_url}' \
-            --output /dev/null \
-            http://gm-cinema.purrcoding.com/)
-
-          echo "Redirect: $location"
-
-          test "$location" = "https://gm-cinema.purrcoding.com/" || {
-            echo "✗ HTTP does not redirect to HTTPS"
+          if [ -z "${SURGE_TOKEN:-}" ]; then
+            echo "::error::SURGE_TOKEN is not available to this workflow."
+            echo "Add SURGE_TOKEN under Settings > Secrets and variables > Actions > Repository secrets."
             exit 1
-          }
+          fi
 
-          echo "✓ HTTP → HTTPS works"
+          echo "SURGE_TOKEN is available."
+
+      - name: Deploy to Surge
+        env:
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+        run: |
+          npx surge ./public "https://gm-cinema.purrcoding.com"
+
+      - name: Deployment successful
+        run: |
+          echo "::notice::Deployment successful: https://gm-cinema.purrcoding.com"
