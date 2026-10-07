@@ -15,6 +15,9 @@ concurrency:
   group: "surge"
   cancel-in-progress: true
 
+env:
+  SURGE_DOMAIN: "gm-cinema.purrcoding.com"
+
 jobs:
   deploy:
     runs-on: ubuntu-24.04
@@ -39,6 +42,7 @@ jobs:
       - name: Verify public directory
         run: |
           echo "::group::Verifying public directory contents"
+          test -d public
           echo "Files in public directory:"
           find public -type f | head -20
           echo "Total files: $(find public -type f | wc -l)"
@@ -48,9 +52,8 @@ jobs:
         run: |
           echo "::group::Minifying HTML files in public/"
 
-          find public -name "*.html" -type f | while read file; do
+          find public -name "*.html" -type f | while read -r file; do
             echo "Processing: $file"
-
             original_size=$(stat -c%s "$file")
 
             html-minifier-terser \
@@ -71,7 +74,6 @@ jobs:
 
             new_size=$(stat -c%s "$file")
             savings=$((original_size - new_size))
-
             echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
           done
 
@@ -81,9 +83,8 @@ jobs:
         run: |
           echo "::group::Minifying CSS files in public/"
 
-          find public -name "*.css" -type f | while read file; do
+          find public -name "*.css" -type f | while read -r file; do
             echo "Processing: $file"
-
             original_size=$(stat -c%s "$file")
 
             cleancss -O3 \
@@ -92,7 +93,6 @@ jobs:
 
             new_size=$(stat -c%s "$file")
             savings=$((original_size - new_size))
-
             echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
           done
 
@@ -102,9 +102,8 @@ jobs:
         run: |
           echo "::group::Minifying JavaScript files in public/"
 
-          find public -name "*.js" -type f | while read file; do
+          find public -name "*.js" -type f | while read -r file; do
             echo "Processing: $file"
-
             original_size=$(stat -c%s "$file")
 
             terser "$file" \
@@ -116,21 +115,65 @@ jobs:
 
             new_size=$(stat -c%s "$file")
             savings=$((original_size - new_size))
-
             echo "✓ $file: ${original_size}B → ${new_size}B (saved ${savings}B)"
           done
 
           echo "::endgroup::"
 
       - name: Deploy to Surge
-        run: npx surge ./public https://gm-cinema.purrcoding.com
+        run: |
+          npx surge ./public "$SURGE_DOMAIN"
         env:
           SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+
+      - name: Verify HTTPS deployment
+        run: |
+          echo "::group::Verifying HTTPS deployment"
+
+          status=$(curl \
+            --silent \
+            --show-error \
+            --location \
+            --write-out "%{http_code}" \
+            --output /dev/null \
+            "https://$SURGE_DOMAIN/")
+
+          echo "HTTPS status: $status"
+
+          if [ "$status" -lt 200 ] || [ "$status" -ge 400 ]; then
+            echo "::error::HTTPS deployment check failed with HTTP status $status"
+            exit 1
+          fi
+
+          echo "✓ HTTPS endpoint is reachable"
+          echo "::endgroup::"
+
+      - name: Verify HTTP redirects to HTTPS
+        run: |
+          echo "::group::Verifying HTTP → HTTPS redirect"
+
+          headers=$(curl \
+            --silent \
+            --show-error \
+            --head \
+            --max-redirs 0 \
+            "http://$SURGE_DOMAIN/" || true)
+
+          echo "$headers"
+
+          echo "$headers" | grep -qiE "^location:[[:space:]]*https://$SURGE_DOMAIN(/|$)" || {
+            echo "::error::HTTP does not redirect to HTTPS"
+            exit 1
+          }
+
+          echo "✓ HTTP redirects to HTTPS"
+          echo "::endgroup::"
 
       - name: Deployment success notification
         if: success()
         run: |
-          echo "::notice::Deployment successful! Site available at https://gm-cinema.purrcoding.com"
+          echo "::notice::Deployment successful!"
+          echo "::notice::Site: https://$SURGE_DOMAIN"
 
       - name: Deployment failure notification
         if: failure()
