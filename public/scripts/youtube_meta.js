@@ -43,12 +43,6 @@
 			return null;
 		}
 
-		function getUrlParameter(name) {
-			const urlParams = new URLSearchParams(window.location.search);
-			if (urlParams.get(name)) return urlParams.get(name);
-
-			return null;
-		}
 
 		// ─── IFrame API bootstrap ─────────────────────────────────────────────────
 
