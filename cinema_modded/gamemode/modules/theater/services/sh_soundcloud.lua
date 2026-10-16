@@ -73,6 +73,33 @@ local function BuildTitle(track)
 	return title
 end
 
+-- True if media has at least one non-encrypted transcoding usable in GMod CEF.
+-- Major-label / AD_SUPPORTED tracks often only expose cbc-/ctr-encrypted-hls.
+local function HasPlayableTranscoding(media)
+	if not istable(media) or not istable(media.transcodings) then
+		-- Unknown media block: do not hard-fail (hydration path often omits it).
+		return true
+	end
+	if #media.transcodings == 0 then
+		return false
+	end
+	for _, t in ipairs(media.transcodings) do
+		local proto = ""
+		if istable(t.format) and isstring(t.format.protocol) then
+			proto = t.format.protocol:lower()
+		elseif isstring(t.protocol) then
+			proto = t.protocol:lower()
+		end
+		if proto ~= ""
+			and not proto:find("encrypted", 1, true)
+			and proto:sub(1, 4) ~= "cbc-"
+			and proto:sub(1, 4) ~= "ctr-" then
+			return true
+		end
+	end
+	return false
+end
+
 local function MetadataFromResolve(data)
 	if not istable(data) then return nil end
 	-- Resolve can return a track object or a collection wrapper.
@@ -95,6 +122,11 @@ local function MetadataFromResolve(data)
 	end
 	if track.public == false then
 		return nil, "Track is not public"
+	end
+
+	-- Reject tracks that only offer DRM / encrypted HLS (silent in GMod CEF).
+	if not HasPlayableTranscoding(track.media) then
+		return nil, "SoundCloud track only offers encrypted/DRM streams (not playable in GMod)"
 	end
 
 	return {
@@ -381,6 +413,18 @@ if CLIENT then
 		const track = (data && data.collection && data.collection[0]) || data;
 		const duration = track && (track.full_duration || track.duration);
 		const title = titleFromTrack(track);
+		// Reject DRM-only streams (cbc-/ctr-encrypted-hls) — no audible path in GMod CEF.
+		if (track && track.media && Array.isArray(track.media.transcodings) && track.media.transcodings.length > 0) {
+			const playable = track.media.transcodings.some(function(t) {
+				const proto = ((t.format && t.format.protocol) || t.protocol || "").toLowerCase();
+				return proto && proto.indexOf("encrypted") === -1
+					&& proto.indexOf("cbc-") !== 0 && proto.indexOf("ctr-") !== 0;
+			});
+			if (!playable) {
+				console.log("ERROR:SoundCloud track only offers encrypted/DRM streams (not playable in GMod)");
+				return;
+			}
+		}
 		if (title && Number(duration) > 0 && emit(title, duration, normalizeArt(track.artwork_url))) return;
 		debug("resolve response was incomplete");
 	} catch (error) {
@@ -514,6 +558,9 @@ local function ParseSoundCloudHTML(body)
 			end
 			if metadata.public == false then
 				return nil, "Track is not public"
+			end
+			if not HasPlayableTranscoding(metadata.media) then
+				return nil, "SoundCloud track only offers encrypted/DRM streams (not playable in GMod)"
 			end
 
 			return {
