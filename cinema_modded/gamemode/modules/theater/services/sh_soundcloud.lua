@@ -504,23 +504,40 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 			duration = tonumber(metadata.duration) or 0,
 			thumbnail = metadata.thumbnail
 		}
+		-- Never queue zero-duration / incomplete metadata.
+		if not info.title or info.title == "" or info.duration <= 0 then
+			if onFailure then onFailure("Theater_RequestFailed") end
+			return
+		end
 		if onSuccess then pcall(onSuccess, info) end
 	end
 
 	local trackPath = data:Data()
 
 	local function runHydrationFallback(primaryError)
+		-- Encrypted: stop entirely — no HTML scrape, no client crawl.
 		if IsEncryptedStreamError(primaryError) then
 			if onFailure then onFailure(primaryError) end
 			return
 		end
 		local pageUrl = "https://soundcloud.com/" .. trackPath
 		self:Fetch(pageUrl, function(body)
-			local ok, metadata, err = pcall(ParseSoundCloudHTML, body)
-			if ok and metadata and metadata.title then
-				deliver(metadata)
+			local ok, pack = pcall(function()
+				local meta, e = ParseSoundCloudHTML(body)
+				return { meta = meta, err = e }
+			end)
+			if ok and pack and istable(pack.meta) and pack.meta.title
+				and (tonumber(pack.meta.duration) or 0) > 0 then
+				deliver(pack.meta)
 			elseif onFailure then
-				onFailure(primaryError or (ok and err) or tostring(metadata) or "Theater_RequestFailed")
+				local msg = primaryError
+					or (ok and pack and pack.err)
+					or "Theater_RequestFailed"
+				if IsEncryptedStreamError(msg) then
+					onFailure(msg)
+				else
+					onFailure(msg)
+				end
 			end
 		end, function(err)
 			if onFailure then onFailure(primaryError or err or "Theater_RequestFailed") end
@@ -528,6 +545,10 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 	end
 
 	local function runClientCrawler(primaryError)
+		if IsEncryptedStreamError(primaryError) then
+			if onFailure then onFailure(primaryError) end
+			return
+		end
 		theater.FetchVideoMedata(data:GetOwner(), data, function(metadata)
 			local err = metadata and metadata.err
 			if IsEncryptedStreamError(err) or IsEncryptedStreamError(primaryError) then
@@ -543,6 +564,7 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 		end)
 	end
 
+	-- Server resolve is authoritative for DRM. Encrypted → hard stop, no further stages.
 	if SERVER and self.ResolveTrack then
 		self:ResolveTrack(trackPath, function(metadata)
 			deliver(metadata)
