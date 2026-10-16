@@ -181,11 +181,12 @@ if CLIENT then
 
 	function SERVICE:LoadProvider(Video, panel)
 		local html = PLAYER_HTML:Replace("{@audioPath}", Video:Data())
-		panel:SetHTML(html)
 
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions(pnl)
 		end
+
+		panel:SetHTML(html)
 	end
 
 	function SERVICE:SearchFunctions(browser)
