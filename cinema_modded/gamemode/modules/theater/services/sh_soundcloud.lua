@@ -96,8 +96,16 @@ if CLIENT then
 <script>
 (async function() {
 	const trackUrl = "https://soundcloud.com/{@audioPath}";
+	let completed = false;
+	let safetyTimeout = setTimeout(function() {
+		if (completed) return;
+		completed = true;
+		console.log("ERROR:SoundCloud metadata probe timed out");
+	}, 8000);
 	const emit = function(title, duration) {
-		if (!title || !(Number(duration) > 0)) return false;
+		if (completed || !title) return false;
+		completed = true;
+		clearTimeout(safetyTimeout);
 		console.log("METADATA:" + JSON.stringify({
 			title: String(title),
 			duration: Math.floor(Math.max(0, Number(duration) || 0) / 1000)
