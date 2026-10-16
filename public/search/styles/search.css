@@ -25,7 +25,7 @@ button, input { font: inherit; }
 button { color: inherit; }
 
 .shell { width: min(1080px, calc(100% - 32px)); min-height: 100vh; margin: 0 auto; padding: clamp(14px, 3vh, 28px) 0 clamp(14px, 3vh, 24px); display: flex; flex-direction: column; justify-content: center; }
-.section-heading, .request-box, .modal-actions { display: flex; align-items: center; }
+.section-heading, .request-box { display: flex; align-items: center; }
 .section-kicker, .eyebrow {
   font-size: 10px; font-weight: 800; letter-spacing: .14em;
 }
@@ -47,18 +47,12 @@ button { color: inherit; }
 }
 .input-wrap input::placeholder { color: #5e6877; }
 .request-box:focus-within { border-color: rgba(141,38,33,.65); box-shadow: 0 0 0 3px rgba(141,38,33,.12), var(--shadow); }
-.request-btn, .btn-primary, .btn-secondary {
-  border: 0; border-radius: 12px; cursor: pointer; transition: transform .18s ease, opacity .18s ease, background .18s ease;
-}
+.request-btn { border: 0; border-radius: 12px; cursor: pointer; transition: transform .18s ease, opacity .18s ease, background .18s ease; }
 .request-btn {
   display: inline-flex; align-items: center; gap: 10px; padding: 13px 17px;
   background: #f2f2f2; color: #1a1e26; font-weight: 750;
 }
-.request-btn:hover, .btn-primary:hover { transform: translateY(-1px); }
-.request-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
-.icon-btn, .modal-close {
-  border: 0; background: transparent; color: var(--muted); cursor: pointer;
-}
+.request-btn:hover { transform: translateY(-1px); }
 .icon-btn { width: 28px; height: 28px; }
 .support-link {
   display: inline-flex; align-items: center; gap: 8px; margin-top: 11px;
@@ -87,11 +81,6 @@ button { color: inherit; }
 }
 .service-meta { display: flex; justify-content: space-between; align-items: end; gap: 8px; }
 .service-name { font-weight: 700; font-size: 14px; line-height: 1.3; }
-.service-sub { color: var(--muted); font-size: 10px; margin-top: 3px; }
-.badge {
-  white-space: nowrap; padding: 4px 6px; border-radius: 6px; font-size: 8px; font-weight: 800;
-  letter-spacing: .05em; background: rgba(255,255,255,0.11); color: rgba(255,255,255,0.88);
-}
 .empty-state { padding: 35px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 15px; }
 
 
@@ -106,10 +95,6 @@ button { color: inherit; }
   border: 1px solid var(--line); border-radius: 20px; background: #1a1e26; box-shadow: var(--shadow);
 }
 .modal-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; }
-.modal-icon {
-  width: 46px; height: 46px; display: grid; place-items: center; margin-bottom: 17px;
-  border-radius: 13px; color: rgba(255,255,255,0.88); background: rgba(255,255,255,0.11);
-}
 .modal-card h2 { margin: 5px 0 8px; font-size: 24px; letter-spacing: -.03em; }
 .modal-card p { color: var(--muted); }
 .support-card { max-height: min(760px, calc(100vh - 36px)); overflow: auto; }
@@ -133,19 +118,6 @@ button { color: inherit; }
 .support-label { color: #c9cfda; font-size: 10px; font-weight: 700; }
 .support-item code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 10px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: #8f9aaa; }
 .support-item > i { font-size: 11px; }
-.modal-card ol { color: #aeb6c4; padding-left: 20px; }
-.modal-card li { margin: 7px 0; }
-.modal-actions { justify-content: flex-end; gap: 8px; margin-top: 24px; }
-.btn-primary, .btn-secondary { padding: 10px 14px; font-weight: 700; }
-.btn-primary { background: var(--text); color: #0b0d12; }
-.btn-secondary { background: transparent; border: 1px solid var(--line); color: var(--muted); }
-
-.toast {
-  position: fixed; right: 18px; bottom: 18px; z-index: 30; max-width: calc(100vw - 36px);
-  display: flex; align-items: center; gap: 9px; padding: 11px 14px;
-  background: #333; border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow);
-  font-size: 12px;
-}
 .toast i { color: #d77b74; }
 
 @media (max-width: 800px) {
@@ -167,7 +139,6 @@ button { color: inherit; }
 @media (max-width: 390px) {
   .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
   .service-card { min-height: 88px; padding: 10px; }
-  .service-sub { display: none; }
 }
 
 
