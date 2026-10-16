@@ -13,10 +13,6 @@ end
 if (CLIENT) then
 	local EMBED_URL = "https://vkvideo.ru/video_ext.php?oid=-%s&id=%s&autoplay=1"
 
-	--[[
-		VK puts the real <video> under div.video-container.s-t and/or Shadow DOM.
-		Same recursive finder idea as OK (shadow-root-container + nested roots).
-	]]
 	local JS_FIND_VIDEO = [[
 		function findVideo(root) {
 			if (!root) return null;
@@ -88,9 +84,21 @@ if (CLIENT) then
 		})();
 	]]
 
+	-- Title: full document.title / <title> from the page header
 	local METADATA_JS = [[
 		(function() {
 			]] .. JS_FIND_VIDEO .. [[
+
+			function pageTitle() {
+				var t = (document.title || "").trim();
+				if (t) return t;
+				var el = document.querySelector("head title");
+				if (el) {
+					var text = (el.textContent || el.innerText || "").trim();
+					if (text) return text;
+				}
+				return "VK Video";
+			}
 
 			var checkerInterval = setInterval(function() {
 				var player = findVideo(document);
@@ -100,9 +108,6 @@ if (CLIENT) then
 				if (window.metaevent_set) return;
 
 				player.muted = true;
-
-				var titleEl = document.querySelector(".videoplayer_title_link, .videoplayer_title_link._clickable");
-				var title = titleEl ? (titleEl.innerText || titleEl.textContent) : "VK Video";
 
 				var finish = function() {
 					if (window.metaevent_set) return;
@@ -115,13 +120,13 @@ if (CLIENT) then
 					}
 
 					console.log("METADATA:" + JSON.stringify({
-						title: title,
+						title: pageTitle(),
 						thumbnail: thumb,
 						duration: player.duration || 0
 					}));
 				};
 
-				if (player.readyState >= 1 && !isNaN(player.duration) && player.duration > 0) {
+				if (player.readyState >= 1 && !isNaN(player.duration)) {
 					finish();
 				} else {
 					player.addEventListener("loadedmetadata", finish);
@@ -137,7 +142,11 @@ if (CLIENT) then
 	]]
 
 	local function extractData(data)
+		-- video-OID_ID or live-OID_ID
 		local oid, id = data:match("video%-(%d+)_(%d+)")
+		if not oid then
+			oid, id = data:match("live%-(%d+)_(%d+)")
+		end
 		return oid, id
 	end
 
@@ -194,8 +203,10 @@ function SERVICE:GetURLInfo( url )
 	local info = {}
 
 	-- https://vkvideo.ru/video-xxxxxxxxx_xxxxxxxxx
+	-- https://vkvideo.ru/live-xxxxxxxxx_xxxxxxxxx
 	if url.path then
 		local videoID = url.path:match("(video%-%d+_%d+)")
+			or url.path:match("(live%-%d+_%d+)")
 		if videoID then
 			info.Data = videoID
 		end
@@ -203,9 +214,10 @@ function SERVICE:GetURLInfo( url )
 
 	if url.query then
 
-		-- https://vkvideo.ru/video?z=video-xxxxxxxxx_xxxxxxxxx
+		-- ?z=video-... or ?z=live-...
 		if url.query.z then
 			local data = url.query.z:match("(video%-%d+_%d+)")
+				or url.query.z:match("(live%-%d+_%d+)")
 			if data then info.Data = data end
 		end
 
@@ -234,7 +246,9 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		info.thumbnail = metadata.thumbnail
 
 		local duration = metadata.duration
-		if not duration or (isnumber(duration) and duration == 0) then
+		local isLivePath = isstring(data) and data:StartWith("live-")
+
+		if isLivePath or not duration or (isnumber(duration) and duration == 0) then
 			info.type = "vklive"
 			info.duration = 0
 		else
