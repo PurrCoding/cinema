@@ -15,15 +15,11 @@ local Ignored = {
 	["comments"] = true,
 	["followers"] = true,
 	["following"] = true,
-	["tracks"] = true, -- /user/tracks is a list page, not a single track
+	["tracks"] = true,
 }
 
--- ---------------------------------------------------------------------------
--- Shared client_id cache (server + client). Refreshed like yt-dlp when API
--- returns 401/403 or when the cache is older than CLIENT_ID_TTL seconds.
--- ---------------------------------------------------------------------------
-local CLIENT_ID_TTL = 6 * 60 * 60 -- 6 hours
-local CLIENT_ID_FALLBACK = "nIjtjiYnjkOhMyh5xrbqEW12DxeJVnic" -- last known working widget id
+local CLIENT_ID_TTL = 6 * 60 * 60
+local CLIENT_ID_FALLBACK = "nIjtjiYnjkOhMyh5xrbqEW12DxeJVnic"
 
 local SoundCloudClientId = {
 	value = CLIENT_ID_FALLBACK,
@@ -39,7 +35,6 @@ end
 
 local function ExtractClientIdFromJS(body)
 	if not isstring(body) or body == "" then return nil end
-	-- yt-dlp pattern: client_id: "32-char alnum"
 	local id = body:match('client_id%s*:%s*"([0-9a-zA-Z]{32})"')
 		or body:match("client_id%s*:%s*'([0-9a-zA-Z]{32})'")
 		or body:match('"client_id"%s*:%s*"([0-9a-zA-Z]{32})"')
@@ -60,7 +55,6 @@ end
 
 local function NormalizeArtwork(url)
 	if not isstring(url) or url == "" then return nil end
-	-- Prefer a larger thumbnail when SoundCloud serves size variants.
 	return url:gsub("%-large%.", "-t500x500."):gsub("%-t300x300%.", "-t500x500.")
 end
 
@@ -79,11 +73,8 @@ local function IsEncryptedStreamError(err)
 	return isstring(err) and err:find("encrypted/DRM", 1, true) ~= nil
 end
 
--- True if media has at least one non-encrypted transcoding usable in GMod CEF.
--- Major-label / AD_SUPPORTED tracks often only expose cbc-/ctr-encrypted-hls.
 local function HasPlayableTranscoding(media)
 	if not istable(media) or not istable(media.transcodings) then
-		-- Unknown media block: do not hard-fail (hydration path often omits it).
 		return true
 	end
 	if #media.transcodings == 0 then
@@ -108,13 +99,11 @@ end
 
 local function MetadataFromResolve(data)
 	if not istable(data) then return nil end
-	-- Resolve can return a track object or a collection wrapper.
 	local track = data
 	if data.collection and istable(data.collection[1]) then
 		track = data.collection[1]
 	end
 	if data.kind and data.kind ~= "track" and data.tracks then
-		-- playlist / set – not supported as a single queue item
 		return nil, "playlists/sets are not supported"
 	end
 
@@ -122,7 +111,6 @@ local function MetadataFromResolve(data)
 	local title = track.title
 	if not title or title == "" then return nil, "missing title" end
 
-	-- Respect embed policy when present.
 	if track.embeddable_by and track.embeddable_by ~= "all" and track.embeddable_by ~= "me" then
 		return nil, "Track is not embeddable"
 	end
@@ -130,21 +118,22 @@ local function MetadataFromResolve(data)
 		return nil, "Track is not public"
 	end
 
-	-- Reject tracks that only offer DRM / encrypted HLS (silent in GMod CEF).
 	if not HasPlayableTranscoding(track.media) then
 		return nil, ENCRYPTED_STREAM_ERR
 	end
 
+	local durationSec = math.floor(math.max(0, durationMs) / 1000)
+	if durationSec <= 0 then
+		return nil, "missing duration"
+	end
+
 	return {
 		title = BuildTitle(track),
-		duration = math.floor(math.max(0, durationMs) / 1000),
+		duration = durationSec,
 		thumbnail = NormalizeArtwork(track.artwork_url or (track.user and track.user.avatar_url)),
 	}
 end
 
--- ---------------------------------------------------------------------------
--- Server-side: fetch / refresh client_id from SoundCloud JS bundles
--- ---------------------------------------------------------------------------
 if SERVER then
 	function SERVICE:RefreshClientId(onDone)
 		if SoundCloudClientId.refreshing then
@@ -164,7 +153,6 @@ if SERVER then
 
 		self:Fetch("https://soundcloud.com/", function(body)
 			local srcs = ExtractScriptSrcs(body)
-			-- Prefer later scripts (app bundles usually load last), same as yt-dlp.
 			local index = #srcs
 			local function tryNext()
 				if index < 1 then
@@ -201,7 +189,6 @@ if SERVER then
 		self:RefreshClientId(onDone)
 	end
 
-	--- Resolve track metadata via api-widget / api-v2 (primary server path).
 	function SERVICE:ResolveTrack(trackPath, onSuccess, onFailure)
 		local trackUrl = "https://soundcloud.com/" .. trackPath
 
@@ -220,7 +207,6 @@ if SERVER then
 					return
 				end
 
-				-- Stale client_id → refresh once and retry.
 				if not isRetry and (code == 401 or code == 403 or not data) then
 					self:RefreshClientId(function(newId)
 						if newId and newId ~= clientId then
@@ -254,9 +240,6 @@ if SERVER then
 	end
 end
 
--- ---------------------------------------------------------------------------
--- Client: player + metadata probe (dynamic client_id when possible)
--- ---------------------------------------------------------------------------
 if CLIENT then
 	local PLAYER_HTML = [[
 <!doctype html>
@@ -267,7 +250,6 @@ if CLIENT then
 	const trackUrl = "https://soundcloud.com/{@audioPath}";
 	let frame = null;
 
-	// Prefer SoundCloud's recommended iframe, but do not depend on oEmbed being available.
 	try {
 		const response = await fetch("https://soundcloud.com/oembed?format=json&url=" + encodeURIComponent(trackUrl));
 		if (!response.ok) throw new Error("oEmbed HTTP " + response.status);
@@ -331,10 +313,6 @@ if CLIENT then
 </script></body></html>
 ]]
 
-	-- Client-side metadata probe (minimal):
-	-- 1) scrape client_id + api-widget resolve (incl. DRM gate)
-	-- 2) oEmbed title only if resolve failed for non-DRM reasons
-	-- No SC.Widget metadata probe — playback widget stays in PLAYER_HTML only.
 	local METADATA_HTML = [[
 <!doctype html><html><head><meta charset="utf-8"></head><body>
 <script>
@@ -385,7 +363,7 @@ if CLIENT then
 					const idMatch = js.match(/client_id\s*:\s*["']([0-9a-zA-Z]{32})["']/)
 						|| js.match(/"client_id"\s*:\s*"([0-9a-zA-Z]{32})"/);
 					if (idMatch) return idMatch[1];
-				} catch (e) { /* try next asset */ }
+				} catch (e) {}
 			}
 		} catch (error) {
 			debug("client_id scrape failed (" + error + ")");
@@ -405,7 +383,6 @@ if CLIENT then
 		return data.title;
 	}
 
-	// Stage 1: resolve with fresh (or fallback) client_id
 	try {
 		const clientId = await scrapeClientId();
 		const resolveUrl = "https://api-widget.soundcloud.com/resolve?url="
@@ -417,7 +394,6 @@ if CLIENT then
 		const track = (data && data.collection && data.collection[0]) || data;
 		const duration = track && (track.full_duration || track.duration);
 		const title = titleFromTrack(track);
-		// Reject DRM-only streams — stop all further metadata stages (oEmbed/widget cannot fix playback).
 		if (track && track.media && Array.isArray(track.media.transcodings) && track.media.transcodings.length > 0) {
 			const playable = track.media.transcodings.some(function(t) {
 				const proto = ((t.format && t.format.protocol) || t.protocol || "").toLowerCase();
@@ -434,26 +410,9 @@ if CLIENT then
 		if (title && Number(duration) > 0 && emit(title, duration, normalizeArt(track.artwork_url))) return;
 		debug("resolve response was incomplete");
 	} catch (error) {
-		debug("resolve unavailable; trying oEmbed only (" + error + ")");
+		debug("resolve unavailable (" + error + ")");
 	}
 
-	// Stage 2 (last resort): oEmbed title only — no widget probe (heavy, rarely needed if resolve works)
-	let embedTitle = null;
-	let embedUrl = null;
-	try {
-		const response = await fetch("https://soundcloud.com/oembed?format=json&url=" + encodeURIComponent(trackUrl));
-		if (!response.ok) throw new Error("oEmbed HTTP " + response.status);
-		const data = await response.json();
-		embedTitle = data && data.title;
-		const match = data && data.html && data.html.match(/src=["']([^"']+)["']/i);
-		if (match) embedUrl = match[1].replace(/&amp;/g, "&");
-	} catch (error) {
-		debug("oEmbed failed (" + error + ")");
-	}
-
-	// No widget metadata probe: duration would be 0 from oEmbed alone is acceptable as last resort,
-	// but do not spin up SC.Widget just for metadata (slow + redundant with server resolve).
-	if (embedTitle && emit(embedTitle, 0, null)) return;
 	console.log("ERROR:SoundCloud metadata probe exhausted");
 })();
 </script></body></html>
@@ -487,9 +446,6 @@ if CLIENT then
 	end
 end
 
--- ---------------------------------------------------------------------------
--- URL matching
--- ---------------------------------------------------------------------------
 function SERVICE:Match(url)
 	return url.host and url.host:match("soundcloud.com")
 end
@@ -497,8 +453,6 @@ end
 function SERVICE:GetURLInfo(url)
 	if not url.path then return false end
 
-	-- https://soundcloud.com/artist/track-name
-	-- https://soundcloud.com/artist/track-name?in=...
 	local path1, path2 = url.path:match("^/([%a%d-_]+)/([%a%d-_]+)/?$")
 	if path1 and path2 and not Ignored[path1] and not Ignored[path2] then
 		return { Data = ("%s/%s"):format(path1, path2) }
@@ -507,9 +461,6 @@ function SERVICE:GetURLInfo(url)
 	return false
 end
 
--- ---------------------------------------------------------------------------
--- Server HTML hydration parser (fallback)
--- ---------------------------------------------------------------------------
 local function ParseSoundCloudHTML(body)
 	local json = body:match('<script>window%.__sc_hydration%s*=%s*(.-);</script>')
 		or body:match('window%.__sc_hydration%s*=%s*(.-);%s*</script>')
@@ -546,9 +497,6 @@ local function ParseSoundCloudHTML(body)
 	return nil, "Sound metadata not found in hydration data"
 end
 
--- ---------------------------------------------------------------------------
--- GetVideoInfo: server resolve → client crawler → hydration HTML
--- ---------------------------------------------------------------------------
 function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 	local function deliver(metadata)
 		local info = {
@@ -586,17 +534,15 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 				if onFailure then onFailure(err or primaryError) end
 				return
 			end
-			if metadata and not metadata.err and metadata.title and metadata.title ~= "" and metadata.title ~= "Unknown" then
+			local dur = metadata and tonumber(metadata.duration) or 0
+			if metadata and not metadata.err and metadata.title and metadata.title ~= "" and metadata.title ~= "Unknown" and dur > 0 then
 				deliver(metadata)
 				return
 			end
-			-- Last realistic fallback: page hydration (no widget, no second resolve).
 			runHydrationFallback(primaryError or err)
 		end)
 	end
 
-	-- Prefer pure server resolve (no client CEF required for metadata).
-	-- On encrypted/DRM-only tracks: stop immediately — further crawlers cannot make them playable.
 	if SERVER and self.ResolveTrack then
 		self:ResolveTrack(trackPath, function(metadata)
 			deliver(metadata)
@@ -605,7 +551,6 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 				if onFailure then onFailure(err) end
 				return
 			end
-			-- Non-DRM failures only: one lightweight client probe, then hydration.
 			runClientCrawler(err)
 		end)
 		return
