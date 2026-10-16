@@ -16,7 +16,8 @@ if (CLIENT) then
 		var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName('video')[0];
 			if (!!player && player.paused == false && player.readyState == 4) {
-				if (player.muted) {player.muted = false}
+				player.muted = false;
+				try { player.volume = 1; } catch (e) {}
 
 				clearInterval(checkerInterval);
 
@@ -24,6 +25,14 @@ if (CLIENT) then
 				window.cinema_controller = player;
 
 				exTheater.controllerReady();
+
+				// Embed autoplay may re-mute shortly after start
+				setTimeout(function() {
+					if (window.cinema_controller) window.cinema_controller.muted = false;
+				}, 200);
+				setTimeout(function() {
+					if (window.cinema_controller) window.cinema_controller.muted = false;
+				}, 1000);
 			}
 		}, 50);
 	]]
@@ -34,8 +43,11 @@ if (CLIENT) then
 			LocalPlayer():ChatPrint(("Rumble: %s"):format(msg))
 		end
 
-		local url = API_URL:format( Video:Data() ) .. ".html"
-		self:Fetch( url, function( body, length, headers, code )
+		local data = Video:Data()
+		local isShort = data:StartWith("shorts/")
+		local oembedUrl = API_URL:format( data ) .. (isShort and "" or ".html")
+
+		self:Fetch( oembedUrl, function( body, length, headers, code )
 			local response = util.JSONToTable(body)
 			if not response then
 				return onFail("API Error")
@@ -60,8 +72,17 @@ end
 function SERVICE:GetURLInfo( url )
 
 	if url.path then
+		-- Watch page: /vXXXX-title.html (full slug as Data, same as before)
 		local data = url.path:match("/([%a%d%p-_]+).html")
-		if ( data ) then return { Data = data } end
+		if data then
+			return { Data = data }
+		end
+
+		-- Shorts: /shorts/vXXXX
+		local shortId = url.path:match("^/shorts/([%w%-_]+)")
+		if shortId then
+			return { Data = "shorts/" .. shortId }
+		end
 	end
 
 	return false
@@ -92,7 +113,8 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 	end
 
-	local url = API_URL:format( data ) .. ".html"
+	local isShort = isstring(data) and data:StartWith("shorts/")
+	local url = API_URL:format( data ) .. (isShort and "" or ".html")
 	self:Fetch( url, onReceive, onFailure )
 
 end
