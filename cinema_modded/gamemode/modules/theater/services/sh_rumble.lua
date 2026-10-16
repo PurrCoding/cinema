@@ -16,8 +16,7 @@ if (CLIENT) then
 		var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName('video')[0];
 			if (!!player && player.paused == false && player.readyState == 4) {
-				player.muted = false;
-				try { player.volume = 1; } catch (e) {}
+				if (player.muted) { player.muted = false; }
 
 				clearInterval(checkerInterval);
 
@@ -26,13 +25,12 @@ if (CLIENT) then
 
 				exTheater.controllerReady();
 
-				// Embed autoplay may re-mute shortly after start
+				// Autoplay policy may re-mute once; clear without touching volume
 				setTimeout(function() {
-					if (window.cinema_controller) window.cinema_controller.muted = false;
-				}, 200);
-				setTimeout(function() {
-					if (window.cinema_controller) window.cinema_controller.muted = false;
-				}, 1000);
+					if (window.cinema_controller && window.cinema_controller.muted) {
+						window.cinema_controller.muted = false;
+					}
+				}, 300);
 			}
 		}, 50);
 	]]
@@ -44,7 +42,7 @@ if (CLIENT) then
 		end
 
 		local data = Video:Data()
-		local isShort = data:StartWith("shorts/")
+		local isShort = isstring(data) and data:StartWith("shorts/")
 		local oembedUrl = API_URL:format( data ) .. (isShort and "" or ".html")
 
 		self:Fetch( oembedUrl, function( body, length, headers, code )
@@ -72,7 +70,7 @@ end
 function SERVICE:GetURLInfo( url )
 
 	if url.path then
-		-- Watch page: /vXXXX-title.html (full slug as Data, same as before)
+		-- Watch page: /vXXXX-title.html (full slug as Data)
 		local data = url.path:match("/([%a%d%p-_]+).html")
 		if data then
 			return { Data = data }
