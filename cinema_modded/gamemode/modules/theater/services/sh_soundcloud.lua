@@ -73,6 +73,12 @@ local function BuildTitle(track)
 	return title
 end
 
+local ENCRYPTED_STREAM_ERR = "SoundCloud track only offers encrypted/DRM streams (not playable in GMod)"
+
+local function IsEncryptedStreamError(err)
+	return isstring(err) and err:find("encrypted/DRM", 1, true) ~= nil
+end
+
 -- True if media has at least one non-encrypted transcoding usable in GMod CEF.
 -- Major-label / AD_SUPPORTED tracks often only expose cbc-/ctr-encrypted-hls.
 local function HasPlayableTranscoding(media)
@@ -126,7 +132,7 @@ local function MetadataFromResolve(data)
 
 	-- Reject tracks that only offer DRM / encrypted HLS (silent in GMod CEF).
 	if not HasPlayableTranscoding(track.media) then
-		return nil, "SoundCloud track only offers encrypted/DRM streams (not playable in GMod)"
+		return nil, ENCRYPTED_STREAM_ERR
 	end
 
 	return {
@@ -325,14 +331,12 @@ if CLIENT then
 </script></body></html>
 ]]
 
-	-- Client-side metadata probe:
-	-- 1) scrape client_id from JS bundles (yt-dlp style)
-	-- 2) api-widget resolve
-	-- 3) oEmbed
-	-- 4) official Widget API
+	-- Client-side metadata probe (minimal):
+	-- 1) scrape client_id + api-widget resolve (incl. DRM gate)
+	-- 2) oEmbed title only if resolve failed for non-DRM reasons
+	-- No SC.Widget metadata probe — playback widget stays in PLAYER_HTML only.
 	local METADATA_HTML = [[
-<!doctype html><html><head><meta charset="utf-8">
-<script src="https://w.soundcloud.com/player/api.js"></script></head><body>
+<!doctype html><html><head><meta charset="utf-8"></head><body>
 <script>
 (async function() {
 	const trackUrl = "https://soundcloud.com/{@audioPath}";
@@ -413,7 +417,7 @@ if CLIENT then
 		const track = (data && data.collection && data.collection[0]) || data;
 		const duration = track && (track.full_duration || track.duration);
 		const title = titleFromTrack(track);
-		// Reject DRM-only streams (cbc-/ctr-encrypted-hls) — no audible path in GMod CEF.
+		// Reject DRM-only streams — stop all further metadata stages (oEmbed/widget cannot fix playback).
 		if (track && track.media && Array.isArray(track.media.transcodings) && track.media.transcodings.length > 0) {
 			const playable = track.media.transcodings.some(function(t) {
 				const proto = ((t.format && t.format.protocol) || t.protocol || "").toLowerCase();
@@ -421,6 +425,8 @@ if CLIENT then
 					&& proto.indexOf("cbc-") !== 0 && proto.indexOf("ctr-") !== 0;
 			});
 			if (!playable) {
+				completed = true;
+				clearTimeout(safetyTimeout);
 				console.log("ERROR:SoundCloud track only offers encrypted/DRM streams (not playable in GMod)");
 				return;
 			}
@@ -428,10 +434,10 @@ if CLIENT then
 		if (title && Number(duration) > 0 && emit(title, duration, normalizeArt(track.artwork_url))) return;
 		debug("resolve response was incomplete");
 	} catch (error) {
-		debug("resolve unavailable; trying oEmbed/widget (" + error + ")");
+		debug("resolve unavailable; trying oEmbed only (" + error + ")");
 	}
 
-	// Stage 2: oEmbed title and iframe URL
+	// Stage 2 (last resort): oEmbed title only — no widget probe (heavy, rarely needed if resolve works)
 	let embedTitle = null;
 	let embedUrl = null;
 	try {
@@ -445,44 +451,10 @@ if CLIENT then
 		debug("oEmbed failed (" + error + ")");
 	}
 
-	// Stage 3: official widget API
-	try {
-		const frame = document.createElement("iframe");
-		frame.setAttribute("allow", "autoplay");
-		frame.setAttribute("width", "100%");
-		frame.setAttribute("height", "166");
-		frame.src = embedUrl || ("https://w.soundcloud.com/player/?url="
-			+ encodeURIComponent(trackUrl) + "&auto_play=false&hide_related=true&show_comments=false");
-		document.body.appendChild(frame);
-		const player = SC.Widget(frame);
-		let finished = false;
-		const finish = function(title, duration, thumbnail) {
-			if (finished) return;
-			finished = true;
-			if (!emit(title || embedTitle, duration, thumbnail)) {
-				console.log("ERROR:SoundCloud widget returned incomplete metadata");
-			}
-		};
-		player.bind(SC.Widget.Events.READY, function() {
-			player.getCurrentSound(function(sound) {
-				player.getDuration(function(duration) {
-					const title = (sound && sound.title) || embedTitle;
-					const art = sound && (sound.artwork_url || (sound.user && sound.user.avatar_url));
-					finish(title, duration || (sound && sound.duration) || 0, normalizeArt(art));
-				});
-			});
-		});
-		player.bind(SC.Widget.Events.ERROR, function() {
-			debug("widget emitted an error");
-			if (!finished && embedTitle) {
-				finish(embedTitle, 0, null);
-			}
-		});
-	} catch (error) {
-		debug("widget fallback failed (" + error + ")");
-		if (embedTitle && emit(embedTitle, 0, null)) return;
-		console.log("ERROR:SoundCloud metadata probe exhausted");
-	}
+	// No widget metadata probe: duration would be 0 from oEmbed alone is acceptable as last resort,
+	// but do not spin up SC.Widget just for metadata (slow + redundant with server resolve).
+	if (embedTitle && emit(embedTitle, 0, null)) return;
+	console.log("ERROR:SoundCloud metadata probe exhausted");
 })();
 </script></body></html>
 ]]
@@ -560,7 +532,7 @@ local function ParseSoundCloudHTML(body)
 				return nil, "Track is not public"
 			end
 			if not HasPlayableTranscoding(metadata.media) then
-				return nil, "SoundCloud track only offers encrypted/DRM streams (not playable in GMod)"
+				return nil, ENCRYPTED_STREAM_ERR
 			end
 
 			return {
@@ -590,6 +562,10 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 	local trackPath = data:Data()
 
 	local function runHydrationFallback(primaryError)
+		if IsEncryptedStreamError(primaryError) then
+			if onFailure then onFailure(primaryError) end
+			return
+		end
 		local pageUrl = "https://soundcloud.com/" .. trackPath
 		self:Fetch(pageUrl, function(body)
 			local ok, metadata, err = pcall(ParseSoundCloudHTML, body)
@@ -605,19 +581,31 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 
 	local function runClientCrawler(primaryError)
 		theater.FetchVideoMedata(data:GetOwner(), data, function(metadata)
+			local err = metadata and metadata.err
+			if IsEncryptedStreamError(err) or IsEncryptedStreamError(primaryError) then
+				if onFailure then onFailure(err or primaryError) end
+				return
+			end
 			if metadata and not metadata.err and metadata.title and metadata.title ~= "" and metadata.title ~= "Unknown" then
 				deliver(metadata)
 				return
 			end
-			runHydrationFallback(primaryError or (metadata and metadata.err))
+			-- Last realistic fallback: page hydration (no widget, no second resolve).
+			runHydrationFallback(primaryError or err)
 		end)
 	end
 
 	-- Prefer pure server resolve (no client CEF required for metadata).
+	-- On encrypted/DRM-only tracks: stop immediately — further crawlers cannot make them playable.
 	if SERVER and self.ResolveTrack then
 		self:ResolveTrack(trackPath, function(metadata)
 			deliver(metadata)
 		end, function(err)
+			if IsEncryptedStreamError(err) then
+				if onFailure then onFailure(err) end
+				return
+			end
+			-- Non-DRM failures only: one lightweight client probe, then hydration.
 			runClientCrawler(err)
 		end)
 		return
