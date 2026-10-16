@@ -117,7 +117,8 @@ function gmodAvailable(name) {
 
 function checkCodecSupport() {
   const video = document.createElement('video');
-  hasCodecSupport = video.canPlayType('video/mp4; codecs="avc1.42E01E"') === 'probably';
+  const support = video.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+  hasCodecSupport = support === 'probably' || support === 'maybe';
   return hasCodecSupport;
 }
 
