@@ -97,10 +97,12 @@ local function MetadataFromResolve(data)
 		return nil, "Track is not public"
 	end
 
+	local trackId = track.id and tostring(track.id) or nil
 	return {
 		title = BuildTitle(track),
 		duration = math.floor(math.max(0, durationMs) / 1000),
 		thumbnail = NormalizeArtwork(track.artwork_url or (track.user and track.user.avatar_url)),
+		track_id = trackId,
 	}
 end
 
@@ -245,13 +247,41 @@ if CLIENT then
 
 	if (!frame) {
 		frame = document.createElement("iframe");
+		let widgetUrl = trackUrl;
+		// Try resolve → api.soundcloud.com/tracks/{id} (more reliable for some artists).
+		try {
+			const clientId = "nIjtjiYnjkOhMyh5xrbqEW12DxeJVnic";
+			const resolveUrl = "https://api-widget.soundcloud.com/resolve?url="
+				+ encodeURIComponent(trackUrl) + "&format=json&client_id=" + clientId;
+			const r = await fetch(resolveUrl, { credentials: "omit" });
+			if (r.ok) {
+				const j = await r.json();
+				const t = (j && j.collection && j.collection[0]) || j;
+				if (t && t.id) widgetUrl = "https://api.soundcloud.com/tracks/" + t.id;
+			}
+		} catch (e) {
+			console.log("DEBUG:SoundCloud resolve for widget URL failed (" + e + ")");
+		}
 		frame.src = "https://w.soundcloud.com/player/?url="
-			+ encodeURIComponent(trackUrl).replace(/%2F/g, "/")
+			+ encodeURIComponent(widgetUrl).replace(/%2F/g, "/")
 			+ "&auto_play=true&hide_related=true&show_comments=false&show_user=true&visual=false";
 	}
-	frame.setAttribute("allow", "autoplay");
+	// Force permissions required for modern SC streams (encrypted-media fix, May 2026).
+	frame.setAttribute("allow", "autoplay; encrypted-media");
 	frame.setAttribute("width", "100%");
 	frame.setAttribute("height", "166");
+	// Prefer api.soundcloud.com/tracks/{id} when the oEmbed iframe already has it.
+	try {
+		const src = frame.getAttribute("src") || "";
+		const idMatch = src.match(/api\.soundcloud\.com%2Ftracks%2F(\d+)/i)
+			|| src.match(/api\.soundcloud\.com\/tracks\/(\d+)/i)
+			|| src.match(/soundcloud%3Atracks%3A(\d+)/i);
+		if (idMatch) {
+			frame.src = "https://w.soundcloud.com/player/?url="
+				+ encodeURIComponent("https://api.soundcloud.com/tracks/" + idMatch[1])
+				+ "&auto_play=true&hide_related=true&show_comments=false&show_user=true&visual=false";
+		}
+	} catch (e) {}
 	document.body.appendChild(frame);
 	document.body.style.margin = "0";
 	document.body.style.overflow = "hidden";
@@ -404,7 +434,7 @@ if CLIENT then
 	// Stage 3: official widget API
 	try {
 		const frame = document.createElement("iframe");
-		frame.setAttribute("allow", "autoplay");
+		frame.setAttribute("allow", "autoplay; encrypted-media");
 		frame.setAttribute("width", "100%");
 		frame.setAttribute("height", "166");
 		frame.src = embedUrl || ("https://w.soundcloud.com/player/?url="
