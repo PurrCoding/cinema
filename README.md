@@ -33,13 +33,13 @@ This community-maintained successor to the original [PixelTail Games Cinema](htt
 
 YouTube, Twitch, SoundCloud, Dailymotion, Rumble, Kick, Bilibili (VOD, AV, live, and episodes), VK, OK, Internet Archive, Google Drive, MEGA, Jellyfin, and direct URL/protocol playback.
 
-Actual playback support can depend on the provider, URL type, and the Chromium/CEF codecs available in the player's Garry's Mod installation.
+Actual playback support can depend on the provider, URL type, and the Chromium/CEF codecs available in the player's Garry's Mod installation. SoundCloud specifically requires GModPatchTool to update the embedded browser; stock CEF 86 is too old for reliable playback.
 
 ## Requirements
 
 - Garry's Mod (the **x86-64 branch is recommended**).
 - A supported map: a `theater*` or `cinema*` map, or a map with theater entities and location data.
-- [GModPatchTool](https://github.com/solsticegamestudios/GModPatchTool) is strongly recommended for H.264 and other codec support.
+- [GModPatchTool](https://github.com/solsticegamestudios/GModPatchTool) is required for reliable SoundCloud playback and strongly recommended for H.264 and other codec support.
 
 > **Compatibility:** Do not run this gamemode alongside the original PixelTail Cinema addon or its forks. Disable or unsubscribe from those first.
 

@@ -19,7 +19,7 @@ var ua = navigator.userAgent || '';
 
 const services = [
   { name: 'YouTube', icon: 'fa-brands fa-youtube', url: 'https://youtube.com/', requiresCodec: false, group: 'Video' },
-  { name: 'SoundCloud', icon: 'fa-brands fa-soundcloud', url: 'https://soundcloud.com/discover', requiresCodec: false, group: 'Audio' },
+  { name: 'SoundCloud', icon: 'fa-brands fa-soundcloud', url: 'https://soundcloud.com/discover', requiresCodec: true, group: 'Audio' },
   { name: 'Dailymotion', icon: 'fa-brands fa-dailymotion', url: 'https://www.dailymotion.com/', requiresCodec: true, group: 'Video' },
   { name: 'Twitch', icon: 'fa-brands fa-twitch', url: 'https://www.twitch.tv/', requiresCodec: true, group: 'Live' },
   { name: 'Rumble', icon: 'fa-solid fa-play', url: 'https://rumble.com/', requiresCodec: true, group: 'Video' },
@@ -117,7 +117,8 @@ function gmodAvailable(name) {
 
 function checkCodecSupport() {
   const video = document.createElement('video');
-  hasCodecSupport = video.canPlayType('video/mp4; codecs="avc1.42E01E"') === 'probably';
+  const support = video.canPlayType('video/mp4; codecs="avc1.42E01E, mp4a.40.2"');
+  hasCodecSupport = support === 'probably' || support === 'maybe';
   return hasCodecSupport;
 }
 
@@ -226,17 +227,6 @@ function requestUrl() {
   setTimeout(() => { $('#submit-btn').disabled = false; }, 900);
 }
 
-function showCodecPopup(service) {
-  $('#service-name-popup').textContent = service.name;
-  $('#codec-modal').classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeCodecPopup() {
-  $('#codec-modal').classList.add('hidden');
-  document.body.style.overflow = '';
-}
-
 function selectService(service) {
   playUISound(true);
   if (service.action === 'steam-overlay') {
@@ -263,13 +253,13 @@ function renderServices(filter = '') {
       <span class="service-meta">
         <span>
           <span class="service-name">${service.name}</span>
-          ${disabled ? '<span class="service-sub">Codec needed</span>' : ''}
         </span>
-        ${disabled ? '<span class="badge">CODEC</span>' : '<span class="service-arrow"><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></span>'}
+        <span class="service-arrow">${disabled ? '' : '<i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>'}</span>
       </span>
     `;
     card.addEventListener('mouseenter', () => playUISound(false));
-    card.addEventListener('click', () => disabled ? showCodecPopup(service) : selectService(service));
+    card.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+    card.addEventListener('click', () => { if (!disabled) selectService(service); });
     grid.appendChild(card);
   });
 }
@@ -296,17 +286,8 @@ function initialize() {
     el.addEventListener('click', closeSupportPopup);
   });
 
-  document.querySelectorAll('[data-action="close-codec"]').forEach(el => {
-    el.addEventListener('click', closeCodecPopup);
-  });
-  $('[data-action="codec-instructions"]').addEventListener('click', () => {
-    navigateInGmod('https://www.solsticegamestudios.com/fixmedia/');
-    closeCodecPopup();
-  });
-
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape') {
-      closeCodecPopup();
       closeSupportPopup();
     }
     if (
