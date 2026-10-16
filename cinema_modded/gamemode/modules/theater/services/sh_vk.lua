@@ -13,69 +13,128 @@ end
 if (CLIENT) then
 	local EMBED_URL = "https://vkvideo.ru/video_ext.php?oid=-%s&id=%s&autoplay=1"
 
-	local JS_BASE = [[
-		var checkerInterval = setInterval(function() {
-			var player = document.getElementsByTagName('video')[0]
-			if (typeof (player) != 'undefined') {
-				{@JS_Content}
+	--[[
+		VK puts the real <video> under div.video-container.s-t and/or Shadow DOM.
+		Same recursive finder idea as OK (shadow-root-container + nested roots).
+	]]
+	local JS_FIND_VIDEO = [[
+		function findVideo(root) {
+			if (!root) return null;
+
+			var container = root.querySelector && root.querySelector("div.video-container.s-t");
+			if (container) {
+				var inContainer = container.querySelector("video");
+				if (inContainer) return inContainer;
+				if (container.shadowRoot) {
+					var v = findVideo(container.shadowRoot);
+					if (v) return v;
+				}
 			}
-		}, 50);
+
+			var vid = root.querySelector && root.querySelector("video");
+			if (vid) return vid;
+
+			var rootContainer = root.querySelector && root.querySelector(".shadow-root-container");
+			if (rootContainer && rootContainer.shadowRoot) {
+				var v2 = findVideo(rootContainer.shadowRoot);
+				if (v2) return v2;
+			}
+
+			var all = root.querySelectorAll ? root.querySelectorAll("*") : [];
+			for (var i = 0; i < all.length; i++) {
+				var el = all[i];
+				if (el.shadowRoot) {
+					var v3 = findVideo(el.shadowRoot);
+					if (v3) return v3;
+				}
+			}
+			return null;
+		}
 	]]
 
-	local THEATER_JS = JS_BASE:Replace("{@JS_Content}", [[
-		var player = document.getElementsByTagName('video')[0];
-		if (!!player) {
+	local THEATER_JS = [[
+		(function() {
+			]] .. JS_FIND_VIDEO .. [[
 
-			if (player.paused) { player.play(); }
-			if (!player.paused && player.readyState === 4) {
-				if (player.muted) {player.muted = false}
+			var checkerInterval = setInterval(function() {
+				var player = findVideo(document);
+				if (!player) return;
+
+				if (player.paused) { try { player.play(); } catch (e) {} }
+
+				if (!player.paused && player.readyState >= 3) {
+					if (player.muted) { player.muted = false; }
+
+					clearInterval(checkerInterval);
+
+					window.cinema_controller = player;
+					exTheater.controllerReady();
+
+					document.body.style.backgroundColor = "black";
+
+					player.addEventListener("seeking", function() {
+						if (!player.paused) { player.pause(); }
+
+						var onProgress = function() {
+							if (player.paused && player.readyState >= 3) {
+								player.removeEventListener("progress", onProgress);
+								player.play();
+							}
+						};
+						player.addEventListener("progress", onProgress);
+					});
+				}
+			}, 50);
+		})();
+	]]
+
+	local METADATA_JS = [[
+		(function() {
+			]] .. JS_FIND_VIDEO .. [[
+
+			var checkerInterval = setInterval(function() {
+				var player = findVideo(document);
+				if (!player) return;
 
 				clearInterval(checkerInterval);
+				if (window.metaevent_set) return;
 
-				window.cinema_controller = player;
-				exTheater.controllerReady();
+				player.muted = true;
 
-				document.body.style.backgroundColor = "black";
+				var titleEl = document.querySelector(".videoplayer_title_link, .videoplayer_title_link._clickable");
+				var title = titleEl ? (titleEl.innerText || titleEl.textContent) : "VK Video";
 
-				player.addEventListener("seeking", function () {
-					if (!player.paused) { player.pause() }
+				var finish = function() {
+					if (window.metaevent_set) return;
+					window.metaevent_set = true;
 
-					this.addEventListener("progress", function progessCheck() {
-						if (player.paused && player.readyState === 4) {
-							this.removeEventListener("progress", progessCheck);
-							player.play();
-						}
+					var thumb = "";
+					var thumbEl = document.querySelector(".videoplayer_thumb");
+					if (thumbEl && thumbEl.style && thumbEl.style.backgroundImage) {
+						thumb = thumbEl.style.backgroundImage.slice(4, -1).replace(/["']/g, "");
+					}
+
+					console.log("METADATA:" + JSON.stringify({
+						title: title,
+						thumbnail: thumb,
+						duration: player.duration || 0
+					}));
+				};
+
+				if (player.readyState >= 1 && !isNaN(player.duration) && player.duration > 0) {
+					finish();
+				} else {
+					player.addEventListener("loadedmetadata", finish);
+					player.addEventListener("error", function() {
+						console.log("ERROR:" + (player.error ? player.error.code : 5));
 					});
-				});
-			}
-		}
-	]])
-
-	local METADATA_JS = JS_BASE:Replace("{@JS_Content}", [[
-		player.muted = true;
-		clearInterval(checkerInterval);
-		if (window.metaevent_set) {return;}
-
-		var title = document.getElementsByClassName("videoplayer_title_link _clickable")[0].innerText
-
-		player.addEventListener('loadedmetadata', (event) => {
-			window.metaevent_set = true;
-
-			var thumb = document.getElementsByClassName("videoplayer_thumb")[0].style.backgroundImage.slice(4, -1).replace(/["']/g, "")
-
-			var metadata = {
-				title: title,
-				thumbnail: thumb,
-				duration: player.duration,
-			};
-
-			console.log("METADATA:" + JSON.stringify(metadata));
-
-		});
-		player.addEventListener('error', (event) => {
-			console.log("ERROR:" + player.error.code )
-		});
-	]])
+					setTimeout(function() {
+						if (!window.metaevent_set) finish();
+					}, 8000);
+				}
+			}, 50);
+		})();
+	]]
 
 	local function extractData(data)
 		local oid, id = data:match("video%-(%d+)_(%d+)")
@@ -135,16 +194,18 @@ function SERVICE:GetURLInfo( url )
 	local info = {}
 
 	-- https://vkvideo.ru/video-xxxxxxxxx_xxxxxxxxx
-	local videoID = url.path:match("[video%-(%d+)_(%d+)]+")
-	if (videoID and videoID ~= "video") then
-		info.Data = videoID
+	if url.path then
+		local videoID = url.path:match("(video%-%d+_%d+)")
+		if videoID then
+			info.Data = videoID
+		end
 	end
 
-	if (url.query) then
+	if url.query then
 
 		-- https://vkvideo.ru/video?z=video-xxxxxxxxx_xxxxxxxxx
 		if url.query.z then
-			local data = url.query.z:match("[video%-(%d+)_(%d+)]+")
+			local data = url.query.z:match("(video%-%d+_%d+)")
 			if data then info.Data = data end
 		end
 
