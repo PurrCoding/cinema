@@ -6,6 +6,7 @@ local SERVICE = {
 }
 
 local META_API = "https://api.bitchute.com/api/beta9/video"
+local EMBED_URL = "https://www.bitchute.com/api/beta9/embed/%s?startTime=%d&autoPlay=true"
 
 local function ParseDuration( str )
 	if not str or str == "" then return 0 end
@@ -36,27 +37,13 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
-	local EMBED_URL = "https://www.bitchute.com/embed/%s"
 
 	--[[
-		Same approach as MEGA:
-		1. Use BitChute/Video.js only to start the stream
-		2. Detach <video>, wipe the rest of the page (kills Video.js)
-		3. Own play/pause/volume/seek via native HTMLMediaElement
+		Embed API: autoPlay + startTime.
+		Isolate <video> once playing (MEGA-style) so Video.js cannot fight controls.
 	]]
 	local THEATER_JS = [[
 		(function() {
-			function tryClickPlay() {
-				var btn = document.querySelector(".vjs-big-play-button")
-					|| document.querySelector("button.vjs-play-control")
-					|| document.querySelector(".vjs-play-control");
-				if (btn) {
-					try { btn.click(); } catch (e) {}
-					return true;
-				}
-				return false;
-			}
-
 			function isolate(player) {
 				document.documentElement.style.cssText = "margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;";
 				document.body.style.cssText = "margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;";
@@ -97,12 +84,9 @@ if (CLIENT) then
 				window.cinema_controller = player;
 			}
 
-			tryClickPlay();
-
 			var checkerInterval = setInterval(function() {
-				tryClickPlay();
-
-				var player = document.getElementsByTagName("video")[0];
+				var player = document.getElementById("player_one")
+					|| document.querySelector("video");
 				if (!player) return;
 
 				if (player.paused) {
@@ -114,7 +98,6 @@ if (CLIENT) then
 					return;
 				}
 
-				// Live streams often have duration NaN/Infinity — still isolate once playing
 				if (player.readyState < 2) return;
 
 				clearInterval(checkerInterval);
@@ -124,29 +107,22 @@ if (CLIENT) then
 				if (req && req.catch) req.catch(function() {});
 
 				exTheater.controllerReady();
-			}, 20);
+			}, 50);
 		})();
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )
 
-		local startTime = math.Round( CurTime() - Video:StartTime() )
-		if startTime < 0 then startTime = 0 end
+		local startTime = 0
+		if self.IsTimed then
+			startTime = math.Round( CurTime() - Video:StartTime() )
+			if startTime < 0 then startTime = 0 end
+		end
 
-		panel:OpenURL( EMBED_URL:format( Video:Data() ) )
+		panel:OpenURL( EMBED_URL:format( Video:Data(), startTime ) )
 		panel.OnDocumentReady = function( pnl )
 			self:LoadExFunctions( pnl )
 			pnl:QueueJavascript( THEATER_JS )
-
-			if self.IsTimed and startTime > 3 then
-				timer.Simple( 1.5, function()
-					if IsValid( pnl ) then
-						pnl:QueueJavascript(
-							("if (window.cinema_controller) cinema_controller.currentTime = %d;"):format( startTime )
-						)
-					end
-				end )
-			end
 		end
 
 	end
