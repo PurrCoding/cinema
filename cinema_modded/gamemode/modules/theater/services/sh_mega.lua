@@ -21,6 +21,8 @@ if (CLIENT) then
 
 	local THEATER_JS = [[
 		(function() {
+			window.__mpWantPlay = true;
+
 			var checkerInterval = setInterval(function() {
 				var plybtn = document.querySelector(".play-video-button");
 				var player = document.getElementsByTagName("video")[0];
@@ -32,8 +34,7 @@ if (CLIENT) then
 					return;
 				}
 
-				// Only MEGA UI click — extra play() races with theater pause
-				if (plybtn && player.paused) {
+				if (plybtn && player.paused && window.__mpWantPlay) {
 					try {
 						player.setAttribute("webkit-playsinline", "webkit-playsinline");
 						plybtn.click();
@@ -46,12 +47,46 @@ if (CLIENT) then
 				clearInterval(checkerInterval);
 				window.cinema_controller = player;
 
-				// Patch controller play so AbortError is swallowed
-				var rawPlay = player.play.bind(player);
+				// MEGA ignores native pause — drive UI instead
+				player.pause = function() {
+					window.__mpWantPlay = false;
+					var playBtn = document.querySelector(".play-video-button");
+					if (playBtn && player.paused) return;
+
+					try { player.click(); } catch (e) {}
+
+					var ticks = 0;
+					if (window.__mpPauseWatch) clearInterval(window.__mpPauseWatch);
+					window.__mpPauseWatch = setInterval(function() {
+						if (window.__mpWantPlay) {
+							clearInterval(window.__mpPauseWatch);
+							return;
+						}
+						if (!player || player.paused) {
+							clearInterval(window.__mpPauseWatch);
+							return;
+						}
+						try { player.click(); } catch (e) {}
+						if (++ticks >= 15) clearInterval(window.__mpPauseWatch);
+					}, 120);
+				};
+
 				player.play = function() {
-					var req = rawPlay();
-					if (req && req.catch) req.catch(function() {});
-					return req;
+					window.__mpWantPlay = true;
+					if (window.__mpPauseWatch) {
+						clearInterval(window.__mpPauseWatch);
+						window.__mpPauseWatch = null;
+					}
+					if (!player.paused) return Promise.resolve();
+
+					var playBtn = document.querySelector(".play-video-button");
+					if (playBtn) {
+						try { playBtn.click(); } catch (e) {}
+						return Promise.resolve();
+					}
+
+					try { player.click(); } catch (e) {}
+					return Promise.resolve();
 				};
 
 				exTheater.controllerReady();
@@ -87,7 +122,7 @@ if (CLIENT) then
 				clearInterval(checkerInterval);
 				done = true;
 				player.volume = 0;
-				try { player.pause(); } catch (e) {}
+				try { player.click(); } catch (e) {}
 
 				var title = document.title.replace("MEGA - ", "");
 				console.log("METADATA:" + JSON.stringify({
