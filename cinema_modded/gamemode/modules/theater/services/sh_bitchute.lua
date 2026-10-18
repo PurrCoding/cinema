@@ -19,14 +19,20 @@ local function ParseDuration( str )
 	return tonumber( str ) or 0
 end
 
+-- Only video/embed pages with an id — not homepage, channels, etc.
 function SERVICE:Match( url )
-	return url.host and url.host:match( "bitchute%.com" )
+	if not url or not url.host or not url.host:match( "bitchute%.com" ) then
+		return false
+	end
+	if not url.path then return false end
+	return url.path:match( "^/(?:video|embed)/[%w%-_]+" ) ~= nil
 end
 
 function SERVICE:GetURLInfo( url )
 	if not url.path then return false end
-	local id = url.path:match( "^/(?:video|embed)/([%w%-_]+)" )
-	if id then
+	local id = url.path:match( "^/(?:video|embed)/([%w%-_]+)/?$" )
+		or url.path:match( "^/(?:video|embed)/([%w%-_]+)" )
+	if id and id ~= "" then
 		return { Data = id }
 	end
 	return false
