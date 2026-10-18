@@ -24,6 +24,8 @@ if (CLIENT) then
 			window.__mpWantPlay = true;
 
 			var checkerInterval = setInterval(function() {
+				if (!window.__mpWantPlay) return;
+
 				var plybtn = document.querySelector(".play-video-button");
 				var player = document.getElementsByTagName("video")[0];
 
@@ -34,20 +36,22 @@ if (CLIENT) then
 					return;
 				}
 
-				if (plybtn && player.paused && window.__mpWantPlay) {
+				// Startup: keep trying until MEGA actually plays
+				if (player.paused) {
 					try {
 						player.setAttribute("webkit-playsinline", "webkit-playsinline");
-						plybtn.click();
+						if (plybtn) plybtn.click();
+						var req = player.play();
+						if (req && req.catch) req.catch(function() {});
 					} catch (e) {}
 					return;
 				}
 
-				if (player.paused || Number.isNaN(player.duration)) return;
+				if (Number.isNaN(player.duration)) return;
 
 				clearInterval(checkerInterval);
 				window.cinema_controller = player;
 
-				// MEGA ignores native pause — drive UI instead
 				player.pause = function() {
 					window.__mpWantPlay = false;
 					var playBtn = document.querySelector(".play-video-button");
@@ -82,11 +86,10 @@ if (CLIENT) then
 					var playBtn = document.querySelector(".play-video-button");
 					if (playBtn) {
 						try { playBtn.click(); } catch (e) {}
-						return Promise.resolve();
 					}
-
-					try { player.click(); } catch (e) {}
-					return Promise.resolve();
+					var req = HTMLMediaElement.prototype.play.call(player);
+					if (req && req.catch) req.catch(function() {});
+					return req || Promise.resolve();
 				};
 
 				exTheater.controllerReady();
@@ -108,15 +111,17 @@ if (CLIENT) then
 					return;
 				}
 
-				if (plybtn && player.paused) {
+				if (player.paused) {
 					try {
 						player.setAttribute("webkit-playsinline", "webkit-playsinline");
-						plybtn.click();
+						if (plybtn) plybtn.click();
+						var req = player.play();
+						if (req && req.catch) req.catch(function() {});
 					} catch (e) {}
 					return;
 				}
 
-				if (player.paused || Number.isNaN(player.duration)) return;
+				if (Number.isNaN(player.duration)) return;
 				if (done) return;
 
 				clearInterval(checkerInterval);
