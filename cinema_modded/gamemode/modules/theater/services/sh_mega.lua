@@ -27,27 +27,33 @@ if (CLIENT) then
 
 				if (!player) return;
 
-				// Skip ads / wrong video nodes
 				if (!player.id || player.id !== "video") {
 					try { player.currentTime = 9999; } catch (e) {}
 					return;
 				}
 
-				// Kick MEGA play button once if still idle
+				// Only MEGA UI click — extra play() races with theater pause
 				if (plybtn && player.paused) {
 					try {
 						player.setAttribute("webkit-playsinline", "webkit-playsinline");
 						plybtn.click();
-						player.play();
 					} catch (e) {}
 					return;
 				}
 
 				if (player.paused || Number.isNaN(player.duration)) return;
 
-				// Bound — stop auto-click so theater pause/play works
 				clearInterval(checkerInterval);
 				window.cinema_controller = player;
+
+				// Patch controller play so AbortError is swallowed
+				var rawPlay = player.play.bind(player);
+				player.play = function() {
+					var req = rawPlay();
+					if (req && req.catch) req.catch(function() {});
+					return req;
+				};
+
 				exTheater.controllerReady();
 			}, 50);
 		})();
@@ -71,7 +77,6 @@ if (CLIENT) then
 					try {
 						player.setAttribute("webkit-playsinline", "webkit-playsinline");
 						plybtn.click();
-						player.play();
 					} catch (e) {}
 					return;
 				}
@@ -82,6 +87,7 @@ if (CLIENT) then
 				clearInterval(checkerInterval);
 				done = true;
 				player.volume = 0;
+				try { player.pause(); } catch (e) {}
 
 				var title = document.title.replace("MEGA - ", "");
 				console.log("METADATA:" + JSON.stringify({
