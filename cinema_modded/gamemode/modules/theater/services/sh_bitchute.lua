@@ -40,13 +40,22 @@ if (CLIENT) then
 
 	--[[
 		Same approach as MEGA:
-		1. Use BitChute/Video.js only to start the stream once
+		1. Use BitChute/Video.js only to start the stream
 		2. Detach <video>, wipe the rest of the page (kills Video.js)
 		3. Own play/pause/volume/seek via native HTMLMediaElement
 	]]
 	local THEATER_JS = [[
 		(function() {
-			var started = false;
+			function tryClickPlay() {
+				var btn = document.querySelector(".vjs-big-play-button")
+					|| document.querySelector("button.vjs-play-control")
+					|| document.querySelector(".vjs-play-control");
+				if (btn) {
+					try { btn.click(); } catch (e) {}
+					return true;
+				}
+				return false;
+			}
 
 			function isolate(player) {
 				document.documentElement.style.cssText = "margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;";
@@ -88,35 +97,25 @@ if (CLIENT) then
 				window.cinema_controller = player;
 			}
 
-			var checkerInterval = setInterval(function() {
-				var btn = document.querySelector(".vjs-big-play-button")
-					|| document.querySelector("button.vjs-play-control")
-					|| document.querySelector(".vjs-play-control");
-				var player = document.getElementsByTagName("video")[0];
+			// Click as soon as the button exists
+			tryClickPlay();
 
+			var checkerInterval = setInterval(function() {
+				tryClickPlay();
+
+				var player = document.getElementsByTagName("video")[0];
 				if (!player) return;
 
-				if (player.paused && !started) {
-					started = true;
+				if (player.paused) {
 					try {
 						player.setAttribute("webkit-playsinline", "webkit-playsinline");
-						if (btn) btn.click();
 						var req = player.play();
 						if (req && req.catch) req.catch(function() {});
 					} catch (e) {}
-					setTimeout(function() {
-						if (player.paused) {
-							var b = document.querySelector(".vjs-big-play-button")
-								|| document.querySelector("button.vjs-play-control");
-							if (b) { try { b.click(); } catch (e) {} }
-							var r = player.play();
-							if (r && r.catch) r.catch(function() {});
-						}
-					}, 600);
 					return;
 				}
 
-				if (player.paused || Number.isNaN(player.duration)) return;
+				if (Number.isNaN(player.duration) && player.readyState < 2) return;
 
 				clearInterval(checkerInterval);
 				isolate(player);
@@ -125,7 +124,7 @@ if (CLIENT) then
 				if (req && req.catch) req.catch(function() {});
 
 				exTheater.controllerReady();
-			}, 50);
+			}, 20);
 		})();
 	]]
 
