@@ -12,6 +12,7 @@ local Ignored = {
 }
 
 local PlaybackApi = "https://web.kick.com/api/v1/stream/%s/playback"
+local ChannelApi = "https://kick.com/api/v2/channels/%s"
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("kick.com")
@@ -109,13 +110,32 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		return
 	end
 
-	-- Live channel
-	local info = {}
-	info.title = ("Kick: %s"):format(data)
+	-- Live channel: api/v2/channels/{slug} + livestream.is_live
+	local onReceive = function( body, length, headers, code )
+		local response = util.JSONToTable(body)
+		if not response then
+			return onFailure( "Theater_RequestFailed" )
+		end
 
-	if onSuccess then
-		pcall(onSuccess, info)
+		local live = response.livestream
+		if not istable(live) or live.is_live ~= true then
+			return onFailure( "Kick channel is not live." )
+		end
+
+		local info = {}
+		info.title = live.session_title or ("Kick: %s"):format(data)
+		info.duration = 0
+
+		if istable(live.thumbnail) and isstring(live.thumbnail.url) then
+			info.thumbnail = live.thumbnail.url
+		end
+
+		if onSuccess then
+			pcall(onSuccess, info)
+		end
 	end
+
+	self:Fetch( ChannelApi:format(data), onReceive, onFailure )
 end
 
 theater.RegisterService( "kick", SERVICE )
