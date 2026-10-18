@@ -20,85 +20,74 @@ end
 if (CLIENT) then
 
 	local THEATER_JS = [[
-		(async () => {
-			var done = false
-			var checkerInterval = setInterval(function () {
+		(function() {
+			var checkerInterval = setInterval(function() {
+				var plybtn = document.querySelector(".play-video-button");
+				var player = document.getElementsByTagName("video")[0];
 
-				var plybtn = document.querySelector('.play-video-button');
-				var player = document.getElementsByTagName('video')[0];
+				if (!player) return;
 
-				if (!!player) {
-					if (!!plybtn && player.paused ) { 
-						player.setAttribute('webkit-playsinline', 'webkit-playsinline');
-						player.click(); 
-						return;
-					}
-
-					//Check if we have the correct element
-					if (player.id && player.id === "video" && player.id === video.id ) { 
-					
-						//Check if its playing and duration is not NaN
-						if (!player.paused && !Number.isNaN(player.duration)) {
-							
-							// Check if we already done
-							if (done) { return } 
-
-							done = true
-
-							window.cinema_controller = player;
-							exTheater.controllerReady();
-						}
-					} else{ //Skip any video ads
-						player.currentTime = 9999
-					}
+				// Skip ads / wrong video nodes
+				if (!player.id || player.id !== "video") {
+					try { player.currentTime = 9999; } catch (e) {}
+					return;
 				}
 
+				// Kick MEGA play button once if still idle
+				if (plybtn && player.paused) {
+					try {
+						player.setAttribute("webkit-playsinline", "webkit-playsinline");
+						plybtn.click();
+						player.play();
+					} catch (e) {}
+					return;
+				}
+
+				if (player.paused || Number.isNaN(player.duration)) return;
+
+				// Bound — stop auto-click so theater pause/play works
+				clearInterval(checkerInterval);
+				window.cinema_controller = player;
+				exTheater.controllerReady();
 			}, 50);
 		})();
 	]]
 
 	local METADATA_JS = [[
-		(async () => {
-			var done = false
-			var checkerInterval = setInterval(function () {
+		(function() {
+			var done = false;
+			var checkerInterval = setInterval(function() {
+				var plybtn = document.querySelector(".play-video-button");
+				var player = document.getElementsByTagName("video")[0];
 
-				var plybtn = document.querySelector('.play-video-button');
-				var player = document.getElementsByTagName('video')[0];
+				if (!player) return;
 
-				if (!!player) {
-					if (!!plybtn && player.paused ) { 
-						player.setAttribute('webkit-playsinline', 'webkit-playsinline');
-						player.click(); 
-						return;
-					}
-
-					//Check if we have the correct element
-					if (player.id && player.id === "video" && player.id === video.id ) { 
-					
-						//Check if its playing and duration is not NaN
-						if (!player.paused && !Number.isNaN(player.duration)) {
-							
-							// Check if we already done
-							if (done) { return } 
-						
-							clearInterval(checkerInterval);
-
-							done = true
-							player.volume = 0
-
-							var title = document.title.replace("MEGA - ", "")
-							var metadata = { 
-								duration: player.duration,
-								title: title
-							}
-
-							console.log("METADATA:" + JSON.stringify(metadata))
-						}
-					} else{ //Skip any video ads
-						player.currentTime = 9999
-					}
+				if (!player.id || player.id !== "video") {
+					try { player.currentTime = 9999; } catch (e) {}
+					return;
 				}
 
+				if (plybtn && player.paused) {
+					try {
+						player.setAttribute("webkit-playsinline", "webkit-playsinline");
+						plybtn.click();
+						player.play();
+					} catch (e) {}
+					return;
+				}
+
+				if (player.paused || Number.isNaN(player.duration)) return;
+				if (done) return;
+
+				clearInterval(checkerInterval);
+				done = true;
+				player.volume = 0;
+
+				var title = document.title.replace("MEGA - ", "");
+				console.log("METADATA:" + JSON.stringify({
+					duration: player.duration,
+					title: title
+				}));
 			}, 50);
 		})();
 	]]
