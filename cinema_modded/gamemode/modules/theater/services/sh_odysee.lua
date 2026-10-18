@@ -13,19 +13,20 @@ function SERVICE:GetURLInfo( url )
 
 	-- https://odysee.com/@channel:1/video-title:a
 	-- https://odysee.com/video-title:a
-	local claimName = url.path:match("/([^/]+)$")
-	if not claimName or claimName == "" then
+	local channel, claim = url.path:match("/(@[^/]+)/([^/]+)$")
+	local claimOnly = url.path:match("/([^/]+)$")
+
+	local data
+	if channel and claim then
+		-- Full path matches official oEmbed embed src
+		data = channel .. "/" .. claim
+	elseif claimOnly and claimOnly ~= "" and not claimOnly:StartWith("$") then
+		data = claimOnly
+	else
 		return false
 	end
 
-	local info = { Data = claimName }
-
-	-- Preserve channel for livestream-style embeds when present
-	local channel = url.path:match("/@([^/]+)/")
-	if channel then
-		info.Data = claimName
-		info.Channel = channel
-	end
+	local info = { Data = data }
 
 	if url.query and url.query.t then
 		local t = tonumber(url.query.t)
@@ -54,6 +55,13 @@ local function ParseISO8601Duration( duration )
 	return totalSeconds > 0 and totalSeconds or 0
 end
 
+local function DecodeURIComponent( str )
+	if not str then return str end
+	return string.gsub(str, "%%(%x%x)", function(h)
+		return string.char(tonumber(h, 16))
+	end)
+end
+
 local function ParseOdyseeHTML( body )
 	local jsonData = string.match(body, '<script type="application/ld%+json">(.-)</script>')
 	if not jsonData then return nil end
@@ -74,15 +82,21 @@ local function ParseOdyseeHTML( body )
 		duration = ParseISO8601Duration(videoData.duration)
 	end
 
+	local embedUrl = ""
+	if videoData.embedUrl and videoData.embedUrl ~= "" then
+		embedUrl = DecodeURIComponent(videoData.embedUrl)
+	end
+
 	return {
 		title = title,
 		duration = duration,
-		embedUrl = videoData.embedUrl or "",
+		embedUrl = embedUrl,
+		thumbnail = videoData.thumbnailUrl or "",
 	}
 end
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
-	-- data is the claim name from GetURLInfo
+	-- data is the embed path (@channel/claim or claim)
 	local pageUrl = "https://odysee.com/" .. data
 
 	self:Fetch( pageUrl, function( body, length, headers, code )
@@ -109,6 +123,20 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 				duration = 0,
 				type = "odyseelive",
 			}
+
+			if response.thumbnail_url then
+				info.thumbnail = response.thumbnail_url
+			end
+
+			if response.html then
+				local src = string.match(response.html, 'src="([^"]+)"')
+				if src then
+					local embed = DecodeURIComponent(src)
+					embed = string.match(embed, "^([^?]+)") or embed
+					info.embedUrl = embed
+				end
+			end
+
 			pcall(onSuccess, info)
 		end, onFailure )
 	end, onFailure )
@@ -116,24 +144,65 @@ end
 
 if CLIENT then
 	local THEATER_JS = [[
-		var checkerInterval = setInterval(function() {
-			var player = document.querySelector("video#vjs_video_3_html5_api")
-				|| document.querySelector("video");
-			var consentBtn = document.querySelector("#onetrust-accept-btn-handler");
-
-			if (!!consentBtn) {
-				consentBtn.click();
-				return;
+		(function() {
+			function findPlayer() {
+				var parent = document.querySelector(".video-js-parent");
+				if (parent) {
+					var v = parent.querySelector("video");
+					if (v) return v;
+				}
+				return document.querySelector("video.vjs-tech")
+					|| document.querySelector("video");
 			}
 
-			if (!!player && !player.paused && player.readyState == 4) {
-				if (player.muted) { player.muted = false; }
+			var consentHandled = false;
+			var checkerInterval = setInterval(function() {
+				var consentBtn = document.querySelector("#onetrust-accept-btn-handler");
+				if (consentBtn && !consentHandled) {
+					consentBtn.click();
+					consentHandled = true;
+					return;
+				}
+
+				var player = findPlayer();
+				if (!player) return;
+
+				if (player.paused) {
+					try { player.play(); } catch (e) {}
+					return;
+				}
+
+				if (player.readyState < 2) return;
+
 				clearInterval(checkerInterval);
+
+				try {
+					player.muted = false;
+					if (player.hasAttribute && player.hasAttribute("muted")) {
+						player.removeAttribute("muted");
+					}
+				} catch (e) {}
+
 				document.body.style.backgroundColor = "black";
 				window.cinema_controller = player;
+
+				// Short watchdog: Odysee sometimes re-mutes right after start
+				var ticks = 0;
+				var watchdog = setInterval(function() {
+					try {
+						if (player.muted) {
+							player.muted = false;
+							if (player.hasAttribute && player.hasAttribute("muted")) {
+								player.removeAttribute("muted");
+							}
+						}
+					} catch (e) {}
+					if (++ticks >= 40) clearInterval(watchdog);
+				}, 100);
+
 				exTheater.controllerReady();
-			}
-		}, 50);
+			}, 50);
+		})();
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )
@@ -142,8 +211,20 @@ if CLIENT then
 			startTime = math.max(0, math.Round(CurTime() - Video:StartTime()))
 		end
 
-		local claim = Video:Data()
-		local embedUrl = ("https://odysee.com/$/embed/%s?autoplay=1"):format(claim)
+		local embedUrl
+
+		-- Prefer embedUrl resolved during GetVideoInfo (JSON-LD / oEmbed)
+		local meta = Video.metadata or Video._metadata
+		if istable(meta) and meta.embedUrl and meta.embedUrl ~= "" then
+			embedUrl = meta.embedUrl
+		else
+			local claim = Video:Data()
+			embedUrl = ("https://odysee.com/$/embed/%s"):format(claim)
+		end
+
+		if not string.find(embedUrl, "[?&]autoplay=") then
+			embedUrl = embedUrl .. (string.find(embedUrl, "?", 1, true) and "&" or "?") .. "autoplay=1"
+		end
 
 		if self.IsTimed and startTime > 0 then
 			embedUrl = embedUrl .. "&t=" .. startTime
