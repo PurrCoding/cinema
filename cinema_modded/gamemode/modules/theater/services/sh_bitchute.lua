@@ -37,61 +37,96 @@ end
 
 if (CLIENT) then
 	local EMBED_URL = "https://www.bitchute.com/embed/%s"
+
+	--[[
+		Same approach as MEGA:
+		1. Use BitChute/Video.js only to start the stream once
+		2. Detach <video>, wipe the rest of the page (kills Video.js)
+		3. Own play/pause/volume/seek via native HTMLMediaElement
+	]]
 	local THEATER_JS = [[
-		var checkerInterval = setInterval(function() {
-			var btn = document.querySelector(".vjs-big-play-button")
-				|| document.querySelector("button.vjs-play-control")
-				|| document.querySelector(".vjs-play-control");
-			if (btn) {
-				try { btn.click(); } catch (e) {}
-			}
+		(function() {
+			var started = false;
 
-			var player = document.getElementsByTagName("video")[0];
-			if (!player) return;
+			function isolate(player) {
+				document.documentElement.style.cssText = "margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;";
+				document.body.style.cssText = "margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;";
 
-			if (player.paused) {
-				try { player.play(); } catch (e) {}
-				return;
-			}
+				document.body.appendChild(player);
 
-			if (player.readyState < 2) return;
-
-			clearInterval(checkerInterval);
-
-			document.documentElement.style.cssText = "margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;";
-			document.body.style.cssText = "margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;";
-			document.body.appendChild(player);
-
-			var children = Array.prototype.slice.call(document.body.childNodes);
-			for (var i = 0; i < children.length; i++) {
-				if (children[i] !== player) {
-					try { document.body.removeChild(children[i]); } catch (e) {}
+				var nodes = Array.prototype.slice.call(document.body.childNodes);
+				for (var i = 0; i < nodes.length; i++) {
+					if (nodes[i] !== player) {
+						try { document.body.removeChild(nodes[i]); } catch (e) {}
+					}
 				}
+
+				var scripts = document.querySelectorAll("script");
+				for (var s = 0; s < scripts.length; s++) {
+					try { scripts[s].remove(); } catch (e) {}
+				}
+
+				player.style.cssText = [
+					"position:fixed",
+					"top:0",
+					"left:0",
+					"width:100%",
+					"height:100%",
+					"max-width:100%",
+					"max-height:100%",
+					"object-fit:contain",
+					"background:#000",
+					"z-index:9999",
+					"margin:0",
+					"padding:0",
+					"border:none"
+				].join(";");
+
+				player.removeAttribute("controls");
+				player.controls = false;
+
+				window.cinema_controller = player;
 			}
 
-			player.style.cssText = [
-				"position:fixed",
-				"top:0",
-				"left:0",
-				"width:100%",
-				"height:100%",
-				"max-width:100%",
-				"max-height:100%",
-				"object-fit:contain",
-				"background:#000",
-				"z-index:9999",
-				"margin:0",
-				"padding:0",
-				"border:none"
-			].join(";");
+			var checkerInterval = setInterval(function() {
+				var btn = document.querySelector(".vjs-big-play-button")
+					|| document.querySelector("button.vjs-play-control")
+					|| document.querySelector(".vjs-play-control");
+				var player = document.getElementsByTagName("video")[0];
 
-			player.removeAttribute("controls");
-			player.controls = false;
-			if (player.muted) { player.muted = false; }
+				if (!player) return;
 
-			window.cinema_controller = player;
-			exTheater.controllerReady();
-		}, 50);
+				if (player.paused && !started) {
+					started = true;
+					try {
+						player.setAttribute("webkit-playsinline", "webkit-playsinline");
+						if (btn) btn.click();
+						var req = player.play();
+						if (req && req.catch) req.catch(function() {});
+					} catch (e) {}
+					setTimeout(function() {
+						if (player.paused) {
+							var b = document.querySelector(".vjs-big-play-button")
+								|| document.querySelector("button.vjs-play-control");
+							if (b) { try { b.click(); } catch (e) {} }
+							var r = player.play();
+							if (r && r.catch) r.catch(function() {});
+						}
+					}, 600);
+					return;
+				}
+
+				if (player.paused || Number.isNaN(player.duration)) return;
+
+				clearInterval(checkerInterval);
+				isolate(player);
+
+				var req = player.play();
+				if (req && req.catch) req.catch(function() {});
+
+				exTheater.controllerReady();
+			}, 50);
+		})();
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )
