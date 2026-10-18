@@ -16,16 +16,44 @@ if (CLIENT) then
 		var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName('video')[0];
 			if (!!player && player.paused == false && player.readyState == 4) {
-				if (player.muted) { player.muted = false; }
-
 				clearInterval(checkerInterval);
 
-				document.body.style.backgroundColor = "black";
-				window.cinema_controller = player;
+				if (player.muted) { player.muted = false; }
 
+				// Full-bleed black stage (same idea as Kick)
+				document.documentElement.style.cssText = "margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;";
+				document.body.style.cssText = "margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;";
+
+				document.body.appendChild(player);
+				var children = Array.prototype.slice.call(document.body.childNodes);
+				for (var i = 0; i < children.length; i++) {
+					if (children[i] !== player) {
+						try { document.body.removeChild(children[i]); } catch (e) {}
+					}
+				}
+
+				player.style.cssText = [
+					"position:fixed",
+					"top:0",
+					"left:0",
+					"width:100%",
+					"height:100%",
+					"max-width:100%",
+					"max-height:100%",
+					"object-fit:contain",
+					"background:#000",
+					"z-index:9999",
+					"margin:0",
+					"padding:0",
+					"border:none"
+				].join(";");
+
+				player.removeAttribute("controls");
+				player.controls = false;
+
+				window.cinema_controller = player;
 				exTheater.controllerReady();
 
-				// Autoplay policy may re-mute once; clear without touching volume
 				setTimeout(function() {
 					if (window.cinema_controller && window.cinema_controller.muted) {
 						window.cinema_controller.muted = false;
@@ -70,13 +98,11 @@ end
 function SERVICE:GetURLInfo( url )
 
 	if url.path then
-		-- Watch page: /vXXXX-title.html (full slug as Data)
 		local data = url.path:match("/([%a%d%p-_]+).html")
 		if data then
 			return { Data = data }
 		end
 
-		-- Shorts: /shorts/vXXXX
 		local shortId = url.path:match("^/shorts/([%w%-_]+)")
 		if shortId then
 			return { Data = "shorts/" .. shortId }
