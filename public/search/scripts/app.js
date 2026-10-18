@@ -29,8 +29,6 @@ const services = [
   { name: 'Archive', icon: 'fa-brands fa-internet-archive', url: 'https://archive.org/details/movies', requiresCodec: true, group: 'Archive' },
   { name: 'VK Видео', icon: 'fa-brands fa-vk', url: 'https://vkvideo.ru/', requiresCodec: true, group: 'Video' },
   { name: 'Одноклассники', icon: 'fa-brands fa-odnoklassniki', url: 'https://ok.ru/video', requiresCodec: true, group: 'Video' },
-  { name: 'Google Drive', icon: 'fa-brands fa-google-drive', url: 'https://drive.google.com/', requiresCodec: true, group: 'Video' },
-  { name: 'MEGA', icon: 'fa-solid fa-cloud', url: 'https://mega.nz/', requiresCodec: true, group: 'Video' }
 ];
 
 let hasCodecSupport = false;
