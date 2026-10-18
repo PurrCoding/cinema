@@ -22,6 +22,36 @@ if (CLIENT) then
 	local THEATER_JS = [[
 		(function() {
 			window.__mpWantPlay = true;
+			window.__mpToggleBusy = false;
+
+			function toggleOnce(wantPlay) {
+				window.__mpWantPlay = wantPlay;
+				var player = window.cinema_controller;
+				if (!player) return;
+				if (wantPlay && !player.paused) return;
+				if (!wantPlay && player.paused) return;
+				if (window.__mpToggleBusy) return;
+
+				var btn = document.querySelector(".play-video-button");
+				if (!btn) return;
+
+				window.__mpToggleBusy = true;
+				try { btn.click(); } catch (e) {}
+
+				setTimeout(function() {
+					window.__mpToggleBusy = false;
+					if (window.__mpWantPlay !== wantPlay) return;
+					var ply = window.cinema_controller;
+					if (!ply) return;
+					if (wantPlay && !ply.paused) return;
+					if (!wantPlay && ply.paused) return;
+					var b = document.querySelector(".play-video-button");
+					if (!b) return;
+					window.__mpToggleBusy = true;
+					try { b.click(); } catch (e) {}
+					setTimeout(function() { window.__mpToggleBusy = false; }, 400);
+				}, 400);
+			}
 
 			var checkerInterval = setInterval(function() {
 				if (!window.__mpWantPlay) return;
@@ -36,78 +66,29 @@ if (CLIENT) then
 					return;
 				}
 
-				// Autoplay via MEGA toggle until video.paused === false
-				if (player.paused) {
-					if (btn) {
-						try {
-							player.setAttribute("webkit-playsinline", "webkit-playsinline");
-							btn.click();
-						} catch (e) {}
-					}
+				if (!player.paused && !Number.isNaN(player.duration)) {
+					clearInterval(checkerInterval);
+					window.cinema_controller = player;
+
+					player.pause = function() { toggleOnce(false); };
+					player.play = function() {
+						toggleOnce(true);
+						return Promise.resolve();
+					};
+
+					exTheater.controllerReady();
 					return;
 				}
 
-				if (Number.isNaN(player.duration)) return;
-
-				clearInterval(checkerInterval);
-				window.cinema_controller = player;
-
-				// Theater pause/play → click .play-video-button, trust video.paused
-				player.pause = function() {
-					window.__mpWantPlay = false;
-					if (player.paused) return;
-
-					var b = document.querySelector(".play-video-button");
-					if (b) { try { b.click(); } catch (e) {} }
-
-					var ticks = 0;
-					if (window.__mpPauseWatch) clearInterval(window.__mpPauseWatch);
-					window.__mpPauseWatch = setInterval(function() {
-						if (window.__mpWantPlay) {
-							clearInterval(window.__mpPauseWatch);
-							return;
-						}
-						if (!player || player.paused) {
-							clearInterval(window.__mpPauseWatch);
-							return;
-						}
-						var bb = document.querySelector(".play-video-button");
-						if (bb) { try { bb.click(); } catch (e) {} }
-						if (++ticks >= 20) clearInterval(window.__mpPauseWatch);
-					}, 100);
-				};
-
-				player.play = function() {
-					window.__mpWantPlay = true;
-					if (window.__mpPauseWatch) {
-						clearInterval(window.__mpPauseWatch);
-						window.__mpPauseWatch = null;
-					}
-					if (!player.paused) return Promise.resolve();
-
-					var b = document.querySelector(".play-video-button");
-					if (b) { try { b.click(); } catch (e) {} }
-
-					var ticks = 0;
-					if (window.__mpPlayWatch) clearInterval(window.__mpPlayWatch);
-					window.__mpPlayWatch = setInterval(function() {
-						if (!window.__mpWantPlay) {
-							clearInterval(window.__mpPlayWatch);
-							return;
-						}
-						if (!player || !player.paused) {
-							clearInterval(window.__mpPlayWatch);
-							return;
-						}
-						var bb = document.querySelector(".play-video-button");
-						if (bb) { try { bb.click(); } catch (e) {} }
-						if (++ticks >= 20) clearInterval(window.__mpPlayWatch);
-					}, 100);
-
-					return Promise.resolve();
-				};
-
-				exTheater.controllerReady();
+				// Autoplay: one click, cooldown, check video.paused
+				if (player.paused && btn && !window.__mpToggleBusy) {
+					window.__mpToggleBusy = true;
+					try {
+						player.setAttribute("webkit-playsinline", "webkit-playsinline");
+						btn.click();
+					} catch (e) {}
+					setTimeout(function() { window.__mpToggleBusy = false; }, 500);
+				}
 			}, 50);
 		})();
 	]]
@@ -115,6 +96,7 @@ if (CLIENT) then
 	local METADATA_JS = [[
 		(function() {
 			var done = false;
+			var busy = false;
 			var checkerInterval = setInterval(function() {
 				var btn = document.querySelector(".play-video-button");
 				var player = document.getElementsByTagName("video")[0];
@@ -126,32 +108,29 @@ if (CLIENT) then
 					return;
 				}
 
-				if (player.paused) {
-					if (btn) {
-						try {
-							player.setAttribute("webkit-playsinline", "webkit-playsinline");
-							btn.click();
-						} catch (e) {}
-					}
+				if (!player.paused && !Number.isNaN(player.duration)) {
+					if (done) return;
+					clearInterval(checkerInterval);
+					done = true;
+					player.volume = 0;
+					if (btn) { try { btn.click(); } catch (e) {} }
+
+					var title = document.title.replace("MEGA - ", "");
+					console.log("METADATA:" + JSON.stringify({
+						duration: player.duration,
+						title: title
+					}));
 					return;
 				}
 
-				if (Number.isNaN(player.duration)) return;
-				if (done) return;
-
-				clearInterval(checkerInterval);
-				done = true;
-				player.volume = 0;
-
-				if (btn) {
-					try { btn.click(); } catch (e) {}
+				if (player.paused && btn && !busy) {
+					busy = true;
+					try {
+						player.setAttribute("webkit-playsinline", "webkit-playsinline");
+						btn.click();
+					} catch (e) {}
+					setTimeout(function() { busy = false; }, 500);
 				}
-
-				var title = document.title.replace("MEGA - ", "");
-				console.log("METADATA:" + JSON.stringify({
-					duration: player.duration,
-					title: title
-				}));
 			}, 50);
 		})();
 	]]
