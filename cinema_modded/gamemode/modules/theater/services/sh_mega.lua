@@ -26,7 +26,7 @@ if (CLIENT) then
 			var checkerInterval = setInterval(function() {
 				if (!window.__mpWantPlay) return;
 
-				var plybtn = document.querySelector(".play-video-button");
+				var btn = document.querySelector(".play-video-button");
 				var player = document.getElementsByTagName("video")[0];
 
 				if (!player) return;
@@ -36,14 +36,14 @@ if (CLIENT) then
 					return;
 				}
 
-				// Startup: keep trying until MEGA actually plays
+				// Autoplay via MEGA toggle until video.paused === false
 				if (player.paused) {
-					try {
-						player.setAttribute("webkit-playsinline", "webkit-playsinline");
-						if (plybtn) plybtn.click();
-						var req = player.play();
-						if (req && req.catch) req.catch(function() {});
-					} catch (e) {}
+					if (btn) {
+						try {
+							player.setAttribute("webkit-playsinline", "webkit-playsinline");
+							btn.click();
+						} catch (e) {}
+					}
 					return;
 				}
 
@@ -52,12 +52,13 @@ if (CLIENT) then
 				clearInterval(checkerInterval);
 				window.cinema_controller = player;
 
+				// Theater pause/play → click .play-video-button, trust video.paused
 				player.pause = function() {
 					window.__mpWantPlay = false;
-					var playBtn = document.querySelector(".play-video-button");
-					if (playBtn && player.paused) return;
+					if (player.paused) return;
 
-					try { player.click(); } catch (e) {}
+					var b = document.querySelector(".play-video-button");
+					if (b) { try { b.click(); } catch (e) {} }
 
 					var ticks = 0;
 					if (window.__mpPauseWatch) clearInterval(window.__mpPauseWatch);
@@ -70,9 +71,10 @@ if (CLIENT) then
 							clearInterval(window.__mpPauseWatch);
 							return;
 						}
-						try { player.click(); } catch (e) {}
-						if (++ticks >= 15) clearInterval(window.__mpPauseWatch);
-					}, 120);
+						var bb = document.querySelector(".play-video-button");
+						if (bb) { try { bb.click(); } catch (e) {} }
+						if (++ticks >= 20) clearInterval(window.__mpPauseWatch);
+					}, 100);
 				};
 
 				player.play = function() {
@@ -83,13 +85,26 @@ if (CLIENT) then
 					}
 					if (!player.paused) return Promise.resolve();
 
-					var playBtn = document.querySelector(".play-video-button");
-					if (playBtn) {
-						try { playBtn.click(); } catch (e) {}
-					}
-					var req = HTMLMediaElement.prototype.play.call(player);
-					if (req && req.catch) req.catch(function() {});
-					return req || Promise.resolve();
+					var b = document.querySelector(".play-video-button");
+					if (b) { try { b.click(); } catch (e) {} }
+
+					var ticks = 0;
+					if (window.__mpPlayWatch) clearInterval(window.__mpPlayWatch);
+					window.__mpPlayWatch = setInterval(function() {
+						if (!window.__mpWantPlay) {
+							clearInterval(window.__mpPlayWatch);
+							return;
+						}
+						if (!player || !player.paused) {
+							clearInterval(window.__mpPlayWatch);
+							return;
+						}
+						var bb = document.querySelector(".play-video-button");
+						if (bb) { try { bb.click(); } catch (e) {} }
+						if (++ticks >= 20) clearInterval(window.__mpPlayWatch);
+					}, 100);
+
+					return Promise.resolve();
 				};
 
 				exTheater.controllerReady();
@@ -101,7 +116,7 @@ if (CLIENT) then
 		(function() {
 			var done = false;
 			var checkerInterval = setInterval(function() {
-				var plybtn = document.querySelector(".play-video-button");
+				var btn = document.querySelector(".play-video-button");
 				var player = document.getElementsByTagName("video")[0];
 
 				if (!player) return;
@@ -112,12 +127,12 @@ if (CLIENT) then
 				}
 
 				if (player.paused) {
-					try {
-						player.setAttribute("webkit-playsinline", "webkit-playsinline");
-						if (plybtn) plybtn.click();
-						var req = player.play();
-						if (req && req.catch) req.catch(function() {});
-					} catch (e) {}
+					if (btn) {
+						try {
+							player.setAttribute("webkit-playsinline", "webkit-playsinline");
+							btn.click();
+						} catch (e) {}
+					}
 					return;
 				}
 
@@ -127,7 +142,10 @@ if (CLIENT) then
 				clearInterval(checkerInterval);
 				done = true;
 				player.volume = 0;
-				try { player.click(); } catch (e) {}
+
+				if (btn) {
+					try { btn.click(); } catch (e) {}
+				}
 
 				var title = document.title.replace("MEGA - ", "");
 				console.log("METADATA:" + JSON.stringify({
