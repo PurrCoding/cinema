@@ -29,7 +29,7 @@ const services = [
 	{ name: 'Internet Archive', icon: 'fa-brands fa-internet-archive', url: 'https://archive.org/details/movies', requiresCodec: true, group: 'Archive' },
 	{ name: 'VK Видео', icon: 'fa-brands fa-vk', url: 'https://vkvideo.ru/', requiresCodec: true, group: 'Video' },
 	{ name: 'Одноклассники', icon: 'fa-brands fa-odnoklassniki', url: 'https://ok.ru/video', requiresCodec: true, group: 'Video' },
-	{ name: 'Bitchute', icon: 'fa-brands fa-flag-usa', url: 'https://bitchute.com/', requiresCodec: true, group: 'Video' },
+	{ name: 'Bitchute', icon: 'fa-solid fa-flag-usa', url: 'https://bitchute.com/', requiresCodec: true, group: 'Video' },
 ];
 
 let hasCodecSupport = false;
