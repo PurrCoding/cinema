@@ -103,8 +103,7 @@ const supportGroups = [
       ['VK Video', 'https://vkvideo.ru/video-VIDEO_ID'],
       ['Одноклассники', 'https://ok.ru/video/VIDEO_ID'],
       ['Google Drive', 'https://drive.google.com/file/d/FILE_ID/view'],
-      ['MEGA', 'https://mega.nz/file/FILE_ID#KEY'],
-      ['Jellyfin', 'https://media.example.com/web/index.html#/details?id=ITEM_ID&serverId=SERVER_ID']
+      ['MEGA', 'https://mega.nz/file/FILE_ID#KEY']
     ]
   }
 ];
