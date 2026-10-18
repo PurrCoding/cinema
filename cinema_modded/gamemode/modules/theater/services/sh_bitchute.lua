@@ -97,7 +97,6 @@ if (CLIENT) then
 				window.cinema_controller = player;
 			}
 
-			// Click as soon as the button exists
 			tryClickPlay();
 
 			var checkerInterval = setInterval(function() {
@@ -115,7 +114,8 @@ if (CLIENT) then
 					return;
 				}
 
-				if (Number.isNaN(player.duration) && player.readyState < 2) return;
+				// Live streams often have duration NaN/Infinity — still isolate once playing
+				if (player.readyState < 2) return;
 
 				clearInterval(checkerInterval);
 				isolate(player);
@@ -182,13 +182,19 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 			return onFailure( "Theater_RequestFailed" )
 		end
 
+		local duration = ParseDuration( response.duration )
+		local isLive = ( response.state_id == "live" )
+			or ( response.duration == "0:00" )
+
 		local info = {}
 		info.title = response.video_name or "BitChute Video"
 		info.thumbnail = response.thumbnail_url
-		info.duration = ParseDuration( response.duration )
 
-		if response.state_id == "live" then
+		if isLive then
+			info.type = "bitchutelive"
 			info.duration = 0
+		else
+			info.duration = duration
 		end
 
 		if onSuccess then
@@ -224,3 +230,12 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 end
 
 theater.RegisterService( "bitchute", SERVICE )
+
+-- Hidden live variant (same player, no seeking / no end-of-media)
+theater.RegisterService( "bitchutelive", {
+	Name = "BitChute Live",
+	IsTimed = false,
+	NeedsCodecFix = true,
+	Hidden = true,
+	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
+} )
