@@ -31,7 +31,7 @@ This community-maintained successor to the original [PixelTail Games Cinema](htt
 
 ### Supported media
 
-YouTube, Twitch, SoundCloud, Dailymotion, Rumble, Kick, Bilibili (VOD, AV, live, and episodes), VK, OK, Internet Archive, Google Drive, MEGA, Jellyfin, and direct URL/protocol playback.
+YouTube, Twitch, SoundCloud, Dailymotion, Rumble, Kick, Bilibili (VOD, AV, live, and episodes), VK, OK, Internet Archive, Google Drive, MEGA, and direct URL/protocol playback.
 
 Actual playback support can depend on the provider, URL type, and the Chromium/CEF codecs available in the player's Garry's Mod installation. SoundCloud specifically requires GModPatchTool to update the embedded browser; stock CEF 86 is too old for reliable playback.
 

@@ -25,9 +25,10 @@ const services = [
   { name: 'Rumble', icon: 'fa-solid fa-play', url: 'https://rumble.com/', requiresCodec: true, group: 'Video' },
   { name: 'Kick', icon: 'fa-brands fa-kickstarter', url: 'https://kick.com/', requiresCodec: true, group: 'Live' },
   { name: 'Bilibili', icon: 'fa-brands fa-bilibili', url: 'https://www.bilibili.com/', requiresCodec: true, group: 'Video', action: 'steam-overlay' },
+  { name: 'Odysee', icon: 'fa-solid fa-circle-play', url: 'https://odysee.com/', requiresCodec: true, group: 'Video' },
   { name: 'Archive', icon: 'fa-brands fa-internet-archive', url: 'https://archive.org/details/movies', requiresCodec: true, group: 'Archive' },
   { name: 'VK Видео', icon: 'fa-brands fa-vk', url: 'https://vkvideo.ru/', requiresCodec: true, group: 'Video' },
-  { name: 'Одноклассники', icon: 'fa-brands fa-odnoklassniki', url: 'https://ok.ru/video', requiresCodec: true, group: 'Video' }
+  { name: 'Одноклассники', icon: 'fa-brands fa-odnoklassniki', url: 'https://ok.ru/video', requiresCodec: true, group: 'Video' },
 ];
 
 let hasCodecSupport = false;
@@ -98,13 +99,15 @@ const supportGroups = [
       ['Dailymotion', 'https://www.dailymotion.com/video/VIDEO_ID'],
       ['Rumble', 'https://rumble.com/VIDEO_PATH.html'],
       ['Kick', 'https://kick.com/CHANNEL'],
+      ['Kick VOD', 'https://kick.com/CHANNEL/videos/UUID'],
       ['Bilibili', 'https://www.bilibili.com/video/VIDEO_ID'],
+      ['Odysee', 'https://odysee.com/@channel:1/video:1'],
       ['Archive.org', 'https://archive.org/details/ITEM_ID'],
       ['VK Video', 'https://vkvideo.ru/video-VIDEO_ID'],
+      ['VK Live', 'https://vkvideo.ru/live-OWNER_ID'],
       ['Одноклассники', 'https://ok.ru/video/VIDEO_ID'],
       ['Google Drive', 'https://drive.google.com/file/d/FILE_ID/view'],
-      ['MEGA', 'https://mega.nz/file/FILE_ID#KEY'],
-      ['Jellyfin', 'https://media.example.com/web/index.html#/details?id=ITEM_ID&serverId=SERVER_ID']
+      ['MEGA', 'https://mega.nz/file/FILE_ID#KEY']
     ]
   }
 ];

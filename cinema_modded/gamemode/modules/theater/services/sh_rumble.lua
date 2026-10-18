@@ -16,14 +16,49 @@ if (CLIENT) then
 		var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName('video')[0];
 			if (!!player && player.paused == false && player.readyState == 4) {
-				if (player.muted) {player.muted = false}
-
 				clearInterval(checkerInterval);
 
-				document.body.style.backgroundColor = "black";
-				window.cinema_controller = player;
+				if (player.muted) { player.muted = false; }
 
+				// Full-bleed black stage (same idea as Kick)
+				document.documentElement.style.cssText = "margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;";
+				document.body.style.cssText = "margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;";
+
+				document.body.appendChild(player);
+				var children = Array.prototype.slice.call(document.body.childNodes);
+				for (var i = 0; i < children.length; i++) {
+					if (children[i] !== player) {
+						try { document.body.removeChild(children[i]); } catch (e) {}
+					}
+				}
+
+				player.style.cssText = [
+					"position:fixed",
+					"top:0",
+					"left:0",
+					"width:100%",
+					"height:100%",
+					"max-width:100%",
+					"max-height:100%",
+					"object-fit:contain",
+					"background:#000",
+					"z-index:9999",
+					"margin:0",
+					"padding:0",
+					"border:none"
+				].join(";");
+
+				player.removeAttribute("controls");
+				player.controls = false;
+
+				window.cinema_controller = player;
 				exTheater.controllerReady();
+
+				setTimeout(function() {
+					if (window.cinema_controller && window.cinema_controller.muted) {
+						window.cinema_controller.muted = false;
+					}
+				}, 300);
 			}
 		}, 50);
 	]]
@@ -34,8 +69,11 @@ if (CLIENT) then
 			LocalPlayer():ChatPrint(("Rumble: %s"):format(msg))
 		end
 
-		local url = API_URL:format( Video:Data() ) .. ".html"
-		self:Fetch( url, function( body, length, headers, code )
+		local data = Video:Data()
+		local isShort = isstring(data) and data:StartWith("shorts/")
+		local oembedUrl = API_URL:format( data ) .. (isShort and "" or ".html")
+
+		self:Fetch( oembedUrl, function( body, length, headers, code )
 			local response = util.JSONToTable(body)
 			if not response then
 				return onFail("API Error")
@@ -61,7 +99,14 @@ function SERVICE:GetURLInfo( url )
 
 	if url.path then
 		local data = url.path:match("/([%a%d%p-_]+).html")
-		if ( data ) then return { Data = data } end
+		if data then
+			return { Data = data }
+		end
+
+		local shortId = url.path:match("^/shorts/([%w%-_]+)")
+		if shortId then
+			return { Data = "shorts/" .. shortId }
+		end
 	end
 
 	return false
@@ -92,7 +137,8 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 	end
 
-	local url = API_URL:format( data ) .. ".html"
+	local isShort = isstring(data) and data:StartWith("shorts/")
+	local url = API_URL:format( data ) .. (isShort and "" or ".html")
 	self:Fetch( url, onReceive, onFailure )
 
 end
