@@ -24,9 +24,6 @@ local function ParseMetaDataFromHTML( html )
     return metadata
 end
 
-
-
-
 local API_URL = "https://ok.ru/web-api/videoyandexfeed/%s"
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
