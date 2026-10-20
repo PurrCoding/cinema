@@ -1,73 +1,73 @@
 --[[
-	Bilibili Bangumi Support by OriginalSnow
-	Note: You can edit this code. But you cant upload anymore.
+    Bilibili Bangumi Support by OriginalSnow
+    Note: You can edit this code. But you cant upload anymore.
 ]]
 
 local SERVICE = {
-	Name = "哔哩哔哩番剧",
-	IsTimed = true,
+    Name = "哔哩哔哩番剧",
+    IsTimed = true,
 
-	NeedsCodecFix = true
+    NeedsCodecFix = true
 }
 
 
 
 function SERVICE:Match(url)
-	local host = url.host or ""
-	local path = url.path or ""
-	return host:match("www.bilibili.com") and string.find(path, "/bangumi/play/ep[%w*].") or false
+    local host = url.host or ""
+    local path = url.path or ""
+    return host:match("www.bilibili.com") and string.find(path, "/bangumi/play/ep[%w*].") or false
 end
 
 if CLIENT then
-	local PLAYURL = "https://www.bilibili.com/bangumi/play/ep%s"
-	local JS = [[
-		var checkerVideoInterval = setInterval(function() {
-			var player = document.getElementsByTagName('video')[0];
-			if (player&&player.paused != false) {
-				document.getElementsByClassName('squirtle-video-pagefullscreen squirtle-video-item')[0].click();
-				clearInterval(checkerVideoInterval);
-				window.cinema_controller = player;
-				exTheater.controllerReady();
-			}
-		}, 50);
-	]]
-	local fullscreenRequest = [[
-		var checkerFullScreenInterval = setInterval(function(){
-			var IsFullScreen = document.getElementById("bilibili-player-wrap").classList[0].indexOf("video_playerFullScreen")>-1
-			if(!IsFullScreen){
-				document.getElementsByClassName('squirtle-video-pagefullscreen squirtle-video-item')[0].click();
-			}
-		}, 50)    
-	]]
-	function SERVICE:LoadProvider(vi, p)
-		p:OpenURL(PLAYURL:format(vi:Data()))
-		p.OnDocumentReady = function(pnl)
-			self:LoadExFunctions(pnl)
-			pnl:QueueJavascript(JS)
-			timer.Simple(5, function() pnl:QueueJavascript(fullscreenRequest) end)
-		end
-	end
+    local PLAYURL = "https://www.bilibili.com/bangumi/play/ep%s"
+    local JS = [[
+        var checkerVideoInterval = setInterval(function() {
+            var player = document.getElementsByTagName('video')[0];
+            if (player&&player.paused != false) {
+                document.getElementsByClassName('squirtle-video-pagefullscreen squirtle-video-item')[0].click();
+                clearInterval(checkerVideoInterval);
+                window.cinema_controller = player;
+                exTheater.controllerReady();
+            }
+        }, 50);
+    ]]
+    local fullscreenRequest = [[
+        var checkerFullScreenInterval = setInterval(function(){
+            var IsFullScreen = document.getElementById("bilibili-player-wrap").classList[0].indexOf("video_playerFullScreen")>-1
+            if(!IsFullScreen){
+                document.getElementsByClassName('squirtle-video-pagefullscreen squirtle-video-item')[0].click();
+            }
+        }, 50)
+    ]]
+    function SERVICE:LoadProvider(vi, p)
+        p:OpenURL(PLAYURL:format(vi:Data()))
+        p.OnDocumentReady = function(pnl)
+            self:LoadExFunctions(pnl)
+            pnl:QueueJavascript(JS)
+            timer.Simple(5, function() pnl:QueueJavascript(fullscreenRequest) end)
+        end
+    end
 end
 
 function SERVICE:GetURLInfo(url)
-	local info = {}
-	local host = url.host or ""
-	local path = url.path or ""
-	if host:match("www.bilibili.com") then
-		local s = string.match(path, "ep[%w*]+")
-		if s then
-			local s1 = string.Split(s, "ep")
-			info.Data = s1[2]
-		end
-	end
-	return info.Data and info or false
+    local info = {}
+    local host = url.host or ""
+    local path = url.path or ""
+    if host:match("www.bilibili.com") then
+        local s = string.match(path, "ep[%w*]+")
+        if s then
+            local s1 = string.Split(s, "ep")
+            info.Data = s1[2]
+        end
+    end
+    return info.Data and info or false
 end
 
 
 SERVICE.ClassName = "bilibiliep"
 
 if SERVER then
-	return SERVICE
+    return SERVICE
 end
 
 theater.RegisterService(SERVICE)
