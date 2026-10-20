@@ -13,7 +13,7 @@ local validExtensions = {
     ["mpd"] = "dash",      -- DASH
 }
 
-local function ParseURL( urlString )
+local function ParseURL(urlString)
     local status, parsed = pcall(url.parse2, urlString)
     if status then
         return parsed
@@ -21,7 +21,7 @@ local function ParseURL( urlString )
     return nil
 end
 
-local function GetProtocol( url )
+local function GetProtocol(url)
     if url.file and validExtensions[ url.file.ext ] then
         return validExtensions[ url.file.ext ]
     end
