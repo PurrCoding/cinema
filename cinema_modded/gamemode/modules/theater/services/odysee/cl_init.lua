@@ -238,7 +238,13 @@ if CLIENT then
 	end
 end
 
-theater.RegisterService( "odysee", SERVICE )
+SERVICE.ClassName = "odysee"
+
+if SERVER then
+	return SERVICE
+end
+
+theater.RegisterService(SERVICE)
 
 theater.RegisterService( "odyseelive", {
 	Name = "Odysee Live",
