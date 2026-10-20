@@ -85,12 +85,6 @@ function SERVICE:GetURLInfo( url )
     return false
 end
 
--- Lua search patterns to find metadata from the html
-
----
--- Function to parse video metadata straight from the html instead of using the API
---
-
 if SERVER then
     return SERVICE
 end
