@@ -11,8 +11,6 @@ local function ParseElementAttribute( element, attribute )
     return string.sub( output, 2, -2 )
 end
 
-
-
 -- Lua search patterns to find metadata from the html
 local patterns = {
     ["title"]          = "<meta%sproperty=\"og:title\"%s-content=%b\"\">",
@@ -32,8 +30,6 @@ local function ParseElementContent( element )
     return string.gsub( output, "%s-</%w->%s-$", "" )
 end
 
-
-
 ---
 -- Helper function for converting ISO 8601 time strings.
 -- e.g. "PT1H23M45S" -> 5025
@@ -48,9 +44,6 @@ local function convertISO8601Time( duration )
     duration = hours * 3600 + minutes * 60 + seconds
     return duration
 end
-
-
-
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
@@ -115,9 +108,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
     end)
 
 end
-
-
-
 
 ---
 -- Parse video metadata from a raw YouTube watch page HTML body.
