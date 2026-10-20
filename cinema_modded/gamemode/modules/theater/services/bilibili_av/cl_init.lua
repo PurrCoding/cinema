@@ -1,6 +1,6 @@
 --[[
-	Bilibili Support Legacy by OriginalSnow
-	Note: You can edit this code. But you cant upload anymore.
+    Bilibili Support Legacy by OriginalSnow
+    Note: You can edit this code. But you cant upload anymore.
 ]]
 
 local SERVICE = {
@@ -23,16 +23,16 @@ if CLIENT then
     local PLAYURL = "www.bilibili.com/blackboard/html5mobileplayer.html?aid=%s&autoplay=1&p=%s"
     local JS = [[
         var checkerInterval = setInterval(function() {
-			var player = document.getElementsByTagName('video')[0];
-			if (!!player && player.paused == false && player.readyState == 4) {
-				clearInterval(checkerInterval);
+            var player = document.getElementsByTagName('video')[0];
+            if (!!player && player.paused == false && player.readyState == 4) {
+                clearInterval(checkerInterval);
 
-				document.body.style.backgroundColor = "black";
-				window.cinema_controller = player;
+                document.body.style.backgroundColor = "black";
+                window.cinema_controller = player;
 
-				exTheater.controllerReady();
-			}
-		}, 50);
+                exTheater.controllerReady();
+            }
+        }, 50);
     ]]
     function SERVICE:LoadProvider(vi, p)
         local vedioID = vi:Data()
@@ -68,7 +68,7 @@ end
 SERVICE.ClassName = "bilibili_legacy"
 
 if SERVER then
-	return SERVICE
+    return SERVICE
 end
 
 theater.RegisterService(SERVICE)

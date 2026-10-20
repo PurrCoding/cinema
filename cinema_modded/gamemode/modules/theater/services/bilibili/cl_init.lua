@@ -1,6 +1,6 @@
 --[[
-	Bilibili Support by OriginalSnow
-	Note: You can edit this code. But you cant upload anymore.
+    Bilibili Support by OriginalSnow
+    Note: You can edit this code. But you cant upload anymore.
 ]]
 
 local SERVICE = {
@@ -144,7 +144,7 @@ end
 SERVICE.ClassName = "bilibili"
 
 if SERVER then
-	return SERVICE
+    return SERVICE
 end
 
 theater.RegisterService(SERVICE)
