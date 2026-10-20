@@ -126,7 +126,7 @@ local SERVICE = theater.GetServiceByClass( "mega" )
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )
-		panel:OpenURL(PREVIEW_URL:format(Video:Data()))
+		panel:OpenURL(self.PreviewURL:format(Video:Data()))
 
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
@@ -144,6 +144,6 @@ local SERVICE = theater.GetServiceByClass( "mega" )
 			end
 		end
 
-		panel:OpenURL(PREVIEW_URL:format(data))
+		panel:OpenURL(self.PreviewURL:format(data))
 
 	end
