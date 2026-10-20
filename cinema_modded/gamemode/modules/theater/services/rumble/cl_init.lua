@@ -5,7 +5,7 @@ local SERVICE = {
 	NeedsCodecFix = true,
 }
 
-local API_URL = "https://rumble.com/api/Media/oembed.json?url=https://rumble.com/%s"
+
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("rumble.com")
@@ -112,36 +112,6 @@ function SERVICE:GetURLInfo( url )
 	return false
 end
 
-function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
-
-	local onReceive = function( body, length, headers, code )
-		local response = util.JSONToTable(body)
-		if not response then
-			return onFailure( "Theater_RequestFailed" )
-		end
-
-		local info = {}
-		info.title = response.title
-		info.thumbnail = response.thumbnail_url
-
-		if response.duration == 0 then
-			info.type = "rumblelive"
-			info.duration = 0
-		else
-			info.duration = response.duration
-		end
-
-		if onSuccess then
-			pcall(onSuccess, info)
-		end
-
-	end
-
-	local isShort = isstring(data) and data:StartWith("shorts/")
-	local url = API_URL:format( data ) .. (isShort and "" or ".html")
-	self:Fetch( url, onReceive, onFailure )
-
-end
 
 SERVICE.ClassName = "rumble"
 
