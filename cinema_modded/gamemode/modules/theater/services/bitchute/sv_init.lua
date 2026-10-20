@@ -16,8 +16,6 @@ local function ParseDuration( str )
     return tonumber( str ) or 0
 end
 
-
-
 local META_API = "https://api.bitchute.com/api/beta9/video"
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
