@@ -1,12 +1,12 @@
 local SERVICE = {
 	Name = "Google Drive",
 	IsTimed = true,
+	PreviewURL = "https://drive.google.com/file/d/%s/preview?autoplay=true",
 
 	NeedsCodecFix = true,
 	ExtentedVideoInfo = true
 }
 
-local PREVIEW_URL = "https://drive.google.com/file/d/%s/preview?autoplay=true"
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("drive.google.com")
