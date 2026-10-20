@@ -143,7 +143,13 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 end
 
-theater.RegisterService( "rumble", SERVICE )
+SERVICE.ClassName = "rumble"
+
+if SERVER then
+	return SERVICE
+end
+
+theater.RegisterService(SERVICE)
 
 theater.RegisterService( "rumblelive", {
 	Name = "Rumble Live",

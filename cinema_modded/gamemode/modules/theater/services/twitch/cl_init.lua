@@ -67,4 +67,12 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	end
 end
 
-theater.RegisterService( "twitchstream", SERVICE )
+SERVICE.ClassName = "twitchstream"
+
+if SERVER then
+	return SERVICE
+end
+
+theater.RegisterService(SERVICE)
+
+

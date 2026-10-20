@@ -581,4 +581,12 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 	runClientCrawler(nil)
 end
 
-theater.RegisterService("soundcloud", SERVICE)
+SERVICE.ClassName = "soundcloud"
+
+if SERVER then
+	return SERVICE
+end
+
+theater.RegisterService(SERVICE)
+
+
