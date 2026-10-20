@@ -38,12 +38,7 @@
 		theater.RefreshPanel(true)
 	end )
 
-	-- Client functions are loaded after shared commands; resolve this callback when invoked.
-	concommand.Add( "cinema_fullscreen", function( ... )
-		if theater.ToggleFullscreen then
-			theater.ToggleFullscreen( ... )
-		end
-	end )
+	concommand.Add( "cinema_fullscreen", theater.ToggleFullscreen )
 
 	-- Hide Players
 	local amount = 0
@@ -91,15 +86,11 @@
 		if ( LastState and not HasFocus ) or ( not LastState and HasFocus ) then
 
 			if HasFocus == true then
-				if LastVolume ~= nil then
-					theater.SetVolume( LastVolume )
-				end
+				theater.SetVolume( LastVolume )
 				LastVolume = nil
 			else
-				if theater.GetVolume and theater.SetVolume then
-					LastVolume = theater.GetVolume()
-					theater.SetVolume( 0 )
-				end
+				LastVolume = theater.GetVolume()
+				theater.SetVolume( 0 )
 			end
 
 			LastState = HasFocus
