@@ -107,11 +107,12 @@ function SERVICE:ParseYTMetaDataFromHTML( html )
         else
             -- Modern fallback: parse lengthSeconds from the ytInitialPlayerResponse
             -- JSON blob that YouTube embeds directly in the page HTML.
-            local lengthSeconds = tonumber( string.match(html, '"lengthSeconds"%s*:%s*"(\\d+)"') )
+            local lengthSeconds = tonumber( string.match(html, '"lengthSeconds"%s*:%s*"(%d+)"') )
             if lengthSeconds then
                 metadata.duration = math.max( 1, lengthSeconds )
             end
-        end    end
+        end
+    end
 
     return metadata
 end
