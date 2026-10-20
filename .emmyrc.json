@@ -1,0 +1,8 @@
+{
+  "diagnostics": {
+    "disable": [
+      "unchecked-nil-access",
+      "unchecked-nil-access"
+    ]
+  }
+}
