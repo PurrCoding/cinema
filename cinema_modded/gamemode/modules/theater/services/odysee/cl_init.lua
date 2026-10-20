@@ -38,7 +38,6 @@ function SERVICE:GetURLInfo( url )
     return info
 end
 
-
 if CLIENT then
     local THEATER_JS = [[
         (function() {
@@ -135,13 +134,11 @@ if CLIENT then
     end
 end
 
-SERVICE.ClassName = "odysee"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
+theater.RegisterService("odysee", SERVICE)
 
 theater.RegisterService( "odyseelive", {
     Name = "Odysee Live",
