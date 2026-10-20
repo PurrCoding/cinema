@@ -1,3 +1,6 @@
+-- Register the shared service definition before attaching server-only behavior.
+include("cl_init.lua")
+
 -- Server-side YouTube metadata extraction and HTML fallback.
 local SERVICE = theater.GetServiceByClass( "youtube" )
 if not SERVICE then return end
