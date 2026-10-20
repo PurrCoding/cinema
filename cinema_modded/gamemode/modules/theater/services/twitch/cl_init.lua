@@ -2,7 +2,8 @@ local SERVICE = {
     Name = "Twitch.TV Stream",
     IsTimed = false,
 
-    NeedsCodecFix = true
+    NeedsCodecFix = true,
+    PlayerURL = "https://player.twitch.tv/?channel=%s&parent=pixeltailgames.com"
 }
 
 local Ignored = {
@@ -16,7 +17,7 @@ function SERVICE:Match(url)
 end
 
 if CLIENT then
-    local TWITCH_URL = "https://player.twitch.tv/?channel=%s&parent=pixeltailgames.com"
+
     local THEATER_JS = [[
         var checkerInterval = setInterval(function() {
             var matureAccept = document.querySelectorAll("[data-a-target=\"content-classification-gate-overlay-start-watching-button\"]")[0]
@@ -38,7 +39,7 @@ if CLIENT then
 
     function SERVICE:LoadProvider(Video, panel)
 
-        panel:OpenURL( TWITCH_URL:format( Video:Data() ) )
+        panel:OpenURL( SERVICE.PlayerURL:format( Video:Data() ) )
         panel.OnDocumentReady = function(pnl)
             self:LoadExFunctions( pnl )
             pnl:QueueJavascript(THEATER_JS)

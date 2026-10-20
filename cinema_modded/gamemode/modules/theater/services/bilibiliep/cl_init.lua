@@ -7,7 +7,8 @@ local SERVICE = {
     Name = "哔哩哔哩番剧",
     IsTimed = true,
 
-    NeedsCodecFix = true
+    NeedsCodecFix = true,
+    PlayerURL = "https://www.bilibili.com/bangumi/play/ep%s"
 }
 
 function SERVICE:Match(url)
@@ -17,7 +18,7 @@ function SERVICE:Match(url)
 end
 
 if CLIENT then
-    local PLAYURL = "https://www.bilibili.com/bangumi/play/ep%s"
+
     local JS = [[
         var checkerVideoInterval = setInterval(function() {
             var player = document.getElementsByTagName('video')[0];
@@ -38,7 +39,7 @@ if CLIENT then
         }, 50)
     ]]
     function SERVICE:LoadProvider(vi, p)
-        p:OpenURL(PLAYURL:format(vi:Data()))
+        p:OpenURL(SERVICE.PlayerURL:format(vi:Data()))
         p.OnDocumentReady = function(pnl)
             self:LoadExFunctions(pnl)
             pnl:QueueJavascript(JS)

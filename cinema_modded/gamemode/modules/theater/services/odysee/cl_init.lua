@@ -2,6 +2,7 @@ local SERVICE = {
     Name = "Odysee",
     IsTimed = true,
     NeedsCodecFix = true,
+    EmbedURL = "https://odysee.com/$/embed/%s"
 }
 
 function SERVICE:Match(url)
@@ -115,7 +116,7 @@ if CLIENT then
             embedUrl = meta.embedUrl
         else
             local claim = Video:Data()
-            embedUrl = ("https://odysee.com/$/embed/%s"):format(claim)
+            embedUrl = SERVICE.EmbedURL:format(claim)
         end
 
         if not string.find(embedUrl, "[?&]autoplay=") then

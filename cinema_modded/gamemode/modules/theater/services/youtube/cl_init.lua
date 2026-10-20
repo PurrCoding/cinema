@@ -4,6 +4,8 @@ local SERVICE = {
 
     NeedsCodecFix = false,
     ExtentedVideoInfo = true,
+    PlayerURL = "youtube.html",
+    MetadataURL = "youtube_meta.html"
 }
 
 function SERVICE:Match(url)
@@ -13,7 +15,7 @@ end
 if CLIENT then
 
     function SERVICE:LoadProvider(Video, panel)
-        local baseUrl = theater.GetCinemaURL("youtube.html")
+        local baseUrl = theater.GetCinemaURL(SERVICE.PlayerURL)
         local videoId = Video:Data()
         local hash = ("v=%s"):format(videoId)
 
@@ -56,7 +58,7 @@ if CLIENT then
 
         local panel = self:CreateWebCrawler(callback)
 
-        local baseUrl = theater.GetCinemaURL("youtube_meta.html")
+        local baseUrl = theater.GetCinemaURL(SERVICE.MetadataURL)
         panel:OpenURL(baseUrl .. ("#v=%s"):format(videoId))
     end
 
