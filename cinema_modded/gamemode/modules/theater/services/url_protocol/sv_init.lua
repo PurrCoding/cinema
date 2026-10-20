@@ -1,5 +1,28 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+local function ParseURL( urlString )
+	local status, parsed = pcall(url.parse2, urlString)
+	if status then
+		return parsed
+	end
+	return nil
+end
+
+
+
+local validExtensions = {
+	["m3u8"] = "hls",      -- HLS
+	["mpd"] = "dash",      -- DASH
+}
+
+local function GetProtocol( url )
+	if url.file and validExtensions[ url.file.ext ] then
+		return validExtensions[ url.file.ext ]
+	end
+	return nil
+end
+
+
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
@@ -24,29 +47,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		end
 	end)
 end
-
-
-local function ParseURL( urlString )
-	local status, parsed = pcall(url.parse2, urlString)
-	if status then
-		return parsed
-	end
-	return nil
-end
-
-
-local function GetProtocol( url )
-	if url.file and validExtensions[ url.file.ext ] then
-		return validExtensions[ url.file.ext ]
-	end
-	return nil
-end
-
-
-local validExtensions = {
-	["m3u8"] = "hls",      -- HLS
-	["mpd"] = "dash",      -- DASH
-}
 
 theater.RegisterService("url_protocol", SERVICE)
 
