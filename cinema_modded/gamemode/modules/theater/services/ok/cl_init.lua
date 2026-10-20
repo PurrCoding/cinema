@@ -10,8 +10,6 @@ local ValidTypes = {
     ["live"] = true,
 }
 
-
-
 function SERVICE:Match( url )
     return url.host and url.host:match("ok.ru")
 end
@@ -93,13 +91,11 @@ end
 -- Function to parse video metadata straight from the html instead of using the API
 --
 
-SERVICE.ClassName = "ok"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
+theater.RegisterService("ok", SERVICE)
 
 theater.RegisterService( "oklive", {
     Name = "Ok Live",
