@@ -11,11 +11,11 @@ local Ignored = {
     ["downloads"] = true,
 }
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     return url.host and url.host:match("twitch.tv")
 end
 
-if (CLIENT) then
+if CLIENT then
     local TWITCH_URL = "https://player.twitch.tv/?channel=%s&parent=pixeltailgames.com"
     local THEATER_JS = [[
         var checkerInterval = setInterval(function() {
@@ -36,7 +36,7 @@ if (CLIENT) then
         }, 50);
     ]]
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
 
         panel:OpenURL( TWITCH_URL:format( Video:Data() ) )
         panel.OnDocumentReady = function(pnl)
@@ -47,7 +47,7 @@ if (CLIENT) then
     end
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
     if url.path then
         local data = url.path:match("/([%w_]+)")
         if (data and not Ignored[data]) then return { Data = data } end

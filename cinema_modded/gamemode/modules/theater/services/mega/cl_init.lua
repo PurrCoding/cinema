@@ -13,11 +13,11 @@ local ValidTypes = {
     ["file"] = true,
 }
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     return url.host and url.host:match("mega.nz")
 end
 
-if (CLIENT) then
+if CLIENT then
 
     local THEATER_JS = [[
         (function() {
@@ -143,7 +143,7 @@ if (CLIENT) then
         })();
     ]]
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
         panel:OpenURL(PREVIEW_URL:format(Video:Data()))
 
         panel.OnDocumentReady = function(pnl)
@@ -152,7 +152,7 @@ if (CLIENT) then
         end
     end
 
-    function SERVICE:GetMetadata( data, callback )
+    function SERVICE:GetMetadata(data, callback)
 
         local panel = self:CreateWebCrawler(callback)
 
@@ -167,7 +167,7 @@ if (CLIENT) then
     end
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
 
     local info = {}
 

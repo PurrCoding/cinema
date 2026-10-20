@@ -5,7 +5,7 @@ local SERVICE = {
     NeedsCodecFix = true,
 }
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     if not url or not url.host then return false end
     if not url.host:match( "bitchute%.com" ) then return false end
     if not url.path then return false end
@@ -17,7 +17,7 @@ function SERVICE:Match( url )
     return false
 end
 
-if (CLIENT) then
+if CLIENT then
     local EMBED_URL = "https://www.bitchute.com/embed/%s"
 
     --[[
@@ -110,7 +110,7 @@ if (CLIENT) then
         })();
     ]]
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
 
         local startTime = math.Round( CurTime() - Video:StartTime() )
         if startTime < 0 then startTime = 0 end
@@ -134,7 +134,7 @@ if (CLIENT) then
     end
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
 
     local info = {}
 

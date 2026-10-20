@@ -5,11 +5,11 @@ local SERVICE = {
     NeedsCodecFix = true,
 }
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     return url.host and url.host:match("rumble.com")
 end
 
-if (CLIENT) then
+if CLIENT then
     local THEATER_JS = [[
         var checkerInterval = setInterval(function() {
             var player = document.getElementsByTagName('video')[0];
@@ -61,7 +61,7 @@ if (CLIENT) then
         }, 50);
     ]]
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
 
         local function onFail(msg)
             LocalPlayer():ChatPrint(("Rumble: %s"):format(msg))
@@ -93,7 +93,7 @@ if (CLIENT) then
     end
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
 
     if url.path then
         local data = url.path:match("/([%a%d%p-_]+).html")

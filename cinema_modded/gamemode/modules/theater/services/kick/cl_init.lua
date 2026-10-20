@@ -11,11 +11,11 @@ local Ignored = {
     ["videos"] = true,
 }
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     return url.host and url.host:match("kick.com")
 end
 
-if (CLIENT) then
+if CLIENT then
     local THEATER_JS = [[
         (async () => {
             var checkerInterval = setInterval(function () {
@@ -44,7 +44,7 @@ if (CLIENT) then
         })();
     ]]
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
 
         panel:OpenURL( ("https://kick.com/%s"):format( Video:Data() ) )
         panel.OnDocumentReady = function(pnl)
@@ -55,7 +55,7 @@ if (CLIENT) then
     end
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
     if not url.path then return false end
 
     local channel, uuid = url.path:match("^/([%a%d-_]+)/videos/([%w%-]+)")

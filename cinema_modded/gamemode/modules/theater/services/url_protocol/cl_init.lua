@@ -26,21 +26,21 @@ local function GetProtocol( url )
     return nil
 end
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     if url.file and validExtensions[ url.file.ext ] then
         return true
     end
     return false
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
     if url and url.encoded then
         return { Data = url.encoded }
     end
     return false
 end
 
-if (CLIENT) then
+if CLIENT then
     local HTML_BASE = [[
         <!DOCTYPE html>
         <head></head>
@@ -161,7 +161,7 @@ if (CLIENT) then
         extractMetadata();
     ]])
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
         local url = Video:Data()
         local urlParsed = ParseURL(url)
         local protocol = GetProtocol(urlParsed) or "hls"
@@ -175,7 +175,7 @@ if (CLIENT) then
         end
     end
 
-    function SERVICE:GetMetadata( data, callback )
+    function SERVICE:GetMetadata(data, callback)
         local panel = self:CreateWebCrawler(callback)
         local urlParsed = ParseURL(data)
         local protocol = GetProtocol(urlParsed) or "hls"

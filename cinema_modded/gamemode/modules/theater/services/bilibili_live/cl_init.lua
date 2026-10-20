@@ -14,7 +14,7 @@ local SERVICE = {
     NeedsCodecFix = true
 }
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     local host = url.host or ""
     local path = url.path or ""
     return host:match("live.bilibili.com") and string.find(path, "/[%w*].")
@@ -36,7 +36,7 @@ if CLIENT then
         }, 50);
     ]]
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
 
         panel:OpenURL( PLAYERURL:format( Video:Data() ) )
         panel.OnDocumentReady = function(pnl)
@@ -47,7 +47,7 @@ if CLIENT then
     end
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
     local info = {}
     local host = url.host or ""
     local path = url.path or ""

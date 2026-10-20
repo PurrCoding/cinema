@@ -8,11 +8,11 @@ local SERVICE = {
 
 local PREVIEW_URL = "https://drive.google.com/file/d/%s/preview?autoplay=true"
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     return url.host and url.host:match("drive.google.com")
 end
 
-if (CLIENT) then
+if CLIENT then
 
 local THEATER_JS = [[
         (async () => {
@@ -148,7 +148,7 @@ local THEATER_JS = [[
         })();
     ]]
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
         panel:OpenURL(PREVIEW_URL:format(Video:Data()))
 
         panel.OnDocumentReady = function(pnl)
@@ -157,7 +157,7 @@ local THEATER_JS = [[
         end
     end
 
-    function SERVICE:GetMetadata( data, callback )
+    function SERVICE:GetMetadata(data, callback)
 
         local panel = self:CreateWebCrawler(callback)
 
@@ -172,7 +172,7 @@ local THEATER_JS = [[
     end
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
 
     local info = {}
 

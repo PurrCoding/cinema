@@ -4,11 +4,11 @@ local SERVICE = {
     NeedsCodecFix = true,
 }
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     return url.host and url.host:match("odysee%.com")
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
     if not url.path then return false end
 
     -- https://odysee.com/@channel:1/video-title:a
@@ -101,7 +101,7 @@ if CLIENT then
         })();
     ]]
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
         local startTime = 0
         if self.IsTimed then
             startTime = math.max(0, math.Round(CurTime() - Video:StartTime()))

@@ -5,11 +5,11 @@ local SERVICE = {
     NeedsCodecFix = true
 }
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     return url.host and url.host:match("dailymotion.com")
 end
 
-if (CLIENT) then
+if CLIENT then
     local DAILYMOTION_URL = "https://geo.dailymotion.com/player.html?video=%s&rel=0&autoplay=1"
     local THEATER_JS = [[
         (function() {
@@ -25,7 +25,7 @@ if (CLIENT) then
         })();
     ]]
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
 
         local startTime = math.Round(CurTime() - Video:StartTime())
         if startTime > 0 then
@@ -41,7 +41,7 @@ if (CLIENT) then
     end
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
 
     local info = {}
 

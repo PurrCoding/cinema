@@ -6,11 +6,11 @@ local SERVICE = {
     ExtentedVideoInfo = true
 }
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     return url.host and url.host:match("vkvideo.ru")
 end
 
-if (CLIENT) then
+if CLIENT then
     local EMBED_URL = "https://vkvideo.ru/video_ext.php?oid=-%s&id=%s&autoplay=1"
 
     local JS_FIND_VIDEO = [[
@@ -150,7 +150,7 @@ if (CLIENT) then
         return oid, id
     end
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
 
         local startTime = math.Round(CurTime() - Video:StartTime())
         if startTime > 0 then
@@ -168,7 +168,7 @@ if (CLIENT) then
 
     end
 
-    function SERVICE:GetMetadata( data, callback )
+    function SERVICE:GetMetadata(data, callback)
 
         local panel = vgui.Create("DHTML")
         panel:SetSize(512,512)
@@ -198,7 +198,7 @@ if (CLIENT) then
     end
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
 
     local info = {}
 

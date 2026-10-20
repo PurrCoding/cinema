@@ -6,13 +6,13 @@ local SERVICE = {
     ExtentedVideoInfo = true,
 }
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     return url.host and url.host:match("youtu.?be[.com]?")
 end
 
-if (CLIENT) then
+if CLIENT then
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
         local baseUrl = theater.GetCinemaURL("youtube.html")
         local videoId = Video:Data()
         local hash = ("v=%s"):format(videoId)
@@ -48,7 +48,7 @@ if (CLIENT) then
     -- theater.FetchVideoMedata. Loads the invisible youtube_meta.html crawler,
     -- which uses the YouTube IFrame API to emit
     -- "METADATA:{title,isLive,duration}" or "ERROR:<code|msg>" to console.
-    function SERVICE:GetMetadata( data, callback )
+    function SERVICE:GetMetadata(data, callback)
         local videoId = data
         if istable(data) then
             videoId = data.id or data.Data
@@ -62,7 +62,7 @@ if (CLIENT) then
 
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
 
     local info = {}
 

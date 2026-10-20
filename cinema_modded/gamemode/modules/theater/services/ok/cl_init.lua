@@ -10,11 +10,11 @@ local ValidTypes = {
     ["live"] = true,
 }
 
-function SERVICE:Match( url )
+function SERVICE:Match(url)
     return url.host and url.host:match("ok.ru")
 end
 
-if (CLIENT) then
+if CLIENT then
     local EMBED_URL = "https://ok.ru/videoembed/%s?autoplay=1"
     local THEATER_JS = [[
         (function() {
@@ -61,7 +61,7 @@ if (CLIENT) then
         })();
     ]]
 
-    function SERVICE:LoadProvider( Video, panel )
+    function SERVICE:LoadProvider(Video, panel)
         local data = string.Explode(",", Video:Data())
         local typeID, videoID = data[1], data[2]
 
@@ -75,7 +75,7 @@ if (CLIENT) then
     end
 end
 
-function SERVICE:GetURLInfo( url )
+function SERVICE:GetURLInfo(url)
 
     if url.path then
         local typeID, videoID = url.path:match("^/([%w%-_]+)/(%d+)")
