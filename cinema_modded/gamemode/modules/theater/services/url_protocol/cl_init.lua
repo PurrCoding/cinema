@@ -189,29 +189,6 @@ if (CLIENT) then
 
 end
 
-function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
-	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
-		if metadata.err then
-			return onFailure(metadata.err)
-		end
-
-		local info = {}
-		local urlParsed = ParseURL(data:Data())
-		local protocol = GetProtocol(urlParsed) or "unknown"
-		info.title = ("%s: %s"):format(protocol:upper(), data:Data())
-
-		if metadata.live then
-			info.type = "url_protocol_live"
-			info.duration = 0
-		else
-			info.duration = math.Round(tonumber(metadata.duration) or 0)
-		end
-
-		if onSuccess then
-			pcall(onSuccess, info)
-		end
-	end)
-end
 
 -- Register the multi-protocol service
 SERVICE.ClassName = "url_protocol"
