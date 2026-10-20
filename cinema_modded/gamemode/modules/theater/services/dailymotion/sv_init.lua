@@ -1,5 +1,6 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+local API_URL = "https://api.dailymotion.com/video/%s?fields=id,title,duration,thumbnail_url,status,mode,private"
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
@@ -35,8 +36,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	self:Fetch( url, onReceive, onFailure )
 
 end
-
-local API_URL = "https://api.dailymotion.com/video/%s?fields=id,title,duration,thumbnail_url,status,mode,private"
 
 theater.RegisterService("dailymotion", SERVICE)
 
