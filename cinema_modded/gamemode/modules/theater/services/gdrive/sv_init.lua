@@ -4,20 +4,20 @@ if not SERVICE then return end
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
-	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
+    theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
 
-		if metadata.err then
-			return onFailure(metadata.err)
-		end
+        if metadata.err then
+            return onFailure(metadata.err)
+        end
 
-		local info = {}
-		info.title = metadata.title
-		info.duration = tonumber(metadata.duration)
+        local info = {}
+        info.title = metadata.title
+        info.duration = tonumber(metadata.duration)
 
-		if onSuccess then
-			pcall(onSuccess, info)
-		end
-	end)
+        if onSuccess then
+            pcall(onSuccess, info)
+        end
+    end)
 
 end
 
