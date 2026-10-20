@@ -66,6 +66,8 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 end
 
 
+
+
 theater.RegisterService("youtube", SERVICE)
 
 -- Implementation is found in "youtube" service.
