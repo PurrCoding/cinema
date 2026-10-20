@@ -3,6 +3,7 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
+    EmbedURL = "https://www.bitchute.com/embed/%s"
 }
 
 function SERVICE:Match( url )
@@ -18,7 +19,6 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
-    local EMBED_URL = "https://www.bitchute.com/embed/%s"
 
     --[[
         Same approach as MEGA:
@@ -115,7 +115,7 @@ if (CLIENT) then
         local startTime = math.Round( CurTime() - Video:StartTime() )
         if startTime < 0 then startTime = 0 end
 
-        panel:OpenURL( EMBED_URL:format( Video:Data() ) )
+        panel:OpenURL( SERVICE.EmbedURL:format( Video:Data() ) )
         panel.OnDocumentReady = function( pnl )
             self:LoadExFunctions( pnl )
             pnl:QueueJavascript( THEATER_JS )

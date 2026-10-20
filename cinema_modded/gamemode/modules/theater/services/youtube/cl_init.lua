@@ -4,6 +4,7 @@ local SERVICE = {
 
     NeedsCodecFix = false,
     ExtentedVideoInfo = true,
+    PlayerURL = "youtube.html"
 }
 
 function SERVICE:Match( url )
@@ -13,7 +14,7 @@ end
 if (CLIENT) then
 
     function SERVICE:LoadProvider( Video, panel )
-        local baseUrl = theater.GetCinemaURL("youtube.html")
+        local baseUrl = theater.GetCinemaURL(SERVICE.PlayerURL)
         local videoId = Video:Data()
         local hash = ("v=%s"):format(videoId)
 

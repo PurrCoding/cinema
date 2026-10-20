@@ -11,7 +11,8 @@ local SERVICE = {
     Name = "哔哩哔哩直播",
     IsTimed = false,
 
-    NeedsCodecFix = true
+    NeedsCodecFix = true,
+    PlayerURL = "https://www.bilibili.com/blackboard/live/live-mobile-playerV3.html?roomId=%s&danmaku=1&autoplay=1"
 }
 
 function SERVICE:Match( url )
@@ -21,7 +22,7 @@ function SERVICE:Match( url )
 end
 
 if CLIENT then
-    local PLAYERURL = "https://www.bilibili.com/blackboard/live/live-mobile-playerV3.html?roomId=%s&danmaku=1&autoplay=1"
+
     local JS = [[
         var checkerInterval = setInterval(function() {
             var player = document.getElementsByTagName('video')[0];
@@ -38,7 +39,7 @@ if CLIENT then
 
     function SERVICE:LoadProvider( Video, panel )
 
-        panel:OpenURL( PLAYERURL:format( Video:Data() ) )
+        panel:OpenURL( SERVICE.PlayerURL:format( Video:Data() ) )
         panel.OnDocumentReady = function(pnl)
             self:LoadExFunctions( pnl )
             pnl:QueueJavascript(JS)
