@@ -68,7 +68,22 @@ function Load( strDirectory, strGamemode )
 
 	local fileList = GetFileList( strDirectory, strGamemode )
 
-	for k, v in pairs( fileList ) do
+	-- Shared service setup must run before client/server extensions.
+	local function LoadPriority( name )
+		if name == "sh_init.lua" or string.sub( name, 1, 3 ) == "sh_" then return 1 end
+		if name == "cl_init.lua" or string.sub( name, 1, 3 ) == "cl_" then return 2 end
+		if name == "sv_init.lua" or string.sub( name, 1, 3 ) == "sv_" then return 3 end
+		return 2
+	end
+
+	table.sort( fileList, function( a, b )
+		local priorityA = LoadPriority( a )
+		local priorityB = LoadPriority( b )
+		if priorityA == priorityB then return a < b end
+		return priorityA < priorityB
+	end )
+
+	for k, v in ipairs( fileList ) do
 
 		if ( IsLuaFile( v ) ) then
 
