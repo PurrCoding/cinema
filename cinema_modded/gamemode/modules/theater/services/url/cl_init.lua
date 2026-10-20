@@ -241,24 +241,34 @@ end
 local basicService = createService("URL (Basic Media)", false, BASIC_FORMATS)
 local proprietaryService = createService("URL (Proprietary Video)", true, PROPRIETARY_FORMATS)
 
--- Register all services
-theater.RegisterService("url_basic", basicService)
-theater.RegisterService("url_proprietary", proprietaryService)
-
--- Register image service for timed images
-theater.RegisterService("image_timed", {
+-- Register all services on the client. On the server, return the service objects
+-- so sv_init.lua can register them after including this file.
+local imageTimedService = {
 	Name = "URL (Timed Images)",
 	IsTimed = true,
 	NeedsCodecFix = false,
 	Hidden = true,
 	LoadProvider = CLIENT and basicService.LoadProvider or function() end
-})
+}
 
--- Register image service for untimed images
-theater.RegisterService("image", {
+local imageService = {
 	Name = "URL (Images)",
 	IsTimed = false,
 	NeedsCodecFix = false,
 	Hidden = true,
 	LoadProvider = CLIENT and basicService.LoadProvider or function() end
-})
+}
+
+if SERVER then
+	return {
+		url_basic = basicService,
+		url_proprietary = proprietaryService,
+		image_timed = imageTimedService,
+		image = imageService
+	}
+end
+
+theater.RegisterService("url_basic", basicService)
+theater.RegisterService("url_proprietary", proprietaryService)
+theater.RegisterService("image_timed", imageTimedService)
+theater.RegisterService("image", imageService)
