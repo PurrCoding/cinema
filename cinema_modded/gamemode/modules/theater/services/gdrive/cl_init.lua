@@ -184,13 +184,8 @@ function SERVICE:GetURLInfo( url )
     return info.Data and info or false
 end
 
-
-SERVICE.ClassName = "gdrive"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
-
-
+theater.RegisterService("gdrive", SERVICE)
