@@ -234,7 +234,13 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	)
 end
 
-theater.RegisterService( "kick", SERVICE )
+SERVICE.ClassName = "kick"
+
+if SERVER then
+	return SERVICE
+end
+
+theater.RegisterService(SERVICE)
 
 theater.RegisterService( "kickvod", {
 	Name = "Kick VOD",

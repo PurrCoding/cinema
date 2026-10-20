@@ -203,4 +203,12 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 end
 
-theater.RegisterService( "gdrive", SERVICE )
+SERVICE.ClassName = "gdrive"
+
+if SERVER then
+	return SERVICE
+end
+
+theater.RegisterService(SERVICE)
+
+

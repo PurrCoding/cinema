@@ -473,4 +473,12 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 	self:Fetch(url, processMetadata, onFailure)
 end
 
-theater.RegisterService("ia", SERVICE)
+SERVICE.ClassName = "ia"
+
+if SERVER then
+	return SERVICE
+end
+
+theater.RegisterService(SERVICE)
+
+
