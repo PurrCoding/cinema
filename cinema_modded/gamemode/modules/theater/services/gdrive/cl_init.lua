@@ -184,24 +184,6 @@ function SERVICE:GetURLInfo( url )
 	return info.Data and info or false
 end
 
-function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
-
-	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
-
-		if metadata.err then
-			return onFailure(metadata.err)
-		end
-
-		local info = {}
-		info.title = metadata.title
-		info.duration = tonumber(metadata.duration)
-
-		if onSuccess then
-			pcall(onSuccess, info)
-		end
-	end)
-
-end
 
 SERVICE.ClassName = "gdrive"
 
