@@ -1,90 +1,90 @@
 local SERVICE = {
-	Name = "OK",
-	IsTimed = true,
+    Name = "OK",
+    IsTimed = true,
 
-	NeedsCodecFix = true
+    NeedsCodecFix = true
 }
 
 local ValidTypes = {
-	["video"] = true,
-	["live"] = true,
+    ["video"] = true,
+    ["live"] = true,
 }
 
 
 
 function SERVICE:Match( url )
-	return url.host and url.host:match("ok.ru")
+    return url.host and url.host:match("ok.ru")
 end
 
 if (CLIENT) then
-	local EMBED_URL = "https://ok.ru/videoembed/%s?autoplay=1"
-	local THEATER_JS = [[
-		(function() {
+    local EMBED_URL = "https://ok.ru/videoembed/%s?autoplay=1"
+    local THEATER_JS = [[
+        (function() {
 
-			// Recursively search for a <video> element, including inside Shadow DOM
-			function findVideo(root) {
-				if (!root) return null;
+            // Recursively search for a <video> element, including inside Shadow DOM
+            function findVideo(root) {
+                if (!root) return null;
 
-				// Direct video element
-				let vid = root.querySelector && root.querySelector("video");
-				if (vid) return vid;
+                // Direct video element
+                let vid = root.querySelector && root.querySelector("video");
+                if (vid) return vid;
 
-				// Handle ok divs "shadow-root-container" shadow DOM
-				let rootContainer = root.querySelector && root.querySelector(".shadow-root-container");
-				if (rootContainer && rootContainer.shadowRoot) {
-					let v = findVideo(rootContainer.shadowRoot);
-					if (v) return v;
-				}
+                // Handle ok divs "shadow-root-container" shadow DOM
+                let rootContainer = root.querySelector && root.querySelector(".shadow-root-container");
+                if (rootContainer && rootContainer.shadowRoot) {
+                    let v = findVideo(rootContainer.shadowRoot);
+                    if (v) return v;
+                }
 
-				// Traverse all elements and check for nested shadow roots
-				let all = root.querySelectorAll ? root.querySelectorAll("*") : [];
-				for (let el of all) {
-					if (el.shadowRoot) {
-						let v = findVideo(el.shadowRoot);
-						if (v) return v;
-					}
-				}
+                // Traverse all elements and check for nested shadow roots
+                let all = root.querySelectorAll ? root.querySelectorAll("*") : [];
+                for (let el of all) {
+                    if (el.shadowRoot) {
+                        let v = findVideo(el.shadowRoot);
+                        if (v) return v;
+                    }
+                }
 
-				return null;
-			}
+                return null;
+            }
 
-			// Poll until video element is available and ready
-			var checkerInterval = setInterval(function() {
-				var player = findVideo(document);
+            // Poll until video element is available and ready
+            var checkerInterval = setInterval(function() {
+                var player = findVideo(document);
 
-				if (!player.paused && player.readyState === 4) {
-					clearInterval(checkerInterval);
+                if (!player.paused && player.readyState === 4) {
+                    clearInterval(checkerInterval);
 
-					window.cinema_controller = player;
-					exTheater.controllerReady();
-				}
-			}, 100);
+                    window.cinema_controller = player;
+                    exTheater.controllerReady();
+                }
+            }, 100);
 
-		})();
-	]]
+        })();
+    ]]
 
-	function SERVICE:LoadProvider( Video, panel )
-		local data = string.Explode(",", Video:Data())
-		local typeID, videoID = data[1], data[2]
+    function SERVICE:LoadProvider( Video, panel )
+        local data = string.Explode(",", Video:Data())
+        local typeID, videoID = data[1], data[2]
 
-		panel:OpenURL( EMBED_URL:format(videoID) )
-		print(EMBED_URL:format(videoID))
-		panel.OnDocumentReady = function(pnl)
-			self:LoadExFunctions( pnl )
-			pnl:QueueJavascript(THEATER_JS)
-		end
+        panel:OpenURL( EMBED_URL:format(videoID) )
+        print(EMBED_URL:format(videoID))
+        panel.OnDocumentReady = function(pnl)
+            self:LoadExFunctions( pnl )
+            pnl:QueueJavascript(THEATER_JS)
+        end
 
-	end
+    end
 end
 
 function SERVICE:GetURLInfo( url )
 
-	if url.path then
-		local typeID, videoID = url.path:match("^/([%w%-_]+)/(%d+)")
-		if (typeID and videoID and ValidTypes[typeID]) then return { Data = typeID .. "," .. videoID } end
-	end
+    if url.path then
+        local typeID, videoID = url.path:match("^/([%w%-_]+)/(%d+)")
+        if (typeID and videoID and ValidTypes[typeID]) then return { Data = typeID .. "," .. videoID } end
+    end
 
-	return false
+    return false
 end
 
 -- Lua search patterns to find metadata from the html
@@ -96,15 +96,15 @@ end
 SERVICE.ClassName = "ok"
 
 if SERVER then
-	return SERVICE
+    return SERVICE
 end
 
 theater.RegisterService(SERVICE)
 
 theater.RegisterService( "oklive", {
-	Name = "Ok Live",
-	IsTimed = false,
-	NeedsCodecFix = true,
-	Hidden = true,
-	LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
+    Name = "Ok Live",
+    IsTimed = false,
+    NeedsCodecFix = true,
+    Hidden = true,
+    LoadProvider = CLIENT and SERVICE.LoadProvider or function() end
 } )
