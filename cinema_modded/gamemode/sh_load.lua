@@ -70,10 +70,14 @@ function Load( strDirectory, strGamemode )
 
 	-- Shared service setup must run before client/server extensions.
 	local function LoadPriority( name )
-		if name == "sh_init.lua" or string.sub( name, 1, 3 ) == "sh_" then return 1 end
-		if name == "cl_init.lua" or string.sub( name, 1, 3 ) == "cl_" then return 2 end
-		if name == "sv_init.lua" or string.sub( name, 1, 3 ) == "sv_" then return 3 end
-		return 2
+		-- Entry points must run before the rest of their realm's files.
+		if name == "sh_init.lua" then return 1 end
+		if string.sub( name, 1, 3 ) == "sh_" then return 2 end
+		if name == "cl_init.lua" then return 3 end
+		if string.sub( name, 1, 3 ) == "cl_" then return 4 end
+		if name == "sv_init.lua" then return 5 end
+		if string.sub( name, 1, 3 ) == "sv_" then return 6 end
+		return 4
 	end
 
 	table.sort( fileList, function( a, b )
