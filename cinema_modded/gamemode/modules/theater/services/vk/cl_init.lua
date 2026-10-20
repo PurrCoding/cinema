@@ -233,14 +233,11 @@ function SERVICE:GetURLInfo( url )
     return info.Data and info or false
 end
 
-
-SERVICE.ClassName = "vk"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
+theater.RegisterService("vk", SERVICE)
 
 theater.RegisterService( "vklive", {
     Name = "VK Video (Live)",
