@@ -100,17 +100,18 @@ function SERVICE:ParseYTMetaDataFromHTML( html )
         -- Try the legacy <meta itemprop="duration"> tag (ISO 8601) first.
         -- YouTube removed this tag around 2021, so it will usually be absent.
         local durationISO8601 = util.ParseElementAttribute( string.match(html, patterns["duration"]), "content" )
-        if isstring(durationISO8601) then
-            metadata.duration = math.max( 1, util.ISO_8601ToSeconds(durationISO8601) )
+        local parsedDuration = isstring(durationISO8601)
+            and util.ISO_8601ToSeconds(durationISO8601)
+        if parsedDuration then
+            metadata.duration = math.max( 1, parsedDuration )
         else
             -- Modern fallback: parse lengthSeconds from the ytInitialPlayerResponse
             -- JSON blob that YouTube embeds directly in the page HTML.
-            local lengthSeconds = tonumber( string.match(html, '"lengthSeconds"%s*:%s*"(%d+)"') )
+            local lengthSeconds = tonumber( string.match(html, '"lengthSeconds"%s*:%s*"(\\d+)"') )
             if lengthSeconds then
                 metadata.duration = math.max( 1, lengthSeconds )
             end
-        end
-    end
+        end    end
 
     return metadata
 end
