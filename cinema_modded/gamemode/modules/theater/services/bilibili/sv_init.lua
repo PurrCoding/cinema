@@ -1,5 +1,6 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+-- 目前支持AV号与BV号
 local META_URL = "https://www.bilibili.com/video/%s"
 
 function SERVICE:GetVideoInfo(d, onSuccess, onFailure)
