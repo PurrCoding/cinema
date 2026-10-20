@@ -72,8 +72,6 @@ end
 SERVICES.url_basic.GetVideoInfo = GetVideoInfo
 SERVICES.url_proprietary.GetVideoInfo = GetVideoInfo
 
-
-
 if (SERVER) then
     CreateConVar("cinema_service_imageduration", "0", {FCVAR_ARCHIVE, FCVAR_NEVER_AS_STRING}, "0 = Infinite, 60sec Max", 0, 60 )
 end
