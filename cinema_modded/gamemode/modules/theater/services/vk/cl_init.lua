@@ -233,34 +233,6 @@ function SERVICE:GetURLInfo( url )
 	return info.Data and info or false
 end
 
-function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
-
-	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
-
-		if metadata.err then
-			return onFailure(metadata.err)
-		end
-
-		local info = {}
-		info.title = metadata.title
-		info.thumbnail = metadata.thumbnail
-
-		local duration = metadata.duration
-		local isLivePath = isstring(data) and data:StartWith("live-")
-
-		if isLivePath or not duration or (isnumber(duration) and duration == 0) then
-			info.type = "vklive"
-			info.duration = 0
-		else
-			info.duration = metadata.duration
-		end
-
-		if onSuccess then
-			pcall(onSuccess, info)
-		end
-	end)
-
-end
 
 SERVICE.ClassName = "vk"
 
