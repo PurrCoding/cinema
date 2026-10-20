@@ -183,7 +183,7 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 	end
 
 	-- Server resolve is authoritative for DRM. Encrypted → hard stop, no further stages.
-	if SERVER and self.ResolveTrack then
+	if self.ResolveTrack then
 		self:ResolveTrack(trackPath, function(metadata)
 			deliver(metadata)
 		end, function(err)
