@@ -1,6 +1,73 @@
-local SERVICE = theater.GetServiceByClass( "bilibili_legacy" )
+--[[
+	Bilibili Support Legacy by OriginalSnow
+	Note: You can edit this code. But you cant upload anymore.
+]]
 
-    local PLAYURL = "www.bilibili.com/blackboard/html5mobileplayer.html?aid=%s&autoplay=1&p=%s"
+local SERVICE = {
+    Name = "哔哩哔哩Legacy",
+    IsTimed = true,
+
+    NeedsCodecFix = true
+}
+
+local META_URL = "https://www.bilibili.com/video/%s"
+
+function SERVICE:Match(url)
+    local host = url.host or ""
+    local path = url.path or ""
+    local av = host:match("www.bilibili.com") and string.match(path, "av[%w*]+")
+    return av or false
+end
+
+
+function SERVICE:GetURLInfo(url)
+    local info = {}
+    local p
+    if url.query ~= nil then
+        p = url.query["p"] or 1
+    else
+        p = 1
+    end
+
+    local host = url.host or ""
+    local path = url.path or ""
+    if host:match("www.bilibili.com") or host:match("b23.tv") then
+        local av = string.match(path, "av[%w*]+")
+        if av then info.Data = av .. " " .. p end
+    end
+    return info.Data and info or false
+end
+
+function SERVICE:GetVideoInfo(d, onSuccess, onFailure)
+    local sT = string.Split(d, " ")
+    local aid = string.Split(sT[1], "av")
+    local f = Format("https://api.bilibili.com/x/web-interface/view?aid=%s", aid[2])
+    local onReceive = function(b, l, h, c)
+        http.Fetch(f, function(r, s)
+            if s == 0 then return onFailure("Theater_RequestFailed") end
+            local rT = util.JSONToTable(r)
+            local data = rT and rT.data
+            if data == nil or not data.pages then return onFailure("Theater_RequestFailed") end
+            local pdata = data.pages[tonumber(sT[2])] or data.pages[1]
+            if pdata == nil then return onFailure("Theater_RequestFailed") end
+            local info = {}
+            info.title = data.title .. " (" .. sT[2] .. "p)"
+            info.duration = pdata.duration + 1
+            if onSuccess then pcall(onSuccess, info) end
+        end)
+    end
+
+    local url = META_URL:format(aid[2])
+    self:Fetch(url, onReceive, onFailure)
+end
+
+SERVICE.ClassName = "bilibili_legacy"
+theater.RegisterService( SERVICE )
+
+-- Client-only implementation; the server includes this file to register SERVICE.
+if SERVER then return end
+
+local PLAYURL = "www.bilibili.com/blackboard/html5mobileplayer.html?aid=%s&autoplay=1&p=%s"
     local JS = [[
         var checkerInterval = setInterval(function() {
 			var player = document.getElementsByTagName('video')[0];
