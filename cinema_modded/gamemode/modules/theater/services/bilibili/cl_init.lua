@@ -12,7 +12,6 @@ local SERVICE = {
 
 -- 目前支持AV号与BV号
 
-
 function SERVICE:Match(url) -- 匹配B站网址
     local host = url.host or ""
     local path = url.path or ""
@@ -140,13 +139,8 @@ function SERVICE:GetURLInfo(url)
     return info.Data and info or false
 end
 
-
-SERVICE.ClassName = "bilibili"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
-
-
+theater.RegisterService("bilibili", SERVICE)
