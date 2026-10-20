@@ -122,8 +122,8 @@ local SERVICE = theater.GetServiceByClass( "url_protocol" )
 
 	function SERVICE:LoadProvider( Video, panel )
 		local url = Video:Data()
-		local urlParsed = ParseURL(url)
-		local protocol = GetProtocol(urlParsed) or "hls"
+		local urlParsed = self:ParseURL(url)
+		local protocol = self:GetProtocol(urlParsed) or "hls"
 
 		local html = THEATER_HTML:Replace("{@VideoSrc}", url)
 		html = html:Replace("{@Protocol}", protocol)
@@ -136,8 +136,8 @@ local SERVICE = theater.GetServiceByClass( "url_protocol" )
 
 	function SERVICE:GetMetadata( data, callback )
 		local panel = self:CreateWebCrawler(callback)
-		local urlParsed = ParseURL(data)
-		local protocol = GetProtocol(urlParsed) or "hls"
+		local urlParsed = self:ParseURL(data)
+		local protocol = self:GetProtocol(urlParsed) or "hls"
 
 		local html = METADATA_HTML:Replace("{@VideoSrc}", data)
 		html = html:Replace("{@Protocol}", protocol)
