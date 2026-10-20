@@ -43,8 +43,6 @@ local function FindBestVideoFile(files, requestedFile)
     return candidates[1]
 end
 
-
-
 -- length parsing
 local function ParseLength(value)
     if value == nil then return nil end
@@ -76,8 +74,6 @@ local function ParseLength(value)
     return nil
 end
 
-
-
 -- title generation
 local function GenerateTitle(response, file, identifier)
     if response.metadata and response.metadata.title then
@@ -105,8 +101,6 @@ local function GenerateTitle(response, file, identifier)
     return "Internet Archive: " .. identifier
 end
 
-
-
 -- thumbnail handling
 local function GetThumbnail(files, videoFileName)
     local baseName = videoFileName:gsub("%.%w+$", "")
@@ -124,8 +118,6 @@ local function GetThumbnail(files, videoFileName)
     -- no thumbnail
     return nil
 end
-
-
 
 -- API endpoints
 local METADATA_URL = "https://archive.org/metadata/%s"
