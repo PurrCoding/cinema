@@ -1,5 +1,44 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+local function ParseElementAttribute( element, attribute )
+	if not element then return end
+	local output = string.match( element, attribute .. "%s-=%s-%b\"\"" )
+	if not output then return end
+	output = string.gsub( output, attribute .. "%s-=%s-", "" )
+	return string.sub( output, 2, -2 )
+end
+
+
+
+local patterns = {
+	["title"]          = "<meta%sproperty=\"og:title\"%s-content=%b\"\">",
+	["title_fallback"] = "<title>.-</title>",
+	["duration"]       = "<meta%sitemprop%s-=%s-\"duration\"%s-content%s-=%s-%b\"\">",
+	["live"]           = "<meta%sitemprop%s-=%s-\"isLiveBroadcast\"%s-content%s-=%s-%b\"\">",
+	["live_enddate"]   = "<meta%sitemprop%s-=%s-\"endDate\"%s-content%s-=%s-%b\"\">"
+}
+
+local function ParseElementContent( element )
+	if not element then return end
+	local output = string.gsub( element, "^%s-<%w->%s-", "" )
+	return string.gsub( output, "%s-</%w->%s-$", "" )
+end
+
+
+
+local function convertISO8601Time( duration )
+	if not isstring(duration) then return 0 end
+
+	local hours   = tonumber( string.match(duration, "(%d+)H") ) or 0
+	local minutes = tonumber( string.match(duration, "(%d+)M") ) or 0
+	local seconds = tonumber( string.match(duration, "(%d+)S") ) or 0
+
+	duration = hours * 3600 + minutes * 60 + seconds
+	return duration
+end
+
+
+
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
@@ -106,44 +145,6 @@ function SERVICE:ParseYTMetaDataFromHTML( html )
 
 	return metadata
 end
-
-
-
-local function ParseElementAttribute( element, attribute )
-	if not element then return end
-	local output = string.match( element, attribute .. "%s-=%s-%b\"\"" )
-	if not output then return end
-	output = string.gsub( output, attribute .. "%s-=%s-", "" )
-	return string.sub( output, 2, -2 )
-end
-
-
-local patterns = {
-	["title"]          = "<meta%sproperty=\"og:title\"%s-content=%b\"\">",
-	["title_fallback"] = "<title>.-</title>",
-	["duration"]       = "<meta%sitemprop%s-=%s-\"duration\"%s-content%s-=%s-%b\"\">",
-	["live"]           = "<meta%sitemprop%s-=%s-\"isLiveBroadcast\"%s-content%s-=%s-%b\"\">",
-	["live_enddate"]   = "<meta%sitemprop%s-=%s-\"endDate\"%s-content%s-=%s-%b\"\">"
-}
-
-local function ParseElementContent( element )
-	if not element then return end
-	local output = string.gsub( element, "^%s-<%w->%s-", "" )
-	return string.gsub( output, "%s-</%w->%s-$", "" )
-end
-
-
-local function convertISO8601Time( duration )
-	if not isstring(duration) then return 0 end
-
-	local hours   = tonumber( string.match(duration, "(%d+)H") ) or 0
-	local minutes = tonumber( string.match(duration, "(%d+)M") ) or 0
-	local seconds = tonumber( string.match(duration, "(%d+)S") ) or 0
-
-	duration = hours * 3600 + minutes * 60 + seconds
-	return duration
-end
-
 
 theater.RegisterService("youtube", SERVICE)
 

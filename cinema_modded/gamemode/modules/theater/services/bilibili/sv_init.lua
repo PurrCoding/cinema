@@ -1,5 +1,6 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+local META_URL = "https://www.bilibili.com/video/%s"
 
 function SERVICE:GetVideoInfo(d, onSuccess, onFailure)
     local sT = string.Split(d, " ")
@@ -23,8 +24,5 @@ function SERVICE:GetVideoInfo(d, onSuccess, onFailure)
     local url = META_URL:format(sT[1])
     self:Fetch(url, onReceive, onFailure)
 end
-
-
-local META_URL = "https://www.bilibili.com/video/%s"
 
 theater.RegisterService("bilibili", SERVICE)
