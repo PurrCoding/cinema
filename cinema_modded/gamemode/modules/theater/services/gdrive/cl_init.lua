@@ -136,7 +136,7 @@ local THEATER_JS = [[
 	]]
 
 	function SERVICE:LoadProvider( Video, panel )
-		panel:OpenURL(PREVIEW_URL:format(Video:Data()))
+		panel:OpenURL(self.PreviewURL:format(Video:Data()))
 
 		panel.OnDocumentReady = function(pnl)
 			self:LoadExFunctions( pnl )
@@ -154,6 +154,6 @@ local THEATER_JS = [[
 			end
 		end
 
-		panel:OpenURL(PREVIEW_URL:format(data))
+		panel:OpenURL(self.PreviewURL:format(data))
 
 	end
