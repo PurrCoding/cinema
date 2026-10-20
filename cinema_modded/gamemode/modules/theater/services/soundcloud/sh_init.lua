@@ -54,6 +54,31 @@ function SERVICE:GetURLInfo(url)
 	return false
 end
 
+local function HasPlayableTranscoding(media)
+	if not istable(media) or not istable(media.transcodings) then
+		return true
+	end
+	if #media.transcodings == 0 then
+		return false
+	end
+	for _, t in ipairs(media.transcodings) do
+		local proto = ""
+		if istable(t.format) and isstring(t.format.protocol) then
+			proto = t.format.protocol:lower()
+		elseif isstring(t.protocol) then
+			proto = t.protocol:lower()
+		end
+		if proto ~= ""
+			and not proto:find("encrypted", 1, true)
+			and proto:sub(1, 4) ~= "cbc-"
+			and proto:sub(1, 4) ~= "ctr-" then
+			return true
+		end
+	end
+	return false
+end
+
+
 local function ParseSoundCloudHTML(body)
 	local json = body:match('<script>window%.__sc_hydration%s*=%s*(.-);</script>')
 		or body:match('window%.__sc_hydration%s*=%s*(.-);%s*</script>')
