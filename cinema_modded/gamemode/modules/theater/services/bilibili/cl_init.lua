@@ -140,28 +140,6 @@ function SERVICE:GetURLInfo(url)
     return info.Data and info or false
 end
 
-function SERVICE:GetVideoInfo(d, onSuccess, onFailure)
-    local sT = string.Split(d, " ")
-    local f = Format("https://api.bilibili.com/x/web-interface/view?bvid=%s", sT[1])
-    local onReceive = function(b, l, h, c)
-        http.Fetch(f, function(r, s)
-            if s == 0 then return onFailure("Theater_RequestFailed") end
-            local rT = util.JSONToTable(r)
-            local data = rT and rT.data
-            if data == nil or not data.pages then return onFailure("Theater_RequestFailed") end
-            local pdata = data.pages[tonumber(sT[2])] or data.pages[1]
-            if pdata == nil then return onFailure("Theater_RequestFailed") end
-            local info = {}
-            info.thumbnail = data.pic
-            info.title = data.title .. " (" .. sT[2] .. "p)"
-            info.duration = pdata.duration + 1
-            if onSuccess then pcall(onSuccess, info) end
-        end)
-    end
-
-    local url = META_URL:format(sT[1])
-    self:Fetch(url, onReceive, onFailure)
-end
 
 SERVICE.ClassName = "bilibili"
 
