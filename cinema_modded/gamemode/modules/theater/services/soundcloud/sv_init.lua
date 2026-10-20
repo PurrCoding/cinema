@@ -4,8 +4,6 @@ local function IsEncryptedStreamError(err)
     return isstring(err) and err:find("encrypted/DRM", 1, true) ~= nil
 end
 
-
-
 local function HasPlayableTranscoding(media)
     if not istable(media) or not istable(media.transcodings) then
         return true
@@ -30,9 +28,6 @@ local function HasPlayableTranscoding(media)
     return false
 end
 
-
-
-
 local ENCRYPTED_STREAM_ERR = "SoundCloud track only offers encrypted/DRM streams (not playable in GMod)"
 
 local function BuildTitle(track)
@@ -44,19 +39,10 @@ local function BuildTitle(track)
     return title
 end
 
-
-
-
-
-
-
 local function NormalizeArtwork(url)
     if not isstring(url) or url == "" then return nil end
     return url:gsub("%-large%.", "-t500x500."):gsub("%-t300x300%.", "-t500x500.")
 end
-
-
-
 
 local function ParseSoundCloudHTML(body)
     local json = body:match('<script>window%.__sc_hydration%s*=%s*(.-);</script>')
@@ -94,9 +80,6 @@ local function ParseSoundCloudHTML(body)
     return nil, "Sound metadata not found in hydration data"
 end
 
-
-
-
 local CLIENT_ID_FALLBACK = "nIjtjiYnjkOhMyh5xrbqEW12DxeJVnic"
 
 local SoundCloudClientId = {
@@ -116,8 +99,6 @@ local function ExtractScriptSrcs(html)
     return srcs
 end
 
-
-
 local function ExtractClientIdFromJS(body)
     if not isstring(body) or body == "" then return nil end
     local id = body:match('client_id%s*:%s*"([0-9a-zA-Z]{32})"')
@@ -127,9 +108,6 @@ local function ExtractClientIdFromJS(body)
     return id
 end
 
-
-
-
 local CLIENT_ID_TTL = 6 * 60 * 60
 
 local function ClientIdIsFresh()
@@ -137,9 +115,6 @@ local function ClientIdIsFresh()
         and SoundCloudClientId.value ~= ""
         and (CurTime() - SoundCloudClientId.fetchedAt) < CLIENT_ID_TTL
 end
-
-
-
 
 local function MetadataFromResolve(data)
     if not istable(data) then return nil end
@@ -177,9 +152,6 @@ local function MetadataFromResolve(data)
         thumbnail = NormalizeArtwork(track.artwork_url or (track.user and track.user.avatar_url)),
     }
 end
-
-
-
 
 function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
     local function deliver(metadata)
@@ -264,7 +236,6 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 
     runClientCrawler(nil)
 end
-
 
 if SERVER then
     function SERVICE:RefreshClientId(onDone)
