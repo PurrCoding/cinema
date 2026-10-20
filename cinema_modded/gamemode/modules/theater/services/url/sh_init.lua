@@ -53,10 +53,10 @@ theater.RegisterService("url_proprietary", proprietaryService)
 
 -- Image entries are aliases. Resolve the provider when called so cl_init.lua
 -- can attach it after the shared service registrations have completed.
-local function LoadImageProvider(...)
+local function LoadImageProvider(_, Video, panel)
 	local service = theater.GetServiceByClass("url_basic")
 	if service and service.LoadProvider then
-		return service:LoadProvider(...)
+		return service:LoadProvider(Video, panel)
 	end
 end
 
