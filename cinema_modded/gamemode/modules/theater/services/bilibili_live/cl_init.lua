@@ -93,4 +93,12 @@ function SERVICE:GetVideoInfo( ID , onSuccess, onFailure )
 	self:Fetch( url, onReceive, onFailure )
 end
 
-theater.RegisterService( "bilibili_live", SERVICE )
+SERVICE.ClassName = "bilibili_live"
+
+if SERVER then
+	return SERVICE
+end
+
+theater.RegisterService(SERVICE)
+
+
