@@ -169,68 +169,7 @@ local function createService(name, codecSupport, formats)
 			panel:SetHTML(HTML_METADATA:Replace("{@VideoSrc}", data))
 		end or nil,
 
-		GetVideoInfo = function(self, data, onSuccess, onFailure)
-			local status, data2 = pcall(url2.parse2, data:Data())
-			if not status then
-				return onFailure("Failed to parse URL: " .. tostring(data2))
-			end
-
-			local fileext = data2.file and data2.file.ext
-			local filename = data2.file and data2.file.name or "Unknown"
-
-			if not fileext then
-				return onFailure("No file extension found")
-			end
-
-			-- Handle video and audio formats with metadata extraction
-			if BASIC_VIDEO_AUDIO_FORMATS[fileext] then
-				theater.FetchVideoMedata(data:GetOwner(), data, function(metadata)
-					if metadata.err then
-						return onFailure(metadata.err)
-					end
-
-					local info = {
-						title = (fileext == "webm" and "Video: %s" or "Audio: %s"):format(filename),
-						duration = math.max(0, math.Round(tonumber(metadata.duration) or 0))
-					}
-
-					if onSuccess then pcall(onSuccess, info) end
-				end)
-				return
-			end
-
-			-- Handle images with configurable duration
-			if IMAGE_FORMATS[fileext] then
-				local info = { title = ("Image: %s"):format(filename) }
-				local duration = GetConVar("cinema_service_imageduration"):GetInt()
-
-				if duration > 0 then
-					info.type = "image_timed"
-					info.duration = duration
-				else
-					info.type = "image"
-				end
-
-				if onSuccess then pcall(onSuccess, info) end
-				return
-			end
-
-			-- Handle proprietary video formats
-			if PROPRIETARY_FORMATS[fileext] then
-				theater.FetchVideoMedata(data:GetOwner(), data, function(metadata)
-					if metadata.err then
-						return onFailure(metadata.err)
-					end
-
-					local info = {
-						title = ("Video: %s"):format(filename),
-						duration = math.max(0, math.Round(tonumber(metadata.duration) or 0))
-					}
-
-					if onSuccess then pcall(onSuccess, info) end
-				end)
-			end
-		end
+		-- GetVideoInfo is attached in sv_init.lua.
 	}
 end
 
@@ -261,7 +200,11 @@ if SERVER then
 		url_basic = basicService,
 		url_proprietary = proprietaryService,
 		image_timed = imageTimedService,
-		image = imageService
+		image = imageService,
+		url = url2,
+		IMAGE_FORMATS = IMAGE_FORMATS,
+		BASIC_VIDEO_AUDIO_FORMATS = BASIC_VIDEO_AUDIO_FORMATS,
+		PROPRIETARY_FORMATS = PROPRIETARY_FORMATS
 	}
 end
 
