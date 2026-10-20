@@ -1,16 +1,5 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
----
--- Get the value for an attribute from a html element
---
-local function ParseElementAttribute( element, attribute )
-    if not element then return end
-    local output = string.match( element, attribute .. "%s-=%s-%b\"\"" )
-    if not output then return end
-    output = string.gsub( output, attribute .. "%s-=%s-", "" )
-    return string.sub( output, 2, -2 )
-end
-
 -- Lua search patterns to find metadata from the html
 local patterns = {
     ["title"]          = "<meta%sproperty=\"og:title\"%s-content=%b\"\">",
@@ -19,31 +8,6 @@ local patterns = {
     ["live"]           = "<meta%sitemprop%s-=%s-\"isLiveBroadcast\"%s-content%s-=%s-%b\"\">",
     ["live_enddate"]   = "<meta%sitemprop%s-=%s-\"endDate\"%s-content%s-=%s-%b\"\">"
 }
-
----
--- Get the contents of a html element by removing tags.
--- Used as fallback for when title cannot be found via meta tag.
---
-local function ParseElementContent( element )
-    if not element then return end
-    local output = string.gsub( element, "^%s-<%w->%s-", "" )
-    return string.gsub( output, "%s-</%w->%s-$", "" )
-end
-
----
--- Helper function for converting ISO 8601 time strings.
--- e.g. "PT1H23M45S" -> 5025
---
-local function convertISO8601Time( duration )
-    if not isstring(duration) then return 0 end
-
-    local hours   = tonumber( string.match(duration, "(%d+)H") ) or 0
-    local minutes = tonumber( string.match(duration, "(%d+)M") ) or 0
-    local seconds = tonumber( string.match(duration, "(%d+)S") ) or 0
-
-    duration = hours * 3600 + minutes * 60 + seconds
-    return duration
-end
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
@@ -116,14 +80,14 @@ function SERVICE:ParseYTMetaDataFromHTML( html )
     local metadata = {}
 
     -- Title: prefer og:title meta tag, fall back to <title> element
-    metadata.title = ParseElementAttribute( string.match(html, patterns["title"]), "content" )
-        or ParseElementContent( string.match(html, patterns["title_fallback"]) )
+    metadata.title = util.ParseElementAttribute( string.match(html, patterns["title"]), "content" )
+        or util.ParseElementContent( string.match(html, patterns["title_fallback"]) )
 
     -- Decode HTML entities (e.g. &amp; -> &)
     metadata.title = url.htmlentities_decode( metadata.title )
 
     -- Live broadcast detection
-    local isLiveBroadcast = tobool( ParseElementAttribute( string.match(html, patterns["live"]), "content" ) )
+    local isLiveBroadcast = tobool( util.ParseElementAttribute( string.match(html, patterns["live"]), "content" ) )
     local broadcastEndDate = string.match( html, patterns["live_enddate"] )
 
     if isLiveBroadcast and not broadcastEndDate then
@@ -135,9 +99,9 @@ function SERVICE:ParseYTMetaDataFromHTML( html )
 
         -- Try the legacy <meta itemprop="duration"> tag (ISO 8601) first.
         -- YouTube removed this tag around 2021, so it will usually be absent.
-        local durationISO8601 = ParseElementAttribute( string.match(html, patterns["duration"]), "content" )
+        local durationISO8601 = util.ParseElementAttribute( string.match(html, patterns["duration"]), "content" )
         if isstring(durationISO8601) then
-            metadata.duration = math.max( 1, convertISO8601Time(durationISO8601) )
+            metadata.duration = math.max( 1, util.ISO_8601ToSeconds(durationISO8601) )
         else
             -- Modern fallback: parse lengthSeconds from the ytInitialPlayerResponse
             -- JSON blob that YouTube embeds directly in the page HTML.
