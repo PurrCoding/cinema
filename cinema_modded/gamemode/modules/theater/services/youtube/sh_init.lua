@@ -53,7 +53,7 @@ theater.RegisterService( "youtubelive", {
 	IsTimed = false,
 	NeedsCodecFix = true,
 	Hidden = true,
-	LoadProvider = CLIENT and function( ... )
-		if SERVICE.LoadProvider then return SERVICE:LoadProvider( ... ) end
+	LoadProvider = CLIENT and function( _, Video, panel )
+		if SERVICE.LoadProvider then return SERVICE:LoadProvider( Video, panel ) end
 	end or function() end
 } )
