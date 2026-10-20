@@ -11,8 +11,6 @@ local function FinishVodInfo( info, onSuccess )
     end
 end
 
-
-
 local KickHeaders = {
     ["Accept"] = "application/json",
     ["Referer"] = "https://kick.com/",
@@ -30,11 +28,6 @@ local function MsToSeconds( ms )
     end
     return math.floor( ms )
 end
-
-
-
-
-
 
 local function ResolveVodFromChannelList( self, channel, vodId, onSuccess, onFailure )
     self:Fetch( ChannelVideosApi:format( channel ),
@@ -99,9 +92,6 @@ local function ResolveVodFromChannelList( self, channel, vodId, onSuccess, onFai
         KickHeaders
     )
 end
-
-
-
 
 local ChannelApi = "https://kick.com/api/v2/channels/%s"
 
