@@ -1,5 +1,6 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+-- format support
 local VALID_FORMATS = {
 	["MPEG4"] = true,
 	["h.264"] = true,
@@ -14,6 +15,7 @@ local VALID_FORMATS = {
 	["VBR MP3"] = true,
 }
 
+-- file selection logic
 local function FindBestVideoFile(files, requestedFile)
 	local candidates = {}
 
@@ -43,6 +45,7 @@ end
 
 
 
+-- length parsing
 local function ParseLength(value)
 	if value == nil then return nil end
 
@@ -75,6 +78,7 @@ end
 
 
 
+-- title generation
 local function GenerateTitle(response, file, identifier)
 	if response.metadata and response.metadata.title then
 		local title = response.metadata.title
@@ -103,6 +107,7 @@ end
 
 
 
+-- thumbnail handling
 local function GetThumbnail(files, videoFileName)
 	local baseName = videoFileName:gsub("%.%w+$", "")
 
@@ -122,6 +127,7 @@ end
 
 
 
+-- API endpoints
 local METADATA_URL = "https://archive.org/metadata/%s"
 
 function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
