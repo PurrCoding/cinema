@@ -1,7 +1,0 @@
-{
-  "diagnostics": {
-    "disable": [
-      "unchecked-nil-access"
-    ]
-  }
-}
