@@ -3,6 +3,7 @@ local SERVICE = theater.GetServiceByClass("soundcloud")
 
 local CLIENT_ID_TTL = 6 * 60 * 60
 local CLIENT_ID_FALLBACK = "nIjtjiYnjkOhMyh5xrbqEW12DxeJVnic"
+
 local SoundCloudClientId = {
 	value = CLIENT_ID_FALLBACK,
 	fetchedAt = 0,
@@ -17,10 +18,11 @@ end
 
 local function ExtractClientIdFromJS(body)
 	if not isstring(body) or body == "" then return nil end
-	return body:match('client_id%s*:%s*"([0-9a-zA-Z]{32})"')
+	local id = body:match('client_id%s*:%s*"([0-9a-zA-Z]{32})"')
 		or body:match("client_id%s*:%s*'([0-9a-zA-Z]{32})'")
 		or body:match('"client_id"%s*:%s*"([0-9a-zA-Z]{32})"')
 		or body:match("client_id%s*=%s*\"([0-9a-zA-Z]{32})\"")
+	return id
 end
 
 local function ExtractScriptSrcs(html)
@@ -51,14 +53,25 @@ end
 local ENCRYPTED_STREAM_ERR = "SoundCloud track only offers encrypted/DRM streams (not playable in GMod)"
 
 local function HasPlayableTranscoding(media)
-	if not istable(media) or not istable(media.transcodings) then return true end
-	if #media.transcodings == 0 then return false end
+	if not istable(media) or not istable(media.transcodings) then
+		return true
+	end
+	if #media.transcodings == 0 then
+		return false
+	end
 	for _, t in ipairs(media.transcodings) do
 		local proto = ""
-		if istable(t.format) and isstring(t.format.protocol) then proto = t.format.protocol:lower()
-		elseif isstring(t.protocol) then proto = t.protocol:lower() end
-		if proto ~= "" and not proto:find("encrypted", 1, true)
-			and proto:sub(1, 4) ~= "cbc-" and proto:sub(1, 4) ~= "ctr-" then return true end
+		if istable(t.format) and isstring(t.format.protocol) then
+			proto = t.format.protocol:lower()
+		elseif isstring(t.protocol) then
+			proto = t.protocol:lower()
+		end
+		if proto ~= ""
+			and not proto:find("encrypted", 1, true)
+			and proto:sub(1, 4) ~= "cbc-"
+			and proto:sub(1, 4) ~= "ctr-" then
+			return true
+		end
 	end
 	return false
 end
@@ -66,17 +79,38 @@ end
 local function MetadataFromResolve(data)
 	if not istable(data) then return nil end
 	local track = data
-	if data.collection and istable(data.collection[1]) then track = data.collection[1] end
-	if data.kind and data.kind ~= "track" and data.tracks then return nil, "playlists/sets are not supported" end
+	if data.collection and istable(data.collection[1]) then
+		track = data.collection[1]
+	end
+	if data.kind and data.kind ~= "track" and data.tracks then
+		return nil, "playlists/sets are not supported"
+	end
+
 	local durationMs = tonumber(track.full_duration) or tonumber(track.duration) or 0
 	local title = track.title
 	if not title or title == "" then return nil, "missing title" end
-	if track.embeddable_by and track.embeddable_by ~= "all" and track.embeddable_by ~= "me" then return nil, "Track is not embeddable" end
-	if track.public == false then return nil, "Track is not public" end
-	if not HasPlayableTranscoding(track.media) then return nil, ENCRYPTED_STREAM_ERR end
+
+	if track.embeddable_by and track.embeddable_by ~= "all" and track.embeddable_by ~= "me" then
+		return nil, "Track is not embeddable"
+	end
+	if track.public == false then
+		return nil, "Track is not public"
+	end
+
+	if not HasPlayableTranscoding(track.media) then
+		return nil, ENCRYPTED_STREAM_ERR
+	end
+
 	local durationSec = math.floor(math.max(0, durationMs) / 1000)
-	if durationSec <= 0 then return nil, "missing duration" end
-	return { title = BuildTitle(track), duration = durationSec, thumbnail = NormalizeArtwork(track.artwork_url or (track.user and track.user.avatar_url)) }
+	if durationSec <= 0 then
+		return nil, "missing duration"
+	end
+
+	return {
+		title = BuildTitle(track),
+		duration = durationSec,
+		thumbnail = NormalizeArtwork(track.artwork_url or (track.user and track.user.avatar_url)),
+	}
 end
 
 	function SERVICE:RefreshClientId(onDone)
