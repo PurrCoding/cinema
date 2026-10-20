@@ -72,15 +72,26 @@ function ConvertTimeToSeconds(time)
 end
 
 -- Get the value for an attribute from a html element
-function ParseElementAttribute( element, attribute )
-	if not element then return end
-	-- Find the desired attribute
-	local output = element:match( attribute .. "%s-=%s-%b\"\"" )
-	if not output then return end
-	-- Remove the 'attribute=' part
-	output = output:gsub( attribute .. "%s-=%s-", "" )
-	-- Trim the quotes around the value string
-	return output:sub( 2, -2 )
+local function EscapePattern(value)
+	return (value:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1"))
+end
+
+function ParseElementAttribute(element, attribute)
+	if not isstring(element) or not isstring(attribute) or attribute == "" then
+		return nil
+	end
+
+	attribute = EscapePattern(attribute)
+
+	-- Support both single- and double-quoted attribute values.
+	local output = element:match(attribute .. "%s-=%s-%b\"\"")
+	if not output then
+		output = element:match(attribute .. "%s-=%s-%b''")
+	end
+	if not output then return nil end
+
+	output = output:gsub("^" .. attribute .. "%s-=%s-", "")
+	return output:sub(2, -2)
 end
 
 -- Get the contents of a html element by removing tags
