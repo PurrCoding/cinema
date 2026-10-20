@@ -5,7 +5,6 @@ local SERVICE = {
     NeedsCodecFix = true
 }
 
-
 local Ignored = {
     ["video"] = true,
     ["directory"] = true,
@@ -57,13 +56,8 @@ function SERVICE:GetURLInfo( url )
     return false
 end
 
-
-SERVICE.ClassName = "twitchstream"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
-
-
+theater.RegisterService("twitchstream", SERVICE)
