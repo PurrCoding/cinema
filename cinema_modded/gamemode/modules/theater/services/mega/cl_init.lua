@@ -179,13 +179,8 @@ function SERVICE:GetURLInfo( url )
     return info.Data and info or false
 end
 
-
-SERVICE.ClassName = "mega"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
-
-
+theater.RegisterService("mega", SERVICE)
