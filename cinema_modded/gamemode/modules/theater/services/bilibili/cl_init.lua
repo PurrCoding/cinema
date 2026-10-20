@@ -10,8 +10,6 @@ local SERVICE = {
     NeedsCodecFix = true
 }
 
--- 目前支持AV号与BV号
-
 function SERVICE:Match(url) -- 匹配B站网址
     local host = url.host or ""
     local path = url.path or ""
