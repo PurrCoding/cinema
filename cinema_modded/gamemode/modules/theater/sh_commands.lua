@@ -42,7 +42,12 @@ if CLIENT then
 		theater.RefreshPanel(true)
 	end )
 
-	concommand.Add( "cinema_fullscreen", theater.ToggleFullscreen )
+	-- Client functions are loaded after shared commands; resolve this callback when invoked.
+	concommand.Add( "cinema_fullscreen", function( ... )
+		if theater.ToggleFullscreen then
+			theater.ToggleFullscreen( ... )
+		end
+	end )
 
 	-- Hide Players
 	local amount = 0
@@ -80,7 +85,7 @@ if CLIENT then
 	end )
 
 	-- Mute theater on losing focus to Garry's Mod window
-	local HasFocus, LastVolume = true, theater.GetVolume()
+	local HasFocus, LastVolume = true, nil
 	hook.Add( "Think", "TheaterMuteOnFocusChange", function()
 
 		if not MuteNoFocus:GetBool() then return end
@@ -90,11 +95,15 @@ if CLIENT then
 		if ( LastState and not HasFocus ) or ( not LastState and HasFocus ) then
 
 			if HasFocus == true then
-				theater.SetVolume( LastVolume )
+				if LastVolume ~= nil then
+					theater.SetVolume( LastVolume )
+				end
 				LastVolume = nil
 			else
-				LastVolume = theater.GetVolume()
-				theater.SetVolume( 0 )
+				if theater.GetVolume and theater.SetVolume then
+					LastVolume = theater.GetVolume()
+					theater.SetVolume( 0 )
+				end
 			end
 
 			LastState = HasFocus
