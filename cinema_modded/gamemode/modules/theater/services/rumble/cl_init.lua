@@ -59,7 +59,7 @@ local SERVICE = theater.GetServiceByClass( "rumble" )
 
 		local data = Video:Data()
 		local isShort = isstring(data) and data:StartWith("shorts/")
-		local oembedUrl = API_URL:format( data ) .. (isShort and "" or ".html")
+		local oembedUrl = self.OEmbedURL:format( data ) .. (isShort and "" or ".html")
 
 		self:Fetch( oembedUrl, function( body, length, headers, code )
 			local response = util.JSONToTable(body)
