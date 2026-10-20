@@ -18,16 +18,11 @@ local Ignored = {
     ["tracks"] = true,
 }
 
-
-
-
 local SoundCloudClientId = {
     value = CLIENT_ID_FALLBACK,
     fetchedAt = 0,
     refreshing = false,
 }
-
-
 
 if CLIENT then
     local PLAYER_HTML = [[
@@ -250,13 +245,8 @@ function SERVICE:GetURLInfo(url)
     return false
 end
 
-
-SERVICE.ClassName = "soundcloud"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
-
-
+theater.RegisterService("soundcloud", SERVICE)
