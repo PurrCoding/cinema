@@ -510,15 +510,21 @@ if SERVER then
 
 		if not IsVideoTimed(self:VideoType()) then return end
 
-		-- Get the plus or minus sign for later.
-		local frontsign = seconds[1] or ""
+		if not isstring(seconds) and not isnumber(seconds) then return end
 
-		-- Seconds isn't a number, check HH:MM:SS
+		-- Keep the sign so relative seeks also work with HH:MM:SS and MM:SS.
+		local frontsign = isstring(seconds) and seconds:sub(1, 1) or ""
+
+		-- Seconds isn't a number, check HH:MM:SS / MM:SS.
 		if not tonumber(seconds) then
-			seconds = util.ConvertTimeToSeconds(seconds)
-		end
+			local time = seconds
+			if frontsign == "+" or frontsign == "-" then
+				time = seconds:sub(2)
+			end
 
-		-- If it's not one of those two things then it will fall trough wihtout any changes.
+			seconds = util.ConvertTimeToSeconds(time)
+			if not seconds then return end
+		end
 		if frontsign == "+" then
 			seconds = self:VideoCurrentTime(true) + math.abs(seconds)
 		elseif frontsign == "-" then
