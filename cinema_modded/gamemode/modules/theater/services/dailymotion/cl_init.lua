@@ -5,8 +5,6 @@ local SERVICE = {
     NeedsCodecFix = true
 }
 
-
-
 function SERVICE:Match( url )
     return url.host and url.host:match("dailymotion.com")
 end
@@ -66,14 +64,11 @@ function SERVICE:GetURLInfo( url )
     return info.Data and info or false
 end
 
-
-SERVICE.ClassName = "dailymotion"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
+theater.RegisterService("dailymotion", SERVICE)
 
 theater.RegisterService( "dailymotionlive", {
     Name = "Dailymotion Live",
