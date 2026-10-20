@@ -7,7 +7,7 @@ MEDIA_ERR = { -- https://developer.mozilla.org/en-US/docs/Web/API/MediaError
 	[2] = "A network error occurred while fetching the media.", -- MEDIA_ERR_NETWORK
 	[3] = "An error occurred while decoding the media.", -- MEDIA_ERR_DECODE
 	[4] = "The media source is not supported.", -- MEDIA_ERR_SRC_NOT_SUPPORTED
-	[5] = "An unknown error occurred.", -- MEDIA_ERR_UNKOWN
+	[5] = "An unknown error occurred.", -- MEDIA_ERR_UNKNOWN
 }
 
 -- Helper function for converting ISO 8601 time strings; this is the formatting
@@ -96,8 +96,9 @@ end
 
 -- Get the contents of a html element by removing tags
 -- Used as fallback for when title cannot be found
-function ParseElementContent( element )
-	if not element then return end
+function ParseElementContent(element)
+	if not isstring(element) then return nil end
+
 	-- Trim start
 	local output = element:gsub( "^%s-<%w->%s-", "" )
 	-- Trim end
