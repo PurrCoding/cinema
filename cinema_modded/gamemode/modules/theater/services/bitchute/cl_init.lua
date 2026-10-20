@@ -5,9 +5,6 @@ local SERVICE = {
     NeedsCodecFix = true,
 }
 
-
-
-
 function SERVICE:Match( url )
     if not url or not url.host then return false end
     if not url.host:match( "bitchute%.com" ) then return false end
@@ -154,14 +151,11 @@ function SERVICE:GetURLInfo( url )
     return info.Data and info or false
 end
 
-
-SERVICE.ClassName = "bitchute"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
+theater.RegisterService("bitchute", SERVICE)
 
 -- Hidden live variant (same player, no seeking / no end-of-media)
 theater.RegisterService( "bitchutelive", {
