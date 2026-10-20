@@ -96,26 +96,6 @@ function SERVICE:GetURLInfo( url )
     return info.Data and info or false
 end
 
----
--- Helper function for converting ISO 8601 time strings.
--- e.g. "PT1H23M45S" -> 5025
---
-
----
--- Get the value for an attribute from a html element
---
-
----
--- Get the contents of a html element by removing tags.
--- Used as fallback for when title cannot be found via meta tag.
---
-
--- Lua search patterns to find metadata from the html
-
----
--- Parse video metadata from a raw YouTube watch page HTML body.
---
-
 if SERVER then
     return SERVICE
 end
