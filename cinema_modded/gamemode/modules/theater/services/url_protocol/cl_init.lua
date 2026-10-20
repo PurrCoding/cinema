@@ -186,18 +186,14 @@ if (CLIENT) then
         panel:SetHTML(html)
     end
 
-
 end
 
-
 -- Register the multi-protocol service
-SERVICE.ClassName = "url_protocol"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
+theater.RegisterService("url_protocol", SERVICE)
 
 -- Register live streaming variant
 theater.RegisterService( "url_protocol_live", {
