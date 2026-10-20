@@ -1,11 +1,11 @@
 local SERVICE = {
 	Name = "Rumble",
 	IsTimed = true,
+	OEmbedURL = "https://rumble.com/api/Media/oembed.json?url=https://rumble.com/%s",
 
 	NeedsCodecFix = true,
 }
 
-local API_URL = "https://rumble.com/api/Media/oembed.json?url=https://rumble.com/%s"
 
 function SERVICE:Match( url )
 	return url.host and url.host:match("rumble.com")
