@@ -3,6 +3,7 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
+
     EmbedURL = "https://www.bitchute.com/embed/%s"
 }
 
@@ -115,7 +116,7 @@ if CLIENT then
         local startTime = math.Round( CurTime() - Video:StartTime() )
         if startTime < 0 then startTime = 0 end
 
-        panel:OpenURL( SERVICE.EmbedURL:format( Video:Data() ) )
+        panel:OpenURL( self.EmbedURL:format( Video:Data() ) )
         panel.OnDocumentReady = function( pnl )
             self:LoadExFunctions( pnl )
             pnl:QueueJavascript( THEATER_JS )

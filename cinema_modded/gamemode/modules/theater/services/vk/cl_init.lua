@@ -4,6 +4,7 @@ local SERVICE = {
 
     NeedsCodecFix = true,
     ExtentedVideoInfo = true,
+
     EmbedURL = "https://vkvideo.ru/video_ext.php?oid=-%s&id=%s&autoplay=1"
 }
 
@@ -157,7 +158,7 @@ if CLIENT then
             startTime = util.SecondsToISO_8601(startTime)
         else startTime = 0 end
 
-        local url = SERVICE.EmbedURL:format(extractData(Video:Data())) ..
+        local url = self.EmbedURL:format(extractData(Video:Data())) ..
             (self.IsTimed and "&t=" .. startTime or "")
 
         panel:OpenURL(url)
@@ -194,7 +195,7 @@ if CLIENT then
                 panel:Remove()
             end
         end
-        panel:OpenURL(SERVICE.EmbedURL:format(extractData(data)))
+        panel:OpenURL(self.EmbedURL:format(extractData(data)))
     end
 end
 

@@ -8,6 +8,7 @@ local SERVICE = {
     IsTimed = true, -- 是否是计时视频
 
     NeedsCodecFix = true,
+
     PlayerURL = "https://player.bilibili.com/player.html?bvid=%s&p=%s&autoplay=1"
 }
 
@@ -112,7 +113,7 @@ if CLIENT then
         local bvid = vid[1]
         local page = tonumber(vid[2]) or 1
 
-        p:OpenURL(SERVICE.PlayerURL:format(bvid, page))
+        p:OpenURL(self.PlayerURL:format(bvid, page))
         p.OnDocumentReady = function(pnl)
             self:LoadExFunctions(pnl)
             pnl:QueueJavascript(JS)

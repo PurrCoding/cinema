@@ -12,6 +12,7 @@ local SERVICE = {
     IsTimed = false,
 
     NeedsCodecFix = true,
+
     PlayerURL = "https://www.bilibili.com/blackboard/live/live-mobile-playerV3.html?roomId=%s&danmaku=1&autoplay=1"
 }
 
@@ -39,7 +40,7 @@ if CLIENT then
 
     function SERVICE:LoadProvider(Video, panel)
 
-        panel:OpenURL( SERVICE.PlayerURL:format( Video:Data() ) )
+        panel:OpenURL( self.PlayerURL:format( Video:Data() ) )
         panel.OnDocumentReady = function(pnl)
             self:LoadExFunctions( pnl )
             pnl:QueueJavascript(JS)
