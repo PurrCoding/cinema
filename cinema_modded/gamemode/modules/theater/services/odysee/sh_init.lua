@@ -150,8 +150,8 @@ theater.RegisterService( "odyseelive", {
 	IsTimed = false,
 	NeedsCodecFix = true,
 	Hidden = true,
-	LoadProvider = CLIENT and function( ... )
+	LoadProvider = CLIENT and function( _, Video, panel )
 		local service = theater.GetServiceByClass( "odysee" )
-		if service and service.LoadProvider then return service:LoadProvider( ... ) end
+		if service and service.LoadProvider then return service:LoadProvider( Video, panel ) end
 	end or function() end,
 } )
