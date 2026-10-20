@@ -1,5 +1,71 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+local function DecodeURIComponent( str )
+	if not str then return str end
+	return string.gsub(str, "%%(%x%x)", function(h)
+		return string.char(tonumber(h, 16))
+	end)
+end
+
+
+
+
+local function ParseISO8601Duration( duration )
+	if not duration or not string.match(duration, "^PT") then
+		return 0
+	end
+
+	local totalSeconds = 0
+	local hours = string.match(duration, "(%d+)H")
+	local minutes = string.match(duration, "(%d+)M")
+	local seconds = string.match(duration, "(%d+)S")
+
+	if hours then totalSeconds = totalSeconds + (tonumber(hours) * 3600) end
+	if minutes then totalSeconds = totalSeconds + (tonumber(minutes) * 60) end
+	if seconds then totalSeconds = totalSeconds + tonumber(seconds) end
+
+	return totalSeconds > 0 and totalSeconds or 0
+end
+
+
+
+
+
+local function ParseOdyseeHTML( body )
+	local jsonData = string.match(body, '<script type="application/ld%+json">(.-)</script>')
+	if not jsonData then return nil end
+
+	local videoData = util.JSONToTable(jsonData)
+	if not videoData or videoData["@type"] ~= "VideoObject" then
+		return nil
+	end
+
+	local title = videoData.name or "Odysee Video"
+	title = string.gsub(title, "&quot;", '"')
+	title = string.gsub(title, "&amp;", "&")
+	title = string.gsub(title, "&lt;", "<")
+	title = string.gsub(title, "&gt;", ">")
+
+	local duration = 0
+	if videoData.duration then
+		duration = ParseISO8601Duration(videoData.duration)
+	end
+
+	local embedUrl = ""
+	if videoData.embedUrl and videoData.embedUrl ~= "" then
+		embedUrl = DecodeURIComponent(videoData.embedUrl)
+	end
+
+	return {
+		title = title,
+		duration = duration,
+		embedUrl = embedUrl,
+		thumbnail = videoData.thumbnailUrl or "",
+	}
+end
+
+
+
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	-- data is the embed path (@channel/claim or claim)
@@ -47,70 +113,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		end, onFailure )
 	end, onFailure )
 end
-
-
-local function ParseOdyseeHTML( body )
-	local jsonData = string.match(body, '<script type="application/ld%+json">(.-)</script>')
-	if not jsonData then return nil end
-
-	local videoData = util.JSONToTable(jsonData)
-	if not videoData or videoData["@type"] ~= "VideoObject" then
-		return nil
-	end
-
-	local title = videoData.name or "Odysee Video"
-	title = string.gsub(title, "&quot;", '"')
-	title = string.gsub(title, "&amp;", "&")
-	title = string.gsub(title, "&lt;", "<")
-	title = string.gsub(title, "&gt;", ">")
-
-	local duration = 0
-	if videoData.duration then
-		duration = ParseISO8601Duration(videoData.duration)
-	end
-
-	local embedUrl = ""
-	if videoData.embedUrl and videoData.embedUrl ~= "" then
-		embedUrl = DecodeURIComponent(videoData.embedUrl)
-	end
-
-	return {
-		title = title,
-		duration = duration,
-		embedUrl = embedUrl,
-		thumbnail = videoData.thumbnailUrl or "",
-	}
-end
-
-
-
-local function DecodeURIComponent( str )
-	if not str then return str end
-	return string.gsub(str, "%%(%x%x)", function(h)
-		return string.char(tonumber(h, 16))
-	end)
-end
-
-
-
-local function ParseISO8601Duration( duration )
-	if not duration or not string.match(duration, "^PT") then
-		return 0
-	end
-
-	local totalSeconds = 0
-	local hours = string.match(duration, "(%d+)H")
-	local minutes = string.match(duration, "(%d+)M")
-	local seconds = string.match(duration, "(%d+)S")
-
-	if hours then totalSeconds = totalSeconds + (tonumber(hours) * 3600) end
-	if minutes then totalSeconds = totalSeconds + (tonumber(minutes) * 60) end
-	if seconds then totalSeconds = totalSeconds + tonumber(seconds) end
-
-	return totalSeconds > 0 and totalSeconds or 0
-end
-
-
 
 theater.RegisterService("odysee", SERVICE)
 

@@ -1,6 +1,7 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
 
+
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 	theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
@@ -19,6 +20,5 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	end)
 
 end
-
 
 theater.RegisterService("mega", SERVICE)
