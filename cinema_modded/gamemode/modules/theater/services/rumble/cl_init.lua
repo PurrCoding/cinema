@@ -5,8 +5,6 @@ local SERVICE = {
     NeedsCodecFix = true,
 }
 
-
-
 function SERVICE:Match( url )
     return url.host and url.host:match("rumble.com")
 end
@@ -112,14 +110,11 @@ function SERVICE:GetURLInfo( url )
     return false
 end
 
-
-SERVICE.ClassName = "rumble"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
+theater.RegisterService("rumble", SERVICE)
 
 theater.RegisterService( "rumblelive", {
     Name = "Rumble Live",
