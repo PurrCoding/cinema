@@ -1,5 +1,6 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+-- Lua search patterns to find metadata from the html
 local patterns = {
 	["title"] = "<ovs:title>(.+)</ovs:title>",
 	["thumb"] = "<ovs:thumbnail>(.+)</ovs:thumbnail>",
@@ -7,6 +8,9 @@ local patterns = {
 	["age_restriction"] = "<ovs:adult>(.+)</ovs:adult>",
 }
 
+---
+-- Function to parse video metadata straight from the html instead of using the API
+--
 local function ParseMetaDataFromHTML( html )
 	local metadata, html = {}, html
 
