@@ -80,8 +80,8 @@ theater.RegisterService( "vklive", {
 	Name = "VK Video (Live)",
 	IsTimed = false,
 	Hidden = true,
-	LoadProvider = CLIENT and function( ... )
+	LoadProvider = CLIENT and function( _, Video, panel )
 		local service = theater.GetServiceByClass( "vk" )
-		if service and service.LoadProvider then return service:LoadProvider( ... ) end
+		if service and service.LoadProvider then return service:LoadProvider( Video, panel ) end
 	end or function() end
 } )
