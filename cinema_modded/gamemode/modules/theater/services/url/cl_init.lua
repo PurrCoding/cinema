@@ -10,7 +10,6 @@
 
 local url2 = url
 
-
 -- Format definitions - clearly separated for maintainability
 local IMAGE_FORMATS = {
     jpg = true, jpeg = true, png = true, gif = true, bmp = true
