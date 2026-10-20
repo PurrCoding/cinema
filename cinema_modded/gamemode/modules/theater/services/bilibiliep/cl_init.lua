@@ -10,8 +10,6 @@ local SERVICE = {
     NeedsCodecFix = true
 }
 
-
-
 function SERVICE:Match(url)
     local host = url.host or ""
     local path = url.path or ""
@@ -63,13 +61,8 @@ function SERVICE:GetURLInfo(url)
     return info.Data and info or false
 end
 
-
-SERVICE.ClassName = "bilibiliep"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
-
-
+theater.RegisterService("bilibiliep", SERVICE)
