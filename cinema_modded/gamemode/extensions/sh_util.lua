@@ -51,6 +51,7 @@ function ConvertTimeToSeconds(time)
 	if not isstring(time) then return nil end
 
 	local hr, min, sec = string.match(time, "^" .. hhmmss .. "$")
+	local hasHours = hr ~= nil
 
 	-- Not in HH:MM:SS, try MM:SS
 	if not hr then
@@ -63,7 +64,7 @@ function ConvertTimeToSeconds(time)
 	min = tonumber(min)
 	sec = tonumber(sec)
 
-	if not hr or not min or not sec or min >= 60 or sec >= 60 then
+	if not hr or not min or not sec or (hasHours and min >= 60) or sec >= 60 then
 		return nil
 	end
 
