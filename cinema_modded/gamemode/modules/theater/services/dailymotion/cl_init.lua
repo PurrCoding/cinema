@@ -100,7 +100,13 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	self:Fetch( url, onReceive, onFailure )
 
 end
-theater.RegisterService( "dailymotion", SERVICE )
+SERVICE.ClassName = "dailymotion"
+
+if SERVER then
+	return SERVICE
+end
+
+theater.RegisterService(SERVICE)
 
 theater.RegisterService( "dailymotionlive", {
 	Name = "Dailymotion Live",

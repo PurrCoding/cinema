@@ -229,7 +229,13 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 end
 
-theater.RegisterService( "bitchute", SERVICE )
+SERVICE.ClassName = "bitchute"
+
+if SERVER then
+	return SERVICE
+end
+
+theater.RegisterService(SERVICE)
 
 -- Hidden live variant (same player, no seeking / no end-of-media)
 theater.RegisterService( "bitchutelive", {
