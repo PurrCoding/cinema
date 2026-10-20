@@ -1,5 +1,8 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+---
+-- Get the value for an attribute from a html element
+--
 local function ParseElementAttribute( element, attribute )
 	if not element then return end
 	local output = string.match( element, attribute .. "%s-=%s-%b\"\"" )
@@ -10,6 +13,7 @@ end
 
 
 
+-- Lua search patterns to find metadata from the html
 local patterns = {
 	["title"]          = "<meta%sproperty=\"og:title\"%s-content=%b\"\">",
 	["title_fallback"] = "<title>.-</title>",
@@ -18,6 +22,10 @@ local patterns = {
 	["live_enddate"]   = "<meta%sitemprop%s-=%s-\"endDate\"%s-content%s-=%s-%b\"\">"
 }
 
+---
+-- Get the contents of a html element by removing tags.
+-- Used as fallback for when title cannot be found via meta tag.
+--
 local function ParseElementContent( element )
 	if not element then return end
 	local output = string.gsub( element, "^%s-<%w->%s-", "" )
@@ -26,6 +34,10 @@ end
 
 
 
+---
+-- Helper function for converting ISO 8601 time strings.
+-- e.g. "PT1H23M45S" -> 5025
+--
 local function convertISO8601Time( duration )
 	if not isstring(duration) then return 0 end
 
@@ -107,6 +119,9 @@ end
 
 
 
+---
+-- Parse video metadata from a raw YouTube watch page HTML body.
+--
 function SERVICE:ParseYTMetaDataFromHTML( html )
 	local metadata = {}
 
