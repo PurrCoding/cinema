@@ -10,7 +10,7 @@ local SERVICE = {
     NeedsCodecFix = true
 }
 
-local META_URL = "https://www.bilibili.com/video/%s"
+
 
 function SERVICE:Match(url)
     local host = url.host or ""

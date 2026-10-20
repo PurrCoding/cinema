@@ -11,7 +11,7 @@ local SERVICE = {
 }
 
 -- 目前支持AV号与BV号
-local META_URL = "https://www.bilibili.com/video/%s"
+
 
 function SERVICE:Match(url) -- 匹配B站网址
     local host = url.host or ""

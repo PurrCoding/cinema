@@ -25,4 +25,6 @@ function SERVICE:GetVideoInfo(d, onSuccess, onFailure)
 end
 
 
+local META_URL = "https://www.bilibili.com/video/%s"
+
 theater.RegisterService("bilibili_legacy", SERVICE)
