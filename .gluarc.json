@@ -12,12 +12,12 @@
   },
   "diagnostics": {
     "disable": [
-      "undefined-field",
-      "assign-type-mismatch",
       "param-type-mismatch",
-      "cast-type-mismatch",
-      "gmod-net-read-write-order-mismatch",
-      "missing-fields"
+      "undefined-field",
+      "need-check-nil",
+      "missing-fields",
+      "assign-type-mismatch",
+      "cast-type-mismatch"
     ],
     "globals": [
       "Pointshop2",
