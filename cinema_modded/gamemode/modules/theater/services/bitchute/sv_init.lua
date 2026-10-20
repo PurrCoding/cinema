@@ -1,21 +1,5 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
-local function ParseDuration( str )
-    if not str or str == "" then return 0 end
-
-    local h, m, s = string.match( str, "^(%d+):(%d+):(%d+)$" )
-    if h then
-        return tonumber( h ) * 3600 + tonumber( m ) * 60 + tonumber( s )
-    end
-
-    m, s = string.match( str, "^(%d+):(%d+)$" )
-    if m then
-        return tonumber( m ) * 60 + tonumber( s )
-    end
-
-    return tonumber( str ) or 0
-end
-
 local META_API = "https://api.bitchute.com/api/beta9/video"
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
@@ -31,7 +15,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
             return onFailure( "Theater_RequestFailed" )
         end
 
-        local duration = ParseDuration( response.duration )
+        local duration = util.ConvertTimeToSeconds(response.duration or "") or tonumber(response.duration) or 0
         local isLive = ( response.state_id == "live" )
             or ( response.duration == "0:00" )
 
