@@ -1,12 +1,12 @@
 local SERVICE = {
 	Name = "Mega",
 	IsTimed = true,
+	PreviewURL = "https://mega.nz/embed/%s",
 
 	NeedsCodecFix = true,
 	ExtentedVideoInfo = true
 }
 
-local PREVIEW_URL = "https://mega.nz/embed/%s"
 
 local ValidTypes = {
 	["embed"] = true,
