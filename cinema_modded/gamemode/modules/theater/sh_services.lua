@@ -4,6 +4,11 @@ Services = {}
 
 function RegisterService( class, object, base )
 
+	if istable(class) and object == nil then
+		object = class
+		class = object.ClassName
+	end
+
 	if not class or not object then return end
 	if not base then base = "base" end
 

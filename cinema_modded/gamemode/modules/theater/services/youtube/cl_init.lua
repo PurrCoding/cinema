@@ -247,7 +247,13 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 end
 
-theater.RegisterService( "youtube", SERVICE )
+SERVICE.ClassName = "youtube"
+
+if SERVER then
+	return SERVICE
+end
+
+theater.RegisterService(SERVICE)
 
 -- Implementation is found in "youtube" service.
 -- GetVideoInfo switches to "youtubelive"
