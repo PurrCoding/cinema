@@ -8,8 +8,6 @@ local function ParseURL( urlString )
     return nil
 end
 
-
-
 local validExtensions = {
     ["m3u8"] = "hls",      -- HLS
     ["mpd"] = "dash",      -- DASH
@@ -21,8 +19,6 @@ local function GetProtocol( url )
     end
     return nil
 end
-
-
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
     theater.FetchVideoMedata( data:GetOwner(), data, function(metadata)
