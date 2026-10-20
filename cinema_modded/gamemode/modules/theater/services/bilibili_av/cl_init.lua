@@ -8,7 +8,7 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
-    PlayerURL = "www.bilibili.com/blackboard/html5mobileplayer.html?aid=%s&autoplay=1&p=%s"
+    PlayerURL = "https://www.bilibili.com/blackboard/html5mobileplayer.html?aid=%s&autoplay=1&p=%s"
 }
 
 function SERVICE:Match(url)
