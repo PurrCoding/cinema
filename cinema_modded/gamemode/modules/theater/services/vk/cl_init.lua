@@ -262,7 +262,14 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
 end
 
-theater.RegisterService( "vk", SERVICE )
+SERVICE.ClassName = "vk"
+
+if SERVER then
+	return SERVICE
+end
+
+theater.RegisterService(SERVICE)
+
 theater.RegisterService( "vklive", {
 	Name = "VK Video (Live)",
 	IsTimed = false,
