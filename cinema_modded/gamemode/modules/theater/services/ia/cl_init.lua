@@ -324,13 +324,8 @@ function SERVICE:GetURLInfo(url)
     }
 end
 
-
-SERVICE.ClassName = "ia"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
-
-
+theater.RegisterService("ia", SERVICE)
