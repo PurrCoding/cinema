@@ -7,23 +7,6 @@ local function DecodeURIComponent( str )
     end)
 end
 
-local function ParseISO8601Duration( duration )
-    if not duration or not string.match(duration, "^PT") then
-        return 0
-    end
-
-    local totalSeconds = 0
-    local hours = string.match(duration, "(%d+)H")
-    local minutes = string.match(duration, "(%d+)M")
-    local seconds = string.match(duration, "(%d+)S")
-
-    if hours then totalSeconds = totalSeconds + (tonumber(hours) * 3600) end
-    if minutes then totalSeconds = totalSeconds + (tonumber(minutes) * 60) end
-    if seconds then totalSeconds = totalSeconds + tonumber(seconds) end
-
-    return totalSeconds > 0 and totalSeconds or 0
-end
-
 local function ParseOdyseeHTML( body )
     local jsonData = string.match(body, '<script type="application/ld%+json">(.-)</script>')
     if not jsonData then return nil end
@@ -41,7 +24,7 @@ local function ParseOdyseeHTML( body )
 
     local duration = 0
     if videoData.duration then
-        duration = ParseISO8601Duration(videoData.duration)
+        duration = string.match(videoData.duration, "^PT") and util.ISO_8601ToSeconds(videoData.duration) or 0
     end
 
     local embedUrl = ""
