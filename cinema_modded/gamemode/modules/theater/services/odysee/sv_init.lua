@@ -7,9 +7,6 @@ local function DecodeURIComponent( str )
     end)
 end
 
-
-
-
 local function ParseISO8601Duration( duration )
     if not duration or not string.match(duration, "^PT") then
         return 0
@@ -26,10 +23,6 @@ local function ParseISO8601Duration( duration )
 
     return totalSeconds > 0 and totalSeconds or 0
 end
-
-
-
-
 
 local function ParseOdyseeHTML( body )
     local jsonData = string.match(body, '<script type="application/ld%+json">(.-)</script>')
@@ -63,9 +56,6 @@ local function ParseOdyseeHTML( body )
         thumbnail = videoData.thumbnailUrl or "",
     }
 end
-
-
-
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
     -- data is the embed path (@channel/claim or claim)
