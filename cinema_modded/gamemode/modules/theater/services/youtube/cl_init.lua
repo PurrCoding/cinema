@@ -116,13 +116,11 @@ end
 -- Parse video metadata from a raw YouTube watch page HTML body.
 --
 
-SERVICE.ClassName = "youtube"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
+theater.RegisterService("youtube", SERVICE)
 
 -- Implementation is found in "youtube" service.
 -- GetVideoInfo switches to "youtubelive"
