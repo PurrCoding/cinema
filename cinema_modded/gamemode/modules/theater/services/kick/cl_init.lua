@@ -11,12 +11,6 @@ local Ignored = {
     ["videos"] = true,
 }
 
-
-
-
-
-
-
 function SERVICE:Match( url )
     return url.host and url.host:match("kick.com")
 end
@@ -77,14 +71,11 @@ function SERVICE:GetURLInfo( url )
     return false
 end
 
-
-SERVICE.ClassName = "kick"
-
 if SERVER then
     return SERVICE
 end
 
-theater.RegisterService(SERVICE)
+theater.RegisterService("kick", SERVICE)
 
 theater.RegisterService( "kickvod", {
     Name = "Kick VOD",
