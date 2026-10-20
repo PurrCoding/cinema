@@ -3,6 +3,7 @@ local url2 = url -- keep reference for extracting url data
 local SERVICE = {
 	Name = "Internet Archive",
 	IsTimed = true,
+	EmbedURL = "https://archive.org/embed/%s?autoplay=1",
 
 	NeedsCodecFix = true,
 	ExtentedVideoInfo = true,
@@ -12,7 +13,6 @@ local SERVICE = {
 
 -- API endpoints
 local METADATA_URL = "https://archive.org/metadata/%s"
-local EMBED_URL = "https://archive.org/embed/%s?autoplay=1"
 
 -- format support
 local VALID_FORMATS = {
