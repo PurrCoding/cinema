@@ -1,5 +1,6 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+local API_URL = "https://rumble.com/api/Media/oembed.json?url=https://rumble.com/%s"
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
@@ -31,9 +32,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	self:Fetch( url, onReceive, onFailure )
 
 end
-
-
-local API_URL = "https://rumble.com/api/Media/oembed.json?url=https://rumble.com/%s"
 
 theater.RegisterService("rumble", SERVICE)
 

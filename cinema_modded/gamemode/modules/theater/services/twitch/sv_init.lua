@@ -1,5 +1,6 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+local THUMB_URL = "https://static-cdn.jtvnw.net/previews-ttv/live_user_%s-1280x720.jpg"
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	local info = {}
@@ -10,8 +11,5 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 		pcall(onSuccess, info)
 	end
 end
-
-
-local THUMB_URL = "https://static-cdn.jtvnw.net/previews-ttv/live_user_%s-1280x720.jpg"
 
 theater.RegisterService("twitchstream", SERVICE)

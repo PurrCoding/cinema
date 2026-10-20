@@ -1,5 +1,29 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+local patterns = {
+	["title"] = "<ovs:title>(.+)</ovs:title>",
+	["thumb"] = "<ovs:thumbnail>(.+)</ovs:thumbnail>",
+	["duration"] = "<ovs:duration>(.+)</ovs:duration>",
+	["age_restriction"] = "<ovs:adult>(.+)</ovs:adult>",
+}
+
+local function ParseMetaDataFromHTML( html )
+	local metadata, html = {}, html
+
+	metadata.title = html:match(patterns["title"])
+	metadata.title = url.htmlentities_decode(metadata.title) -- Parse HTML entities in the title into symbols
+
+	metadata.thumbnail = url.htmlentities_decode(html:match(patterns["thumb"]))
+	metadata.familyfriendly = html:match(patterns["age_restriction"])
+	metadata.duration = tonumber(html:match(patterns["duration"]))
+
+	return metadata
+end
+
+
+
+
+local API_URL = "https://ok.ru/web-api/videoyandexfeed/%s"
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	data = string.Explode(",", data)
@@ -33,31 +57,6 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 	self:Fetch( url, onReceive, onFailure )
 
 end
-
-
-local function ParseMetaDataFromHTML( html )
-	local metadata, html = {}, html
-
-	metadata.title = html:match(patterns["title"])
-	metadata.title = url.htmlentities_decode(metadata.title) -- Parse HTML entities in the title into symbols
-
-	metadata.thumbnail = url.htmlentities_decode(html:match(patterns["thumb"]))
-	metadata.familyfriendly = html:match(patterns["age_restriction"])
-	metadata.duration = tonumber(html:match(patterns["duration"]))
-
-	return metadata
-end
-
-
-
-local API_URL = "https://ok.ru/web-api/videoyandexfeed/%s"
-
-local patterns = {
-	["title"] = "<ovs:title>(.+)</ovs:title>",
-	["thumb"] = "<ovs:thumbnail>(.+)</ovs:thumbnail>",
-	["duration"] = "<ovs:duration>(.+)</ovs:duration>",
-	["age_restriction"] = "<ovs:adult>(.+)</ovs:adult>",
-}
 
 theater.RegisterService("ok", SERVICE)
 
