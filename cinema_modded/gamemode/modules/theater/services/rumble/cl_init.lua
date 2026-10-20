@@ -3,7 +3,6 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
-    EmbedURLPattern = "(https://rumble%.com/embed/[%a%d%-_]+/)"
 }
 
 function SERVICE:Match( url )
@@ -79,7 +78,7 @@ if (CLIENT) then
             end
 
             local startTime = math.Round(CurTime() - Video:StartTime())
-            local embed = response.html:match(SERVICE.EmbedURLPattern)
+            local embed = response.html:match("(https://rumble.com/embed/[%a%d-_]+/)")
                 .. "?pub=7a20&rel=5&autoplay=2"
                 .. (self.IsTimed and "&t=" .. startTime or "" )
 

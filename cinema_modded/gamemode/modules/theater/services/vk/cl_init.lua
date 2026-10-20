@@ -3,8 +3,7 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
-    ExtentedVideoInfo = true,
-    EmbedURL = "https://vkvideo.ru/video_ext.php?oid=-%s&id=%s&autoplay=1"
+    ExtentedVideoInfo = true
 }
 
 function SERVICE:Match( url )
@@ -12,6 +11,7 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
+    local EMBED_URL = "https://vkvideo.ru/video_ext.php?oid=-%s&id=%s&autoplay=1"
 
     local JS_FIND_VIDEO = [[
         function findVideo(root) {
@@ -157,7 +157,7 @@ if (CLIENT) then
             startTime = util.SecondsToISO_8601(startTime)
         else startTime = 0 end
 
-        local url = SERVICE.EmbedURL:format(extractData(Video:Data())) ..
+        local url = EMBED_URL:format(extractData(Video:Data())) ..
             (self.IsTimed and "&t=" .. startTime or "")
 
         panel:OpenURL(url)
@@ -194,7 +194,7 @@ if (CLIENT) then
                 panel:Remove()
             end
         end
-        panel:OpenURL(SERVICE.EmbedURL:format(extractData(data)))
+        panel:OpenURL(EMBED_URL:format(extractData(data)))
     end
 end
 

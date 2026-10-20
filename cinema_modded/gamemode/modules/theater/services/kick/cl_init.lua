@@ -2,8 +2,7 @@ local SERVICE = {
     Name = "Kick",
     IsTimed = false,
 
-    NeedsCodecFix = true,
-    PlayerURL = "https://kick.com/%s"
+    NeedsCodecFix = true
 }
 
 local Ignored = {
@@ -47,7 +46,7 @@ if (CLIENT) then
 
     function SERVICE:LoadProvider( Video, panel )
 
-        panel:OpenURL( SERVICE.PlayerURL:format( Video:Data() ) )
+        panel:OpenURL( ("https://kick.com/%s"):format( Video:Data() ) )
         panel.OnDocumentReady = function(pnl)
             self:LoadExFunctions( pnl )
             pnl:QueueJavascript(THEATER_JS)

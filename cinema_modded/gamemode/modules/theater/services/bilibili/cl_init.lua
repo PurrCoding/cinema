@@ -7,8 +7,7 @@ local SERVICE = {
     Name = "哔哩哔哩", -- 服务名称
     IsTimed = true, -- 是否是计时视频
 
-    NeedsCodecFix = true,
-    PlayerURL = "https://player.bilibili.com/player.html?bvid=%s&p=%s&autoplay=1"
+    NeedsCodecFix = true
 }
 
 function SERVICE:Match(url) -- 匹配B站网址
@@ -20,7 +19,7 @@ function SERVICE:Match(url) -- 匹配B站网址
 end
 
 if CLIENT then
-
+    local PLAYURL = "https://player.bilibili.com/player.html?bvid=%s&p=%s&autoplay=1"
     local JS = [[
         (function() {
             var started = false;
@@ -112,7 +111,7 @@ if CLIENT then
         local bvid = vid[1]
         local page = tonumber(vid[2]) or 1
 
-        p:OpenURL(SERVICE.PlayerURL:format(bvid, page))
+        p:OpenURL(PLAYURL:format(bvid, page))
         p.OnDocumentReady = function(pnl)
             self:LoadExFunctions(pnl)
             pnl:QueueJavascript(JS)

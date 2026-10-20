@@ -3,9 +3,10 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
-    ExtentedVideoInfo = true,
-    PreviewURL = "https://drive.google.com/file/d/%s/preview?autoplay=true"
+    ExtentedVideoInfo = true
 }
+
+local PREVIEW_URL = "https://drive.google.com/file/d/%s/preview?autoplay=true"
 
 function SERVICE:Match( url )
     return url.host and url.host:match("drive.google.com")
@@ -148,7 +149,7 @@ local THEATER_JS = [[
     ]]
 
     function SERVICE:LoadProvider( Video, panel )
-        panel:OpenURL(SERVICE.PreviewURL:format(Video:Data()))
+        panel:OpenURL(PREVIEW_URL:format(Video:Data()))
 
         panel.OnDocumentReady = function(pnl)
             self:LoadExFunctions( pnl )
@@ -166,7 +167,7 @@ local THEATER_JS = [[
             end
         end
 
-        panel:OpenURL(SERVICE.PreviewURL:format(data))
+        panel:OpenURL(PREVIEW_URL:format(data))
 
     end
 end

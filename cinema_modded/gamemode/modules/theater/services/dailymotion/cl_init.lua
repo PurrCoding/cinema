@@ -2,8 +2,7 @@ local SERVICE = {
     Name = "Dailymotion",
     IsTimed = true,
 
-    NeedsCodecFix = true,
-    PlayerURL = "https://geo.dailymotion.com/player.html?video=%s&rel=0&autoplay=1"
+    NeedsCodecFix = true
 }
 
 function SERVICE:Match( url )
@@ -11,7 +10,7 @@ function SERVICE:Match( url )
 end
 
 if (CLIENT) then
-
+    local DAILYMOTION_URL = "https://geo.dailymotion.com/player.html?video=%s&rel=0&autoplay=1"
     local THEATER_JS = [[
         (function() {
             var checkerInterval = setInterval(function() {
@@ -33,7 +32,7 @@ if (CLIENT) then
             startTime = startTime
         else startTime = 0 end
 
-        panel:OpenURL( SERVICE.PlayerURL:format( Video:Data() ) .. (self.IsTimed and "&start=" .. startTime or "" ) )
+        panel:OpenURL( DAILYMOTION_URL:format( Video:Data() ) .. (self.IsTimed and "&start=" .. startTime or "" ) )
         panel.OnDocumentReady = function(pnl)
             self:LoadExFunctions( pnl )
             pnl:RunJavascript(THEATER_JS)

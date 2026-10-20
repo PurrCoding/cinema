@@ -3,9 +3,7 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
-    ExtentedVideoInfo = true,
-    HLSLibraryURL = "https://cdn.jsdelivr.net/npm/hls.js@1",
-    DASHLibraryURL = "https://cdn.dashjs.org/latest/dash.all.min.js"
+    ExtentedVideoInfo = true
 }
 
 local validExtensions = {
@@ -68,8 +66,8 @@ if (CLIENT) then
                 </div>
 
                 <!-- Load all streaming libraries -->
-                <script src="__HLS_LIBRARY_URL__"></script>
-                <script src="__DASH_LIBRARY_URL__"></script>
+                <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+                <script src="https://cdn.dashjs.org/latest/dash.all.min.js"></script>
 
                 <script>
                     var video = document.getElementById('video');
@@ -118,7 +116,6 @@ if (CLIENT) then
             </body>
         </html>
     ]]
-    HTML_BASE = HTML_BASE:Replace("__HLS_LIBRARY_URL__", SERVICE.HLSLibraryURL):Replace("__DASH_LIBRARY_URL__", SERVICE.DASHLibraryURL)
 
     local THEATER_HTML = HTML_BASE:Replace("{@JS_Content}", [[
         video.autoplay = true;

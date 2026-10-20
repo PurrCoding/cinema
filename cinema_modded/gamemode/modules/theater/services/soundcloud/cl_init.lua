@@ -5,14 +5,7 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
-    ExtentedVideoInfo = true,
-    PlayerAPIURL = "https://w.soundcloud.com/player/api.js",
-    TrackURLTemplate = "https://soundcloud.com/{@audioPath}",
-    OEmbedURL = "https://soundcloud.com/oembed?format=json&url=",
-    PlayerURL = "https://w.soundcloud.com/player/?url=",
-    HomeURL = "https://soundcloud.com/",
-    AssetBaseURL = "https://a-v2.sndcdn.com",
-    ResolveURL = "https://api-widget.soundcloud.com/resolve?url="
+    ExtentedVideoInfo = true
 }
 
 local Ignored = {
@@ -35,14 +28,14 @@ if CLIENT then
     local PLAYER_HTML = [[
 <!doctype html>
 <html><head><meta charset="utf-8">
-<script src="__SC_PLAYER_API_URL__"></script></head>
+<script src="https://w.soundcloud.com/player/api.js"></script></head>
 <body><script>
 (async function() {
-    const trackUrl = "__SC_TRACK_URL_TEMPLATE__";
+    const trackUrl = "https://soundcloud.com/{@audioPath}";
     let frame = null;
 
     try {
-        const response = await fetch("__SC_OEMBED_URL__" + encodeURIComponent(trackUrl));
+        const response = await fetch("https://soundcloud.com/oembed?format=json&url=" + encodeURIComponent(trackUrl));
         if (!response.ok) throw new Error("oEmbed HTTP " + response.status);
         const data = await response.json();
         if (data && data.html) {
@@ -56,7 +49,7 @@ if CLIENT then
 
     if (!frame) {
         frame = document.createElement("iframe");
-        frame.src = "__SC_PLAYER_URL__"
+        frame.src = "https://w.soundcloud.com/player/?url="
             + encodeURIComponent(trackUrl).replace(/%2F/g, "/")
             + "&auto_play=true&hide_related=true&show_comments=false&show_user=true&visual=false";
     }
@@ -103,13 +96,12 @@ if CLIENT then
 })();
 </script></body></html>
 ]]
-    PLAYER_HTML = PLAYER_HTML:Replace("__SC_PLAYER_API_URL__", SERVICE.PlayerAPIURL):Replace("__SC_TRACK_URL_TEMPLATE__", SERVICE.TrackURLTemplate):Replace("__SC_OEMBED_URL__", SERVICE.OEmbedURL):Replace("__SC_PLAYER_URL__", SERVICE.PlayerURL):Replace("__SC_HOME_URL__", SERVICE.HomeURL):Replace("__SC_ASSET_BASE_URL__", SERVICE.AssetBaseURL):Replace("__SC_RESOLVE_URL__", SERVICE.ResolveURL)
 
     local METADATA_HTML = [[
 <!doctype html><html><head><meta charset="utf-8"></head><body>
 <script>
 (async function() {
-    const trackUrl = "__SC_TRACK_URL_TEMPLATE__";
+    const trackUrl = "https://soundcloud.com/{@audioPath}";
     const FALLBACK_CLIENT_ID = "nIjtjiYnjkOhMyh5xrbqEW12DxeJVnic";
     let completed = false;
     let safetyTimeout = setTimeout(function() {
@@ -134,7 +126,7 @@ if CLIENT then
 
     async function scrapeClientId() {
         try {
-            const page = await fetch("__SC_HOME_URL__", { credentials: "omit" });
+            const page = await fetch("https://soundcloud.com/", { credentials: "omit" });
             if (!page.ok) throw new Error("homepage HTTP " + page.status);
             const html = await page.text();
             const srcs = [];
@@ -146,7 +138,7 @@ if CLIENT then
             for (let i = srcs.length - 1; i >= 0; i--) {
                 let src = srcs[i];
                 if (!/^https?:\/\//i.test(src)) {
-                    src = "__SC_ASSET_BASE_URL__" + (src.charAt(0) === "/" ? src : "/" + src);
+                    src = "https://a-v2.sndcdn.com" + (src.charAt(0) === "/" ? src : "/" + src);
                 }
                 try {
                     const jsRes = await fetch(src, { credentials: "omit" });
@@ -177,7 +169,7 @@ if CLIENT then
 
     try {
         const clientId = await scrapeClientId();
-        const resolveUrl = "__SC_RESOLVE_URL__"
+        const resolveUrl = "https://api-widget.soundcloud.com/resolve?url="
             + encodeURIComponent(trackUrl)
             + "&format=json&client_id=" + encodeURIComponent(clientId);
         const response = await fetch(resolveUrl, { credentials: "omit" });
@@ -209,7 +201,6 @@ if CLIENT then
 })();
 </script></body></html>
 ]]
-    METADATA_HTML = METADATA_HTML:Replace("__SC_PLAYER_API_URL__", SERVICE.PlayerAPIURL):Replace("__SC_TRACK_URL_TEMPLATE__", SERVICE.TrackURLTemplate):Replace("__SC_OEMBED_URL__", SERVICE.OEmbedURL):Replace("__SC_PLAYER_URL__", SERVICE.PlayerURL):Replace("__SC_HOME_URL__", SERVICE.HomeURL):Replace("__SC_ASSET_BASE_URL__", SERVICE.AssetBaseURL):Replace("__SC_RESOLVE_URL__", SERVICE.ResolveURL)
 
     function SERVICE:LoadProvider(Video, panel)
         local html = PLAYER_HTML:Replace("{@audioPath}", Video:Data())

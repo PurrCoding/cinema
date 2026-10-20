@@ -6,11 +6,13 @@ local SERVICE = {
 
     NeedsCodecFix = true,
     ExtentedVideoInfo = true,
-    NeedsExtraChecks = true,
-    EmbedURL = "https://archive.org/embed/%s?autoplay=1"
+    NeedsExtraChecks = true
+
 }
 
 -- API endpoints
+
+local EMBED_URL = "https://archive.org/embed/%s?autoplay=1"
 
 -- format support
 
@@ -288,7 +290,7 @@ if CLIENT then
             identifier = (parts[2] and identifier .. "/" .. parts[2])
         end
 
-        panel:OpenURL( SERVICE.EmbedURL:format(identifier) )
+        panel:OpenURL( EMBED_URL:format(identifier) )
         panel.OnDocumentReady = function(pnl)
             self:LoadExFunctions(pnl)
             pnl:QueueJavascript(THEATER_JS)

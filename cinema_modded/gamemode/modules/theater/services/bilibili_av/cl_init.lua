@@ -7,8 +7,7 @@ local SERVICE = {
     Name = "哔哩哔哩Legacy",
     IsTimed = true,
 
-    NeedsCodecFix = true,
-    PlayerURL = "www.bilibili.com/blackboard/html5mobileplayer.html?aid=%s&autoplay=1&p=%s"
+    NeedsCodecFix = true
 }
 
 function SERVICE:Match(url)
@@ -19,7 +18,7 @@ function SERVICE:Match(url)
 end
 
 if CLIENT then
-
+    local PLAYURL = "www.bilibili.com/blackboard/html5mobileplayer.html?aid=%s&autoplay=1&p=%s"
     local JS = [[
         var checkerInterval = setInterval(function() {
             var player = document.getElementsByTagName('video')[0];
@@ -37,7 +36,7 @@ if CLIENT then
         local vedioID = vi:Data()
         local vid = string.Split(vedioID, " ")
         local aid = string.Split(vid[1], "av")
-        p:OpenURL(SERVICE.PlayerURL:format(aid[2], vid[2]))
+        p:OpenURL(PLAYURL:format(aid[2], vid[2]))
         p.OnDocumentReady = function(pnl)
             self:LoadExFunctions(pnl)
             pnl:QueueJavascript(JS)
