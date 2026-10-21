@@ -4,6 +4,7 @@ local SERVICE = {
 
     NeedsCodecFix = true,
     ExtentedVideoInfo = true,
+
     PreviewURL = "https://drive.google.com/file/d/%s/preview?autoplay=true"
 }
 

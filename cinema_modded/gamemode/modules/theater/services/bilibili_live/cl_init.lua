@@ -12,6 +12,7 @@ local SERVICE = {
     IsTimed = false,
 
     NeedsCodecFix = true,
+
     PlayerURL = "https://www.bilibili.com/blackboard/live/live-mobile-playerV3.html?roomId=%s&danmaku=1&autoplay=1"
 }
 

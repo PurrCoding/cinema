@@ -4,6 +4,7 @@ local SERVICE = {
 
     NeedsCodecFix = true,
     ExtentedVideoInfo = true,
+
     EmbedURL = "https://vkvideo.ru/video_ext.php?oid=-%s&id=%s&autoplay=1"
 }
 

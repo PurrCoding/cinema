@@ -1,11 +1,10 @@
--- SoundCloud service for Cinema.
--- Robust metadata crawler (yt-dlp-style client_id refresh + multi-stage fallbacks).
 local SERVICE = {
     Name = "SoundCloud",
     IsTimed = true,
 
     NeedsCodecFix = true,
     ExtentedVideoInfo = true,
+
     PlayerAPIURL = "https://w.soundcloud.com/player/api.js",
     TrackURLTemplate = "https://soundcloud.com/{@audioPath}",
     OEmbedURL = "https://soundcloud.com/oembed?format=json&url=",
@@ -23,12 +22,6 @@ local Ignored = {
     ["followers"] = true,
     ["following"] = true,
     ["tracks"] = true,
-}
-
-local SoundCloudClientId = {
-    value = CLIENT_ID_FALLBACK,
-    fetchedAt = 0,
-    refreshing = false,
 }
 
 if CLIENT then

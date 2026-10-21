@@ -8,6 +8,7 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
+
     PlayerURL = "https://www.bilibili.com/bangumi/play/ep%s"
 }
 

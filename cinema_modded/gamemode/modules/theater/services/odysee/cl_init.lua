@@ -2,6 +2,7 @@ local SERVICE = {
     Name = "Odysee",
     IsTimed = true,
     NeedsCodecFix = true,
+
     EmbedURL = "https://odysee.com/$/embed/%s"
 }
 

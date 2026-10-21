@@ -7,20 +7,9 @@ local SERVICE = {
     NeedsCodecFix = true,
     ExtentedVideoInfo = true,
     NeedsExtraChecks = true,
+
     EmbedURL = "https://archive.org/embed/%s?autoplay=1"
 }
-
--- API endpoints
-
--- format support
-
--- length parsing
-
--- file selection logic
-
--- title generation
-
--- thumbnail handling
 
 function SERVICE:Match(url)
     return url.host and url.host:match("archive.org")

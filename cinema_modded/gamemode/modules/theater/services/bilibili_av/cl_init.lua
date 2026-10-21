@@ -8,6 +8,7 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
+
     PlayerURL = "https://www.bilibili.com/blackboard/html5mobileplayer.html?aid=%s&autoplay=1&p=%s"
 }
 

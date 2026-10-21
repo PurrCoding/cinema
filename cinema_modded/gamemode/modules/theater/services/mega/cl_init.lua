@@ -4,6 +4,7 @@ local SERVICE = {
 
     NeedsCodecFix = true,
     ExtentedVideoInfo = true,
+
     PreviewURL = "https://mega.nz/embed/%s"
 }
 

@@ -3,7 +3,8 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
-    APIURL = "https://rumble.com/%s",
+
+    APIURL = "https://rumble.com/api/Media/oembed.json?url=https://rumble.com/%s",
     EmbedURLPattern = "(https://rumble%.com/embed/[%a%d%-_]+/)"
 }
 

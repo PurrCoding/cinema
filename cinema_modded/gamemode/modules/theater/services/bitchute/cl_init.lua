@@ -3,6 +3,7 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
+
     EmbedURL = "https://www.bitchute.com/embed/%s"
 }
 

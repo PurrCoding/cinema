@@ -3,7 +3,8 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
-    PlayerURL = "https://geo.dailymotion.com/player.html?video=%s&rel=0&autoplay=1"
+
+    PlayerURL = "https://geo.dailymotion.com/player/x1nqri.html?video=%s&rel=0&autoplay=1"
 }
 
 function SERVICE:Match(url)
@@ -21,6 +22,8 @@ if CLIENT then
 
                     window.cinema_controller = player;
                     exTheater.controllerReady();
+
+                    player.muted = false;
                 }
             }, 50);
         })();

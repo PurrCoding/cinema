@@ -3,6 +3,7 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
+
     EmbedURL = "https://ok.ru/videoembed/%s?autoplay=1"
 }
 

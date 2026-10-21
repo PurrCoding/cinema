@@ -3,6 +3,7 @@ local SERVICE = {
     IsTimed = false,
 
     NeedsCodecFix = true,
+
     PlayerURL = "https://kick.com/%s"
 }
 

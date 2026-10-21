@@ -4,6 +4,7 @@ local SERVICE = {
 
     NeedsCodecFix = false,
     ExtentedVideoInfo = true,
+
     PlayerURL = "youtube.html",
     MetadataURL = "youtube_meta.html"
 }

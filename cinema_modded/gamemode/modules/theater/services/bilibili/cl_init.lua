@@ -8,6 +8,7 @@ local SERVICE = {
     IsTimed = true, -- 是否是计时视频
 
     NeedsCodecFix = true,
+
     PlayerURL = "https://player.bilibili.com/player.html?bvid=%s&p=%s&autoplay=1"
 }
 
