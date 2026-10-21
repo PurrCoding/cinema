@@ -1,30 +1,25 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
 
+-- Lua search patterns to find metadata from the html
 local patterns = {
-	["title"] = '<meta property="og:title" content=%b"">',
-	["thumb"] = '<meta property="og:image" content=%b"">',
-	["thumb_alt"] = '<link rel="image_src" href=%b"">',
-	["duration"] = '"duration":(%d+)',
-	["age_restriction"] = '"isFamilyFriendly":(%a+)',
+	["title"] = "<ovs:title>(.+)</ovs:title>",
+	["thumb"] = "<ovs:thumbnail>(.+)</ovs:thumbnail>",
+	["duration"] = "<ovs:duration>(.+)</ovs:duration>",
+	["age_restriction"] = "<ovs:adult>(.+)</ovs:adult>",
 }
 
+---
+-- Function to parse video metadata straight from the html instead of using the API
+--
 local function ParseMetaDataFromHTML(html)
 	local metadata = {}
 
-	metadata.title = string.match(html, patterns["title"])
-	if metadata.title then
-		metadata.title = string.match(metadata.title, 'content="(.-)"') or metadata.title
-	end
+	metadata.title = html:match(patterns["title"])
+	metadata.title = url.htmlentities_decode(metadata.title) -- Parse HTML entities in the title into symbols
 
-	metadata.thumbnail = string.match(html, patterns["thumb"]) or string.match(html, patterns["thumb_alt"])
-	if metadata.thumbnail then
-		metadata.thumbnail = string.match(metadata.thumbnail, 'content="(.-)"')
-			or string.match(metadata.thumbnail, 'href="(.-)"')
-			or metadata.thumbnail
-	end
-
-	local familyfriendly = html:match(patterns["age_restriction"])
+	metadata.thumbnail = url.htmlentities_decode(html:match(patterns["thumb"]))
+	metadata.familyfriendly = html:match(patterns["age_restriction"])
 	metadata.duration = tonumber(html:match(patterns["duration"]))
 
 	return metadata
