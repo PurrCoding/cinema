@@ -55,7 +55,7 @@ function SERVICE:GetVideoInfo(data, onSuccess, onFailure)
 				pcall(onFailure, err)
 			end
 		end,
-	end)
+	})
 end
 
 theater.RegisterService("bitchute", SERVICE)
