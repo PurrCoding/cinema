@@ -1,5 +1,6 @@
 local SERVICE = include "cl_init.lua"
 if not SERVICE then return end
+local API_URL = "https://rumble.com/api/Media/oembed.json?url=https://rumble.com/%s"
 
 function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
 
@@ -27,7 +28,7 @@ function SERVICE:GetVideoInfo( data, onSuccess, onFailure )
     end
 
     local isShort = isstring(data) and data:StartWith("shorts/")
-    local url = self.APIURL:format( data ) .. (isShort and "" or ".html")
+    local url = API_URL:format( data ) .. (isShort and "" or ".html")
     self:Fetch( url, onReceive, onFailure )
 
 end

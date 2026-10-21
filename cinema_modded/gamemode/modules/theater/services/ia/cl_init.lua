@@ -7,9 +7,21 @@ local SERVICE = {
     NeedsCodecFix = true,
     ExtentedVideoInfo = true,
     NeedsExtraChecks = true,
-
     EmbedURL = "https://archive.org/embed/%s?autoplay=1"
 }
+
+-- API endpoints
+
+-- format support
+
+-- length parsing
+
+-- file selection logic
+
+-- title generation
+
+-- thumbnail handling
+
 function SERVICE:Match(url)
     return url.host and url.host:match("archive.org")
 end
@@ -276,7 +288,7 @@ if CLIENT then
             identifier = (parts[2] and identifier .. "/" .. parts[2])
         end
 
-        panel:OpenURL( self.EmbedURL:format(identifier) )
+        panel:OpenURL( SERVICE.EmbedURL:format(identifier) )
         panel.OnDocumentReady = function(pnl)
             self:LoadExFunctions(pnl)
             pnl:QueueJavascript(THEATER_JS)

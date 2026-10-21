@@ -4,7 +4,6 @@ local SERVICE = {
 
     NeedsCodecFix = true,
     ExtentedVideoInfo = true,
-
     PreviewURL = "https://mega.nz/embed/%s"
 }
 
@@ -144,7 +143,7 @@ if CLIENT then
     ]]
 
     function SERVICE:LoadProvider(Video, panel)
-        panel:OpenURL(self.PreviewURL:format(Video:Data()))
+        panel:OpenURL(SERVICE.PreviewURL:format(Video:Data()))
 
         panel.OnDocumentReady = function(pnl)
             self:LoadExFunctions( pnl )

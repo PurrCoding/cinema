@@ -6,7 +6,6 @@ local SERVICE = {
 
     NeedsCodecFix = true,
     ExtentedVideoInfo = true,
-
     PlayerAPIURL = "https://w.soundcloud.com/player/api.js",
     TrackURLTemplate = "https://soundcloud.com/{@audioPath}",
     OEmbedURL = "https://soundcloud.com/oembed?format=json&url=",
@@ -24,6 +23,12 @@ local Ignored = {
     ["followers"] = true,
     ["following"] = true,
     ["tracks"] = true,
+}
+
+local SoundCloudClientId = {
+    value = CLIENT_ID_FALLBACK,
+    fetchedAt = 0,
+    refreshing = false,
 }
 
 if CLIENT then

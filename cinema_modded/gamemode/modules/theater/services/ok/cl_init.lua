@@ -3,7 +3,6 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
-
     EmbedURL = "https://ok.ru/videoembed/%s?autoplay=1"
 }
 
@@ -67,7 +66,8 @@ if CLIENT then
         local data = string.Explode(",", Video:Data())
         local typeID, videoID = data[1], data[2]
 
-        panel:OpenURL( self.EmbedURL:format(videoID) )
+        panel:OpenURL( SERVICE.EmbedURL:format(videoID) )
+        print(SERVICE.EmbedURL:format(videoID))
         panel.OnDocumentReady = function(pnl)
             self:LoadExFunctions( pnl )
             pnl:QueueJavascript(THEATER_JS)

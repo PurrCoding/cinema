@@ -8,7 +8,6 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
-
     PlayerURL = "https://www.bilibili.com/blackboard/html5mobileplayer.html?aid=%s&autoplay=1&p=%s"
 }
 
@@ -38,7 +37,7 @@ if CLIENT then
         local vedioID = vi:Data()
         local vid = string.Split(vedioID, " ")
         local aid = string.Split(vid[1], "av")
-        p:OpenURL(self.PlayerURL:format(aid[2], vid[2]))
+        p:OpenURL(SERVICE.PlayerURL:format(aid[2], vid[2]))
         p.OnDocumentReady = function(pnl)
             self:LoadExFunctions(pnl)
             pnl:QueueJavascript(JS)

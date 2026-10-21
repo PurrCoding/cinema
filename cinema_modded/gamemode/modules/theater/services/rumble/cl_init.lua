@@ -3,8 +3,7 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
-
-    APIURL = "https://rumble.com/api/Media/oembed.json?url=https://rumble.com/%s",
+    APIURL = "https://rumble.com/%s",
     EmbedURLPattern = "(https://rumble%.com/embed/[%a%d%-_]+/)"
 }
 
@@ -72,7 +71,7 @@ if CLIENT then
 
         local data = Video:Data()
         local isShort = isstring(data) and data:StartWith("shorts/")
-        local oembedUrl = self.APIURL:format(data) .. (isShort and "" or ".html")
+        local oembedUrl = SERVICE.APIURL:format(data) .. (isShort and "" or ".html")
 
         self:Fetch( oembedUrl, function( body, length, headers, code )
             local response = util.JSONToTable(body)
@@ -81,7 +80,7 @@ if CLIENT then
             end
 
             local startTime = math.Round(CurTime() - Video:StartTime())
-            local embed = response.html:match(self.EmbedURLPattern)
+            local embed = response.html:match(SERVICE.EmbedURLPattern)
                 .. "?pub=7a20&rel=5&autoplay=2"
                 .. (self.IsTimed and "&t=" .. startTime or "" )
 

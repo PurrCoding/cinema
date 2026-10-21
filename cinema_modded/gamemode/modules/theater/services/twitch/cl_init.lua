@@ -3,7 +3,6 @@ local SERVICE = {
     IsTimed = false,
 
     NeedsCodecFix = true,
-
     PlayerURL = "https://player.twitch.tv/?channel=%s&parent=pixeltailgames.com"
 }
 
@@ -40,7 +39,7 @@ if CLIENT then
 
     function SERVICE:LoadProvider(Video, panel)
 
-        panel:OpenURL( self.PlayerURL:format( Video:Data() ) )
+        panel:OpenURL( SERVICE.PlayerURL:format( Video:Data() ) )
         panel.OnDocumentReady = function(pnl)
             self:LoadExFunctions( pnl )
             pnl:QueueJavascript(THEATER_JS)

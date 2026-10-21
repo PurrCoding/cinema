@@ -4,7 +4,6 @@ local SERVICE = {
 
     NeedsCodecFix = true,
     ExtentedVideoInfo = true,
-
     HLSLibraryURL = "https://cdn.jsdelivr.net/npm/hls.js@1",
     DASHLibraryURL = "https://cdn.dashjs.org/latest/dash.all.min.js"
 }

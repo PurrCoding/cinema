@@ -8,7 +8,6 @@ local SERVICE = {
     IsTimed = true,
 
     NeedsCodecFix = true,
-
     PlayerURL = "https://www.bilibili.com/bangumi/play/ep%s"
 }
 
@@ -40,7 +39,7 @@ if CLIENT then
         }, 50)
     ]]
     function SERVICE:LoadProvider(vi, p)
-        p:OpenURL(self.PlayerURL:format(vi:Data()))
+        p:OpenURL(SERVICE.PlayerURL:format(vi:Data()))
         p.OnDocumentReady = function(pnl)
             self:LoadExFunctions(pnl)
             pnl:QueueJavascript(JS)
