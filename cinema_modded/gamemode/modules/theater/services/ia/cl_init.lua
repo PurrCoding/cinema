@@ -1,318 +1,317 @@
 local url2 = url -- keep reference for extracting url data
 
 local SERVICE = {
-    Name = "Internet Archive",
-    IsTimed = true,
+	Name = "Internet Archive",
+	IsTimed = true,
 
-    NeedsCodecFix = true,
-    ExtentedVideoInfo = true,
-    NeedsExtraChecks = true,
+	NeedsCodecFix = true,
+	ExtentedVideoInfo = true,
+	NeedsExtraChecks = true,
 
-    EmbedURL = "https://archive.org/embed/%s?autoplay=1"
+	EmbedURL = "https://archive.org/embed/%s?autoplay=1",
 }
 
 function SERVICE:Match(url)
-    return url.host and url.host:match("archive.org")
+	return url.host and url.host:match("archive.org")
 end
 
 if CLIENT then
 
-    local THEATER_JS = [[
-        (function() {
+	local THEATER_JS = [[
+		(function() {
+			// Recursively search for a <video> element, including inside Shadow DOM
+			function findVideo(root) {
+				if (!root) return null;
 
-            // Recursively search for a <video> element, including inside Shadow DOM
-            function findVideo(root) {
-                if (!root) return null;
+				// Direct video element
+				var vid = root.querySelector && root.querySelector("video");
+				if (vid) return vid;
 
-                // Direct video element
-                let vid = root.querySelector && root.querySelector("video");
-                if (vid) return vid;
+				// Handle archive.org <play-av> shadow DOM
+				var playAv = root.querySelector && root.querySelector("play-av");
+				if (playAv && playAv.shadowRoot) {
+					var v = findVideo(playAv.shadowRoot);
+					if (v) return v;
+				}
 
-                // Handle archive.org <play-av> shadow DOM
-                let playAv = root.querySelector && root.querySelector("play-av");
-                if (playAv && playAv.shadowRoot) {
-                    let v = findVideo(playAv.shadowRoot);
-                    if (v) return v;
-                }
+				// Traverse all elements and check for nested shadow roots
+				var all = root.querySelectorAll ? root.querySelectorAll("*") : [];
+				for (var i = 0; i < all.length; i++) {
+					var el = all[i];
+					if (el.shadowRoot) {
+						var nested = findVideo(el.shadowRoot);
+						if (nested) return nested;
+					}
+				}
 
-                // Traverse all elements and check for nested shadow roots
-                let all = root.querySelectorAll ? root.querySelectorAll("*") : [];
-                for (let el of all) {
-                    if (el.shadowRoot) {
-                        let v = findVideo(el.shadowRoot);
-                        if (v) return v;
-                    }
-                }
+				return null;
+			}
 
-                return null;
-            }
+			// Poll until video element is available and ready
+			var checkerInterval = setInterval(function() {
+				var player = findVideo(document);
 
-            // Poll until video element is available and ready
-            var checkerInterval = setInterval(function() {
-                var player = findVideo(document);
+				if (player && player.readyState >= 2) {
+					clearInterval(checkerInterval);
 
-                if (player && player.readyState >= 2) {
-                    clearInterval(checkerInterval);
+					// Expose player globally for Lua controls
+					window.cinema_controller = player;
 
-                    // Expose player globally for Lua controls
-                    window.cinema_controller = player;
+					// Force fullscreen-like layout
+					player.style.width = "100%";
+					player.style.height = "100%";
+					document.body.style.backgroundColor = "black";
 
-                    // Force fullscreen-like layout
-                    player.style.width = "100%";
-                    player.style.height = "100%";
-                    document.body.style.backgroundColor = "black";
+					exTheater.controllerReady();
+				}
+			}, 100);
+		})();
+	]]
 
-                    exTheater.controllerReady();
-                }
-            }, 100);
+	-- It's overkill, but hey, why not? ¯\_(ツ)_/¯
+	local REQUEST_JS = [[
+	(function watchForJWPlayer() {
 
-        })();
-    ]]
+		let lastState = null;
+		let lastVideoSrc = null;
+		let playerDetected = false;
+		let isVideoPlaying = false;
 
-    -- It's overkill, but hey, why not? ¯\_(ツ)_/¯
-    local REQUEST_JS = [[
-    (function watchForJWPlayer() {
+		// --- Deep Shadow DOM video search (supports play-av and nested players)
+		function findVideoDeep(root) {
+			if (!root) return null;
 
-        let lastState = null;
-        let lastVideoSrc = null;
-        let playerDetected = false;
-        let isVideoPlaying = false;
+			let vid = root.querySelector && root.querySelector("video");
+			if (vid && (vid.currentSrc || vid.readyState > 0)) return vid;
 
-        // --- Deep Shadow DOM video search (supports play-av and nested players)
-        function findVideoDeep(root) {
-            if (!root) return null;
+			let all = root.querySelectorAll ? root.querySelectorAll("*") : [];
+			for (let el of all) {
+				if (el.shadowRoot) {
+					let v = findVideoDeep(el.shadowRoot);
+					if (v) return v;
+				}
+			}
+			return null;
+		}
 
-            let vid = root.querySelector && root.querySelector("video");
-            if (vid && (vid.currentSrc || vid.readyState > 0)) return vid;
+		// --- Update UI state
+		const updateState = (hasVideo, metadata = null) => {
+			const currentVideoSrc = metadata ? metadata.source : null;
+			const stateChanged = (lastState !== hasVideo) || (lastVideoSrc !== currentVideoSrc);
 
-            let all = root.querySelectorAll ? root.querySelectorAll("*") : [];
-            for (let el of all) {
-                if (el.shadowRoot) {
-                    let v = findVideoDeep(el.shadowRoot);
-                    if (v) return v;
-                }
-            }
-            return null;
-        }
+			if (stateChanged) {
+				lastState = hasVideo;
+				lastVideoSrc = currentVideoSrc;
+				playerDetected = hasVideo;
 
-        // --- Update UI state
-        const updateState = (hasVideo, metadata = null) => {
-            const currentVideoSrc = metadata ? metadata.source : null;
-            const stateChanged = (lastState !== hasVideo) || (lastVideoSrc !== currentVideoSrc);
+				if (typeof gmod !== 'undefined' && gmod.updateRequestButton) {
+					gmod.updateRequestButton(!!hasVideo);
+				}
 
-            if (stateChanged) {
-                lastState = hasVideo;
-                lastVideoSrc = currentVideoSrc;
-                playerDetected = hasVideo;
+				if (hasVideo && metadata) {
+					console.log("[IA-DETECT] Video detected:", JSON.stringify(metadata, null, 2));
+				} else if (!hasVideo && lastVideoSrc !== null) {
+					console.log("[IA-DETECT] Video lost");
+				}
+			}
+		};
 
-                if (typeof gmod !== 'undefined' && gmod.updateRequestButton) {
-                    gmod.updateRequestButton(!!hasVideo);
-                }
+		// --- Core detection logic
+		const checkVideoSources = () => {
 
-                if (hasVideo && metadata) {
-                    console.log("[IA-DETECT] Video detected:", JSON.stringify(metadata, null, 2));
-                } else if (!hasVideo && lastVideoSrc !== null) {
-                    console.log("[IA-DETECT] Video lost");
-                }
-            }
-        };
+			// Method 0: Deep Shadow DOM scan (NEW - covers play-av)
+			const deepVideo = findVideoDeep(document);
+			if (deepVideo) {
+				return {
+					found: true,
+					metadata: {
+						detected: true,
+						source: deepVideo.currentSrc,
+						method: 'deep-shadow-scan',
+						readyState: deepVideo.readyState
+					}
+				};
+			}
 
-        // --- Core detection logic
-        const checkVideoSources = () => {
+			// Method 1: JWPlayer API
+			if (typeof window.jwplayer === 'function') {
+				try {
+					const player = window.jwplayer();
+					if (player && player.getPlaylist) {
+						const playlist = player.getPlaylist();
+						if (playlist && playlist.length > 0) {
+							const currentIndex = player.getPlaylistItem() || 0;
+							const currentItem = playlist[currentIndex];
+							if (currentItem && currentItem.file) {
+								return {
+									found: true,
+									metadata: {
+										detected: true,
+										source: currentItem.file,
+										method: 'jwplayer-api',
+										playlistIndex: currentIndex,
+										playlistLength: playlist.length,
+										title: currentItem.title || 'unknown'
+									}
+								};
+							}
+						}
+					}
+				} catch (e) {
+					// silent fail
+				}
+			}
 
-            // Method 0: Deep Shadow DOM scan (NEW - covers play-av)
-            const deepVideo = findVideoDeep(document);
-            if (deepVideo) {
-                return {
-                    found: true,
-                    metadata: {
-                        detected: true,
-                        source: deepVideo.currentSrc,
-                        method: 'deep-shadow-scan',
-                        readyState: deepVideo.readyState
-                    }
-                };
-            }
+			// Method 2: Standard DOM selectors
+			const selectors = [
+				'video',
+				'video[src]',
+				'.jwplayer video',
+				'video.jw-video',
+				'.jw-media video',
+				'[data-jwplayer-id] video'
+			];
 
-            // Method 1: JWPlayer API
-            if (typeof window.jwplayer === 'function') {
-                try {
-                    const player = window.jwplayer();
-                    if (player && player.getPlaylist) {
-                        const playlist = player.getPlaylist();
-                        if (playlist && playlist.length > 0) {
-                            const currentIndex = player.getPlaylistItem() || 0;
-                            const currentItem = playlist[currentIndex];
-                            if (currentItem && currentItem.file) {
-                                return {
-                                    found: true,
-                                    metadata: {
-                                        detected: true,
-                                        source: currentItem.file,
-                                        method: 'jwplayer-api',
-                                        playlistIndex: currentIndex,
-                                        playlistLength: playlist.length,
-                                        title: currentItem.title || 'unknown'
-                                    }
-                                };
-                            }
-                        }
-                    }
-                } catch (e) {
-                    // silent fail
-                }
-            }
+			for (const selector of selectors) {
+				const videos = document.querySelectorAll(selector);
+				for (const video of videos) {
+					if (video.currentSrc || (playerDetected && video.readyState > 0)) {
+						return {
+							found: true,
+							metadata: {
+								detected: true,
+								source: video.currentSrc || 'jwplayer-active',
+								method: 'dom-selector',
+								selector: selector,
+								readyState: video.readyState
+							}
+						};
+					}
+				}
+			}
 
-            // Method 2: Standard DOM selectors
-            const selectors = [
-                'video',
-                'video[src]',
-                '.jwplayer video',
-                'video.jw-video',
-                '.jw-media video',
-                '[data-jwplayer-id] video'
-            ];
+			// fallback: keep previous state if player was already detected
+			return { found: playerDetected, metadata: null };
+		};
 
-            for (const selector of selectors) {
-                const videos = document.querySelectorAll(selector);
-                for (const video of videos) {
-                    if (video.currentSrc || (playerDetected && video.readyState > 0)) {
-                        return {
-                            found: true,
-                            metadata: {
-                                detected: true,
-                                source: video.currentSrc || 'jwplayer-active',
-                                method: 'dom-selector',
-                                selector: selector,
-                                readyState: video.readyState
-                            }
-                        };
-                    }
-                }
-            }
+		// --- Initial detection
+		const initialResult = checkVideoSources();
+		updateState(initialResult.found, initialResult.metadata);
 
-            // fallback: keep previous state if player was already detected
-            return { found: playerDetected, metadata: null };
-        };
+		// --- JWPlayer event hooks (if present)
+		if (typeof window.jwplayer === 'function') {
+			try {
+				const player = window.jwplayer();
 
-        // --- Initial detection
-        const initialResult = checkVideoSources();
-        updateState(initialResult.found, initialResult.metadata);
+				player.on('ready', () => {
+					const result = checkVideoSources();
+					updateState(result.found, result.metadata);
+				});
 
-        // --- JWPlayer event hooks (if present)
-        if (typeof window.jwplayer === 'function') {
-            try {
-                const player = window.jwplayer();
+				player.on('playlistItem', () => {
+					setTimeout(() => {
+						const result = checkVideoSources();
+						updateState(result.found, result.metadata);
+					}, 300);
+				});
 
-                player.on('ready', () => {
-                    const result = checkVideoSources();
-                    updateState(result.found, result.metadata);
-                });
+				player.on('play', () => {
+					console.log("[IA-DETECT] Video playing");
+					isVideoPlaying = true;
+				});
 
-                player.on('playlistItem', () => {
-                    setTimeout(() => {
-                        const result = checkVideoSources();
-                        updateState(result.found, result.metadata);
-                    }, 300);
-                });
+				player.on('pause', () => {
+					console.log("[IA-DETECT] Video paused");
+					isVideoPlaying = false;
+					const result = checkVideoSources();
+					updateState(result.found, result.metadata);
+				});
 
-                player.on('play', () => {
-                    console.log("[IA-DETECT] Video playing");
-                    isVideoPlaying = true;
-                });
+				player.on('complete', () => {
+					console.log("[IA-DETECT] Video completed");
+					isVideoPlaying = false;
+					const result = checkVideoSources();
+					updateState(result.found, result.metadata);
+				});
+			} catch (e) {
+				// silent fail
+			}
+		}
 
-                player.on('pause', () => {
-                    console.log("[IA-DETECT] Video paused");
-                    isVideoPlaying = false;
-                    const result = checkVideoSources();
-                    updateState(result.found, result.metadata);
-                });
+		// --- Continuous monitoring
+		const monitorInterval = setInterval(() => {
+			const result = checkVideoSources();
 
-                player.on('complete', () => {
-                    console.log("[IA-DETECT] Video completed");
-                    isVideoPlaying = false;
-                    const result = checkVideoSources();
-                    updateState(result.found, result.metadata);
-                });
-            } catch (e) {
-                // silent fail
-            }
-        }
+			// keep button enabled while actively playing
+			if (isVideoPlaying && typeof gmod !== 'undefined' && gmod.updateRequestButton) {
+				gmod.updateRequestButton(true);
+			} else {
+				updateState(result.found, result.metadata);
+			}
+		}, 1000);
 
-        // --- Continuous monitoring
-        const monitorInterval = setInterval(() => {
-            const result = checkVideoSources();
+		// --- DOM observer for dynamic changes
+		const observer = new MutationObserver(() => {
+			const result = checkVideoSources();
+			updateState(result.found, result.metadata);
+		});
 
-            // keep button enabled while actively playing
-            if (isVideoPlaying && typeof gmod !== 'undefined' && gmod.updateRequestButton) {
-                gmod.updateRequestButton(true);
-            } else {
-                updateState(result.found, result.metadata);
-            }
-        }, 1000);
+		observer.observe(document.body, {
+			childList: true,
+			subtree: true,
+			attributes: true,
+			attributeFilter: ['src', 'currentSrc']
+		});
 
-        // --- DOM observer for dynamic changes
-        const observer = new MutationObserver(() => {
-            const result = checkVideoSources();
-            updateState(result.found, result.metadata);
-        });
+		console.log("[IA-DETECT] Shadow DOM + JWPlayer detection initialized");
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['src', 'currentSrc']
-        });
+	})();
+	]]
 
-        console.log("[IA-DETECT] Shadow DOM + JWPlayer detection initialized");
+	function SERVICE:LoadProvider(Video, panel)
+		local parts = string.Explode(",", Video:Data())
+		local identifier = parts[1]
 
-    })();
-    ]]
+		if parts[2] then
+			identifier = parts[2] and identifier .. "/" .. parts[2]
+		end
 
-    function SERVICE:LoadProvider(Video, panel)
-        local parts = string.Explode(",", Video:Data())
-        local identifier = parts[1]
+		panel:OpenURL(SERVICE.EmbedURL:format(identifier))
+		panel.OnDocumentReady = function(pnl)
+			self:LoadExFunctions(pnl)
+			pnl:QueueJavascript(THEATER_JS)
+		end
+	end
 
-        if parts[2] then
-            identifier = (parts[2] and identifier .. "/" .. parts[2])
-        end
+	function SERVICE:SearchFunctions(browser)
+		if not IsValid(browser) then return end
 
-        panel:OpenURL( SERVICE.EmbedURL:format(identifier) )
-        panel.OnDocumentReady = function(pnl)
-            self:LoadExFunctions(pnl)
-            pnl:QueueJavascript(THEATER_JS)
-        end
-    end
-
-    function SERVICE:SearchFunctions(browser)
-        if not IsValid(browser) then return end
-
-        browser:RunJavascript(REQUEST_JS)
-    end
+		browser:RunJavascript(REQUEST_JS)
+	end
 end
 
 function SERVICE:GetURLInfo(url)
-    if not url.path then return false end
+	if not url.path then return false end
 
-    -- Extract identifier
-    local identifier = url.path:match("^/details/([^/]+)")
-    if not identifier then return false end
+	-- Extract identifier
+	local identifier = url.path:match("^/details/([^/]+)")
+	if not identifier then return false end
 
-    -- Extract specific file if present
-    local file = url.path:match("^/details/[^/]+/(.+)$")
+	-- Extract specific file if present
+	local file = url.path:match("^/details/[^/]+/(.+)$")
 
-    -- Handle URL encoding
-    if file then
-        file = url2.unescape(file)
-    end
+	-- Handle URL encoding
+	if file then
+		file = url2.unescape(file)
+	end
 
-    return {
-        Data = identifier .. (file and "," .. file or ""),
-    }
+	return {
+		Data = identifier .. (file and "," .. file or ""),
+	}
 end
 
 if SERVER then
-    return SERVICE
+	return SERVICE
 end
 
 theater.RegisterService("ia", SERVICE)
