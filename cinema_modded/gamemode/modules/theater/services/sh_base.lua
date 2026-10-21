@@ -45,8 +45,8 @@ local SERVICE = {
 	TheaterType = THEATER_NONE,
 
 	-- Whether the service has any special requirements for detection (e.g., on-site media src change).
-	-- This is executed by “SERVICE:SearchFunctions”. This will overwrite the Request button and must be executed via
-	-- JavaScript with “gmod.updateRequestButton(true)” in your own mechanism.
+	-- This is executed by "SERVICE:SearchFunctions". This will overwrite the Request button and must be executed via
+	-- JavaScript with "gmod.updateRequestButton(true)" in your own mechanism.
 	NeedsExtraChecks = false,
 }
 
@@ -180,7 +180,7 @@ function SERVICE:Fetch(url, onReceive, onFailure, headers)
 			if isfunction(onFailure) then
 				pcall(onFailure, err)
 			end
-		end
+		end,
 	}
 
 	HTTP(request)

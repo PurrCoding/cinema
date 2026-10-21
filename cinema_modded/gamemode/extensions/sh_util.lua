@@ -7,7 +7,7 @@ MEDIA_ERR = { -- https://developer.mozilla.org/en-US/docs/Web/API/MediaError
 	[2] = "A network error occurred while fetching the media.", -- MEDIA_ERR_NETWORK
 	[3] = "An error occurred while decoding the media.", -- MEDIA_ERR_DECODE
 	[4] = "The media source is not supported.", -- MEDIA_ERR_SRC_NOT_SUPPORTED
-	[5] = "An unknown error occurred.", -- MEDIA_ERR_UNKOWN
+	[5] = "An unknown error occurred.", -- MEDIA_ERR_UNKNOWN
 }
 
 -- Helper function for converting ISO 8601 time strings; this is the formatting
@@ -15,13 +15,27 @@ MEDIA_ERR = { -- https://developer.mozilla.org/en-US/docs/Web/API/MediaError
 function ISO_8601ToSeconds(str)
 	local number = tonumber(str)
 	if number then return number end
+	if not isstring(str) then return nil end
 
 	str = str:lower()
 
-	local h = str:match("(%d+)h") or 0
-	local m = str:match("(%d+)m") or 0
-	local s = str:match("(%d+)s") or 0
-	return h * (60 * 60) + m * 60 + s
+	local h = str:match("([%d%.]+)h")
+	local m = str:match("([%d%.]+)m")
+	local s = str:match("([%d%.]+)s")
+
+	if not h and not m and not s then return nil end
+
+	h = h and tonumber(h)
+	m = m and tonumber(m)
+	s = s and tonumber(s)
+
+	if (str:find("h") and not h) or
+		(str:find("m") and not m) or
+		(str:find("s") and not s) then
+		return nil
+	end
+
+	return (h or 0) * 3600 + (m or 0) * 60 + (s or 0)
 end
 
 function SecondsToISO_8601(seconds)
@@ -34,36 +48,57 @@ end
 local hhmmss = "(%d+):(%d+):(%d+)"
 local mmss = "(%d+):(%d+)"
 function ConvertTimeToSeconds(time)
-	local hr, min, sec = string.match(time, hhmmss)
+	if not isstring(time) then return nil end
+
+	local hr, min, sec = string.match(time, "^" .. hhmmss .. "$")
+	local hasHours = hr ~= nil
 
 	-- Not in HH:MM:SS, try MM:SS
 	if not hr then
-		min, sec = string.match(time, mmss)
-		if not min then return end -- Not in MM:SS, give up
+		min, sec = string.match(time, "^" .. mmss .. "$")
+		if not min then return nil end
 		hr = 0
 	end
 
-	return tonumber(hr) * 3600 +
-		tonumber(min) * 60 +
-		tonumber(sec)
+	hr = tonumber(hr)
+	min = tonumber(min)
+	sec = tonumber(sec)
+
+	if not hr or not min or not sec or (hasHours and min >= 60) or sec >= 60 then
+		return nil
+	end
+
+	return hr * 3600 + min * 60 + sec
 end
 
 -- Get the value for an attribute from a html element
-function ParseElementAttribute( element, attribute )
-	if not element then return end
-	-- Find the desired attribute
-	local output = element:match( attribute .. "%s-=%s-%b\"\"" )
-	if not output then return end
-	-- Remove the 'attribute=' part
-	output = output:gsub( attribute .. "%s-=%s-", "" )
-	-- Trim the quotes around the value string
-	return output:sub( 2, -2 )
+local function EscapePattern(value)
+	return (value:gsub("([%(%)%.%%%+%-%*%?%[%]%^%$])", "%%%1"))
+end
+
+function ParseElementAttribute(element, attribute)
+	if not isstring(element) or not isstring(attribute) or attribute == "" then
+		return nil
+	end
+
+	attribute = EscapePattern(attribute)
+
+	-- Support both single- and double-quoted attribute values.
+	local output = element:match(attribute .. "%s-=%s-%b\"\"")
+	if not output then
+		output = element:match(attribute .. "%s-=%s-%b''")
+	end
+	if not output then return nil end
+
+	output = output:gsub("^" .. attribute .. "%s-=%s-", "")
+	return output:sub(2, -2)
 end
 
 -- Get the contents of a html element by removing tags
 -- Used as fallback for when title cannot be found
-function ParseElementContent( element )
-	if not element then return end
+function ParseElementContent(element)
+	if not isstring(element) then return nil end
+
 	-- Trim start
 	local output = element:gsub( "^%s-<%w->%s-", "" )
 	-- Trim end
@@ -169,5 +204,5 @@ local countrys = {
 }
 
 function getCountryName(letter)
-	return (letter and countrys[letter] and countrys[letter]) or "Unkown"
+	return (letter and countrys[letter] and countrys[letter]) or "Unknown"
 end
