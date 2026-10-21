@@ -1,31 +1,31 @@
 local SERVICE = {
-    Name = "SoundCloud",
-    IsTimed = true,
+	Name = "SoundCloud",
+	IsTimed = true,
 
-    NeedsCodecFix = true,
-    ExtentedVideoInfo = true,
+	NeedsCodecFix = true,
+	ExtentedVideoInfo = true,
 
-    PlayerAPIURL = "https://w.soundcloud.com/player/api.js",
-    TrackURLTemplate = "https://soundcloud.com/{@audioPath}",
-    OEmbedURL = "https://soundcloud.com/oembed?format=json&url=",
-    PlayerURL = "https://w.soundcloud.com/player/?url=",
-    HomeURL = "https://soundcloud.com/",
-    AssetBaseURL = "https://a-v2.sndcdn.com",
-    ResolveURL = "https://api-widget.soundcloud.com/resolve?url="
+	PlayerAPIURL = "https://w.soundcloud.com/player/api.js",
+	TrackURLTemplate = "https://soundcloud.com/{@audioPath}",
+	OEmbedURL = "https://soundcloud.com/oembed?format=json&url=",
+	PlayerURL = "https://w.soundcloud.com/player/?url=",
+	HomeURL = "https://soundcloud.com/",
+	AssetBaseURL = "https://a-v2.sndcdn.com",
+	ResolveURL = "https://api-widget.soundcloud.com/resolve?url=",
 }
 
 local Ignored = {
-    ["sets"] = true,
-    ["albums"] = true,
-    ["likes"] = true,
-    ["comments"] = true,
-    ["followers"] = true,
-    ["following"] = true,
-    ["tracks"] = true,
+	["sets"] = true,
+	["albums"] = true,
+	["likes"] = true,
+	["comments"] = true,
+	["followers"] = true,
+	["following"] = true,
+	["tracks"] = true,
 }
 
 if CLIENT then
-    local PLAYER_HTML = [[
+	local PLAYER_HTML = [[
 <!doctype html>
 <html><head><meta charset="utf-8">
 <script src="__SC_PLAYER_API_URL__"></script></head>
@@ -96,9 +96,15 @@ if CLIENT then
 })();
 </script></body></html>
 ]]
-    PLAYER_HTML = PLAYER_HTML:Replace("__SC_PLAYER_API_URL__", SERVICE.PlayerAPIURL):Replace("__SC_TRACK_URL_TEMPLATE__", SERVICE.TrackURLTemplate):Replace("__SC_OEMBED_URL__", SERVICE.OEmbedURL):Replace("__SC_PLAYER_URL__", SERVICE.PlayerURL):Replace("__SC_HOME_URL__", SERVICE.HomeURL):Replace("__SC_ASSET_BASE_URL__", SERVICE.AssetBaseURL):Replace("__SC_RESOLVE_URL__", SERVICE.ResolveURL)
+	PLAYER_HTML = PLAYER_HTML:Replace("__SC_PLAYER_API_URL__", SERVICE.PlayerAPIURL)
+		:Replace("__SC_TRACK_URL_TEMPLATE__", SERVICE.TrackURLTemplate)
+		:Replace("__SC_OEMBED_URL__", SERVICE.OEmbedURL)
+		:Replace("__SC_PLAYER_URL__", SERVICE.PlayerURL)
+		:Replace("__SC_HOME_URL__", SERVICE.HomeURL)
+		:Replace("__SC_ASSET_BASE_URL__", SERVICE.AssetBaseURL)
+		:Replace("__SC_RESOLVE_URL__", SERVICE.ResolveURL)
 
-    local METADATA_HTML = [[
+	local METADATA_HTML = [[
 <!doctype html><html><head><meta charset="utf-8"></head><body>
 <script>
 (async function() {
@@ -202,53 +208,59 @@ if CLIENT then
 })();
 </script></body></html>
 ]]
-    METADATA_HTML = METADATA_HTML:Replace("__SC_PLAYER_API_URL__", SERVICE.PlayerAPIURL):Replace("__SC_TRACK_URL_TEMPLATE__", SERVICE.TrackURLTemplate):Replace("__SC_OEMBED_URL__", SERVICE.OEmbedURL):Replace("__SC_PLAYER_URL__", SERVICE.PlayerURL):Replace("__SC_HOME_URL__", SERVICE.HomeURL):Replace("__SC_ASSET_BASE_URL__", SERVICE.AssetBaseURL):Replace("__SC_RESOLVE_URL__", SERVICE.ResolveURL)
+	METADATA_HTML = METADATA_HTML:Replace("__SC_PLAYER_API_URL__", SERVICE.PlayerAPIURL)
+		:Replace("__SC_TRACK_URL_TEMPLATE__", SERVICE.TrackURLTemplate)
+		:Replace("__SC_OEMBED_URL__", SERVICE.OEmbedURL)
+		:Replace("__SC_PLAYER_URL__", SERVICE.PlayerURL)
+		:Replace("__SC_HOME_URL__", SERVICE.HomeURL)
+		:Replace("__SC_ASSET_BASE_URL__", SERVICE.AssetBaseURL)
+		:Replace("__SC_RESOLVE_URL__", SERVICE.ResolveURL)
 
-    function SERVICE:LoadProvider(Video, panel)
-        local html = PLAYER_HTML:Replace("{@audioPath}", Video:Data())
+	function SERVICE:LoadProvider(Video, panel)
+		local html = PLAYER_HTML:Replace("{@audioPath}", Video:Data())
 
-        panel.OnDocumentReady = function(pnl)
-            self:LoadExFunctions(pnl)
-        end
+		panel.OnDocumentReady = function(pnl)
+			self:LoadExFunctions(pnl)
+		end
 
-        panel:SetHTML(html)
-    end
+		panel:SetHTML(html)
+	end
 
-    function SERVICE:SearchFunctions(browser)
-        if not IsValid(browser) then return end
+	function SERVICE:SearchFunctions(browser)
+		if not IsValid(browser) then return end
 
-        browser:RunJavascript([[
-            setInterval(function() {
-                var cookieBanner = document.querySelector("#onetrust-banner-sdk #onetrust-reject-all-handler");
-                if (cookieBanner) cookieBanner.click();
-            }, 500);
-        ]])
-    end
+		browser:RunJavascript([[
+			setInterval(function() {
+				var cookieBanner = document.querySelector("#onetrust-banner-sdk #onetrust-reject-all-handler");
+				if (cookieBanner) cookieBanner.click();
+			}, 500);
+		]])
+	end
 
-    function SERVICE:GetMetadata(data, callback)
-        local trackPath = isstring(data) and data or (istable(data) and (data.Data or data.data)) or ""
-        local panel = self:CreateWebCrawler(callback)
-        panel:SetHTML(METADATA_HTML:Replace("{@audioPath}", trackPath))
-    end
+	function SERVICE:GetMetadata(data, callback)
+		local trackPath = isstring(data) and data or (istable(data) and (data.Data or data.data)) or ""
+		local panel = self:CreateWebCrawler(callback)
+		panel:SetHTML(METADATA_HTML:Replace("{@audioPath}", trackPath))
+	end
 end
 
 function SERVICE:Match(url)
-    return url.host and url.host:match("soundcloud.com")
+	return url.host and url.host:match("soundcloud.com")
 end
 
 function SERVICE:GetURLInfo(url)
-    if not url.path then return false end
+	if not url.path then return false end
 
-    local path1, path2 = url.path:match("^/([%a%d-_]+)/([%a%d-_]+)/?$")
-    if path1 and path2 and not Ignored[path1] and not Ignored[path2] then
-        return { Data = ("%s/%s"):format(path1, path2) }
-    end
+	local path1, path2 = url.path:match("^/([%a%d-_]+)/([%a%d-_]+)/?$")
+	if path1 and path2 and not Ignored[path1] and not Ignored[path2] then
+		return { Data = ("%s/%s"):format(path1, path2) }
+	end
 
-    return false
+	return false
 end
 
 if SERVER then
-    return SERVICE
+	return SERVICE
 end
 
 theater.RegisterService("soundcloud", SERVICE)
