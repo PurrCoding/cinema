@@ -18,13 +18,6 @@ function Query( command, ... )
 		)]])
 	end
 
-	-- Migrate databases created by older Cinema versions.
-	local updated = sql.QueryTyped( "SELECT type FROM cinema_requests LIMIT 1" )
-	if updated == false then
-		print( "Altering 'cinema_requests' table for updated structure..." )
-		sql.QueryTyped( "ALTER TABLE cinema_requests ADD COLUMN type VARCHAR(32)" )
-		sql.QueryTyped( "ALTER TABLE cinema_requests ADD COLUMN data VARCHAR(2048)" )
-	end
 
 	if command then
 		return sql.QueryTyped( command, ... )
@@ -66,53 +59,6 @@ function GetRequestHistory( filter )
 	return results
 end
 
-local function CheckDuplicates( url, title, duration, vtype, data )
-	local results = Query(
-		"SELECT id, count FROM cinema_requests WHERE type = ? AND data = ?",
-		vtype, data
-	)
-	local count = 0
-
-	if results and #results > 1 then
-		print( "Duplicate entries in 'cinema_requests' for type=" .. vtype .. " and data=" .. data .. ", fixing..." )
-
-		for vidkey, vid in ipairs( results ) do
-			count = count + ( tonumber( vid.count ) or 0 )
-			if vidkey > 1 then
-				RemoveRequestById( vid.id )
-			end
-		end
-
-		Query(
-			"UPDATE cinema_requests SET lastRequest = ?, title = ?, url = ?, count = ? WHERE type = ? AND data = ?",
-			os.time(), title, url, count, vtype, data
-		)
-	end
-end
-
-local function CheckOldSystem( url, title, duration, vtype, data )
-	local oldsyscheck = Query(
-		"SELECT count FROM cinema_requests WHERE url = ?",
-		url
-	)
-
-	if oldsyscheck and #oldsyscheck > 0 then
-		local count = ( tonumber( oldsyscheck[1].count ) or 0 ) + 1
-
-		Query(
-			"UPDATE cinema_requests SET lastRequest = ?, title = ?, type = ?, data = ?, count = ? WHERE url = ?",
-			os.time(), title, vtype, data, count, url
-		)
-	else
-		Query(
-			"INSERT INTO cinema_requests (title, url, duration, type, data, count, lastRequest) VALUES (?, ?, ?, ?, ?, ?, ?)",
-			title, url, duration, vtype, data, 1, os.time()
-		)
-	end
-
-	CheckDuplicates( url, title, duration, vtype, data )
-	return nil
-end
 
 function LogRequest()
 	local url = net.ReadString()
@@ -132,24 +78,22 @@ function LogRequest()
 	} )
 
 	local results = Query(
-		"SELECT count, url FROM cinema_requests WHERE type = ? AND data = ?",
+		"SELECT count FROM cinema_requests WHERE type = ? AND data = ?",
 		vtype, data
 	)
 
 	if results and #results > 0 then
 		local count = ( tonumber( results[1].count ) or 0 ) + 1
 
-		if results[1].url ~= url then
-			return CheckOldSystem( url, title, duration, vtype, data )
-		end
-
 		return Query(
-			"UPDATE cinema_requests SET lastRequest = ?, title = ?, url = ?, count = ? WHERE type = ? AND data = ?",
-			os.time(), title, url, count, vtype, data
+			"UPDATE cinema_requests SET lastRequest = ?, title = ?, url = ?, duration = ?, count = ? WHERE type = ? AND data = ?",
+			os.time(), title, url, duration, count, vtype, data
 		)
 	end
 
-	-- Check if the video exists in the old history system.
-	return CheckOldSystem( url, title, duration, vtype, data )
+	return Query(
+		"INSERT INTO cinema_requests (title, url, duration, type, data, count, lastRequest) VALUES (?, ?, ?, ?, ?, ?, ?)",
+		title, url, duration, vtype, data, 1, os.time()
+	)
 end
 net.Receive( "PlayerVideoQueued", theater.LogRequest )
