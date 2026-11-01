@@ -2,89 +2,72 @@
 
 ## Requirements
 
-- **Garry's Mod** (x86-64 branch strongly recommended for HTML / Chromium playback)
-- A map with Cinema support:
-  - Built-in style maps: `theater*`, `cinema*`
-  - Or any map that includes theater entities **and** a location definition (see [Creating Custom Maps](creating-custom-maps))
-- **Optional but highly recommended:** [GModPatchTool](https://github.com/solsticegamestudios/GModPatchTool) for broader video codec support (H.264, etc.)
+- **Garry's Mod** (the x86-64 branch is strongly recommended for modern HTML/Chromium playback).
+- A supported map: a `theater*` or `cinema*` map, or a map that includes theater entities and location data.
+- [GModPatchTool](https://github.com/solsticegamestudios/GModPatchTool) is strongly recommended for broader codec support such as H.264.
 
-> **Conflict warning**  
-> This gamemode **conflicts** with the original PixelTail “Cinema” addon and any forks/re-uploads of it.  
-> Unsubscribe / remove every other Cinema addon before using Fixed Edition.
+> **Compatibility warning:** Cinema (Fixed Edition) conflicts with the original PixelTail Cinema addon and its forks. Unsubscribe from or remove other Cinema gamemodes before using this edition.
 
----
+## Method 1 – Steam Workshop
 
-## Method 1 – Steam Workshop (easiest for players & most servers)
+1. Subscribe to [Cinema (Fixed Edition)](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587).
+2. For a dedicated server, add Workshop ID `2419005587` to your collection or Workshop download list.
+3. Restart the server/client if needed.
+4. Select **Cinema (Fixed Edition)** (`cinema_modded`) as the gamemode and start a supported map.
 
-1. Subscribe to the [Workshop addon](https://steamcommunity.com/sharedfiles/filedetails/?id=2419005587).
-2. For a dedicated server, add the Workshop ID `2419005587` to your collection or `workshopid` list.
-3. Restart the server / client.
-4. Select the gamemode **Cinema (Fixed Edition)** (`cinema_modded`) and start a supported map.
+Workshop builds may lag behind the repository. Use the Git version when you need the latest source changes or are developing.
 
-Workshop builds can lag behind the Git repository. Prefer Git when you need the absolute newest features or when developing.
+## Method 2 – Install from this repository
 
----
+1. Clone the repository:
 
-## Method 2 – From this repository (recommended for servers & developers)
-
-1. Download or clone the repository:
    ```bash
    git clone https://github.com/PurrCoding/cinema.git
    ```
-2. Copy the **`cinema_modded`** folder into:
+
+2. Copy the `cinema_modded` directory into:
+
+   ```text
+   garrysmod/gamemodes/cinema_modded/
    ```
-   garrysmod/gamemodes/cinema_modded
-   ```
+
 3. Restart the game or server.
-4. Set the gamemode:
-   - **Listen / single-player / menu:** choose *Cinema (Fixed Edition)* in the gamemode list.
-   - **Dedicated server:** in `server.cfg` or launch options:
-     ```
-     gamemode cinema_modded
-     ```
+4. Select `cinema_modded` in the gamemode menu, or set it in the dedicated server configuration:
+
+   ```cfg
+   gamemode cinema_modded
+   ```
+
 5. Start a supported map.
 
----
+## Optional theater-renting dependencies
 
-## Currency providers (theater renting)
+The renting module supports the built-in PointShop 1 and PointShop 2 currency providers. Install and configure one of those addons if you want players to pay for private-theater rentals. Without a compatible provider, renting cannot charge players.
 
-If you want the optional [theater renting](theater-renting) system, install one of:
-
-- PointShop 1
-- PointShop 2 (standard or premium points)
-
-The rent module auto-detects a provider. You can force one with the ConVar `cinema_rent_currency`.
-
----
+See [Theater renting](theater-renting.md) for the currency ConVars and behavior.
 
 ## Verification checklist
 
-1. Join a private or public theater area on a supported map.
-2. Open the scoreboard (default `TAB`) → queue panel.
-3. Confirm **Request Video** (and **Rent Theater** if renting is configured) appears.
-4. Paste a short YouTube (or other supported) URL and confirm synchronized playback for all players in the theater.
-5. If the screen stays black / no media:
-   - Confirm you are **not** running the original Cinema addon.
-   - Confirm the map has location + theater data.
-   - Confirm GModPatchTool + x86-64 branch if using advanced codecs.
-   - Try `cinema_refresh` in console.
+1. Join a supported map and enter a theater location.
+2. Open the scoreboard (default `TAB`) and confirm the queue/request interface appears.
+3. Request a short video URL and confirm playback starts for everyone in the theater.
+4. If renting is configured, confirm the rent controls appear in a private theater.
+5. If playback fails, check the troubleshooting section below and try `cinema_refresh` in the client console.
 
----
+## Troubleshooting
 
-## Common problems
-
-| Symptom | Likely cause | Fix |
-|---------|--------------|-----|
-| Missing textures / menus | Old Cinema still subscribed | Unsubscribe original Cinema, restart GMod |
-| Doors / screens do nothing | Running Sandbox instead of the gamemode | `gamemode cinema_modded` then changelevel |
-| “Map unsupported” message | Missing location Lua for the map | Add a map file under `gamemode/maps/` (see [Creating Custom Maps](creating-custom-maps)) |
-| Black screen / no video | Missing codecs or wrong CEF | Install GModPatchTool, use x86-64 branch |
-| History / DB errors | First run or permissions | Let the gamemode create its SQLite tables; check server write permissions |
-
----
+| Symptom | Likely cause | Suggested fix |
+|---|---|---|
+| Missing menus or textures | Another Cinema addon/fork is installed | Unsubscribe from conflicting addons and restart |
+| Doors or screens do not work | The server is running another gamemode | Set `gamemode cinema_modded` and change to a supported map |
+| Map unsupported | No matching map location data | Add a location file under `cinema_modded/gamemode/maps/`; see [Creating custom maps](creating-custom-maps.md) |
+| Black screen or playback errors | Missing codecs or incompatible CEF | Use the x86-64 branch and install GModPatchTool |
+| History/database errors | SQLite initialization or filesystem permissions | Allow the gamemode to create its SQLite tables and check server write permissions |
+| A provider works for some URLs but not others | Provider-specific URL or codec limitations | Test a supported URL type and check the provider's requirements |
 
 ## Related pages
 
-- [Configuration](configuration) – all ConVars
-- [Commands](commands) – player & admin commands
-- [Creating Custom Maps](creating-custom-maps) – make your own cinema map
+- [Documentation index](README.md)
+- [Configuration](configuration.md)
+- [Commands](commands.md)
+- [Creating custom maps](creating-custom-maps.md)
