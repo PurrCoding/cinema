@@ -1,11 +1,15 @@
 module( "theater", package.seeall )
 
+local function ReportQueryError( command )
+	local err = sql.LastError() or "Unknown SQL error"
+	ErrorNoHalt( string.format( "[Cinema] Server SQL error: %s\\nQuery: %s\\n", err, command or "<no query>" ) )
+end
+
 function Query( command, ... )
-	-- Ensure the log table exists.
+	if not command then return nil end
 	if not sql.TableExists( "cinema_history" ) then
 		Msg( "Creating 'cinema_history' table...\\n" )
-
-		sql.QueryTyped([[CREATE TABLE IF NOT EXISTS cinema_history (
+		local created = sql.QueryTyped([[CREATE TABLE IF NOT EXISTS cinema_history (
 			id INTEGER PRIMARY KEY,
 			type VARCHAR(32),
 			title VARCHAR(32),
@@ -15,11 +19,18 @@ function Query( command, ... )
 			count NUMERIC NOT NULL DEFAULT 0,
 			lastRequest NUMERIC NOT NULL DEFAULT 0
 		)]])
+		if created == false then
+			ReportQueryError( "CREATE TABLE cinema_history" )
+			return false
+		end
 	end
 
-	if command then
-		return sql.QueryTyped( command, ... )
+	local results = sql.QueryTyped( command, ... )
+	if results == false then
+		ReportQueryError( command )
+		return false
 	end
+	return results
 end
 
 function GetVideoLog( data, type )
@@ -55,7 +66,9 @@ function LogVideo( Video, Theater )
 		Type, data
 	)
 
-	if results and #results > 0 then
+	if results == false then return false end
+
+	if #results > 0 then
 		local count = ( tonumber( results[1].count ) or 0 ) + 1
 
 		return Query(
@@ -71,3 +84,20 @@ function LogVideo( Video, Theater )
 end
 
 hook.Add( "PostVideoQueued", "LogQueuedVideo", theater.LogVideo )
+
+
+-- Print the complete server-side video history for debugging.
+concommand.Add( "cinema_debug_history", function( ply )
+	if IsValid( ply ) and not ply:IsSuperAdmin() then return end
+	MsgN( "[Cinema] Server video history:" )
+	local results = theater.Query( "SELECT * FROM cinema_history" )
+	if results == false then
+		MsgN( "[Cinema] Could not read video history; see the SQL error above." )
+		return
+	end
+	if not results or #results == 0 then
+		MsgN( "[Cinema] No video history entries found." )
+		return
+	end
+	PrintTable( results )
+end )
