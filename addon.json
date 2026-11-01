@@ -6,6 +6,7 @@
 		".git/*",
 		".github/*",
 		".vscode/*",
+		"docs/*",
 		"public/*",
 		"cinema_modded/*",
 		".gluarc.json",
