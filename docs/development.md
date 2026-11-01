@@ -1,80 +1,78 @@
 # Development
 
-## Stack
+This page is the starting point for contributors working on the Garry's Mod Lua gamemode and its HTML/JavaScript playback layer.
 
-- **Lua** gamemode for Garry's Mod (`cinema_modded`)
-- Supporting **HTML/JS** for in-theater playback (loaded via `cinema_url`)
-- Module loader under `gamemode/modules/` with standard `sh_` / `sv_` / `cl_` prefixes
+## Stack and entry points
 
-Authoritative contribution rules for humans and automation: [AGENTS.md](https://github.com/PurrCoding/cinema/blob/master/AGENTS.md).
+- **Lua:** Garry's Mod gamemode under `cinema_modded/`
+- **HTML/CSS/JavaScript:** embedded browser/player pages and service integrations
+- **Module loader:** `cinema_modded/gamemode/modules/`, using `sh_`, `sv_`, and `cl_` file prefixes
+- **Contributor rules:** [AGENTS.md](../AGENTS.md)
 
----
+Important entry points include `gamemode/shared.lua`, `gamemode/sh_load.lua`, `gamemode/cl_init.lua`, and `gamemode/init.lua`.
 
 ## Module overview
 
-| Module | Role |
-|--------|------|
-| `theater` | Theater class, queue, video services, networking |
-| `rent` | Private theater renting |
-| `scoreboard` | Queue, owner/admin, request, settings UI |
-| `location` | Named locations / theater bounds + spatial grid |
-| `seats` | Seat placement helpers |
-| `control` | Input / control helpers |
-| `playermodel` | Playermodel integration |
-| `names` / `taunts` / `warning` | Ancillary UX |
-
-Shared init paths: `gamemode/shared.lua`, `sh_load.lua`, `cl_init.lua`, `init.lua`.
-
----
+| Module | Responsibility |
+|---|---|
+| `theater` | Theater class, queue, video objects, media services, and networking |
+| `rent` | Private-theater renting, currency providers, filters, refunds |
+| `scoreboard` | Queue, request, owner/admin, and settings UI |
+| `location` | Named map areas, theater bounds, spatial lookup, diagnostics |
+| `seats` | Chair model offsets, use behavior, and editor |
+| `control` | Input and control helpers |
+| `playermodel` | Playermodel selection UI |
+| `names`, `taunts`, `warning` | Supporting player-facing features |
 
 ## Repository layout
 
-```
-cinema_modded/                 Gamemode root (install this folder)
+```text
+cinema_modded/
   gamemode/
     modules/
-      theater/                 Core theater logic & video services
-      rent/                    Theater renting system
-      scoreboard/              Queue, admin, request UI
-      location/                Map location system
-      seats/                   Seat helpers / editor
-      control/ playermodel/ …
-    i18n/                      Translations
-    maps/                      Per-map theater / location setup
-  entities/                    Theater entities (screen, door, portable, …)
-  content/                     Materials, fonts, sounds
-  cinema.fgd                   Hammer entity definitions
+      theater/
+      rent/
+      scoreboard/
+      location/
+      seats/
+      control/
+      playermodel/
+    i18n/
+    maps/
+  entities/
+  content/
+  cinema.fgd
+docs/
+README.md
+AGENTS.md
 ```
-
----
 
 ## Conventions
 
-- **Tabs** for indentation; no trailing whitespace
-- Strict **CLIENT / SERVER / SHARED** separation
-- Prefer extending theater/rent APIs over monkey-patching core GMod functions
-- Network explicitly; avoid large unstructured tables when a fixed layout works
-- Clean up hooks, timers, and net receivers
-
----
+- Follow the existing code style and use tabs for Lua indentation.
+- Keep CLIENT, SERVER, and SHARED responsibilities explicit.
+- Treat client and CEF input as untrusted; validate authoritative actions on the server.
+- Prefer existing module APIs and abstractions over parallel implementations.
+- Validate network messages, permissions, ownership, and input ranges server-side.
+- Clean up hooks, timers, entities, and temporary state.
+- Avoid expensive work in frequent hooks and hot paths.
+- Keep browser-to-Lua messages narrow, named, and validated.
 
 ## Theater renting integration
 
-Rent extends `theater.THEATER` on the server (`RequestOwner` disabled for automatic ownership; ownership comes from paid rent).  
-Client UI lives in scoreboard + `rent` VGUI. See [Theater renting](theater-renting).
+The rent module extends the theater implementation and provides currency abstraction, rent lifecycle, refunds, and player filters. Built-in currency integrations are PointShop 1 and PointShop 2. See [Theater renting](theater-renting.md).
 
----
+## Translations
 
-## i18n
+Locale files live under `cinema_modded/gamemode/i18n/languages/`; the schema is maintained in `schema.lua`. See [Translations](translations.md).
 
-Locale files: `cinema_modded/gamemode/i18n/languages/*.lua`.  
-Missing keys fall back to English. Rent-related keys use the `Rent_` prefix.
+## Verification
 
----
+After a change, test the relevant path in a multiplayer environment where practical. Check invalid input, permissions, player disconnects, map cleanup, timer/hook cleanup, CEF loading, and synchronization between players.
 
-## Useful links
+## Useful references
 
 - [Garry's Mod Wiki](https://wiki.facepunch.com/gmod/)
-- [garrysmod-issues](https://github.com/Facepunch/garrysmod-issues)
 - [GModPatchTool](https://github.com/solsticegamestudios/GModPatchTool)
-- [AGENTS.md](https://github.com/PurrCoding/cinema/blob/master/AGENTS.md) – coding standards for this repository
+- [AGENTS.md](../AGENTS.md)
+- [Documentation index](README.md)
