@@ -4,7 +4,7 @@ All commands are entered in the Garry's Mod console unless stated otherwise. Com
 
 ## Player commands
 
-These commands are available to players who are currently inside a theater, subject to the theater's own request and queue rules.
+These commands are available to players who are currently inside a theater, subject to the theater's request and queue rules.
 
 | Command | Arguments | Description |
 |---|---|---|
@@ -12,7 +12,7 @@ These commands are available to players who are currently inside a theater, subj
 | `cinema_video_remove` | `<queue_id>` | Remove a queued video; normal ownership/permission rules are enforced by the theater |
 | `cinema_voteskip` | — | Vote to skip the current video |
 | `cinema_voteup` | `<queue_id>` | Upvote a queued video |
-| `cinema_votedown` | `<queue_id>` | Downvote a queued video; only useful if down-voting is implemented/enabled |
+| `cinema_votedown` | `<queue_id>` | Downvote a queued video; only has an effect with queue mode 3, which is unsupported in the current source |
 | `cinema_name` | `<name>` | Set the current theater's display name, subject to theater-side checks |
 
 ### Client playback commands
@@ -21,7 +21,7 @@ These commands are available to players who are currently inside a theater, subj
 |---|---|---|
 | `cinema_fullscreen` | — | Toggle the local theater fullscreen view |
 | `cinema_refresh` | — | Force-refresh the local theater HTML panel |
-| `cinema_playermodel_selector` | — | Open the gamemode's playermodel and player/weapon color selector |
+| `cinema_playermodel_selector` | — | Open the gamemode's player-model and player/weapon color selector |
 
 ### Chat URL requests
 
@@ -57,10 +57,12 @@ See [Creating custom maps](creating-custom-maps.md), [Seats](seats.md), and [Deb
 
 | Command | Permission / realm | Description |
 |---|---|---|
-| `cinema_location_debug` | Server, superadmin | Print location cache, spatial-grid, and player-location diagnostics |
+| `cinema_location_debug` | Server, superadmin | Print location cache, spatial-grid, player-location, and performance diagnostics |
 | `cinema_location_debug_reset` | Server, superadmin | Reset location diagnostic counters |
-| `cinema_truncate_history` | Server, superadmin | Delete all rows from the Cinema history table; destructive |
-| `cinema_fullscreen_freeze` | Server console/player command | Set the issuing player's frozen state from a `0/1` argument; internal utility |
+| `cinema_truncate_history` | Server, superadmin | Delete all rows from the Cinema video-history table; destructive |
+| `cinema_fullscreen_freeze` | Server command, internal helper | Set the issuing player's frozen state from a `0/1` argument; used by fullscreen mode |
+
+**Warning:** `cinema_truncate_history` clears stored video history and cannot be undone.
 
 ## Related ConVars
 
@@ -68,4 +70,4 @@ See [Creating custom maps](creating-custom-maps.md), [Seats](seats.md), and [Deb
 - `cinema_skip_ratio` – fraction of theater players required to vote-skip.
 - `cinema_video_duration_max` – maximum duration for public-theater requests.
 
-See [Configuration](configuration.md) and [Debug commands](debug-commands.md) for the complete option lists.
+See [Configuration](configuration.md) and [Debug commands](debug-commands.md) for the option lists.
