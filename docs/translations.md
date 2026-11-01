@@ -1,74 +1,53 @@
 # Translations (i18n)
 
-Cinema ships with **20+ locale files**. Missing keys always fall back to English.
-
----
+Cinema includes locale files for the player-facing UI. English is the fallback language; missing translations should be added to the schema and locale files as appropriate.
 
 ## File locations
 
-```
+```text
 cinema_modded/gamemode/i18n/
-  init.lua          -- loader
-  schema.lua        -- authoritative list of required keys
+  init.lua
+  schema.lua
   colors.lua
   languages/
-    en.lua          -- English (fallback)
+    en.lua
     de.lua
     fr.lua
-    …
+    ...
 ```
-
----
 
 ## Adding or updating a language
 
-1. Copy `en.lua` to a new file, e.g. `languages/pt.lua`.
-2. Translate every string value. Keep the **keys** identical.
-3. Set the metadata at the top:
+1. Copy the English locale file as a starting point.
+2. Keep translation keys identical; translate the string values only.
+3. Preserve format placeholders such as `%s` and `%d`.
+4. Preserve any formatting tokens used by the UI.
+5. Add new user-facing keys to `schema.lua` and the English fallback, then update other locale files.
+6. Test the language in-game, including longer strings and formatted announcements.
 
-```lua
-return {
-	Name = "Português",
-	Author = "YourName",
-	-- … all other keys
-}
-```
+Locale files return a table containing metadata and translated values. Follow the structure of the current `en.lua` and neighboring locale files rather than copying an outdated example.
 
-4. Restart the client / server. The language appears in the scoreboard settings if the file is valid.
+## Schema and key groups
 
----
+The schema is the authoritative list of expected translation keys. Common prefixes include:
 
-## Schema
-
-`schema.lua` lists every key the gamemode expects.  
-When you add a new user-facing string in Lua, also add the key to the schema and to **every** language file (or at least to `en.lua`).
-
-Examples of key groups:
-
-- `Theater_*` – announcements (requested, skipped, paused, …)
-- `Queue_*` / `Request_*` – queue & request UI
-- `Rent_*` – theater renting UI
-- `Warning_*` / `Dependency_*` – missing map / codec warnings
-
----
+- `Theater_*` – playback and theater announcements
+- `Queue_*` / `Request_*` – queue and request UI
+- `Rent_*` – theater-renting UI and announcements
+- `Warning_*` / `Dependency_*` – warnings and missing dependency notices
 
 ## Using translations in code
 
-```lua
--- Simple key
-theater.GetTranslation("Theater_RequestFailed")
-
--- Key with format arguments
-theater.GetTranslation("Theater_VideoRequestedBy", ply:Nick())
-```
-
-On the client the same helpers are available; the active language is chosen from the player’s setting / ConVar.
-
----
+Use the project's translation helpers rather than hard-coding player-facing English text. Check existing call sites for the current API and formatting conventions.
 
 ## Best practices
 
-- Never hard-code English UI strings in new features; always go through the translation system.
-- Keep format placeholders consistent (`%s`, `%d`, …) across languages.
-- Test with a non-English locale to catch missing keys early.
-- Rent-related strings use the `Rent_` prefix – keep that convention.
+- Keep placeholders and formatting tokens consistent across locales.
+- Avoid changing key names without updating the schema and all call sites.
+- Test with at least one non-English locale.
+- Update the English fallback whenever a new UI string is introduced.
+
+## Related pages
+
+- [Development](development.md)
+- [Theater renting](theater-renting.md)
