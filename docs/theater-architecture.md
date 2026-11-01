@@ -1,113 +1,73 @@
-# Theater Architecture
+# Theater architecture
 
-This page describes how the core theater objects fit together. Useful for developers who want to extend queue logic, networking, or the HTML player.
+This page outlines the core runtime objects and how the server, client, and embedded browser cooperate.
 
----
+## Main components
 
-## Main objects
+| Component | Location | Responsibility |
+|---|---|---|
+| `Location` | `gamemode/modules/location/` | Map areas and player location lookup |
+| `THEATER` | `gamemode/modules/theater/sh_theater.lua` | Theater state, queue, playback, ownership |
+| `VIDEO` | `gamemode/modules/theater/sh_video.lua` | A queued or playing media item |
+| `SERVICE` | `gamemode/modules/theater/services/` | URL matching, metadata, and provider playback |
+| Scoreboard | `gamemode/modules/scoreboard/` | Queue, request, owner/admin, and settings UI |
+| Rent | `gamemode/modules/rent/` | Private-theater rent lifecycle and currency providers |
 
-| Object | Module | Role |
-|--------|--------|------|
-| `Location` | `modules/location` | Spatial areas + “is player inside theater X?” |
-| `THEATER` | `modules/theater/sh_theater.lua` | One theater instance (queue, current video, owner, flags) |
-| `VIDEO` | `modules/theater/sh_video.lua` | One queued / playing media item |
-| `SERVICE` | `modules/theater/services/*` | URL → metadata → embed player |
-| Scoreboard UI | `modules/scoreboard` | Queue list, request panel, owner/admin controls |
+## Server lifecycle
 
----
+1. Map-specific Lua registers location boxes.
+2. The theater module creates theater instances for locations with theater data.
+3. Player location changes add/remove players from theater instances.
+4. A request is matched to a registered media service.
+5. Metadata is resolved and a VIDEO is created/queued.
+6. The server owns authoritative queue and playback state and replicates updates to relevant clients.
 
-## Theater lifecycle (server)
+## Core objects
 
-1. Map loads → location file registers boxes (some with a `Theater` table).
-2. For each theater location the gamemode creates a `THEATER` object.
-3. Players enter/leave → `PlayerChangeLocation` → theater adds/removes the player.
-4. A player requests a URL → matching `SERVICE` resolves metadata → `VIDEO` is created and pushed onto the theater queue.
-5. When the current video finishes (or is skipped) the next `VIDEO` is started.
-6. Clients receive net messages and open the corresponding HTML provider on their screen panel.
+### THEATER
 
----
+A theater instance owns its location identity, geometry, flags, player list, queue, current video, skip votes, and related state. Methods include request, skip, seek, pause, reset, and queue-lock operations. Private theaters may be extended by the rent module.
 
-## THEATER – important methods / state
+### VIDEO
 
-**Identity & geometry**
+A VIDEO represents a media item. It stores the service type and service-specific data, display metadata such as title/duration/thumbnail, playback timing, requester/owner information, and vote state.
 
-- `Id` – location index
-- `Name()`, `GetFlags()`, `GetPos()`, `GetAngles()`, `GetSize()`
-- `IsPrivate()`, `IsPrivileged()`
+### SERVICE
 
-**Playback**
+A SERVICE matches supported URLs, extracts provider-specific identifiers, retrieves metadata, and loads the client-side player. Service implementations live in `gamemode/modules/theater/services/`.
 
-- Current video, playlist / queue, skip votes
-- `RequestVideo`, `SkipVideo`, `Seek`, `SetPaused`, `Reset`, `PlayDefault`
-- Queue lock (owner can prevent new requests)
+## Networking and authority
 
-**Ownership (private theaters)**
+- The server is authoritative for theater membership, queue changes, permissions, and rental state.
+- Clients request actions; the server validates them before applying state changes.
+- Theater state and queue snapshots are sent to players who need them.
+- The rent module adds networking for rental status and player filters.
 
-- Owner player / SteamID
-- Integrated with the rent module when renting is enabled
+When extending the protocol, follow existing module conventions and validate all client-provided data server-side. See [AGENTS.md](../AGENTS.md).
 
-**Thumbnails**
+## Embedded browser flow
 
-- Optional thumbnail entity outside the room that mirrors the current video
+1. The client theater panel creates a DHTML surface.
+2. A service opens its provider page or injects the required player code.
+3. The provider exposes `window.cinema_controller` and signals `exTheater.controllerReady()`.
+4. The Cinema JavaScript bridge exposes playback controls such as volume, seek, pause, and synchronization.
 
----
-
-## VIDEO – important fields
-
-| Field | Meaning |
-|-------|---------|
-| `Type()` | Service class name (`youtube`, `dailymotion`, …) |
-| `Data()` | Service-specific ID string |
-| `Title()`, `Duration()`, `Thumbnail()` | Display metadata |
-| `StartTime()` | Server `CurTime()` when playback started (used for sync) |
-| Owner nick / SteamID | Who requested it |
-| Votes | Up-votes when queue mode = 1 |
-
----
-
-## Networking (high level)
-
-- Theater state (current video, queue snapshot, pause, lock) is networked to players **inside** that theater.
-- Request / vote / seek / pause commands are sent from client → server, validated (location, privileges, rate limits), then applied.
-- The rent module adds its own net messages for rent / refund / filter lists.
-
-Exact message names live in the `sv_*.lua` / `cl_*.lua` files of the theater and rent modules; prefer extending existing helpers over adding raw `net.Receive` calls.
-
----
-
-## HTML player side
-
-1. Client theater panel is a DHTML surface.
-2. `SERVICE:LoadProvider` opens an embed URL or injects HTML.
-3. JavaScript must set `window.cinema_controller` and call `exTheater.controllerReady()`.
-4. The injected `window.theater` (CinemaPlayer) bridges volume, seek, play, pause and soft-sync.
-
-Base URL for hosted HTML helpers:
-
-```lua
-theater.GetCinemaURL("youtube.html")  -- etc.
-```
-
-Controlled by the ConVar `cinema_url` (do not change unless you host your own copy of the player pages).
-
----
+The `cinema_url` ConVar selects the base URL for hosted Cinema HTML pages. Do not change it unless you host a compatible copy of the player frontend.
 
 ## Extension points
 
 | Goal | Where to look |
-|------|----------------|
-| New media platform | New file in `services/` – see [Custom Video Service](custom-video-service) |
-| Extra owner power | Extend `THEATER` methods + scoreboard owner panel |
-| Different queue rules | `cinema_queue_mode` + queue helpers in theater module |
-| Currency for renting | `modules/rent/sh_currency.lua` |
-| New chair models | `modules/seats/sh_seats.lua` |
-| New language | `i18n/languages/*.lua` – see [Translations](translations) |
-
----
+|---|---|
+| Add a media provider | `services/` – see [Custom video service](custom-video-service.md) |
+| Change theater state or queue behavior | `sh_theater.lua` and related theater module files |
+| Add rental behavior | `modules/rent/` – see [Theater renting](theater-renting.md) |
+| Add currency integration | `modules/rent/sh_currency.lua` |
+| Add chair models | `modules/seats/sh_seats.lua` – see [Seats](seats.md) |
+| Add a language | `gamemode/i18n/languages/` – see [Translations](translations.md) |
 
 ## Related pages
 
-- [Custom Video Service](custom-video-service)
-- [Location System](location-system)
-- [Development](development)
-- [Commands](commands)
+- [Custom video service](custom-video-service.md)
+- [Location system](location-system.md)
+- [Development](development.md)
+- [Commands](commands.md)
