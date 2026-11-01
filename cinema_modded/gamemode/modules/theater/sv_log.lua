@@ -1,14 +1,16 @@
 module( "theater", package.seeall )
 
+local debug_sql = CreateConVar( "cinema_debug_history", "0", FCVAR_ARCHIVE, "Print Cinema SQL queries and results." )
+
 local function ReportQueryError( command )
 	local err = sql.LastError() or "Unknown SQL error"
-	ErrorNoHalt( string.format( "[Cinema] Server SQL error: %s\\nQuery: %s\\n", err, command or "<no query>" ) )
+	ErrorNoHalt( string.format( "[Cinema] Server SQL error: %s\nQuery: %s\n", err, command or "<no query>" ) )
 end
 
 function Query( command, ... )
 	if not command then return nil end
 	if not sql.TableExists( "cinema_history" ) then
-		Msg( "Creating 'cinema_history' table...\\n" )
+		Msg( "Creating 'cinema_history' table...\n" )
 		local created = sql.QueryTyped([[CREATE TABLE IF NOT EXISTS cinema_history (
 			id INTEGER PRIMARY KEY,
 			type VARCHAR(32),
@@ -30,6 +32,16 @@ function Query( command, ... )
 		ReportQueryError( command )
 		return false
 	end
+
+	if debug_sql:GetBool() then
+		MsgN( "[Cinema] Server video history SQL: " .. command )
+		if istable( results ) and #results > 0 then
+			PrintTable( results )
+		else
+			MsgN( "[Cinema] Query completed; no rows returned." )
+		end
+	end
+
 	return results
 end
 
@@ -85,19 +97,3 @@ end
 
 hook.Add( "PostVideoQueued", "LogQueuedVideo", theater.LogVideo )
 
-
--- Print the complete server-side video history for debugging.
-concommand.Add( "cinema_debug_history", function( ply )
-	if IsValid( ply ) and not ply:IsSuperAdmin() then return end
-	MsgN( "[Cinema] Server video history:" )
-	local results = theater.Query( "SELECT * FROM cinema_history" )
-	if results == false then
-		MsgN( "[Cinema] Could not read video history; see the SQL error above." )
-		return
-	end
-	if not results or #results == 0 then
-		MsgN( "[Cinema] No video history entries found." )
-		return
-	end
-	PrintTable( results )
-end )
