@@ -23,7 +23,7 @@ This documentation lives in the repository and is reviewed and versioned with th
 |---|---|
 | [Location system](location-system.md) | Location registration, theater definitions, and spatial lookup |
 | [Creating custom maps](creating-custom-maps.md) | Hammer entities and Lua location files |
-| [Debug commands](debug-commands.md) | Location and seat visualization and diagnostics |
+| [Debug commands](debug-commands.md) | Location, teleport, seat, and SQL diagnostics |
 
 ## Development
 
