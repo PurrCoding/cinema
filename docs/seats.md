@@ -1,62 +1,58 @@
-# Seats System
+# Seats system
 
-Cinema includes a lightweight seat system so players can sit on chairs, sofas and benches that belong to a theater map.
-
----
+Cinema includes a lightweight seat system for supported chairs, sofas, and benches placed in theater maps.
 
 ## How it works
 
-1. The module ships a large table `ChairOffsets` that maps **model paths** to one or more seat offsets (`Pos` + optional `Ang`).
-2. When a player presses **use** on a prop whose model is in that table, the gamemode creates a temporary seat entity at the correct offset and puts the player into it.
-3. Leaving the seat (jump / use again) removes the temporary entity.
+1. The seats module maps model paths to local seat offsets (`Pos` and optional `Ang`).
+2. When a player uses a supported prop, the server creates a temporary seat entity at the configured offset and places the player in it.
+3. The temporary seat is cleaned up when the player gets up or the seat is otherwise removed.
 
-No Hammer entities are required for the basic “sit on this prop” behaviour.
+The basic prop-seat behavior does not require custom Hammer entities.
 
----
+## Adding a chair model
 
-## Adding a new chair model
+Edit:
 
-Edit (or override) the seats module:
-
-```
+```text
 cinema_modded/gamemode/modules/seats/sh_seats.lua
 ```
 
-Add an entry:
+Add an entry to `ChairOffsets`:
 
 ```lua
 ChairOffsets["models/path/to/your_chair.mdl"] = {
-	{ Pos = Vector(0, 0, 20), Ang = Angle(0, -90, 0) },
-	-- more seats for multi-seat models
-	{ Pos = Vector(0, 30, 20), Ang = Angle(0, -90, 0) },
+    { Pos = Vector(0, 0, 20), Ang = Angle(0, -90, 0) },
+    -- Additional seat offsets for multi-seat models
+    { Pos = Vector(0, 30, 20), Ang = Angle(0, -90, 0) },
 }
 ```
 
-Tips for finding good offsets:
+Offsets are local to the prop model. Test the position and orientation in-game; small vertical and angular adjustments are common.
 
-1. Spawn the model in Sandbox.
-2. Noclip to the approximate sitting position.
-3. Use `lua_run print(LocalPlayer():GetPos())` (or a measuring tool) relative to the prop origin.
-4. Test in-game; small Z adjustments (±2–5) are common.
+## Seat debugging and editor
 
----
+Client ConVars:
 
-## Seat editor (client)
+| ConVar | Default | Description |
+|---|---:|---|
+| `cinema_seat_debug` | `0` | Show recognized props and their seat positions |
+| `cinema_seat_editor` | `0` | Enable the editor mode |
+| `cinema_seat_debug_numbers` | `1` | Show seat indices |
+| `cinema_seat_debug_names` | `1` | Show model names |
 
-The seats module also contains a simple editor (`cl_editor.lua`) used during map development.  
-It is mainly intended for internal use when defining new offsets; most mappers just edit `ChairOffsets` directly.
+Admins can aim at a prop and run `cinema_seat_select` to select it and open the editor. The editor provides 3D previews and controls for adjusting seat offsets. Verify edited offsets in `sh_seats.lua` before distributing them.
 
----
+See [Debug commands](debug-commands.md) for more details.
 
-## Server behaviour
+## Server behavior
 
-- `sv_init.lua` handles the actual “use → sit” logic and cleanup.
-- Seats are not networked entities that persist; they exist only while a player is sitting.
-- Admins / owners are not given special privileges for ordinary seats.
+- The server-side seats module handles use interaction and temporary seat entities.
+- Seat offsets are defined by model path in the shared seats module.
+- Seats are separate from theater location definitions; location data still determines whether a player is inside a theater.
 
----
+## Related pages
 
-## Related
-
-- Theater locations still determine whether a player is “in” a theater while seated.
-- Portable TVs / projectors are separate entities and are not part of the seat system.
+- [Location system](location-system.md)
+- [Creating custom maps](creating-custom-maps.md)
+- [Debug commands](debug-commands.md)
