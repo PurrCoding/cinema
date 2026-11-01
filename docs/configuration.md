@@ -6,7 +6,7 @@ Cinema is configured primarily through Garry's Mod ConVars. Server values belong
 
 | ConVar | Default | Description |
 |---|---:|---|
-| `cinema_queue_mode` | `1` | `1` = upvote-only queue; `2` = chronological/request order. Mode `3` is present in legacy code but currently documented by the source as unsupported. |
+| `cinema_queue_mode` | `1` | `1` = upvote-only queue; `2` = chronological/request order. Mode `3` is present in legacy code but currently marked unsupported by the source. |
 | `cinema_skip_ratio` | `0.66` | Fraction of players in the theater required to vote-skip (0–1) |
 | `cinema_video_duration_max` | `10800` | Maximum video duration for public-theater requests, in seconds |
 | `cinema_allow_reset` | `0` | Reset an empty public theater |
@@ -44,19 +44,23 @@ The last three ConVars are server-only. See [Theater renting](theater-renting.md
 | `cinema_hide_amount` | `0.11` | Remaining player model blend when hiding is enabled |
 | `cinema_drawnames` | `1` | Draw player names |
 | `cinema_smoother` | `1` | Enable smoother video rendering; may cost FPS |
-| `cinema_html_filter` | `0` | Print HTML/player console messages for debugging |
+| `cinema_html_filter` | `0` | Suppress ordinary embedded HTML console messages; set to `1` to allow all messages |
 
-## Location and seat debugging ConVars
+## Location, seat, and SQL debugging ConVars
 
 | ConVar | Default | Realm | Description |
 |---|---:|---|---|
 | `cinema_debug_locations` | `0` | Client | Draw registered location bounds and names |
 | `cinema_debug_grid` | `0` | Client | Draw spatial-grid cells around the player |
-| `cinema_debug_teleports` | `0` | Client | Show teleport/debug overlays for theater doors |
+| `cinema_debug_teleports` | `0` | Client | Show teleport sender/receiver overlays |
 | `cinema_seat_debug` | `0` | Client | Visualize supported seat props and seat positions |
-| `cinema_seat_editor` | `0` | Client | Enable the interactive seat editor mode |
+| `cinema_seat_editor` | `0` | Client | Enable the interactive seat-editor overlay |
 | `cinema_seat_debug_numbers` | `1` | Client | Show seat numbers in the seat visualizer |
 | `cinema_seat_debug_names` | `1` | Client | Show prop/model names in the seat visualizer |
+| `cinema_debug_requests` | `0` | Client | Log client-side request-history SQL queries and results |
+| `cinema_debug_history` | `0` | Server | Log server-side video-history SQL queries and results |
+
+See [Debug commands](debug-commands.md) for usage examples and details.
 
 ## Example server.cfg
 
