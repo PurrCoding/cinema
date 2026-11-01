@@ -1,22 +1,12 @@
 module( "theater", package.seeall )
 
-function Query( command )
+function Query( command, ... )
 
-	local updated = sql.Query( "SELECT type FROM cinema_requests LIMIT 1" )
+	-- Ensure the log table exists before running queries against it.
+	if not sql.TableExists( "cinema_requests" ) then
+		Msg( "Creating 'cinema_requests' table...\\n" )
 
-	if not updated then -- The Query will return a false bool if the column doesn't exist
-		print("Altering 'cinema_requests' table for updated structure...")
-		sql.Query( "ALTER TABLE cinema_requests ADD COLUMN type VARCHAR(32)" )
-		sql.Query( "ALTER TABLE cinema_requests ADD COLUMN data VARCHAR(2048)" )
-	end
-
-	-- Ensure the log table exists
-	if not sql.TableExists("cinema_requests") then
-
-		Msg("Creating 'cinema_requests' table...\n")
-
-		-- Initialize the database table
-		sql.Query([[CREATE TABLE cinema_requests (
+		sql.QueryTyped([[CREATE TABLE IF NOT EXISTS cinema_requests (
 			id INTEGER PRIMARY KEY,
 			title VARCHAR(32),
 			url VARCHAR(2048),
@@ -26,14 +16,19 @@ function Query( command )
 			count NUMERIC NOT NULL DEFAULT 0,
 			lastRequest NUMERIC NOT NULL DEFAULT 0
 		)]])
+	end
 
+	-- Migrate databases created by older Cinema versions.
+	local updated = sql.QueryTyped( "SELECT type FROM cinema_requests LIMIT 1" )
+	if updated == false then
+		print( "Altering 'cinema_requests' table for updated structure..." )
+		sql.QueryTyped( "ALTER TABLE cinema_requests ADD COLUMN type VARCHAR(32)" )
+		sql.QueryTyped( "ALTER TABLE cinema_requests ADD COLUMN data VARCHAR(2048)" )
 	end
 
 	if command then
-		-- Msg("QUERYING: " .. command .. "\n")
-		return sql.Query( command )
+		return sql.QueryTyped( command, ... )
 	end
-
 end
 
 function ClearRequestHistory()
@@ -41,152 +36,120 @@ function ClearRequestHistory()
 end
 
 function RemoveRequestById( id )
+	id = tonumber( id )
 	if not id then return end
-	return Query( "DELETE FROM cinema_requests WHERE id=" .. id )
+
+	return Query( "DELETE FROM cinema_requests WHERE id = ?", id )
 end
 
-function GetRequestHistory(filter)
-
-	local q = "SELECT * FROM cinema_requests"
+function GetRequestHistory( filter )
+	local query = "SELECT * FROM cinema_requests"
 
 	if filter and filter ~= "" then
-		q = q .. " WHERE title LIKE '%" .. sql.SQLStr(filter,true) .. "%'"
+		query = query .. " WHERE title LIKE ?"
+		local results = Query( query, "%" .. filter .. "%" ) or {}
+		for _, result in ipairs( results ) do
+			result.duration = tonumber( result.duration )
+			result.count = tonumber( result.count )
+			result.lastRequest = tonumber( result.lastRequest )
+		end
+		return results
 	end
 
-	local results = Query(q) or {}
-
-	if #results > 0 then
-		for _, result in ipairs(results) do
-			result.duration = tonumber(result.duration)
-			result.count = tonumber(result.count)
-			result.lastRequest = tonumber(result.lastRequest)
-		end
+	local results = Query( query ) or {}
+	for _, result in ipairs( results ) do
+		result.duration = tonumber( result.duration )
+		result.count = tonumber( result.count )
+		result.lastRequest = tonumber( result.lastRequest )
 	end
 
 	return results
-
 end
 
-local function CheckDuplicates(url, title, duration, vtype, data)
-	local str = "SELECT id,count FROM cinema_requests WHERE " .. -- Run it again, in case a New Entry was just added
-		string.format("type=%s AND ", vtype) ..
-		string.format("data=%s", data)
-
-	local results = Query(str)
+local function CheckDuplicates( url, title, duration, vtype, data )
+	local results = Query(
+		"SELECT id, count FROM cinema_requests WHERE type = ? AND data = ?",
+		vtype, data
+	)
 	local count = 0
 
-	if results and #results > 1 then -- Check for multiple entries for same video type and data
-		print("Duplicate entries in 'cinema_requests' for type=" .. vtype .. " and data=" .. data .. ", fixing...")
-		for vidkey, vid in pairs(results) do
-			count = count + vid.count
-			if vidkey > 1 then -- Don't delete the first entry!
+	if results and #results > 1 then
+		print( "Duplicate entries in 'cinema_requests' for type=" .. vtype .. " and data=" .. data .. ", fixing..." )
+
+		for vidkey, vid in ipairs( results ) do
+			count = count + ( tonumber( vid.count ) or 0 )
+			if vidkey > 1 then
 				RemoveRequestById( vid.id )
 			end
 		end
 
-		-- Update request count, duplicate detected
-		str = "UPDATE cinema_requests SET " ..
-			string.format("lastRequest='%s', ", os.time()) ..
-			string.format("title=%s, ", title) ..
-			string.format("url=%s, ", url) ..
-			string.format("count='%s' WHERE ", count) ..
-			string.format("type=%s AND ", vtype) ..
-			string.format("data=%s", data)
-
-		Query(str)
+		Query(
+			"UPDATE cinema_requests SET lastRequest = ?, title = ?, url = ?, count = ? WHERE type = ? AND data = ?",
+			os.time(), title, url, count, vtype, data
+		)
 	end
 end
 
-local function CheckOldSystem(url, title, duration, vtype, data)
-	local str = "SELECT count FROM cinema_requests WHERE " ..
-		string.format("url=%s", url)
+local function CheckOldSystem( url, title, duration, vtype, data )
+	local oldsyscheck = Query(
+		"SELECT count FROM cinema_requests WHERE url = ?",
+		url
+	)
 
-	local oldsyscheck = Query(str)
+	if oldsyscheck and #oldsyscheck > 0 then
+		local count = ( tonumber( oldsyscheck[1].count ) or 0 ) + 1
 
-	if istable(oldsyscheck) then
-		local count = tonumber(oldsyscheck[1].count) + 1
-
-		-- Update request count and make video entry compatible with new history system
-		str = "UPDATE cinema_requests SET " ..
-			string.format("lastRequest='%s', ", os.time()) ..
-			string.format("title=%s, ", title) ..
-			string.format("type=%s, ", vtype) ..
-			string.format("data=%s, ", data) ..
-			string.format("count='%s' WHERE ", count) ..
-			string.format("url=%s", url)
-
+		Query(
+			"UPDATE cinema_requests SET lastRequest = ?, title = ?, type = ?, data = ?, count = ? WHERE url = ?",
+			os.time(), title, vtype, data, count, url
+		)
 	else
-		-- Insert new entry into the table
-		str = "INSERT INTO cinema_requests " ..
-			"(title,url,duration,type,data,count,lastRequest) " ..
-			string.format("VALUES (%s, ", title) ..
-			string.format("%s, ", url) ..
-			string.format("'%s', ", duration) ..
-			string.format("%s, ", vtype) ..
-			string.format("%s, ", data) ..
-			string.format("'%s', ", 1) ..
-			string.format("'%s')", os.time())
+		Query(
+			"INSERT INTO cinema_requests (title, url, duration, type, data, count, lastRequest) VALUES (?, ?, ?, ?, ?, ?, ?)",
+			title, url, duration, vtype, data, 1, os.time()
+		)
 	end
 
-	Query(str)
-
-	CheckDuplicates(url, title, duration, vtype, data)
-
+	CheckDuplicates( url, title, duration, vtype, data )
 	return nil
 end
 
 function LogRequest()
-
 	local url = net.ReadString()
 	local title = net.ReadString()
-	local duration = net.ReadInt(32)
+	local duration = net.ReadInt( 32 )
 	local vtype = net.ReadString()
 	local data = net.ReadString()
 
-	-- Use the parent classe of the service
-	if (Services[vtype] and Services[vtype].ParentClass) then
+	-- Use the parent class of the service.
+	if Services[vtype] and Services[vtype].ParentClass then
 		vtype = Services[vtype].ParentClass
 	end
 
-	-- Notify player of video added to queue
 	AddAnnouncement( {
 		"Theater_VideoAddedToQueue",
 		title
 	} )
 
-	-- Escape strings
-	url = sql.SQLStr(url)
-	title = sql.SQLStr(title)
-	vtype = sql.SQLStr(vtype)
-	data = sql.SQLStr(data)
+	local results = Query(
+		"SELECT count, url FROM cinema_requests WHERE type = ? AND data = ?",
+		vtype, data
+	)
 
-	local str = "SELECT count,url FROM cinema_requests WHERE " ..
-		string.format("type=%s AND ", vtype) ..
-		string.format("data=%s", data)
-
-	local results = Query(str)
-
-	if istable(results) then
-		local count = tonumber(results[1].count) + 1
+	if results and #results > 0 then
+		local count = ( tonumber( results[1].count ) or 0 ) + 1
 
 		if results[1].url ~= url then
-			str = CheckOldSystem(url, title, duration, vtype, data)
-		else
-			-- Update request count, url does not suggest duplicates
-			str = "UPDATE cinema_requests SET " ..
-				string.format("lastRequest='%s', ", os.time()) ..
-				string.format("title=%s, ", title) ..
-				string.format("url=%s, ", url) ..
-				string.format("count='%s' WHERE ", count) ..
-				string.format("type=%s AND ", vtype) ..
-				string.format("data=%s", data)
-
+			return CheckOldSystem( url, title, duration, vtype, data )
 		end
-	else -- Check if video exists in old history system
-		str = CheckOldSystem(url, title, duration, vtype, data)
+
+		return Query(
+			"UPDATE cinema_requests SET lastRequest = ?, title = ?, url = ?, count = ? WHERE type = ? AND data = ?",
+			os.time(), title, url, count, vtype, data
+		)
 	end
 
-	return Query(str)
-
+	-- Check if the video exists in the old history system.
+	return CheckOldSystem( url, title, duration, vtype, data )
 end
 net.Receive( "PlayerVideoQueued", theater.LogRequest )
