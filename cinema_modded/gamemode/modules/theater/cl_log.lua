@@ -1,14 +1,16 @@
 module( "theater", package.seeall )
 
+local debug_sql = CreateClientConVar( "cinema_debug_requests", "0", true, false, "Print Cinema SQL queries and results." )
+
 local function ReportQueryError( command )
 	local err = sql.LastError() or "Unknown SQL error"
-	ErrorNoHalt( string.format( "[Cinema] Client SQL error: %s\\nQuery: %s\\n", err, command or "<no query>" ) )
+	ErrorNoHalt( string.format( "[Cinema] Client SQL error: %s\nQuery: %s\n", err, command or "<no query>" ) )
 end
 
 function Query( command, ... )
 	if not command then return nil end
 	if not sql.TableExists( "cinema_requests" ) then
-		Msg( "Creating 'cinema_requests' table...\\n" )
+		Msg( "Creating 'cinema_requests' table...\n" )
 		local created = sql.QueryTyped([[CREATE TABLE IF NOT EXISTS cinema_requests (
 			id INTEGER PRIMARY KEY,
 			title VARCHAR(32),
@@ -30,6 +32,16 @@ function Query( command, ... )
 		ReportQueryError( command )
 		return false
 	end
+
+	if debug_sql:GetBool() then
+		MsgN( "[Cinema] Client request log SQL: " .. command )
+		if istable( results ) and #results > 0 then
+			PrintTable( results )
+		else
+			MsgN( "[Cinema] Query completed; no rows returned." )
+		end
+	end
+
 	return results
 end
 
@@ -113,18 +125,3 @@ function LogRequest()
 end
 net.Receive( "PlayerVideoQueued", theater.LogRequest )
 
-
--- Print the complete client-side request history for debugging.
-concommand.Add( "cinema_debug_requests", function()
-	MsgN( "[Cinema] Client request history:" )
-	local results = theater.GetRequestHistory()
-	if results == false then
-		MsgN( "[Cinema] Could not read request history; see the SQL error above." )
-		return
-	end
-	if not results or #results == 0 then
-		MsgN( "[Cinema] No request history entries found." )
-		return
-	end
-	PrintTable( results )
-end )
