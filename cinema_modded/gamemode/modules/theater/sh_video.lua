@@ -178,13 +178,13 @@ if SERVER then
 
 			-- Query info from local database
 			local results = GetVideoLog(self:Data(), self:Type())
-			if results ~= nil and istable(results) then
+			if istable(results) and istable(results[1]) then
 
-				results = results[1]
+				local result = results[1]
 
-				self._VideoTitle = results.title or "(Unknown)"
-				self._VideoDuration = tonumber(results.duration) or -1
-				self._VideoThumbnail = results.thumbnail or ""
+				self._VideoTitle = result.title or "(Unknown)"
+				self._VideoDuration = tonumber(result.duration) or -1
+				self._VideoThumbnail = result.thumbnail or ""
 
 				callback(true)
 
