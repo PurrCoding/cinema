@@ -1,12 +1,15 @@
 module( "theater", package.seeall )
 
-function Query( command, ... )
+local function ReportQueryError( command )
+	local err = sql.LastError() or "Unknown SQL error"
+	ErrorNoHalt( string.format( "[Cinema] Client SQL error: %s\\nQuery: %s\\n", err, command or "<no query>" ) )
+end
 
-	-- Ensure the log table exists before running queries against it.
+function Query( command, ... )
+	if not command then return nil end
 	if not sql.TableExists( "cinema_requests" ) then
 		Msg( "Creating 'cinema_requests' table...\\n" )
-
-		sql.QueryTyped([[CREATE TABLE IF NOT EXISTS cinema_requests (
+		local created = sql.QueryTyped([[CREATE TABLE IF NOT EXISTS cinema_requests (
 			id INTEGER PRIMARY KEY,
 			title VARCHAR(32),
 			url VARCHAR(2048),
@@ -16,12 +19,18 @@ function Query( command, ... )
 			count NUMERIC NOT NULL DEFAULT 0,
 			lastRequest NUMERIC NOT NULL DEFAULT 0
 		)]])
+		if created == false then
+			ReportQueryError( "CREATE TABLE cinema_requests" )
+			return false
+		end
 	end
 
-
-	if command then
-		return sql.QueryTyped( command, ... )
+	local results = sql.QueryTyped( command, ... )
+	if results == false then
+		ReportQueryError( command )
+		return false
 	end
+	return results
 end
 
 function ClearRequestHistory()
@@ -40,7 +49,9 @@ function GetRequestHistory( filter )
 
 	if filter and filter ~= "" then
 		query = query .. " WHERE title LIKE ?"
-		local results = Query( query, "%" .. filter .. "%" ) or {}
+		local results = Query( query, "%" .. filter .. "%" )
+		if results == false then return false end
+		results = results or {}
 		for _, result in ipairs( results ) do
 			result.duration = tonumber( result.duration )
 			result.count = tonumber( result.count )
@@ -49,7 +60,9 @@ function GetRequestHistory( filter )
 		return results
 	end
 
-	local results = Query( query ) or {}
+	local results = Query( query )
+	if results == false then return false end
+	results = results or {}
 	for _, result in ipairs( results ) do
 		result.duration = tonumber( result.duration )
 		result.count = tonumber( result.count )
@@ -82,7 +95,9 @@ function LogRequest()
 		vtype, data
 	)
 
-	if results and #results > 0 then
+	if results == false then return false end
+
+	if #results > 0 then
 		local count = ( tonumber( results[1].count ) or 0 ) + 1
 
 		return Query(
@@ -97,3 +112,19 @@ function LogRequest()
 	)
 end
 net.Receive( "PlayerVideoQueued", theater.LogRequest )
+
+
+-- Print the complete client-side request history for debugging.
+concommand.Add( "cinema_debug_requests", function()
+	MsgN( "[Cinema] Client request history:" )
+	local results = theater.GetRequestHistory()
+	if results == false then
+		MsgN( "[Cinema] Could not read request history; see the SQL error above." )
+		return
+	end
+	if not results or #results == 0 then
+		MsgN( "[Cinema] No request history entries found." )
+		return
+	end
+	PrintTable( results )
+end )
