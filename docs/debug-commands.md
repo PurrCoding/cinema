@@ -1,95 +1,71 @@
-# Debug Commands
+# Debug commands
 
-These commands and ConVars are intended for mappers, server operators and developers.  
-Most require **admin** or **superadmin**.
-
----
+This page covers client-side visualizers and server-side diagnostics for mappers, server operators, and developers. Commands that mutate data or expose diagnostics are permission-restricted as noted.
 
 ## Location visualization (client)
 
-| ConVar / Command | Default | Description |
-|------------------|---------|-------------|
-| `cinema_debug_locations` | `0` | Draw all location bounding boxes and names in the world |
-| `cinema_debug_grid` | `0` | Draw the spatial grid cells used for fast location lookups |
+| ConVar | Default | Description |
+|---|---:|---|
+| `cinema_debug_locations` | `0` | Draw registered location bounding boxes and names |
+| `cinema_debug_grid` | `0` | Draw the spatial grid around the local player |
 
-Enable them in console:
+Enable them in the client console:
 
-```
+```text
 cinema_debug_locations 1
 cinema_debug_grid 1
 ```
 
-When enabled you will see:
+## Location editing helpers (client, admin)
 
-- Wireframe boxes for every registered location
-- Location names floating at the center of each box
-- Teleport points (green boxes) if a location defines them
-- Spatial grid cells around the player (when grid debug is on)
+| Command | Description |
+|---|---|
+| `cinema_loc_start` | Start a live location box at the current position |
+| `cinema_loc_end` | Finish the box and copy the Lua snippet to the clipboard |
+| `cinema_loc_vector` | Copy the current position as a Lua `Vector(...)` expression |
 
----
-
-## Location editing helpers (admin)
-
-These two commands make creating location data painless.
-
-### `cinema_loc_start`
-
-1. Noclip to one corner of the area you want to define.
-2. Run `cinema_loc_start`.
-3. A live wireframe box follows your movement.
-
-### `cinema_loc_end`
-
-1. Move to the opposite corner.
-2. Run `cinema_loc_end`.
-3. The resulting Lua snippet is printed to console **and** copied to the clipboard:
-
-```lua
-[ "Name" ] =
-{
-	Min = Vector( ... ),
-	Max = Vector( ... ),
-},
-```
-
-Rename `"Name"` to something meaningful (e.g. `"Private Theater #3"`) and paste it into your map’s location file.
-
-### `cinema_loc_vector`
-
-Copies your current position as a ready-to-paste `Vector(x, y, z)` string.  
-Useful when placing theater screens or thumbnails manually.
-
----
+Use these while creating map location data. See [Creating custom maps](creating-custom-maps.md).
 
 ## Server-side location diagnostics (superadmin)
 
 | Command | Description |
-|---------|-------------|
-| `cinema_location_debug` | Print a detailed report: cache hits/misses, spatial grid stats, player location validity, memory estimate |
-| `cinema_location_debug_reset` | Reset the internal debug counters |
+|---|---|
+| `cinema_location_debug` | Print cache hit/miss rates, spatial-grid statistics, player cache state, and approximate memory usage |
+| `cinema_location_debug_reset` | Reset the internal location diagnostic counters |
 
-Example output sections:
+Run these from an in-game superadmin client console. They are server commands and print the report to the server console/log.
 
-- Cache validation (valid / invalid / stale player caches)
-- Spatial grid efficiency
-- Approximate memory usage of the location system
+## Seat visualizer and editor (client)
 
----
+| ConVar / Command | Default | Description |
+|---|---:|---|
+| `cinema_seat_debug` | `0` | Show supported seatable props and seat positions in the current location |
+| `cinema_seat_editor` | `0` | Enable seat-editor mode |
+| `cinema_seat_debug_numbers` | `1` | Show seat indices |
+| `cinema_seat_debug_names` | `1` | Show prop/model names |
+| `cinema_seat_select` | — | Admin command: select the prop under the crosshair and open the editor |
 
-## Other useful client commands while debugging
+Example:
 
-| Command | Description |
-|---------|-------------|
-| `cinema_refresh` | Force the theater HTML panel to reload |
-| `cinema_fullscreen` | Toggle fullscreen view (helps verify screen placement) |
+```text
+cinema_seat_debug 1
+cinema_seat_editor 1
+```
 
----
+The seat editor is development tooling for adjusting model-relative seat offsets. See [Seats](seats.md).
 
-## Tips
+## Other useful client debugging
 
-- Always test locations with `cinema_debug_locations 1` after adding a new map file.
-- Overlapping location boxes are resolved by the order they are checked; keep boxes tight and non-overlapping when possible.
-- The spatial grid size is currently fixed at 512 units (see Location module source).
-- After editing location Lua, a map change or `lua_openscript` / full restart is usually required for the new data to load.
+| ConVar / Command | Description |
+|---|---|
+| `cinema_debug_teleports` | Toggle theater-door teleport overlays |
+| `cinema_html_filter` | Toggle HTML/player console diagnostics |
+| `cinema_refresh` | Reload the local theater HTML panel |
+| `cinema_fullscreen` | Toggle fullscreen playback |
 
-See also: [Location System](location-system) and [Creating Custom Maps](creating-custom-maps).
+## Notes
+
+- The location spatial-grid cell size is currently 512 units in the source.
+- Keep location boxes tight and avoid unnecessary overlaps.
+- After editing map Lua, reload the map or restart the server so the location data is registered again.
+- For the complete ConVar inventory, see [Configuration](configuration.md).
