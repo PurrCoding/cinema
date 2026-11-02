@@ -22,6 +22,49 @@ URL request
 
 The base service in `sh_base.lua` provides shared helpers. Read it and at least one existing service before implementing a new provider; provider requirements differ substantially.
 
+
+## Request and playback flow
+
+This follows the server's `THEATER:RequestVideo`, `VIDEO:RequestInfo`, and `THEATER:NextVideo` paths. Duplicate checks run both before and after asynchronous metadata resolution.
+
+```mermaid
+flowchart TD
+    Input["Player submits URL"] --> Gate["THEATER:RequestVideo"]
+    Gate --> Private{"Private theater?"}
+    Private -- "Yes" --> Owner["Resolve owner and enforce queue lock"]
+    Private -- "No" --> Extract["ExtractURLData and match service"]
+    Owner --> Extract
+    Extract --> Valid{"Valid URL data?"}
+    Valid -- "No" --> Reject["Announce invalid request"]
+    Valid -- "Yes" --> Duplicate{"Already queued?"}
+    Duplicate -- "Yes" --> Vote["Add requester's vote to existing item"]
+    Duplicate -- "No" --> Video["Create VIDEO object"]
+    Video --> Cache{"Metadata in local video log?"}
+    Cache -- "Yes" --> Info["Populate title, duration and thumbnail"]
+    Cache -- "No" --> Fetch["SERVICE metadata lookup"]
+    Fetch --> Success{"Metadata resolved?"}
+    Success -- "No" --> Failed["Announce request failure"]
+    Success -- "Yes" --> Recheck["Recheck duplicates and service restrictions"]
+    Info --> Recheck
+    Recheck --> Duplicate2{"Duplicate appeared meanwhile?"}
+    Duplicate2 -- "Yes" --> Vote
+    Duplicate2 -- "No" --> Hook{"PreVideoQueued allows it?"}
+    Hook -- "No" --> Stop["Stop request"]
+    Hook -- "Yes" --> Queue["Queue VIDEO and notify requester"]
+    Queue --> Select["When current video ends: NextVideo"]
+    Select --> Policy["Chronological or highest vote count"]
+    Policy --> PrePlay{"PrePlayVideo allows it?"}
+    PrePlay -- "No" --> Keep["Leave item in queue"]
+    PrePlay -- "Yes" --> Set["THEATER:SetVideo"]
+    Set --> Broadcast["Send TheaterVideo to theater players"]
+    Broadcast --> Player["Client loads provider in DHTML"]
+    Set --> Clock["Server playback clock"]
+    Clock --> Sync["Timed-media client synchronization"]
+    Sync --> Player
+```
+
+Provider implementations may perform additional checks or change the service type during metadata resolution; the server revalidates the resulting type before queueing.
+
 ## Implementation checklist
 
 1. Create a service file in the appropriate subdirectory under `services/`.
