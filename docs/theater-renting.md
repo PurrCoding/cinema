@@ -13,6 +13,30 @@ While renting, the owner panel provides controls to extend the rental, refund re
 
 Admins can cancel an active rental. Remaining value is refunded to the owner; if the owner is offline, the refund is queued for their next connection.
 
+
+## Rental lifecycle
+
+A rental is created only after theater, owner, duration, and currency checks pass. Expiry clears ownership; an empty theater is then reset.
+
+```mermaid
+stateDiagram-v2
+    [*] --> Available
+    Available --> Validation: RequestRent
+    Validation --> Available: Validation or payment fails
+    Validation --> Rented: Checks pass and payment succeeds
+    Rented --> Rented: Owner extends and pays
+    Rented --> Rented: Owner updates player filter
+    Rented --> Refunding: Owner RefundRent
+    Rented --> Refunding: Admin CancelRent
+    Refunding --> Available: Clear rental and refund owner
+    Rented --> Expired: Expiration timer fires
+    Expired --> Available: Clear ownership and notify players
+    Expired --> Reset: Theater has no players
+    Reset --> Available: Reset theater state
+```
+
+Refunds use remaining time rounded up to whole minutes. If the owner is offline during an admin cancellation, the refund is queued by SteamID for their next connection. Normal expiration does not issue a refund.
+
 ## Requirements and currency providers
 
 The location must define a private theater (`THEATER_PRIVATE`). The rent module includes providers for:

@@ -68,6 +68,29 @@ Use the definitions and existing map files as the source of truth when choosing 
 
 The spatial grid currently uses 512-unit cells. The cell size and movement threshold are implementation details, not server ConVars.
 
+
+## Location lookup flow
+
+The current map's location data is registered first. The module builds lookup caches and a spatial grid, then tests candidate boxes as players move.
+
+```mermaid
+flowchart TD
+    Start["Gamemode loads map"] --> Register["Map file calls Location.Add"]
+    Register --> Match{"Map name matches current map?"}
+    Match -- "No" --> NoData["No map-specific locations"]
+    Match -- "Yes" --> Cache["Build caches and spatial grid"]
+    Cache --> Move["Player movement update"]
+    Move --> Threshold{"Movement threshold exceeded?"}
+    Threshold -- "No" --> Skip["Skip lookup"]
+    Threshold -- "Yes" --> Cell["Find candidate boxes in grid cell"]
+    Cell --> Bounds{"Inside a location box?"}
+    Bounds -- "No" --> Outside["No matching location"]
+    Bounds -- "Yes" --> Changed{"Location changed?"}
+    Changed -- "No" --> Done["Keep current membership"]
+    Changed -- "Yes" --> Update["Update player location"]
+    Update --> Theater["Handle theater enter/leave membership"]
+```
+
 ## Debugging
 
 - `cinema_debug_locations 1` – draw location bounds and names on the client.

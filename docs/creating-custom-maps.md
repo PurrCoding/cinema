@@ -76,6 +76,27 @@ Location.Add("mymap", {
 
 See [Location system](location-system.md) for the complete location and theater data model.
 
+
+## Mapping workflow
+
+Hammer entities define physical screens and related map objects; the Lua location file defines player areas and connects theater metadata to those areas.
+
+```mermaid
+flowchart TD
+    Start["Prepare map in Hammer"] --> FGD["Load cinema_modded/cinema.fgd"]
+    FGD --> Entities["Place screen, thumbnail and door entities"]
+    Entities --> Compile["Compile and load map"]
+    Compile --> Bounds["Use cinema_loc_start / cinema_loc_end"]
+    Bounds --> Lua["Create gamemode/maps/<mapname>.lua"]
+    Lua --> Register["Register areas with Location.Add"]
+    Register --> Theater{"Does a location define Theater data?"}
+    Theater -- "Yes" --> Instance["Gamemode can initialize a theater"]
+    Theater -- "No" --> Area["Location remains a player area"]
+    Instance --> Test["Debug bounds and test player entry"]
+    Area --> Test
+    Test --> Playback["Test requests, playback and map entities"]
+```
+
 ## 4. Standalone Workshop maps
 
 If the map is distributed separately from the gamemode, ship a compatible Lua autorun file with the map/addon and ensure it loads after the Cinema Location module is available. Avoid relying on an unverified load order; test the registration on a clean server.

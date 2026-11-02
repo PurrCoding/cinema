@@ -13,6 +13,27 @@ This page outlines the core runtime objects and how the server, client, and embe
 | Scoreboard | `gamemode/modules/scoreboard/` | Queue, request, owner/admin, and settings UI |
 | Rent | `gamemode/modules/rent/` | Private-theater rent lifecycle and currency providers |
 
+
+## Runtime overview
+
+The server owns theater state and queue decisions. Clients provide the UI and embedded media player; they receive the active video and playback state over theater network messages.
+
+```mermaid
+flowchart TD
+    Map["Map Lua location data"] --> Location["Location registry and spatial lookup"]
+    Location --> Theater["THEATER instances"]
+    UI["Client request UI"] --> Request["THEATER:RequestVideo"]
+    Request --> Service["URL extraction and SERVICE matching"]
+    Service --> Metadata["VIDEO metadata resolution"]
+    Metadata --> Queue["Server-owned queue"]
+    Queue --> Select["THEATER:NextVideo"]
+    Select --> Active["THEATER:SetVideo"]
+    Active --> Net["TheaterVideo network message"]
+    Net --> DHTML["Client DHTML provider player"]
+    Active --> Sync["Timed playback synchronization"]
+    Sync --> DHTML
+```
+
 ## Server lifecycle
 
 1. Map-specific Lua registers location boxes.
