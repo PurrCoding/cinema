@@ -16,32 +16,36 @@
   See LICENSE.md in the project root for the full license text.
 ]]
 
---
--- Shared code available in both client and server realms
---
-
 GM.Name 		= "Cinema"
-GM.Author		= "PixelTail Games"
-GM.Email		= "contact@pixeltailgames.com"
-GM.Website		= "www.pixeltailgames.com"
-GM.Version		= "1.1"
+GM.Author		= "pixelTail Games"
+GM.Email 		= "contact@pixeltailgames.com"
+GM.Website 		= "www.pixeltailgames.com"
 GM.TeamBased 	= false
 
-derive_include = derive_include or include
+--[[---------------------------------------------------------
+	Derma includes
+-----------------------------------------------------------]]
 
-function GM:CreateTeams()
-	TEAM_SPECTATOR = 1001
-	team.SetUp( TEAM_SPECTATOR, "Spectators", Color( 200, 200, 200 ), true )
-	team.SetSpawnPoint( TEAM_SPECTATOR, "info_player_start" )
+if CLIENT then
+	include( "scoreboard/controls/cl_html.lua" )
 end
 
+--[[---------------------------------------------------------
+	Name: gamemode:CreateTeams()
+	Desc: Create and set up teams
+-----------------------------------------------------------]]
+function GM:CreateTeams()
+end
+
+--[[---------------------------------------------------------
+	Name: gamemode:PlayerNoClip( player, bool )
+-----------------------------------------------------------]]
 function GM:PlayerNoClip( pl, on )
 	return false
 end
 
 --[[---------------------------------------------------------
 	Name: gamemode:CanPlayerSuicide( Player ply )
-	Desc: Can this player suicide?
 -----------------------------------------------------------]]
 function GM:CanPlayerSuicide( ply )
 	return false
