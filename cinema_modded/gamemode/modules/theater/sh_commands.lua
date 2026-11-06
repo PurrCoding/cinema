@@ -1,3 +1,21 @@
+--[[
+  Cinema (Fixed Edition)
+  Copyright (C) 2013–2026 Cinema authors
+
+  Originally created by PixelTail Games
+  (https://github.com/pixeltailgames/cinema)
+
+  This file is part of Cinema (Fixed Edition)
+  (https://github.com/PurrCoding/cinema)
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  See LICENSE.md in the project root for the full license text.
+]]
+
 CreateConVar( "cinema_queue_mode", 1, { FCVAR_ARCHIVE, FCVAR_DONTRECORD, FCVAR_REPLICATED }, "1 = Upvote only (supported)\n2 = Chronological / request order (supported)\n3 = Up and down voting (not supported)" )
 CreateConVar( "cinema_url", "https://gm-cinema.purrcoding.com/", { FCVAR_NOT_CONNECTED, FCVAR_REPLICATED }, "Cinema url to load on theater screens.") -- don't edit, use server config!
 
